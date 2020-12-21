@@ -1,20 +1,38 @@
 package com.tungstun.barapi.domain;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
 public class Bar {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    private String id;
+    @Column(name = "adres")
     private String adres;
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "mail")
     private String mail;
+
+    @Column(name = "phone_number")
     private String phoneNumber;
+
+    @Transient
     private List<User> users;
+
+    @Transient
     private List<Product> products;
+
+    @Transient
     private List<Session> sessions;
 
-    public Bar(String id, String adres, String name, String mail, String phoneNumber, List<User> users, List<Product> products, List<Session> sessions) {
-        this.id = id;
+    public Bar() {}
+
+    public Bar(String adres, String name, String mail, String phoneNumber, List<User> users, List<Product> products, List<Session> sessions) {
         this.adres = adres;
         this.name = name;
         this.mail = mail;
@@ -24,7 +42,9 @@ public class Bar {
         this.sessions = sessions;
     }
 
-    public String getId() {
+
+
+    public Long getId() {
         return id;
     }
 
