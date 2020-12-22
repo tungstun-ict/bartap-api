@@ -2,7 +2,7 @@ package com.tungstun.barapi.domain;
 
 import java.util.List;
 
-public class Customer extends User{
+public class Customer extends Person {
     private String phoneNumber;
     private List<Bill> bills;
 
