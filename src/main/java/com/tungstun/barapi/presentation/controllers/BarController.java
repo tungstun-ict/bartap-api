@@ -1,14 +1,11 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.BarService;
 import com.tungstun.barapi.domain.Bar;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.barapi.presentation.dto.response.BarResponse;
-import com.tungstun.barapi.application.BarService;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import javassist.NotFoundException;
-import org.modelmapper.PropertyMap;
-import org.modelmapper.TypeMap;
-import org.modelmapper.internal.MappingContextImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +28,7 @@ public class BarController {
      */
     private BarResponse convertToBarResult(Bar bar){
         return new ResponseMapper().convert(bar, BarResponse.class);
-
     }
-
 
     @GetMapping
     public ResponseEntity<List<BarResponse>> getAllBars() throws NotFoundException {
@@ -50,7 +45,8 @@ public class BarController {
     }
 
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<BarResponse> addBar(@Valid @RequestBody BarRequest barRequest){
+    public ResponseEntity<BarResponse> addBar(
+            @Valid @RequestBody BarRequest barRequest) {
         Bar bar = this.BAR_SERVICE.addBar(
                 barRequest.adres,
                 barRequest.name,
@@ -61,8 +57,9 @@ public class BarController {
     }
 
     @PatchMapping(path = "/{id}", consumes = "application/json")
-    public ResponseEntity<BarResponse> editBar(@PathVariable("id") Long id,
-                                               @RequestBody BarRequest barRequest) throws NotFoundException {
+    public ResponseEntity<BarResponse> editBar(
+            @PathVariable("id") Long id,
+            @RequestBody BarRequest barRequest) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.editBar(
                 id,
                 barRequest.adres,
@@ -78,8 +75,4 @@ public class BarController {
         this.BAR_SERVICE.deleteBar(id);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-
-
 }

@@ -4,21 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BarBuilder {
-
     private String adres;
     private String name;
     private String mail;
     private String phoneNumber;
-    private List<User> users;
+    private List<Person> people;
     private List<Product> products;
     private List<Session> sessions;
 
     public BarBuilder() {
-        this.users = new ArrayList<>();
+        this.people = new ArrayList<>();
         this.products = new ArrayList<>();
         this.sessions = new ArrayList<>();
     }
-
 
     public BarBuilder setAdres(String adres) {
         this.adres = adres;
@@ -40,8 +38,8 @@ public class BarBuilder {
         return this;
     }
 
-    public BarBuilder setUsers(List<User> users) {
-        this.users = users;
+    public BarBuilder setUsers(List<Person> people) {
+        this.people = people;
         return this;
     }
 
@@ -56,8 +54,7 @@ public class BarBuilder {
     }
 
     public Bar build() {
-        return new Bar(this.adres, this.name,
-                this.mail, this.phoneNumber,
-                this.users, this.products, this.sessions);
+        return new Bar(this.adres, this.name, this.mail, this.phoneNumber,
+                this.people, this.products, this.sessions);
     }
 }

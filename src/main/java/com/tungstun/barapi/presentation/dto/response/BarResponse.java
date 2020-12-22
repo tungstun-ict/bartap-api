@@ -1,10 +1,5 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.Product;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.User;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class BarResponse {
@@ -18,28 +13,6 @@ public class BarResponse {
     private List<String> sessions;
 
     public BarResponse() {}
-
-
-//        Manual BarResponse constructor
-    public BarResponse(Long id, String adres, String name, String mail, String phoneNumber, List<User> users, List<Product> products, List<Session> sessions) {
-        this.id = id;
-        this.adres = adres;
-        this.name = name;
-        this.mail = mail;
-        this.phoneNumber = phoneNumber;
-        this.users = new ArrayList<>();
-        this.products = new ArrayList<>();
-        this.sessions = new ArrayList<>();
-        if (users != null){
-            for (User user : users) this.users.add(user.toString());
-        }
-        if (products != null) {
-            for (Product product : products) this.products.add(product.toString());
-        }
-        if (sessions != null) {
-            for (Session session : sessions) this.sessions.add(session.toString());
-        }
-    }
 
     public void setId(Long id) { this.id = id; }
 
@@ -56,7 +29,6 @@ public class BarResponse {
     public void setProducts(List<String> products) { this.products = products; }
 
     public void setSessions(List<String> sessions) { this.sessions = sessions; }
-
 
     public Long getId() { return id; }
 

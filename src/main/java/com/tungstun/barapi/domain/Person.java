@@ -1,10 +1,10 @@
 package com.tungstun.barapi.domain;
 
-public class User {
+public class Person {
     private String id;
     private String name;
 
-    public User(String id, String name) {
+    public Person(String id, String name) {
         this.id = id;
         this.name = name;
     }
