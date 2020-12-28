@@ -76,4 +76,12 @@ public class SessionService {
         this.BAR_SERVICE.saveBar(bar);
         this.SPRING_SESSION_REPOSITORY.delete(session);
     }
+
+    /**
+     * Saves a Session object
+     * @param session to be saved
+     */
+    public void saveSession(Session session){
+        this.SPRING_SESSION_REPOSITORY.save(session);
+    }
 }
