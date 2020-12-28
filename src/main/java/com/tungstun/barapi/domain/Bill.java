@@ -1,29 +1,46 @@
 package com.tungstun.barapi.domain;
 
-import java.util.Date;
+import net.bytebuddy.implementation.bind.annotation.Default;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
+@Table(name = "bill")
 public class Bill {
-    private String id;
-    private Date date; // niet nodig door sessie
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "is_payed")
+    private boolean isPayed;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "session_id")
+    private Session session;
+
+    @Transient
     private Customer customer;
+
+    @Transient
     private List<Order> orders;
 
-    public Bill(String id, Date date, Customer customer, List<Order> orders) {
-        this.id = id;
-        this.date = date;
+
+    public Bill() { }
+    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed) {
+        this.session = session;
         this.customer = customer;
         this.orders = orders;
+        this.isPayed = isPayed;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
+    public Session getSession() { return session; }
 
     public Customer getCustomer() {
         return customer;
@@ -34,15 +51,15 @@ public class Bill {
     }
 
     public boolean addBartender(Order order ){
-        if ( !this.orders.contains(order) ){
-            return this.orders.add(order);
-        }
+        if ( !this.orders.contains(order) )return this.orders.add(order);
         return false;
-
     }
+
     public boolean removeBartender(Order order){
         return this.orders.remove(order);
     }
 
+    public boolean isPayed() { return isPayed; }
 
+    public void setPayed(boolean payed) { isPayed = payed; }
 }

@@ -14,7 +14,11 @@ public class Session {
     @Column(name = "date")
     private LocalDateTime date;
 
-    @Transient
+
+    @OneToMany(mappedBy = "session",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
     private List<Bill> bills;
 
     @Transient
@@ -39,7 +43,7 @@ public class Session {
         return date;
     }
 
-    public List<Bill> getBill() {
+    public List<Bill> getBills() {
         return bills;
     }
 
