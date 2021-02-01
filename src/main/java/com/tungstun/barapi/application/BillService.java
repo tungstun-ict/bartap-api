@@ -1,5 +1,6 @@
 package com.tungstun.barapi.application;
 
+import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBillRepository;
 import com.tungstun.barapi.domain.Bill;
 import com.tungstun.barapi.domain.BillFactory;
@@ -16,10 +17,12 @@ import java.util.List;
 public class BillService {
     private final SpringBillRepository SPRING_BILL_REPOSITORY;
     private final SessionService SESSION_SERVICE;
+    private final PersonService PERSON_SERVICE;
 
-    public BillService(SpringBillRepository springBillRepository, SessionService sessionService) {
+    public BillService(SpringBillRepository springBillRepository, SessionService sessionService, PersonService personService) {
         this.SPRING_BILL_REPOSITORY = springBillRepository;
         this.SESSION_SERVICE = sessionService;
+        PERSON_SERVICE = personService;
     }
 
     /**
@@ -85,6 +88,11 @@ public class BillService {
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
         Customer customer = null;
+        for (Bill bill : session.getBills()){
+            if (bill.getCustomer().getId().equals(billRequest.customerId)) customer = bill.getCustomer();
+        }
+        if (sessionHasBillWithCustomer(session, customer))
+            throw new DuplicateRequestException("Session already contains a bill for requested customer");
         Bill bill = new BillFactory(session, customer).create();
         session.addBill(bill);
         bill = this.SPRING_BILL_REPOSITORY.save(bill);
@@ -103,8 +111,7 @@ public class BillService {
      */
     public Bill setIsPayedOfBillOfSession(Long barId, Long sessionId, Long billId, Boolean isPayed) throws NotFoundException {
        Bill bill = getBillOfBar(barId, sessionId, billId);
-       if (isPayed == null)
-           throw new IllegalArgumentException("isPayed must be true or false");
+       if (isPayed == null) throw new IllegalArgumentException("isPayed must be true or false");
        bill.setPayed(isPayed);
        return this.SPRING_BILL_REPOSITORY.save(bill);
     }
@@ -120,5 +127,17 @@ public class BillService {
         Bill bill = getBillOfBar(barId, sessionId, billId);
         bill.getSession().removeBill(bill);
         this.SPRING_BILL_REPOSITORY.delete(bill);
+    }
+
+    /**
+     * Checks if session already has an existing bill for customer
+     * @return true if session has bill with customer
+     *      false if session does not have a bill with customer
+     */
+    private boolean sessionHasBillWithCustomer(Session session, Customer customer){
+        for (Bill bill : session.getBills()){
+            if (bill.getCustomer().equals(customer)) return true;
+        }
+        return false;
     }
 }
