@@ -22,7 +22,10 @@ public class Bar {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @Transient
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Person> people;
 
     @Transient
