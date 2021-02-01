@@ -13,7 +13,6 @@ public class SessionFactory {
     public Session createSession(){
         return new Session(this.date,
                 new ArrayList<>(),
-                new ArrayList<>(),
                 new ArrayList<>());
     }
 }
