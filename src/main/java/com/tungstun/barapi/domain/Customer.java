@@ -1,11 +1,14 @@
 package com.tungstun.barapi.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.*;
 
 import javax.persistence.*;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Entity
 @Table(name = "customer")
 @PrimaryKeyJoinColumn(name = "user_id")
@@ -13,7 +16,6 @@ public class Customer extends Person {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @JsonManagedReference
     @OneToMany(
             mappedBy = "customer",
             targetEntity = Bill.class,

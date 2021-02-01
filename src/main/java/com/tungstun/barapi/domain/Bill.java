@@ -1,5 +1,6 @@
 package com.tungstun.barapi.domain;
 
+import com.fasterxml.jackson.annotation.*;
 import net.bytebuddy.implementation.bind.annotation.Default;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -7,6 +8,10 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Entity
 @Table(name = "bill")
 public class Bill {
@@ -21,12 +26,12 @@ public class Bill {
     @JoinColumn(name = "session_id")
     private Session session;
 
-    @Transient
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
     private Customer customer;
 
     @Transient
     private List<Order> orders;
-
 
     public Bill() { }
     public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed) {
@@ -51,7 +56,7 @@ public class Bill {
     }
 
     public boolean addBartender(Order order ){
-        if ( !this.orders.contains(order) )return this.orders.add(order);
+        if ( !this.orders.contains(order) ) return this.orders.add(order);
         return false;
     }
 
