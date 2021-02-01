@@ -2,7 +2,8 @@ package com.tungstun.barapi.domain;
 
 import javax.persistence.*;
 
-@MappedSuperclass
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -12,6 +13,9 @@ public class Person {
     private String name;
 
     public Person() { }
+    public Person(String name) {
+        this.name = name;
+    }
     public Person(Long id, String name) {
         this.id = id;
         this.name = name;
@@ -24,4 +28,6 @@ public class Person {
     public String getName() {
         return name;
     }
+
+    public void setName(String name) { this.name = name; }
 }
