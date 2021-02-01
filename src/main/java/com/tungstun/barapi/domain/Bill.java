@@ -1,11 +1,10 @@
 package com.tungstun.barapi.domain;
 
-import com.fasterxml.jackson.annotation.*;
-import net.bytebuddy.implementation.bind.annotation.Default;
-import org.springframework.beans.factory.annotation.Value;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonIdentityInfo(
@@ -26,6 +25,7 @@ public class Bill {
     @JoinColumn(name = "session_id")
     private Session session;
 
+    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer;

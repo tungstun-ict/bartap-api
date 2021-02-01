@@ -1,6 +1,9 @@
 package com.tungstun.barapi.domain;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
 import java.util.List;
@@ -13,9 +16,11 @@ import java.util.List;
 @Table(name = "customer")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Customer extends Person {
+    @JsonIgnore
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @JsonBackReference
     @OneToMany(
             mappedBy = "customer",
             targetEntity = Bill.class,
