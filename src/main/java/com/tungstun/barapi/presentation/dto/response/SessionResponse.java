@@ -2,7 +2,6 @@ package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Bill;
-import com.tungstun.barapi.domain.Customer;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,9 +9,8 @@ import java.util.List;
 public class SessionResponse {
     private Long id;
     private LocalDateTime date;
-    private List<Bill> bills;
-    private List<Customer> customers;
     private List<Bartender> bartenders;
+    private List<Bill> bills;
 
     public SessionResponse() { }
 
@@ -36,14 +34,6 @@ public class SessionResponse {
 
     public void setBills(List<Bill> bills) {
         this.bills = bills;
-    }
-
-    public List<Customer> getCustomers() {
-        return customers;
-    }
-
-    public void setCustomers(List<Customer> customers) {
-        this.customers = customers;
     }
 
     public List<Bartender> getBartenders() {
