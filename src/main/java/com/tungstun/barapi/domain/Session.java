@@ -1,6 +1,8 @@
 package com.tungstun.barapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import javax.persistence.*;
@@ -11,6 +13,7 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
+@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "session")
 public class Session {
@@ -21,6 +24,7 @@ public class Session {
     @Column(name = "date")
     private LocalDateTime date;
 
+
     @OneToMany(mappedBy = "session",
             orphanRemoval = true,
             fetch = FetchType.LAZY,
@@ -28,6 +32,7 @@ public class Session {
     )
     private List<Bill> bills;
 
+    @JsonManagedReference
     @ManyToMany(mappedBy = "shifts")
     private List<Bartender> bartenders;
 
