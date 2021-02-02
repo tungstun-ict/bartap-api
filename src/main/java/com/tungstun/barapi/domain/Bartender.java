@@ -1,5 +1,7 @@
 package com.tungstun.barapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -7,6 +9,7 @@ import java.util.List;
 @Table(name = "bartender")
 @PrimaryKeyJoinColumn(name = "user_id")
 public class Bartender extends Person {
+    @JsonBackReference
     @ManyToMany(
             cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}
     )
