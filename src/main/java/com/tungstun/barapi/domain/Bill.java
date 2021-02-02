@@ -21,6 +21,7 @@ public class Bill {
     @Column(name = "is_payed")
     private boolean isPayed;
 
+    @JsonManagedReference
     @ManyToOne(optional = false)
     @JoinColumn(name = "session_id")
     private Session session;

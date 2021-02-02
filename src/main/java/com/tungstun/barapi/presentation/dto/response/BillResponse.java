@@ -2,6 +2,7 @@ package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Order;
+import com.tungstun.barapi.domain.Session;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ public class BillResponse {
     private boolean isPayed;
     private Customer customer;
     private List<Order> orders;
+    private Session session;
 
     public BillResponse() { }
     public BillResponse(String id, boolean isPayed, Customer customer, List<Order> orders) {
@@ -39,4 +41,8 @@ public class BillResponse {
     }
 
     public boolean removeOrder(Order order){ return this.orders.remove(order); }
+
+    public Session getSession() { return session; }
+
+    public void setSession(Session session) { this.session = session; }
 }
