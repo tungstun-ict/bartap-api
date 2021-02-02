@@ -17,12 +17,10 @@ import java.util.List;
 public class BillService {
     private final SpringBillRepository SPRING_BILL_REPOSITORY;
     private final SessionService SESSION_SERVICE;
-    private final PersonService PERSON_SERVICE;
 
-    public BillService(SpringBillRepository springBillRepository, SessionService sessionService, PersonService personService) {
+    public BillService(SpringBillRepository springBillRepository, SessionService sessionService) {
         this.SPRING_BILL_REPOSITORY = springBillRepository;
         this.SESSION_SERVICE = sessionService;
-        PERSON_SERVICE = personService;
     }
 
     /**
