@@ -1,19 +1,40 @@
 package com.tungstun.barapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import javax.persistence.*;
+
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "name")
     private String name;
 
-    public Person(String id, String name) {
+    public Person() { }
+    public Person(String name) {
+        this.name = name;
+    }
+    public Person(Long id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
     public String getName() {
         return name;
     }
+
+    public void setName(String name) { this.name = name; }
 }

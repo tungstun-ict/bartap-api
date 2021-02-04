@@ -1,9 +1,19 @@
 package com.tungstun.barapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "session")
 public class Session {
@@ -14,20 +24,23 @@ public class Session {
     @Column(name = "date")
     private LocalDateTime date;
 
-    @Transient
+
+    @OneToMany(mappedBy = "session",
+            orphanRemoval = true,
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL
+    )
     private List<Bill> bills;
 
-    @Transient
-    private List<Customer> customers;
-
-    @Transient
+    @JsonManagedReference
+    @ManyToMany(mappedBy = "shifts")
     private List<Bartender> bartenders;
 
     public Session() {}
-    public Session(LocalDateTime date, List<Bill> bills, List<Customer> customers, List<Bartender> bartenders) {
+    public Session(LocalDateTime date, List<Bill> bills
+            , List<Bartender> bartenders) {
         this.date = date;
         this.bills = bills;
-        this.customers = customers;
         this.bartenders = bartenders;
     }
 
@@ -39,7 +52,7 @@ public class Session {
         return date;
     }
 
-    public List<Bill> getBill() {
+    public List<Bill> getBills() {
         return bills;
     }
 
@@ -50,15 +63,6 @@ public class Session {
 
     public boolean removeBill(Bill bill){ return this.bills.remove(bill); }
 
-    public List<Customer> getCustomers() { return this.customers; }
-
-    public boolean addCustomer(Customer customer){
-        if ( !this.customers.contains(customer) )return this.customers.add(customer);
-        return false;
-    }
-
-    public boolean removeCustomer(Customer customer){ return this.customers.remove(customer); }
-
     public List<Bartender> getBartenders() { return this.bartenders; }
 
     public boolean addBartender(Bartender bartender){
@@ -67,15 +71,4 @@ public class Session {
     }
 
     public boolean removeBartender(Bartender bartender){ return this.bartenders.remove(bartender); }
-
-    @Override
-    public String toString() {
-        return "Session{" +
-                "id=" + id +
-                ", date=" + date +
-                ", bills=" + bills +
-                ", customers=" + customers +
-                ", bartenders=" + bartenders +
-                '}';
-    }
 }
