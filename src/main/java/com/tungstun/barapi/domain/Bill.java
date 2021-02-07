@@ -31,7 +31,10 @@ public class Bill {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @Transient
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Order> orders;
 
     public Bill() { }
