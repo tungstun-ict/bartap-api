@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@Table(name = "order")
+@Table(name = "\"order\"")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id;
 
     @Column(name = "date")
     private Date date;
@@ -24,7 +24,7 @@ public class Order {
     private List<OrderLine> orderLines;
 
     public Order() { }
-    public Order(String id, Date date, double price, Bartender bartender, List<OrderLine> orderLines) {
+    public Order(Long id, Date date, double price, Bartender bartender, List<OrderLine> orderLines) {
         this.id = id;
         this.date = date;
         this.price = price;
@@ -32,7 +32,7 @@ public class Order {
         this.orderLines = orderLines;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
