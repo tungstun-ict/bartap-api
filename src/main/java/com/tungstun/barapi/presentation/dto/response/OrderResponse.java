@@ -3,18 +3,18 @@ package com.tungstun.barapi.presentation.dto.response;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.OrderLine;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class OrderResponse {
     private Long id;
-    private Date date;
+    private LocalDateTime date;
     private double price;
     private Bartender bartender;
     private List<OrderLine> orderLines;
 
     public OrderResponse() { }
-    public OrderResponse(Long id, Date date, double price, Bartender bartender, List<OrderLine> orderLines) {
+    public OrderResponse(Long id, LocalDateTime date, double price, Bartender bartender, List<OrderLine> orderLines) {
         this.id = id;
         this.date = date;
         this.price = price;
@@ -30,11 +30,11 @@ public class OrderResponse {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
