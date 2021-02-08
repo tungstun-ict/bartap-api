@@ -2,16 +2,16 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.OrderService;
 import com.tungstun.barapi.domain.Order;
+import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -55,6 +55,16 @@ public class OrderController {
             @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
         Order order = this.ORDER_SERVICE.getOrderOfSession(barId, sessionId, orderId);
+        return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
+    }
+
+    @PostMapping("sessions/{sessionId}/orders")
+    public ResponseEntity<OrderResponse> createNewOrderForSession(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @Valid @RequestBody OrderRequest orderRequest
+    ) throws NotFoundException {
+        Order order = this.ORDER_SERVICE.createNewOrderForSession(barId, sessionId, orderRequest);
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 }
