@@ -38,4 +38,13 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
+    @GetMapping("sessions/{sessionId}/orders")
+    public ResponseEntity<List<OrderResponse>> getAllsessionOrders(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId
+    ) throws NotFoundException {
+        List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfSession(barId, sessionId);
+        List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
+        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+    }
 }
