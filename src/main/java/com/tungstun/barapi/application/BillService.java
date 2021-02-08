@@ -138,4 +138,12 @@ public class BillService {
         }
         return false;
     }
+
+    /**
+     * Saves a Bill object
+     * @return saved bill
+     */
+    public Bill saveBill(Bill bill) {
+        return this.SPRING_BILL_REPOSITORY.save(bill);
+    }
 }
