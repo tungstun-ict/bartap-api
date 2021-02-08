@@ -49,13 +49,8 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws NotFoundException {
-        List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
-        List<Order> orders = new ArrayList<>();
-        for (Session session : sessions){
-            if (session.getId().equals(sessionId)){
-                orders.addAll(extractOrdersFromSession(session));
-            }
-        }
+        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
+        List<Order> orders = extractOrdersFromSession(session);
         if (orders.isEmpty()) throw new NotFoundException(String.format("No orders found for session with id: %s", sessionId));
         return orders;
     }
