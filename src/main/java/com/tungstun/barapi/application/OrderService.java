@@ -28,6 +28,16 @@ public class OrderService {
         return orders;
     }
 
+    private Order findOrderInSession(Session session, Long orderId) throws NotFoundException {
+        List<Order> orders = extractOrdersFromSession(session);
+        for (Order order : orders) {
+            if (order.getId().equals(orderId)) {
+                return order;
+            }
+        }
+        throw new NotFoundException(String.format("No order found with id: %s", orderId));
+    }
+
     public List<Order> getAllOrdersOfBar(Long barId) throws NotFoundException {
         List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
         List<Order> orders = new ArrayList<>();
@@ -48,5 +58,10 @@ public class OrderService {
         }
         if (orders.isEmpty()) throw new NotFoundException(String.format("No orders found for session with id: %s", sessionId));
         return orders;
+    }
+
+    public Order getOrderOfSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
+        return findOrderInSession(session, orderId);
     }
 }
