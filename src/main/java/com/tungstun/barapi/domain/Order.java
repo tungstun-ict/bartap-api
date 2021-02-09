@@ -17,7 +17,10 @@ public class Order {
     @Column(name = "price")
     private double price;
 
-    @Transient
+    @OneToOne(
+            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH},
+            orphanRemoval = true
+    )
     private Bartender bartender;
 
     @Transient
