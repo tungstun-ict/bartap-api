@@ -20,7 +20,10 @@ public class Order {
     @Transient
     private Bartender bartender;
 
-    @Transient
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<OrderLine> orderLines;
 
     public Order() { }
