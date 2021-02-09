@@ -67,4 +67,22 @@ public class OrderController {
         Order order = this.ORDER_SERVICE.createNewOrderForSession(barId, sessionId, orderRequest);
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
+
+    @DeleteMapping("sessions/{sessionId}/orders/{orderId}")
+    public ResponseEntity<Void> deleteOrder(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("orderId") Long orderId
+    ) throws NotFoundException {
+        this.ORDER_SERVICE.deleteOrderFromSession(barId, sessionId, orderId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    /**
+     * Delete order
+     *
+     * orderLines:
+     * Remove from order
+     * add to order
+     */
 }

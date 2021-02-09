@@ -57,6 +57,26 @@ public class OrderService {
         throw new NotFoundException(String.format("No bill found for customer with id %s", customerId));
     }
 
+    private Bill getBillWithOrder(Session session, Long orderId) throws NotFoundException {
+        for(Bill bill : session.getBills()) {
+            for(Order order : bill.getOrders()) {
+                if (order.getId().equals(orderId)){
+                    return bill;
+                }
+            }
+        }
+        throw new NotFoundException(String.format("Could not found a bill with order id %s", orderId));
+    }
+
+    private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
+        for(Order order : bill.getOrders()) {
+            if (order.getId().equals(orderId)){
+                return order;
+            }
+        }
+        throw new NotFoundException(String.format("No Order with id %s found in bill", orderId));
+    }
+
     public List<Order> getAllOrdersOfBar(Long barId) throws NotFoundException {
         List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
         List<Order> orders = new ArrayList<>();
@@ -82,12 +102,19 @@ public class OrderService {
     public Order createNewOrderForSession(Long barId, Long sessionId, OrderRequest orderRequest) throws NotFoundException {
         Bartender bartender = findBartenderInBar(barId, orderRequest.bartenderId);
         Order order = new OrderFactory(LocalDateTime.now(), bartender).create();
+        order = this.SPRING_ORDER_REPOSITORY.save(order);
 
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
         Bill bill = findBillInSessionOfCustomer(session, orderRequest.customerId);
-        bill.getOrders().add(order);
-        this.BILL_SERVICE.saveBill(bill);
+        this.BILL_SERVICE.addOrderToBill(bill, order);
 
-        return this.SPRING_ORDER_REPOSITORY.save(order);
+        return order;
+    }
+
+    public void deleteOrderFromSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
+        Bill bill = getBillWithOrder(session, orderId);
+        Order order = findOrderInBill(bill, orderId);
+        this.BILL_SERVICE.removeOrderFromBill(bill, order);
     }
 }
