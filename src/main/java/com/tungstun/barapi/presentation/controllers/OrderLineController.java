@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("bars/{barId}/")
 public class OrderLineController {
     private final ResponseMapper RESPONSE_MAPPER;
-    private OrderLineService ORDER_LINE_SERVICE;
+    private final OrderLineService ORDER_LINE_SERVICE;
 
     public OrderLineController(OrderLineService orderLineService, ResponseMapper responseMapper) {
         this.ORDER_LINE_SERVICE = orderLineService;
@@ -34,6 +34,16 @@ public class OrderLineController {
             @PathVariable("barId") Long barId
     ) throws NotFoundException {
         List<OrderLine> orderLines = this.ORDER_LINE_SERVICE.getAllOrderLinesOfBar(barId);
+        List<OrderLineResponse> orderLineResponses = RESPONSE_MAPPER.convertList(orderLines, OrderLineResponse.class);
+        return new ResponseEntity<>(orderLineResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("sessions/{sessionId}/orders/all/orderlines")
+    public ResponseEntity<List<OrderLineResponse>> getAllOrderLinesOfSession(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId
+    ) throws NotFoundException {
+        List<OrderLine> orderLines = this.ORDER_LINE_SERVICE.getAllOrderLinesOfSession(barId, sessionId);
         List<OrderLineResponse> orderLineResponses = RESPONSE_MAPPER.convertList(orderLines, OrderLineResponse.class);
         return new ResponseEntity<>(orderLineResponses, HttpStatus.OK);
     }
