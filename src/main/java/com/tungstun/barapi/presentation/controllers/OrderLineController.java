@@ -47,4 +47,26 @@ public class OrderLineController {
         List<OrderLineResponse> orderLineResponses = RESPONSE_MAPPER.convertList(orderLines, OrderLineResponse.class);
         return new ResponseEntity<>(orderLineResponses, HttpStatus.OK);
     }
+
+    @GetMapping("sessions/{sessionId}/orders/{orderId}/orderlines")
+    public ResponseEntity<List<OrderLineResponse>> getAllOrderLinesOfOrder(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("orderId") Long orderId
+    ) throws NotFoundException {
+        List<OrderLine> orderLines = this.ORDER_LINE_SERVICE.getAllOrderLinesOfOrder(barId, sessionId, orderId);
+        List<OrderLineResponse> orderLineResponses = RESPONSE_MAPPER.convertList(orderLines, OrderLineResponse.class);
+        return new ResponseEntity<>(orderLineResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("sessions/{sessionId}/orders/{orderId}/orderlines/{orderLineId}")
+    public ResponseEntity<OrderLineResponse> getOrderLineOfOrder(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("orderId") Long orderId,
+            @PathVariable("orderLineId") Long orderLineId
+    ) throws NotFoundException {
+        OrderLine orderLine = this.ORDER_LINE_SERVICE.getOrderLineOfOrder(barId, sessionId, orderId, orderLineId);
+        return new ResponseEntity<>(convertToOrderLineResponse(orderLine), HttpStatus.OK);
+    }
 }

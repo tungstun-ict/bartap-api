@@ -27,6 +27,16 @@ public class OrderLineService {
         return orderLines;
     }
 
+    private List<OrderLine> extractOrderLinesFromOrderWithId(List<Order> orders, Long orderId) throws NotFoundException {
+        for (Order order : orders) {
+            if (order.getId().equals(orderId)) {
+                return order.getOrderLines();
+            }
+        }
+        throw new NotFoundException(String.format("No order lines found in order with id %s", orderId));
+    }
+
+
     public List<OrderLine> getAllOrderLinesOfBar(Long barId) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBar(barId);
         List<OrderLine> orderLines = extractOrderLinesFromOrders(orders);
@@ -39,5 +49,22 @@ public class OrderLineService {
         List<OrderLine> orderLines = extractOrderLinesFromOrders(orders);
         if (orderLines.isEmpty()) throw new NotFoundException(String.format("No order lines found in session with id: %s", sessionId));
         return orderLines;
+    }
+
+    public List<OrderLine> getAllOrderLinesOfOrder(Long barId, Long sessionId, Long orderId) throws NotFoundException {
+        List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfSession(barId, sessionId);
+        List<OrderLine> orderLines = extractOrderLinesFromOrderWithId(orders, orderId);
+        if (orderLines.isEmpty()) throw new NotFoundException(String.format("No order lines found in session with id: %s", sessionId));
+        return orderLines;
+    }
+
+    public OrderLine getOrderLineOfOrder(Long barId, Long sessionId, Long orderId, Long orderLineId) throws NotFoundException {
+        Order order = this.ORDER_SERVICE.getOrderOfSession(barId, sessionId, orderId);
+        for (OrderLine orderLine : order.getOrderLines()) {
+            if (orderLine.getId().equals(orderLineId)) {
+                return orderLine;
+            }
+        }
+        throw new NotFoundException(String.format("No order line found in order with id: %s", orderId));
     }
 }
