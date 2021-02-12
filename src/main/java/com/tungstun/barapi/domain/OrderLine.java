@@ -12,7 +12,9 @@ public class OrderLine {
     @Column(name = "amount")
     private int amount;
 
-    @Transient
+    @OneToOne(
+            cascade = CascadeType.ALL
+    )
     private Product product;
 
     public OrderLine() { }
