@@ -55,4 +55,13 @@ public class CategoryController {
         Category category = this.CATEGORY_SERVICE.addCategoryToBar(barId, categoryRequest);
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
-}
+
+    @PutMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> getCategoryOfBar(
+            @PathVariable("barId") Long barId,
+            @PathVariable("categoryId") Long categoryId,
+            @Valid @RequestBody CategoryRequest categoryRequest
+    ) throws NotFoundException {
+        Category category = this.CATEGORY_SERVICE.updateCategoryOfBar(barId, categoryId, categoryRequest);
+        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
+    }}

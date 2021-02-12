@@ -46,4 +46,10 @@ public class CategoryService {
         this.BAR_SERVICE.saveBar(bar);
         return category;
     }
+
+    public Category updateCategoryOfBar(Long barId, Long categoryId, CategoryRequest categoryRequest) throws NotFoundException {
+        Category category = getCategoryOfBar(barId, categoryId);
+        category.setName(categoryRequest.name);
+        return this.SPRING_CATEGORY_REPOSITORY.save(category);
+    }
 }
