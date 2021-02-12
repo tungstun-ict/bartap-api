@@ -7,11 +7,11 @@ public class ProductRequest {
 
     public String brand;
 
-    public double size;
+    public Double size;
 
-    public double price;
+    public Double price;
 
-    public boolean isFavorite;
+    public Boolean isFavorite;
 
     public Long categoryId;
 
