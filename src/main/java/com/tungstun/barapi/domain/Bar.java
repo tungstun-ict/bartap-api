@@ -28,7 +28,10 @@ public class Bar {
     )
     private List<Person> people;
 
-    @Transient
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Product> products;
 
     @OneToMany(
