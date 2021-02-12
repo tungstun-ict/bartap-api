@@ -37,12 +37,20 @@ public class Bar {
     @OneToMany(
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
-        orphanRemoval = true)
+        orphanRemoval = true
+    )
     private List<Session> sessions;
 
-    public Bar() {}
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Category> categories;
 
-    public Bar(String adres, String name, String mail, String phoneNumber, List<Person> people, List<Product> products, List<Session> sessions) {
+    public Bar() {}
+    public Bar(String adres, String name, String mail, String phoneNumber,
+               List<Person> people, List<Product> products, List<Session> sessions, List<Category> categories) {
         this.adres = adres;
         this.name = name;
         this.mail = mail;
@@ -50,6 +58,7 @@ public class Bar {
         this.people = people;
         this.products = products;
         this.sessions = sessions;
+        this.categories = categories;
     }
 
     public Long getId() {
