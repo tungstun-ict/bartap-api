@@ -52,7 +52,7 @@ public class ProductController {
             @PathVariable("barId") Long barId,
             @Valid @RequestBody ProductRequest productRequest
     ) throws NotFoundException {
-        Product product = this.PRODUCT_SERVICE.addProductOfBar(barId, productRequest);
+        Product product = this.PRODUCT_SERVICE.addProductToBar(barId, productRequest);
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
@@ -62,7 +62,16 @@ public class ProductController {
             @PathVariable("productId") Long productId,
             @Valid @RequestBody ProductRequest productRequest
     ) throws NotFoundException {
-        Product product = this.PRODUCT_SERVICE.updateProduct(barId, productId, productRequest);
+        Product product = this.PRODUCT_SERVICE.updateProductOfBar(barId, productId, productRequest);
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{productId}")
+    public ResponseEntity<Void> deleteProductFromBar(
+            @PathVariable("barId") Long barId,
+            @PathVariable("productId") Long productId
+    ) throws NotFoundException {
+        this.PRODUCT_SERVICE.deleteProductOfBar(barId, productId);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

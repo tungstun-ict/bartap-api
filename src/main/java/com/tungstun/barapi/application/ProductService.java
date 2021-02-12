@@ -72,13 +72,13 @@ public class ProductService {
                 .build();
     }
 
-    public Product addProductOfBar(Long barId, ProductRequest productRequest) throws NotFoundException {
+    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Product product = buildProduct(productRequest);
         return saveProductForBar(bar, product);
     }
 
-    public Product updateProduct(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
+    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
         //todo Category category = this.CATEGORY_SERVICE.getCategoryById(productRequest.categoryId)
         Category category = null;
@@ -91,5 +91,12 @@ public class ProductService {
         product.setCategory(category);
         product.setProductType(productType);
         return this.SPRING_PRODUCT_REPOSITORY.save(product);
+    }
+
+    public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Product product = getProductOfBar(barId, productId);
+        bar.removeProduct(product);
+        this.BAR_SERVICE.saveBar(bar);
     }
 }
