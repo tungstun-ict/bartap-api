@@ -20,32 +20,32 @@ public class ProductBuilder {
     }
 
     public ProductBuilder setName(String name) {
-        this.name = name;
+        if (name != null) this.name = name;
         return this;
     }
 
     public ProductBuilder setBrand(String brand) {
-        this.brand = brand;
+        if (brand != null) this.brand = brand;
         return this;
     }
 
-    public ProductBuilder setSize(double size) {
-        this.size = size;
+    public ProductBuilder setSize(Double size) {
+        if (size != null) this.size = size;
         return this;
     }
 
-    public ProductBuilder setPrice(double price) {
-        this.price = price;
+    public ProductBuilder setPrice(Double price) {
+        if (price != null) this.price = price;
         return this;
     }
 
-    public ProductBuilder setFavorite(boolean favorite) {
-        isFavorite = favorite;
+    public ProductBuilder setFavorite(Boolean favorite) {
+        if (favorite != null) isFavorite = favorite;
         return this;
     }
 
     public ProductBuilder setCategory(Category category) {
-        this.category = category;
+        if (category != null) this.category = category;
         return this;
     }
 
