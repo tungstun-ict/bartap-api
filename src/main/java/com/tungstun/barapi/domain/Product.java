@@ -76,4 +76,18 @@ public class Product {
     }
 
     public ProductType getProductType() { return productType; }
+
+    public void setName(String name) { this.name = name; }
+
+    public void setBrand(String brand) { this.brand = brand; }
+
+    public void setSize(double size) { this.size = size; }
+
+    public void setPrice(double price) { this.price = price; }
+
+    public void setFavorite(boolean favorite) { isFavorite = favorite; }
+
+    public void setCategory(Category category) { this.category = category; }
+
+    public void setProductType(ProductType productType) { this.productType = productType; }
 }

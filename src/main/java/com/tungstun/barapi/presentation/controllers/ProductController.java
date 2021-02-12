@@ -55,4 +55,14 @@ public class ProductController {
         Product product = this.PRODUCT_SERVICE.addProductOfBar(barId, productRequest);
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
+
+    @PutMapping("/{productId}")
+    public ResponseEntity<ProductResponse> updateProductOfBar(
+            @PathVariable("barId") Long barId,
+            @PathVariable("productId") Long productId,
+            @Valid @RequestBody ProductRequest productRequest
+    ) throws NotFoundException {
+        Product product = this.PRODUCT_SERVICE.updateProduct(barId, productId, productRequest);
+        return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
+    }
 }

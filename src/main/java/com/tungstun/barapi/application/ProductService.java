@@ -28,10 +28,14 @@ public class ProductService {
     }
 
     private ProductType convertStringToProductType(String type) {
-        ProductType productType = ProductType.OTHER;
-        try {
-            productType = ProductType.valueOf(type);
-        }catch (Exception e) { }
+        ProductType productType = ProductType.OTHER;;
+        if (type != null) {
+            try {
+                productType = ProductType.valueOf(type);
+            }catch (Exception e) {
+                throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
+            }
+        }
         return productType;
     }
 
@@ -72,5 +76,20 @@ public class ProductService {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Product product = buildProduct(productRequest);
         return saveProductForBar(bar, product);
+    }
+
+    public Product updateProduct(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
+        Product product = getProductOfBar(barId, productId);
+        //todo Category category = this.CATEGORY_SERVICE.getCategoryById(productRequest.categoryId)
+        Category category = null;
+        ProductType productType = convertStringToProductType(productRequest.productType);
+        product.setName(productRequest.name);
+        product.setBrand(productRequest.brand);
+        product.setSize(productRequest.size);
+        product.setPrice(productRequest.price);
+        product.setFavorite(productRequest.isFavorite);
+        product.setCategory(category);
+        product.setProductType(productType);
+        return this.SPRING_PRODUCT_REPOSITORY.save(product);
     }
 }
