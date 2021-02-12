@@ -10,7 +10,6 @@ import javax.persistence.*;
         property = "id"
 )
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -34,14 +33,18 @@ public class Product {
     @Transient
     private Category category;
 
+    @Enumerated(EnumType.STRING)
+    private ProductType productType;
+
     public Product() { }
-    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category) {
+    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category, ProductType productType) {
         this.name = name;
         this.brand = brand;
         this.size = size;
         this.price = price;
         this.isFavorite = isFavorite;
         this.category = category;
+        this.productType = productType;
     }
 
     public Long getId() {
@@ -71,4 +74,6 @@ public class Product {
     public Category getCategory() {
         return category;
     }
+
+    public ProductType getProductType() { return productType; }
 }
