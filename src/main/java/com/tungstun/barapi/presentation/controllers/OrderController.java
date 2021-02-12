@@ -100,15 +100,4 @@ public class OrderController {
         this.ORDER_SERVICE.deleteProductFromOrder(barId, sessionId, orderId, productId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-
-
-
-    /**
-     *
-     * orderLines:
-     * Remove from order
-     * add to order
-     * delete orderline
-     *
-     */
 }

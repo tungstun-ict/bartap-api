@@ -145,7 +145,6 @@ public class OrderService {
         else{
             this.ORDER_LINE_SERVICE.setProductAmount(orderLine, orderLineRequest.amount);
         }
-
         //todo: update price of order OF misschien beter, het verwijderen van price, want dat is gewoon te berekenen, maar dan wel de price toevoegen aan response
         return this.SPRING_ORDER_REPOSITORY.save(order);
     }
@@ -153,8 +152,6 @@ public class OrderService {
     public Order deleteProductFromOrder(Long barId, Long sessionId, Long orderId, Long productId) throws NotFoundException {
         Order order = getOrderOfSession(barId, sessionId, orderId);
         OrderLine orderLine = checkIfOrderContainsProduct(order, productId);
-
-
         order.removeOrderLine(orderLine);
         this.ORDER_LINE_SERVICE.deleteOrderLine(orderLine);
         return this.SPRING_ORDER_REPOSITORY.save(order);
