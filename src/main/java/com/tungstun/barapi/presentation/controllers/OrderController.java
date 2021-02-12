@@ -2,6 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.OrderService;
 import com.tungstun.barapi.domain.Order;
+import com.tungstun.barapi.presentation.dto.request.OrderLineRequest;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -78,11 +79,36 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("sessions/{sessionId}/orders/{orderId}")
+    public ResponseEntity<OrderResponse> addProductToOrder(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("orderId") Long orderId,
+            @Valid @RequestBody OrderLineRequest orderLineRequest
+    ) throws NotFoundException {
+        Order order = this.ORDER_SERVICE.addProductToOrder(barId, sessionId, orderId, orderLineRequest);
+        return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
+    }
+
+    @DeleteMapping("sessions/{sessionId}/orders/{orderId}/products/{productId}")
+    public ResponseEntity<Void> deleteproductFromOrder(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("orderId") Long orderId,
+            @PathVariable("productId") Long productId
+    ) throws NotFoundException {
+        this.ORDER_SERVICE.deleteProductFromOrder(barId, sessionId, orderId, productId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
+
     /**
-     * Delete order
      *
      * orderLines:
      * Remove from order
      * add to order
+     * delete orderline
+     *
      */
 }

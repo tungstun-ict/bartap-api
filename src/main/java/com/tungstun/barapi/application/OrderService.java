@@ -2,6 +2,7 @@ package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringOrderRepository;
 import com.tungstun.barapi.domain.*;
+import com.tungstun.barapi.presentation.dto.request.OrderLineRequest;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -16,12 +17,16 @@ public class OrderService {
     private final SessionService SESSION_SERVICE;
     private final PersonService PERSON_SERVICE;
     private final BillService BILL_SERVICE;
+    private final OrderLineService ORDER_LINE_SERVICE;
 
-    public OrderService(SpringOrderRepository springOrderRepository, SessionService sessionService, PersonService personService, BillService billService) {
+
+    public OrderService(SpringOrderRepository springOrderRepository, SessionService sessionService,
+                        PersonService personService, BillService billService, OrderLineService orderLineService) {
         this.SPRING_ORDER_REPOSITORY = springOrderRepository;
         this.SESSION_SERVICE = sessionService;
         this.PERSON_SERVICE = personService;
         this.BILL_SERVICE = billService;
+        this.ORDER_LINE_SERVICE = orderLineService;
     }
 
     private List<Order> extractOrdersFromSession(Session session) {
@@ -116,5 +121,42 @@ public class OrderService {
         Bill bill = getBillWithOrder(session, orderId);
         Order order = findOrderInBill(bill, orderId);
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
+    }
+
+
+
+    private OrderLine checkIfOrderContainsProduct(Order order, Long productId) {
+        for (OrderLine orderLine : order.getOrderLines()){
+            //todo: error as long as product is not related to orderline
+//            if (orderLine.getProduct().getId().equals(productId)){
+//                return orderLine;
+//            }
+            return orderLine;
+        }
+        return null;
+    }
+
+    public Order addProductToOrder(Long barId, Long sessionId, Long orderId, OrderLineRequest orderLineRequest) throws NotFoundException {
+        Order order = getOrderOfSession(barId, sessionId, orderId);
+        OrderLine orderLine = checkIfOrderContainsProduct(order, orderLineRequest.productId);
+        if (orderLine == null) {
+            this.ORDER_LINE_SERVICE.addProductToOrder(barId, order, orderLineRequest.productId, orderLineRequest.amount);
+        }
+        else{
+            this.ORDER_LINE_SERVICE.setProductAmount(orderLine, orderLineRequest.amount);
+        }
+
+        //todo: update price of order OF misschien beter, het verwijderen van price, want dat is gewoon te berekenen, maar dan wel de price toevoegen aan response
+        return this.SPRING_ORDER_REPOSITORY.save(order);
+    }
+
+    public Order deleteProductFromOrder(Long barId, Long sessionId, Long orderId, Long productId) throws NotFoundException {
+        Order order = getOrderOfSession(barId, sessionId, orderId);
+        OrderLine orderLine = checkIfOrderContainsProduct(order, productId);
+
+
+        order.removeOrderLine(orderLine);
+        this.ORDER_LINE_SERVICE.deleteOrderLine(orderLine);
+        return this.SPRING_ORDER_REPOSITORY.save(order);
     }
 }
