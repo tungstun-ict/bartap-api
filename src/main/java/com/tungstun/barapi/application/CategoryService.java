@@ -3,6 +3,7 @@ package com.tungstun.barapi.application;
 import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.Bar;
 import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -35,5 +36,14 @@ public class CategoryService {
     public Category getCategoryOfBar(Long barId, Long categoryId) throws NotFoundException {
         List<Category> allCategories = getAllCategoriesOfBar(barId);
         return findCategoryInCategories(allCategories, categoryId);
+    }
+
+    public Category addCategoryToBar(Long barId, CategoryRequest categoryRequest) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Category category = new Category(categoryRequest.name);
+        category = this.SPRING_CATEGORY_REPOSITORY.save(category);
+        bar.addCategory(category);
+        this.BAR_SERVICE.saveBar(bar);
+        return category;
     }
 }

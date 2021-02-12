@@ -2,16 +2,16 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.CategoryService;
 import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import com.tungstun.barapi.presentation.dto.response.CategoryResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @Controller
@@ -44,6 +44,15 @@ public class CategoryController {
             @PathVariable("categoryId") Long categoryId
     ) throws NotFoundException {
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, categoryId);
+        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<CategoryResponse> addCategoryToBar(
+            @PathVariable("barId") Long barId,
+            @Valid @RequestBody CategoryRequest categoryRequest
+    ) throws NotFoundException {
+        Category category = this.CATEGORY_SERVICE.addCategoryToBar(barId, categoryRequest);
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 }
