@@ -37,4 +37,13 @@ public class ProductController {
         List<ProductResponse> productResponse = RESPONSE_MAPPER.convertList(products, ProductResponse.class);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductResponse> getAllProductsOfBar(
+            @PathVariable("barId") Long barId,
+            @PathVariable("productId") Long productId
+    ) throws NotFoundException {
+        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, productId);
+        return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
+    }
 }

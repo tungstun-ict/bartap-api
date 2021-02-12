@@ -18,10 +18,24 @@ public class ProductService {
         this.BAR_SERVICE = barService;
     }
 
+    private Product findProductInProducts(List<Product> products, Long productId) throws NotFoundException {
+        for (Product product : products) {
+            if (product.getId().equals(productId)) {
+                return product;
+            }
+        }
+        throw new NotFoundException(String.format("No product found with id %s", productId));
+    }
+
     public List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         List<Product> products = bar.getProducts();
         if (products.isEmpty()) throw new NotFoundException(String.format("No products found for bar with id %s", barId));
         return products;
+    }
+
+    public Product getProductOfBar(Long barId, Long productId) throws NotFoundException {
+        List<Product> allProducts = getAllProductsOfBar(barId);
+        return findProductInProducts(allProducts, productId);
     }
 }
