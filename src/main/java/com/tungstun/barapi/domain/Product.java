@@ -35,8 +35,7 @@ public class Product {
     private Category category;
 
     public Product() { }
-    public Product(String id, String name, String brand, double size, double price, boolean isFavorite, Category category) {
-        this.id = id;
+    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category) {
         this.name = name;
         this.brand = brand;
         this.size = size;
@@ -45,7 +44,7 @@ public class Product {
         this.category = category;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
