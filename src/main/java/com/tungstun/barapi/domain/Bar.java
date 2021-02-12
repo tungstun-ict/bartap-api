@@ -133,4 +133,15 @@ public class Bar {
     public boolean removeSession(Session session){
         return this.sessions.remove(session);
     }
+
+    public List<Category> getCategories() { return categories; }
+
+    public boolean addCategory(Category category){
+        if ( !this.categories.contains(category) ) return this.categories.add(category);
+        return false;
+    }
+
+    public boolean removeCategory(Category category){
+        return this.categories.remove(category);
+    }
 }
