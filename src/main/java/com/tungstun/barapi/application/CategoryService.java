@@ -18,8 +18,22 @@ public class CategoryService {
         this.BAR_SERVICE = barService;
     }
 
+    private Category findCategoryInCategories(List<Category> categories, Long categoryId) throws NotFoundException {
+        for (Category category : categories) {
+            if (category.getId().equals(categoryId)) {
+                return category;
+            }
+        }
+        throw new NotFoundException(String.format("No category found with id %s", categoryId));
+    }
+
     public List<Category> getAllCategoriesOfBar(Long barId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         return bar.getCategories();
+    }
+
+    public Category getCategoryOfBar(Long barId, Long categoryId) throws NotFoundException {
+        List<Category> allCategories = getAllCategoriesOfBar(barId);
+        return findCategoryInCategories(allCategories, categoryId);
     }
 }

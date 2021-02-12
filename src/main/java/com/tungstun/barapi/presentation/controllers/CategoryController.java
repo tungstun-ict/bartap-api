@@ -37,4 +37,13 @@ public class CategoryController {
         List<CategoryResponse> categoryResponses = RESPONSE_MAPPER.convertList(categories, CategoryResponse.class);
         return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
+
+    @GetMapping("/{categoryId}")
+    public ResponseEntity<CategoryResponse> getCategoryOfBar(
+            @PathVariable("barId") Long barId,
+            @PathVariable("categoryId") Long categoryId
+    ) throws NotFoundException {
+        Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, categoryId);
+        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
+    }
 }
