@@ -52,4 +52,11 @@ public class CategoryService {
         category.setName(categoryRequest.name);
         return this.SPRING_CATEGORY_REPOSITORY.save(category);
     }
+
+    public void deleteCategoryFromBar(Long barId, Long categoryId) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Category category = findCategoryInCategories(bar.getCategories(), categoryId);
+        bar.removeCategory(category);
+        this.BAR_SERVICE.saveBar(bar);
+    }
 }

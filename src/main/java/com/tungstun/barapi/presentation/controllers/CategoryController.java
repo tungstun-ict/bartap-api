@@ -64,4 +64,14 @@ public class CategoryController {
     ) throws NotFoundException {
         Category category = this.CATEGORY_SERVICE.updateCategoryOfBar(barId, categoryId, categoryRequest);
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
-    }}
+    }
+
+    @DeleteMapping("/{categoryId}")
+    public ResponseEntity<Void> deleteCategoryOfBar(
+            @PathVariable("barId") Long barId,
+            @PathVariable("categoryId") Long categoryId
+    ) throws NotFoundException {
+        this.CATEGORY_SERVICE.deleteCategoryFromBar(barId, categoryId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+}
