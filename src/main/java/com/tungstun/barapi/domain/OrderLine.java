@@ -16,8 +16,7 @@ public class OrderLine {
     private Product product;
 
     public OrderLine() { }
-    public OrderLine(Long id, Product product, int amount) {
-        this.id = id;
+    public OrderLine(Product product, int amount) {
         this.product = product;
         this.amount = amount;
     }
