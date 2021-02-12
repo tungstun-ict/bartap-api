@@ -1,19 +1,20 @@
 package com.tungstun.barapi.domain;
 
 public class Category {
-    private String id;
+    private Long id;
     private String name;
 
-    public Category(String id, String name) {
-        this.id = id;
+    public Category(String name) {
         this.name = name;
     }
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
     public String getName() {
         return name;
     }
+
+    public void setName(String name) { this.name = name; }
 }
