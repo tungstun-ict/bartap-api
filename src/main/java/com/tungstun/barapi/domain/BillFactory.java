@@ -12,6 +12,11 @@ public class BillFactory {
     }
 
     public Bill create(){
-        return new Bill(session, customer, new ArrayList<>(), false);
+        return new Bill(
+                session,
+                customer,
+                new ArrayList<>(),
+                false,
+                0.0);
     }
 }
