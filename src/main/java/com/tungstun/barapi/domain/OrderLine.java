@@ -21,10 +21,17 @@ public class OrderLine {
     )
     private Product product;
 
+    @OneToOne(
+            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH},
+            orphanRemoval = true
+    )
+    private Bartender bartender;
+
     public OrderLine() { }
-    public OrderLine(Product product, int amount) {
+    public OrderLine(Product product, int amount, Bartender bartender) {
         this.product = product;
         this.amount = amount;
+        this.bartender = bartender;
         this.creationDate = LocalDateTime.now();
     }
 
@@ -38,4 +45,5 @@ public class OrderLine {
 
     public LocalDateTime getCreationDate() { return creationDate; }
 
+    public Bartender getBartender() { return bartender; }
 }
