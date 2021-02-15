@@ -145,12 +145,12 @@ public class BillService {
     }
 
     public Bill addOrderToBill(Bill bill, Order order) {
-        bill.getOrders().add(order);
+        bill.addOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 
     public Bill removeOrderFromBill(Bill bill, Order order) {
-        bill.getOrders().remove(order);
+        bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 }
