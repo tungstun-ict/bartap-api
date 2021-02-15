@@ -2,20 +2,24 @@ package com.tungstun.barapi.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
-@Table(name = "\"order\"")
+@Table(name = "\"  order\"")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @Column(name = "amount")
+    private int amount;
 
-    @Column(name = "price")
-    private double price;
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
+
+    @OneToOne(
+            cascade = CascadeType.ALL
+    )
+    private Product product;
 
     @OneToOne(
             cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH},
@@ -23,34 +27,23 @@ public class Order {
     )
     private Bartender bartender;
 
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<OrderLine> orderLines;
-
     public Order() { }
-    public Order(LocalDateTime date, double price, Bartender bartender, List<OrderLine> orderLines) {
-        this.date = date;
-        this.price = price;
+    public Order(Product product, int amount, Bartender bartender) {
+        this.product = product;
+        this.amount = amount;
         this.bartender = bartender;
-        this.orderLines = orderLines;
+        this.creationDate = LocalDateTime.now();
     }
 
     public Long getId() { return id; }
 
-    public LocalDateTime getDate() { return date; }
+    public Product getProduct() { return product; }
 
-    public double getPrice() { return price; }
+    public int getAmount() { return amount; }
+
+    public void setAmount(int amount) { this.amount = amount; }
+
+    public LocalDateTime getCreationDate() { return creationDate; }
 
     public Bartender getBartender() { return bartender; }
-
-    public List<OrderLine> getOrderLines() { return orderLines; }
-
-    public boolean addOrderLine(OrderLine orderLine) {
-        if( !this.orderLines.contains(orderLine) ) return this.orderLines.add(orderLine);
-        return false;
-    }
-
-    public boolean removeOrderLine(OrderLine orderLine) {return this.orderLines.remove(orderLine); }
 }
