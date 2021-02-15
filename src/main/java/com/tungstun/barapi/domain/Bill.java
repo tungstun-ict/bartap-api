@@ -45,13 +45,13 @@ public class Bill {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    private List<OrderLine> orderLines;
+    private List<Order> orders;
 
     public Bill() { }
-    public Bill(Session session, Customer customer, List<OrderLine> orderLines, boolean isPayed, double price) {
+    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed, double price) {
         this.session = session;
         this.customer = customer;
-        this.orderLines = orderLines;
+        this.orders = orders;
         this.isPayed = isPayed;
         this.price = price;
         this.creationDate = LocalDateTime.now();
@@ -67,17 +67,17 @@ public class Bill {
         return customer;
     }
 
-    public List<OrderLine> getOrderLines() {
-        return this.orderLines;
+    public List<Order> getOrders() {
+        return this.orders;
     }
 
-    public boolean addOrderLine(OrderLine orderLine ){
-        if ( !this.orderLines.contains(orderLine) ) return this.orderLines.add(orderLine);
+    public boolean addOrder(Order order){
+        if ( !this.orders.contains(order) ) return this.orders.add(order);
         return false;
     }
 
-    public boolean removeOrderLine(Order order){
-        return this.orderLines.remove(order);
+    public boolean removeOrder(Order order){
+        return this.orders.remove(order);
     }
 
     public boolean isPayed() { return isPayed; }
