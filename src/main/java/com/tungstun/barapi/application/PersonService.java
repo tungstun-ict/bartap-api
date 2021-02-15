@@ -108,4 +108,14 @@ public class PersonService {
         bar.removeUser(person);
         this.BAR_SERVICE.saveBar(bar);
     }
+
+    /**
+     * Finds a person with id then checks if it is a Bartender by casting the person to it
+     * @throws NotFoundException if no bartender with given id was found
+     */
+    public Bartender getBartenderOfBar(Long barId, Long bartenderId) throws NotFoundException {
+        Person person = getPersonOfBar(barId, bartenderId);
+        if (!(person instanceof Bartender)) throw new NotFoundException(String.format("No Bartender found with id %s", bartenderId));
+        return (Bartender) person;
+    }
 }
