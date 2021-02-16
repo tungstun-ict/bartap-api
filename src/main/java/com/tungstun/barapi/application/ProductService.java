@@ -10,7 +10,6 @@ import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,12 +25,10 @@ public class ProductService {
     }
 
     private Product findProductInProducts(List<Product> products, Long productId) throws NotFoundException {
-        for (Product product : products) {
-            if (product.getId().equals(productId)) {
-                return product;
-            }
-        }
-        throw new NotFoundException(String.format("No product found with id %s", productId));
+        return products.stream()
+                .filter( product -> product.getId().equals(productId) )
+                .findFirst()
+                .orElseThrow( () -> new NotFoundException(String.format("No product found with id %s", productId)) );
     }
 
     private ProductType convertStringToProductType(String type) {
@@ -53,38 +50,33 @@ public class ProductService {
         return product;
     }
 
-    private List<Product> filterProductsByCategoryId(List<Product> products, Long categoryId) throws NotFoundException {
-        ArrayList<Product> resProducts = new ArrayList<>();
-        for (Product product : products) {
-            if (product.getCategory().getId().equals(categoryId)) {
-                resProducts.add(product);
-            }
-        }
-        if (resProducts.isEmpty()) throw new NotFoundException(String.format("No products found of category with id %s", categoryId));
-        return resProducts;
+    private void filterProductsByCategoryId(List<Product> products, Long categoryId) throws NotFoundException {
+        products.removeIf( product -> !product.getCategory().getId().equals(categoryId) );
+        if (products.isEmpty()) throw new NotFoundException(String.format("No products found of category with id %s", categoryId));
     }
 
-    private List<Product> filterProductsByTypeString(List<Product> products, String type) throws NotFoundException {
+    private void filterProductsByTypeString(List<Product> products, String type) throws NotFoundException {
         ProductType productType = convertStringToProductType(type);
-        ArrayList<Product> resProducts = new ArrayList<>();
-        for (Product product : products) {
-            if (product.getProductType().equals(productType)) {
-                resProducts.add(product);
-            }
-        }
-        if (resProducts.isEmpty()) throw new NotFoundException(String.format("No products found of type %s", productType));
-        return resProducts;
+        products.removeIf( product -> !product.getProductType().equals(productType) );
+        if (products.isEmpty()) throw new NotFoundException(String.format("No products found of type %s", productType));
     }
+
+    private void filterProductsOnFavorites(List<Product> products, Boolean onlyFavorites) throws NotFoundException {
+        products.removeIf( product -> product.isFavorite() != onlyFavorites );
+        if (products.isEmpty()) throw new NotFoundException("No favorite products found");
+    }
+
 
     private List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         return bar.getProducts();
     }
 
-    public List<Product> getProductsOfBar(Long barId, String type, Long categoryId) throws NotFoundException {
+    public List<Product> getProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
         List<Product> products = getAllProductsOfBar(barId);
-        if (type != null) products = filterProductsByTypeString(products, type);
-        if (categoryId != null) products = filterProductsByCategoryId(products, categoryId);
+        if (type != null) filterProductsByTypeString(products, type);
+        if (categoryId != null) filterProductsByCategoryId(products, categoryId);
+        if (onlyFavorites != null) filterProductsOnFavorites(products, onlyFavorites);
         if (products.isEmpty()) throw new NotFoundException(String.format("No products found for bar with id %s", barId));
         return products;
     }
