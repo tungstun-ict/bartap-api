@@ -1,45 +1,53 @@
 package com.tungstun.barapi.domain;
 
-import java.util.Date;
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
 
+@Entity
+@Table(name = "\"order\"")
 public class Order {
-    private String id;
-    private Date date;
-    private int amount;
-    private double price;
-    private Bartender bartender;
-    private Product product;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
 
-    public Order(String id, Date date, int amount, double price, Bartender bartender, Product product) {
-        this.id = id;
+    @Column(name = "date")
+    private LocalDateTime date;
+
+    @Column(name = "price")
+    private double price;
+
+    @OneToOne(
+            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH},
+            orphanRemoval = true
+    )
+    private Bartender bartender;
+
+    @Transient
+    private List<OrderLine> orderLines;
+
+    public Order() { }
+    public Order(LocalDateTime date, double price, Bartender bartender, List<OrderLine> orderLines) {
         this.date = date;
-        this.amount = amount;
         this.price = price;
         this.bartender = bartender;
-        this.product = product;
+        this.orderLines = orderLines;
     }
 
-    public String getId() {
-        return id;
+    public Long getId() { return id; }
+
+    public LocalDateTime getDate() { return date; }
+
+    public double getPrice() { return price; }
+
+    public Bartender getBartender() { return bartender; }
+
+    public List<OrderLine> getOrderLines() { return orderLines; }
+
+    public boolean addOrderLine(OrderLine orderLine) {
+        if( !this.orderLines.contains(orderLine) ) return this.orderLines.add(orderLine);
+        return false;
     }
 
-    public Date getDate() {
-        return date;
-    }
-
-    public int getAmount() {
-        return amount;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public Bartender getBartender() {
-        return bartender;
-    }
-
-    public Product getProduct() {
-        return product;
-    }
+    public boolean removeOrderLine(OrderLine orderLine) {return this.orderLines.remove(orderLine); }
 }
