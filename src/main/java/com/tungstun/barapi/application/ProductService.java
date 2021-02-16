@@ -10,6 +10,7 @@ import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -37,7 +38,7 @@ public class ProductService {
         ProductType productType = ProductType.OTHER;
         if (type != null) {
             try {
-                productType = ProductType.valueOf(type);
+                productType = ProductType.valueOf(type.toUpperCase());
             }catch (Exception e) {
                 throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
             }
@@ -52,9 +53,38 @@ public class ProductService {
         return product;
     }
 
-    public List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
+    private List<Product> filterProductsByCategoryId(List<Product> products, Long categoryId) throws NotFoundException {
+        ArrayList<Product> resProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getCategory().getId().equals(categoryId)) {
+                resProducts.add(product);
+            }
+        }
+        if (resProducts.isEmpty()) throw new NotFoundException(String.format("No products found of category with id %s", categoryId));
+        return resProducts;
+    }
+
+    private List<Product> filterProductsByTypeString(List<Product> products, String type) throws NotFoundException {
+        ProductType productType = convertStringToProductType(type);
+        ArrayList<Product> resProducts = new ArrayList<>();
+        for (Product product : products) {
+            if (product.getProductType().equals(productType)) {
+                resProducts.add(product);
+            }
+        }
+        if (resProducts.isEmpty()) throw new NotFoundException(String.format("No products found of type %s", productType));
+        return resProducts;
+    }
+
+    private List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
-        List<Product> products = bar.getProducts();
+        return bar.getProducts();
+    }
+
+    public List<Product> getProductsOfBar(Long barId, String type, Long categoryId) throws NotFoundException {
+        List<Product> products = getAllProductsOfBar(barId);
+        if (type != null) products = filterProductsByTypeString(products, type);
+        if (categoryId != null) products = filterProductsByCategoryId(products, categoryId);
         if (products.isEmpty()) throw new NotFoundException(String.format("No products found for bar with id %s", barId));
         return products;
     }
