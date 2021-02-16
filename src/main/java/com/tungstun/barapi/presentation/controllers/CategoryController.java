@@ -31,9 +31,10 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<CategoryResponse>> getAllCategoriesOfBar(
-            @PathVariable("barId") Long barId
+            @PathVariable("barId") Long barId,
+            @RequestParam(value = "productType", required = false) String productType
     ) throws NotFoundException {
-        List<Category> categories = this.CATEGORY_SERVICE.getAllCategoriesOfBar(barId);
+        List<Category> categories = this.CATEGORY_SERVICE.getCategoriesOfBar(barId, productType);
         List<CategoryResponse> categoryResponses = RESPONSE_MAPPER.convertList(categories, CategoryResponse.class);
         return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
@@ -57,7 +58,7 @@ public class CategoryController {
     }
 
     @PutMapping("/{categoryId}")
-    public ResponseEntity<CategoryResponse> getCategoryOfBar(
+    public ResponseEntity<CategoryResponse> updateCategoryOfBar(
             @PathVariable("barId") Long barId,
             @PathVariable("categoryId") Long categoryId,
             @Valid @RequestBody CategoryRequest categoryRequest
