@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Category;
-import com.tungstun.barapi.domain.ProductType;
+import com.tungstun.barapi.domain.product.ProductType;
 
 public class ProductResponse {
     private Long id;

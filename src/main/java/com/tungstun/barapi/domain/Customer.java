@@ -2,6 +2,7 @@ package com.tungstun.barapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tungstun.barapi.domain.bill.Bill;
 
 import javax.persistence.*;
 import java.util.List;

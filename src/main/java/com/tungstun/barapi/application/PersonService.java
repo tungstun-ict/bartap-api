@@ -2,10 +2,10 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringPersonRepository;
-import com.tungstun.barapi.domain.Bar;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Person;
+import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;

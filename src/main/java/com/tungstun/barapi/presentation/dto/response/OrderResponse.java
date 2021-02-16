@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Bartender;
-import com.tungstun.barapi.domain.Product;
+import com.tungstun.barapi.domain.product.Product;
 
 import java.time.LocalDateTime;
 

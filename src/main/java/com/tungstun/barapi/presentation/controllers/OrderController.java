@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.OrderService;
-import com.tungstun.barapi.domain.Order;
+import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;

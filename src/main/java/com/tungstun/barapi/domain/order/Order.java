@@ -1,4 +1,7 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.order;
+
+import com.tungstun.barapi.domain.Bartender;
+import com.tungstun.barapi.domain.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

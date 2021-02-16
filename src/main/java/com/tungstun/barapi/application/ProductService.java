@@ -1,7 +1,11 @@
 package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringProductRepository;
-import com.tungstun.barapi.domain.*;
+import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.product.ProductBuilder;
+import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -30,7 +34,7 @@ public class ProductService {
     }
 
     private ProductType convertStringToProductType(String type) {
-        ProductType productType = ProductType.OTHER;;
+        ProductType productType = ProductType.OTHER;
         if (type != null) {
             try {
                 productType = ProductType.valueOf(type);

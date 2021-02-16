@@ -1,4 +1,6 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.product;
+
+import com.tungstun.barapi.domain.Category;
 
 import javax.persistence.*;
 

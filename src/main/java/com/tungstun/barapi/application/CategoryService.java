@@ -1,8 +1,8 @@
 package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringCategoryRepository;
-import com.tungstun.barapi.domain.Bar;
 import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;

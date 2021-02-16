@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.product;
 
 public enum ProductType {
     DRINK,

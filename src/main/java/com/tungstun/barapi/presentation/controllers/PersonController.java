@@ -1,8 +1,6 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.PersonService;
-import com.tungstun.barapi.domain.Bar;
-import com.tungstun.barapi.domain.Bill;
 import com.tungstun.barapi.domain.Person;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;

@@ -1,8 +1,11 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.bill;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.tungstun.barapi.domain.Customer;
+import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
