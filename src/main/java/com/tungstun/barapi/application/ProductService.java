@@ -12,10 +12,12 @@ import java.util.List;
 public class ProductService {
     private final SpringProductRepository SPRING_PRODUCT_REPOSITORY;
     private final BarService BAR_SERVICE;
+    private final CategoryService CATEGORY_SERVICE;
 
-    public ProductService(SpringProductRepository springProductRepository, BarService barService) {
+    public ProductService(SpringProductRepository springProductRepository, BarService barService, CategoryService categoryService) {
         this.SPRING_PRODUCT_REPOSITORY = springProductRepository;
         this.BAR_SERVICE = barService;
+        this.CATEGORY_SERVICE = categoryService;
     }
 
     private Product findProductInProducts(List<Product> products, Long productId) throws NotFoundException {
@@ -57,9 +59,8 @@ public class ProductService {
         List<Product> allProducts = getAllProductsOfBar(barId);
         return findProductInProducts(allProducts, productId);
     }
-    private Product buildProduct(ProductRequest productRequest) {
-        //todo Category category = this.CATEGORY_SERVICE.getCategoryById(productRequest.categoryId)
-        Category category = null;
+    private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException {
+        Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         ProductType productType = convertStringToProductType(productRequest.productType);
         return new ProductBuilder()
                 .setName(productRequest.name)
@@ -74,14 +75,13 @@ public class ProductService {
 
     public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
-        Product product = buildProduct(productRequest);
+        Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
     public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
-        //todo Category category = this.CATEGORY_SERVICE.getCategoryById(productRequest.categoryId)
-        Category category = null;
+        Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         ProductType productType = convertStringToProductType(productRequest.productType);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
