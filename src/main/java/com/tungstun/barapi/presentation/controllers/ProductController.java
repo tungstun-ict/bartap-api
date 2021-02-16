@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.directory.InvalidAttributesException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -54,7 +55,7 @@ public class ProductController {
     public ResponseEntity<ProductResponse> addProductOfBar(
             @PathVariable("barId") Long barId,
             @Valid @RequestBody ProductRequest productRequest
-    ) throws NotFoundException {
+    ) throws NotFoundException, InvalidAttributesException {
         Product product = this.PRODUCT_SERVICE.addProductToBar(barId, productRequest);
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
@@ -64,7 +65,7 @@ public class ProductController {
             @PathVariable("barId") Long barId,
             @PathVariable("productId") Long productId,
             @Valid @RequestBody ProductRequest productRequest
-    ) throws NotFoundException {
+    ) throws NotFoundException, InvalidAttributesException {
         Product product = this.PRODUCT_SERVICE.updateProductOfBar(barId, productId, productRequest);
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }

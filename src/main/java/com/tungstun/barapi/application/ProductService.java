@@ -10,6 +10,7 @@ import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.util.List;
 
 @Service
@@ -66,10 +67,19 @@ public class ProductService {
         if (products.isEmpty()) throw new NotFoundException("No favorite products found");
     }
 
-
     private List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         return bar.getProducts();
+    }
+
+    private void validateCategory(Category category, String type) throws InvalidAttributesException {
+        ProductType productType = convertStringToProductType(type);
+        if (!category.getProductType().equals(productType))
+            throw new InvalidAttributesException(String.format(
+                    "Category is of different product type '%s', then given product type '%s'",
+                    category.getProductType(),
+                    productType)
+            );
     }
 
     public List<Product> getProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
@@ -85,8 +95,9 @@ public class ProductService {
         List<Product> allProducts = getAllProductsOfBar(barId);
         return findProductInProducts(allProducts, productId);
     }
-    private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException {
+    private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
+        validateCategory(category, productRequest.productType);
         ProductType productType = convertStringToProductType(productRequest.productType);
         return new ProductBuilder()
                 .setName(productRequest.name)
@@ -99,15 +110,16 @@ public class ProductService {
                 .build();
     }
 
-    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException {
+    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
-    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
+    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Product product = getProductOfBar(barId, productId);
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
+        validateCategory(category, productRequest.productType);
         ProductType productType = convertStringToProductType(productRequest.productType);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
