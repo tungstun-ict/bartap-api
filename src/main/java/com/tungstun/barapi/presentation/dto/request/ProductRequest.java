@@ -18,7 +18,7 @@ public class ProductRequest {
     @NotNull
     public Boolean isFavorite;
 
-//    @NotNull
+    @NotNull
     public Long categoryId;
 
     @NotNull
