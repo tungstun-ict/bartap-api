@@ -1,5 +1,7 @@
 package com.tungstun.barapi.domain;
 
+import com.tungstun.barapi.domain.product.ProductType;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,9 +14,13 @@ public class Category {
     @Column(name = "name")
     private String name;
 
+    @Enumerated(EnumType.STRING)
+    private ProductType productType;
+
     public Category() { }
-    public Category(String name) {
+    public Category(String name, ProductType productType) {
         this.name = name;
+        this.productType = productType;
     }
 
     public Long getId() {
@@ -26,4 +32,8 @@ public class Category {
     }
 
     public void setName(String name) { this.name = name; }
+
+    public ProductType getProductType() { return productType; }
+
+    public void setProductType(ProductType productType) { this.productType = productType; }
 }
