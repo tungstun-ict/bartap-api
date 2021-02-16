@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.naming.directory.InvalidAttributesException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,18 +16,17 @@ import java.util.Map;
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
     /**
-     * Handles Not Found Exceptions*/
-    @ExceptionHandler(value = NotFoundException.class)
-    public ResponseEntity<Map<String, String>> nfHandler(NotFoundException nf) {
+     * Handles self specified exceptions*/
+    @ExceptionHandler(
+            value = {
+                NotFoundException.class,
+                InvalidAttributesException.class,
+                DuplicateRequestException.class
+            }
+    )
+    public ResponseEntity<Map<String, String>> mainHandler(Exception e) {
         HashMap<String, String> map = new HashMap<>();
-        map.put("Error",  nf.getMessage());
-        return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler(value = DuplicateRequestException.class)
-    public ResponseEntity<Map<String, String>> drHandler(DuplicateRequestException dr) {
-        HashMap<String, String> map = new HashMap<>();
-        map.put("Error",  dr.getMessage());
+        map.put("Error",  e.getMessage());
         return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
     }
 
