@@ -24,7 +24,7 @@ public class Product {
     @Column(name = "is_favorite")
     private boolean isFavorite;
 
-    @Transient
+    @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
 
     @Enumerated(EnumType.STRING)
