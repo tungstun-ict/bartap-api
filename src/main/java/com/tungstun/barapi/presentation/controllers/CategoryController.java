@@ -30,7 +30,7 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponse>> getAllCategoriesOfBar(
+    public ResponseEntity<List<CategoryResponse>> getCategoriesOfBar(
             @PathVariable("barId") Long barId,
             @RequestParam(value = "productType", required = false) String productType
     ) throws NotFoundException {
