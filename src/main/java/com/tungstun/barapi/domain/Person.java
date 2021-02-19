@@ -1,5 +1,7 @@
 package com.tungstun.barapi.domain;
 
+import com.tungstun.security.data.User;
+
 import javax.persistence.*;
 
 //@JsonIdentityInfo(
@@ -15,6 +17,9 @@ public class Person {
 
     @Column(name = "name")
     private String name;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private User user;
 
     public Person() { }
     public Person(String name) {
@@ -34,4 +39,8 @@ public class Person {
     }
 
     public void setName(String name) { this.name = name; }
+
+    public User getUser() { return user; }
+
+    public void setUser(User user) { this.user = user; }
 }
