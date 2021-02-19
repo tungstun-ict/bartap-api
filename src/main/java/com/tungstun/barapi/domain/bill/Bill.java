@@ -4,11 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.Customer;
+import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.order.Order;
-import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonIdentityInfo(
@@ -24,12 +23,6 @@ public class Bill {
 
     @Column(name = "is_payed")
     private boolean isPayed;
-
-    @Column(name = "creation_date")
-    private LocalDateTime creationDate;
-
-    @Column(name = "closed_date")
-    private LocalDateTime closedDate;
 
     @Column(name = "price")
     private double price;
@@ -57,22 +50,15 @@ public class Bill {
         this.orders = orders;
         this.isPayed = isPayed;
         this.price = price;
-        this.creationDate = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
 
     public Session getSession() { return session; }
 
-    public Customer getCustomer() {
-        return customer;
-    }
+    public Customer getCustomer() { return customer; }
 
-    public List<Order> getOrders() {
-        return this.orders;
-    }
+    public List<Order> getOrders() { return this.orders; }
 
     public boolean addOrder(Order order){
         if ( !this.orders.contains(order) ) return this.orders.add(order);
@@ -86,12 +72,6 @@ public class Bill {
     public boolean isPayed() { return isPayed; }
 
     public void setPayed(boolean payed) { isPayed = payed; }
-
-    public LocalDateTime getCreationDate() { return creationDate; }
-
-    public LocalDateTime getClosedDate() { return closedDate; }
-
-    public void setClosedDate(LocalDateTime closedDate) { this.closedDate = closedDate; }
 
     public double getPrice() { return price; }
 
