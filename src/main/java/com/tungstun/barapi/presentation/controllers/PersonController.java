@@ -10,11 +10,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("bars/{barId}/users")
+@RolesAllowed("ROLE_BAR_OWNER")
 public class PersonController {
     private final ResponseMapper RESPONSE_MAPPER;
     private final PersonService PERSON_SERVICE;

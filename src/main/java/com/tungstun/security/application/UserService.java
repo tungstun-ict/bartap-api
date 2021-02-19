@@ -22,6 +22,7 @@ public class UserService implements UserDetailsService {
     public void registerBarOwner(String username, String password) {
         String encodedPassword = this.PASSWORD_ENCODER.encode(password);
         User user = new User(username, encodedPassword, UserRole.ROLE_BAR_OWNER);
+        //todo: Bar direct automatisch aanmaken, of nog niet en later zelf?
         this.SPRING_USER_REPOSITORY.save(user);
     }
 

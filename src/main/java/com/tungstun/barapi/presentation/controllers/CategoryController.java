@@ -11,11 +11,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("bars/{barId}/categories")
+@RolesAllowed("ROLE_BAR_OWNER")
 public class CategoryController {
     private final CategoryService CATEGORY_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;

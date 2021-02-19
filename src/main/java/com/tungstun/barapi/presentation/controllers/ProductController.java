@@ -11,12 +11,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import javax.naming.directory.InvalidAttributesException;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("bars/{barId}/products")
+@RolesAllowed("ROLE_BAR_OWNER")
 public class ProductController {
     private final ProductService PRODUCT_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;

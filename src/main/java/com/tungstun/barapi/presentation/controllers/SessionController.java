@@ -9,10 +9,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
 @RequestMapping("bars/{barId}/sessions")
+@RolesAllowed("ROLE_BAR_OWNER")
 public class SessionController {
     private final SessionService SESSION_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
