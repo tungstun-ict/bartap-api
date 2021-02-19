@@ -1,7 +1,6 @@
 package com.tungstun.barapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.util.List;

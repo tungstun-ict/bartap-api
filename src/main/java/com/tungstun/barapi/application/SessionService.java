@@ -2,13 +2,11 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
+import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.domain.session.SessionFactory;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -59,7 +57,7 @@ public class SessionService {
      */
     public Session createNewSession(Long barId ) throws NotFoundException {
         Bar bar = BAR_SERVICE.getBar(barId);
-        Session session = new SessionFactory(LocalDateTime.now()).createSession();
+        Session session = Session.create();
         if(!bar.addSession(session)) throw new DuplicateRequestException("Bar already has this session");
         this.BAR_SERVICE.saveBar(bar);
         return session;

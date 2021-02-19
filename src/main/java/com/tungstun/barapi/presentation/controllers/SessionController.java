@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.SessionService;
-import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import javassist.NotFoundException;
