@@ -1,14 +1,14 @@
-package com.tungstun.barapi.domain.session;
+package com.tungstun.barapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.bill.Bill;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @JsonIdentityInfo(
@@ -23,9 +23,11 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
 
+    @Column(name = "closed_date")
+    private LocalDateTime closedDate;
 
     @OneToMany(mappedBy = "session",
             orphanRemoval = true,
@@ -38,25 +40,32 @@ public class Session {
     @ManyToMany(mappedBy = "shifts")
     private List<Bartender> bartenders;
 
-    public Session() {}
-    public Session(LocalDateTime date, List<Bill> bills
-            , List<Bartender> bartenders) {
-        this.date = date;
+    public Session(List<Bill> bills, List<Bartender> bartenders
+    ) {
+        this.creationDate = LocalDateTime.now();
         this.bills = bills;
         this.bartenders = bartenders;
+    }
+
+    public Session() {}
+
+    public static Session create() {
+        return new Session(new ArrayList<>(), new ArrayList<>());
     }
 
     public Long getId() {
         return id;
     }
 
-    public LocalDateTime getDate() {
-        return date;
-    }
-
     public List<Bill> getBills() {
         return bills;
     }
+
+    public LocalDateTime getCreationDate() { return creationDate; }
+
+    public LocalDateTime getClosedDate() { return closedDate; }
+
+    public void setClosedDate(LocalDateTime closedDate) { this.closedDate = closedDate; }
 
     public boolean addBill(Bill bill){
         if ( !this.bills.contains(bill) ) return this.bills.add(bill);
