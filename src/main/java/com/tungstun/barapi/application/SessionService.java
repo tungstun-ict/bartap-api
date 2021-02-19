@@ -4,9 +4,11 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.exceptions.AlreadyActiveSessionException;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -57,10 +59,26 @@ public class SessionService {
      */
     public Session createNewSession(Long barId ) throws NotFoundException {
         Bar bar = BAR_SERVICE.getBar(barId);
+        if(barHasActiveSession(bar)) throw new AlreadyActiveSessionException("Bar already has an active session.");
         Session session = Session.create();
         if(!bar.addSession(session)) throw new DuplicateRequestException("Bar already has this session");
+
+        session = this.SPRING_SESSION_REPOSITORY.save(session);
         this.BAR_SERVICE.saveBar(bar);
         return session;
+    }
+
+    public Session endSession(Long barId, Long sessionId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        session.setClosedDate(LocalDateTime.now());
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private boolean barHasActiveSession(Bar bar) {
+        for (Session session : bar.getSessions()) {
+            if (session.getClosedDate() == null) return true;
+        }
+        return false;
     }
 
     /**

@@ -55,6 +55,15 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{sessionId}/end")
+    public ResponseEntity<SessionResponse> endSession(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.endSession(barId, sessionId);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+    }
+
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<Void> deleteSession(
             @PathVariable("barId") Long barId,
