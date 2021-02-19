@@ -89,7 +89,7 @@ public class OrderController {
             @PathVariable("billId") Long billId,
             @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
-        this.ORDER_SERVICE.deleteOrderFromSession(barId, sessionId, billId, orderId);
+        this.ORDER_SERVICE.deleteOrderFromBill(barId, sessionId, billId, orderId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -102,16 +102,5 @@ public class OrderController {
     ) throws NotFoundException {
         Order order = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest);
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
-    }
-
-    @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
-    public ResponseEntity<Void> deleteproductFromOrder(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId,
-            @PathVariable("orderId") Long orderId
-    ) throws NotFoundException {
-        this.ORDER_SERVICE.deleteProductOrder(barId, sessionId, billId, orderId);
-        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
