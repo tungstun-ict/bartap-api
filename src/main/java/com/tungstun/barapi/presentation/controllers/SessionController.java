@@ -61,7 +61,7 @@ public class SessionController {
             @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
         Session session = this.SESSION_SERVICE.endSession(barId, sessionId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
     @PatchMapping("/{sessionId}/bartenders/{bartenderId}/add")
@@ -71,7 +71,17 @@ public class SessionController {
             @PathVariable("bartenderId") Long bartenderId
     ) throws NotFoundException {
         Session session = this.SESSION_SERVICE.addBartenderToSession(barId, sessionId, bartenderId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+    }
+
+    @PatchMapping("/{sessionId}/bartenders/{bartenderId}/remove")
+    public ResponseEntity<SessionResponse> removeBartenderFromSession(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("bartenderId") Long bartenderId
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.removeBartenderFromSession(barId, sessionId, bartenderId);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
     @DeleteMapping("/{sessionId}")

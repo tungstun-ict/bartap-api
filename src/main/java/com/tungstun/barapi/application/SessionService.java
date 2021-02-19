@@ -87,8 +87,34 @@ public class SessionService {
     public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
         Bartender bartender = this.PERSON_SERVICE.getBartenderOfBar(barId, bartenderId);
-        session.addBartender(bartender);
+        if (sessionHasBartender(session, bartender))
+            throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartender.getId()));
+        bartender.addShift(session);
+            session.addBartender(bartender);
         return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private boolean sessionHasBartender(Session session, Bartender bartender) {
+        for (Bartender bartenderIteration : session.getBartenders()) {
+            System.out.println(bartenderIteration + " " + bartender);
+            if  (bartenderIteration.equals(bartender)) return true;
+        }
+        return false;
+    }
+
+    public Session removeBartenderFromSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        Bartender bartender = findBartenderInSession(session, bartenderId);
+        bartender.removeShift(session);
+        session.removeBartender(bartender);
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private Bartender findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
+        for (Bartender bartender : session.getBartenders()) {
+            if (bartender.getId().equals(bartenderId)) return bartender;
+        }
+        throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartenderId));
     }
 
     /**
