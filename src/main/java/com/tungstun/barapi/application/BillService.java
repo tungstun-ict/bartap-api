@@ -18,10 +18,12 @@ import java.util.List;
 public class BillService {
     private final SpringBillRepository SPRING_BILL_REPOSITORY;
     private final SessionService SESSION_SERVICE;
+    private final PersonService PERSON_SERVICE;
 
-    public BillService(SpringBillRepository springBillRepository, SessionService sessionService) {
+    public BillService(SpringBillRepository springBillRepository, SessionService sessionService, PersonService personService) {
         this.SPRING_BILL_REPOSITORY = springBillRepository;
         this.SESSION_SERVICE = sessionService;
+        this.PERSON_SERVICE = personService;
     }
 
     /**
@@ -87,12 +89,9 @@ public class BillService {
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
         this.SESSION_SERVICE.sessionIsActive(session);
-        Customer customer = null;
-        for (Bill bill : session.getBills()){
-            if (bill.getCustomer().getId().equals(billRequest.customerId)) customer = bill.getCustomer();
-        }
+        Customer customer = this.PERSON_SERVICE.getCustomerOfBar(barId, billRequest.customerId);
         if (sessionHasBillWithCustomer(session, customer))
-            throw new DuplicateRequestException("Session already contains a bill for requested customer");
+            throw new DuplicateRequestException(String.format("Session already contains a bill for customer with id %s", customer.getId()));
         Bill bill = new BillFactory(session, customer).create();
         session.addBill(bill);
         bill = this.SPRING_BILL_REPOSITORY.save(bill);
