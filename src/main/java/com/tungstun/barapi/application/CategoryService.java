@@ -1,8 +1,10 @@
 package com.tungstun.barapi.application;
 
+import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.Category;
 import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import javassist.NotFoundException;
@@ -79,6 +81,8 @@ public class CategoryService {
 
     public Category addCategoryToBar(Long barId, CategoryRequest categoryRequest) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
+        if (barHasCategoryWithName(bar, categoryRequest.name))
+            throw new DuplicateRequestException(String.format("Bar already has category with name '%s'", categoryRequest.name));
         ProductType productType = convertStringToProductType(categoryRequest.productType);
         Category category = new Category(categoryRequest.name, productType);
         category = this.SPRING_CATEGORY_REPOSITORY.save(category);
@@ -87,8 +91,29 @@ public class CategoryService {
         return category;
     }
 
+    private boolean barHasCategoryWithName(Bar bar, String name) {
+        for (Category categoryIteration : bar.getCategories()) {
+            if (categoryIteration.getName().toLowerCase().equals(name.toLowerCase())) return true;
+        }
+        return false;
+    }
+
+    private boolean barHasCategoryWithNameAndIsNotItself(Bar bar, Category category, String name) {
+        for (Category categoryIteration : bar.getCategories()) {
+            if (categoryIteration.getName().toLowerCase().equals(name.toLowerCase())
+                    && !categoryIteration.equals(category)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
     public Category updateCategoryOfBar(Long barId, Long categoryId, CategoryRequest categoryRequest) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
         Category category = getCategoryOfBar(barId, categoryId);
+        if (barHasCategoryWithNameAndIsNotItself(bar, category, categoryRequest.name))
+            throw new DuplicateRequestException(String.format("Bar already has category with name '%s'", categoryRequest.name));
         ProductType productType = convertStringToProductType(categoryRequest.productType);
         category.setName(categoryRequest.name);
         category.setProductType(productType);
@@ -98,6 +123,11 @@ public class CategoryService {
     public void deleteCategoryFromBar(Long barId, Long categoryId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Category category = findCategoryInCategories(bar.getCategories(), categoryId);
+        for (Product product : bar.getProducts()) {
+            if (product.getCategory().equals(category)) {
+                product.setCategory(null);
+            }
+        }
         bar.removeCategory(category);
         this.BAR_SERVICE.saveBar(bar);
     }

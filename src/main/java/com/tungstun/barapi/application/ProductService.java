@@ -53,7 +53,7 @@ public class ProductService {
     }
 
     private void filterProductsByCategoryId(List<Product> products, Long categoryId) throws NotFoundException {
-        products.removeIf( product -> !product.getCategory().getId().equals(categoryId) );
+        products.removeIf( product -> product.getCategory() == null || !product.getCategory().getId().equals(categoryId) );
         if (products.isEmpty()) throw new NotFoundException(String.format("No products found of category with id %s", categoryId));
     }
 
