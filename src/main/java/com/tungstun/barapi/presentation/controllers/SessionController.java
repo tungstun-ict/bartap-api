@@ -64,6 +64,16 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
     }
 
+    @PatchMapping("/{sessionId}/bartenders/{bartenderId}/add")
+    public ResponseEntity<SessionResponse> addBartenderToSession(
+            @PathVariable("barId") Long barId,
+            @PathVariable("sessionId") Long sessionId,
+            @PathVariable("bartenderId") Long bartenderId
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.addBartenderToSession(barId, sessionId, bartenderId);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+    }
+
     @DeleteMapping("/{sessionId}")
     public ResponseEntity<Void> deleteSession(
             @PathVariable("barId") Long barId,

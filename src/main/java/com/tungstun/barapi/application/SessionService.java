@@ -2,6 +2,7 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
+import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.exceptions.AlreadyActiveSessionException;
@@ -15,10 +16,12 @@ import java.util.List;
 public class SessionService {
     private final SpringSessionRepository SPRING_SESSION_REPOSITORY;
     private final BarService BAR_SERVICE;
+    private final PersonService PERSON_SERVICE;
 
-    public SessionService(SpringSessionRepository springSessionRepository, BarService barService) {
+    public SessionService(SpringSessionRepository springSessionRepository, BarService barService, PersonService personService) {
         this.SPRING_SESSION_REPOSITORY = springSessionRepository;
         this.BAR_SERVICE = barService;
+        this.PERSON_SERVICE = personService;
     }
 
     /**
@@ -81,6 +84,13 @@ public class SessionService {
         return false;
     }
 
+    public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        Bartender bartender = this.PERSON_SERVICE.getBartenderOfBar(barId, bartenderId);
+        session.addBartender(bartender);
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
     /**
      * Removes session from sessions of bar with given id and deletes it from the datastore
      * @throws NotFoundException if no bar with given id is found 
@@ -100,4 +110,6 @@ public class SessionService {
     public void saveSession(Session session){
         this.SPRING_SESSION_REPOSITORY.save(session);
     }
+
+
 }
