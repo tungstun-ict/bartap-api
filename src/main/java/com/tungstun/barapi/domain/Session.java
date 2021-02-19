@@ -40,14 +40,13 @@ public class Session {
     @ManyToMany(mappedBy = "shifts")
     private List<Bartender> bartenders;
 
+    public Session() {}
     public Session(List<Bill> bills, List<Bartender> bartenders
     ) {
         this.creationDate = LocalDateTime.now();
         this.bills = bills;
         this.bartenders = bartenders;
     }
-
-    public Session() {}
 
     public static Session create() {
         return new Session(new ArrayList<>(), new ArrayList<>());
