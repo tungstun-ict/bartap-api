@@ -15,7 +15,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("bars/{barId}/users")
+@RequestMapping("bars/{barId}/people")
 @RolesAllowed("ROLE_BAR_OWNER")
 public class PersonController {
     private final ResponseMapper RESPONSE_MAPPER;
