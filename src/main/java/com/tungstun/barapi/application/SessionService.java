@@ -73,6 +73,7 @@ public class SessionService {
 
     public Session endSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
         session.setClosedDate(LocalDateTime.now());
         return this.SPRING_SESSION_REPOSITORY.save(session);
     }
@@ -86,6 +87,7 @@ public class SessionService {
 
     public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
         Bartender bartender = this.PERSON_SERVICE.getBartenderOfBar(barId, bartenderId);
         if (sessionHasBartender(session, bartender))
             throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartender.getId()));
@@ -104,6 +106,7 @@ public class SessionService {
 
     public Session removeBartenderFromSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
         Bartender bartender = findBartenderInSession(session, bartenderId);
         bartender.removeShift(session);
         session.removeBartender(bartender);
@@ -115,6 +118,10 @@ public class SessionService {
             if (bartender.getId().equals(bartenderId)) return bartender;
         }
         throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartenderId));
+    }
+
+    public void sessionIsActive(Session session) {
+        if (session.getClosedDate() != null) throw new IllegalArgumentException("Cannot make changes to session if session has ended");
     }
 
     /**

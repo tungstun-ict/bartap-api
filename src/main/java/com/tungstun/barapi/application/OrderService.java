@@ -53,17 +53,6 @@ public class OrderService {
         throw new NotFoundException(String.format("No order found with id: %s", orderId));
     }
 
-    private Bill getBillWithOrder(Session session, Long orderId) throws NotFoundException {
-        for(Bill bill : session.getBills()) {
-            for(Order order : bill.getOrders()) {
-                if (order.getId().equals(orderId)){
-                    return bill;
-                }
-            }
-        }
-        throw new NotFoundException(String.format("Could not found a bill with order id %s", orderId));
-    }
-
     private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
         for(Order order : bill.getOrders()) {
             if (order.getId().equals(orderId)){
@@ -112,9 +101,9 @@ public class OrderService {
         throw new NotFoundException(String.format("No order found with id '%s' in bill with id '%s'", orderId, billId));
     }
 
-    public void deleteOrderFromSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        Bill bill = getBillWithOrder(session, orderId);
+    public void deleteOrderFromSession(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
+        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         Order order = findOrderInBill(bill, orderId);
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
     }
@@ -134,19 +123,21 @@ public class OrderService {
     }
 
     private Order addOrderToBill(Bill bill, Order order) {
-        this.SPRING_ORDER_REPOSITORY.save(order);
+        order = this.SPRING_ORDER_REPOSITORY.save(order);
         this.BILL_SERVICE.addOrderToBill(bill, order);
         return order;
     }
 
     public Order addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         Order order = buildOrder(barId, orderRequest, bill);
         return addOrderToBill(bill, order);
     }
 
-    public void deleteProductFromOrder(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
+    public void deleteProductOrder(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         Order order = findOrderInBill(bill, orderId);
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
     }

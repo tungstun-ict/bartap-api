@@ -124,6 +124,7 @@ public class BillService {
      */
     public void deleteBillFromSessionOfBar(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = getBillOfBar(barId, sessionId, billId);
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.getSession().removeBill(bill);
         this.SPRING_BILL_REPOSITORY.delete(bill);
     }
@@ -149,11 +150,13 @@ public class BillService {
     }
 
     public Bill addOrderToBill(Bill bill, Order order) {
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.addOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 
     public Bill removeOrderFromBill(Bill bill, Order order) {
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
