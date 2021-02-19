@@ -86,6 +86,7 @@ public class BillService {
      */
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
+        this.SESSION_SERVICE.sessionIsActive(session);
         Customer customer = null;
         for (Bill bill : session.getBills()){
             if (bill.getCustomer().getId().equals(billRequest.customerId)) customer = bill.getCustomer();
