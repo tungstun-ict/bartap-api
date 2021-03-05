@@ -5,7 +5,6 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Response details about the bar")
 public class BarResponse {
-
     @ApiModelProperty(notes = "The bar's id")
     private Long id;
 

@@ -10,7 +10,6 @@ import java.util.List;
 
 @ApiModel(description = "Response details about the bill")
 public class BillResponse {
-
     @ApiModelProperty(notes = "The bill's id")
     private String id;
 

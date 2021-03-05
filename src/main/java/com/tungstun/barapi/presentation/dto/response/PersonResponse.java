@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModelProperty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Response details about the person")
 public class PersonResponse {
-
     @ApiModelProperty(notes = "The person's id")
     private Long id;
 
