@@ -98,15 +98,15 @@ public class BillController {
 
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
     @ApiOperation(
-            value = "Updates bill of session of bar",
-            notes = "Provide id of bar, session and bill to update with information from the request body",
+            value = "Updates the payment state of the bill of session of bar",
+            notes = "Provide id of bar, session and bill to updates isPayed to the requested isPayed state ",
             response = BillResponse.class
     )
     public ResponseEntity<BillResponse> setIsPayedOfBillOfBar(
             @ApiParam(value = "ID value for the bar you want to update the bill from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") Long billId,
-            @RequestParam(value = "isPayed") Boolean isPayed
+            @ApiParam(value = "Boolean value for the payment state you want to set the bill to") @RequestParam(value = "isPayed") Boolean isPayed
             ) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.setIsPayedOfBillOfSession(barId, sessionId, billId, isPayed);
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
