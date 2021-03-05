@@ -5,6 +5,8 @@ import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +27,6 @@ public class BillController {
     public BillController(BillService billService, ResponseMapper responseMapper) {
         this.BILL_SERVICE = billService;
         this.RESPONSE_MAPPER = responseMapper;
-//        TypeMap<Bill, BillResponse> typeMap = this.RESPONSE_MAPPER.createTypeMap(Bill.class, BillResponse.class)
-//                .addMapping(Bill::calculateTotalPrice, BillResponse::setTotalPrice);
-
-
-
     }
 
     private BillResponse convertToBillResult(Bill bill){
@@ -39,47 +36,76 @@ public class BillController {
     }
 
     @GetMapping("bills")
-    public ResponseEntity<List<BillResponse>> getAllBills(@PathVariable("barId") Long barId)
-            throws NotFoundException {
+    @ApiOperation(
+            value = "Finds all bills of bar",
+            notes = "Provide id of bar to look up all bills that are linked to the bar",
+            response = BillResponse.class,
+            responseContainer = "List"
+    )
+    public ResponseEntity<List<BillResponse>> getAllBills(
+            @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") Long barId
+    ) throws NotFoundException {
         List<Bill> allBills = this.BILL_SERVICE.getAllBills(barId);
         List<BillResponse> billResponses = RESPONSE_MAPPER.convertList(allBills, BillResponse.class);
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
+    @ApiOperation(
+            value = "Finds bill of bar",
+            notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
+            response = BillResponse.class
+    )
     public ResponseEntity<BillResponse> getBillOfBar(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId) throws NotFoundException {
+            @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve the bill from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
+    ) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
         System.out.println(bill.getOrders());
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
     @GetMapping("/sessions/{sessionId}/bills")
+    @ApiOperation(
+            value = "Finds bills of session of bar",
+            notes = "Provide id of bar and session to look up bills from the session from the bar",
+            response = BillResponse.class,
+            responseContainer = "List"
+    )
     public ResponseEntity<List<BillResponse>> getAllBillsOfSession(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId)
-            throws NotFoundException {
+            @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve bills from") @PathVariable("sessionId") Long sessionId
+    )throws NotFoundException {
         List<Bill> allBills = this.BILL_SERVICE.getAllBillsOfSession(barId, sessionId);
         List<BillResponse> billResponses = RESPONSE_MAPPER.convertList(allBills, BillResponse.class);
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
     @PostMapping("/sessions/{sessionId}/")
+    @ApiOperation(
+            value = "Creates new bill for session of bar",
+            notes = "Provide id of bar and session to add a new bill with information from the request body to session of the bar",
+            response = BillResponse.class
+    )
     public ResponseEntity<BillResponse> createBillForBar(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bar you want to add a new bill to") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to add a new bill to") @PathVariable("sessionId") Long sessionId,
             @Valid @RequestBody BillRequest billRequest) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.createNewBillForSession(barId, sessionId, billRequest);
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
+    @ApiOperation(
+            value = "Updates bill of session of bar",
+            notes = "Provide id of bar, session and bill to update with information from the request body",
+            response = BillResponse.class
+    )
     public ResponseEntity<BillResponse> setIsPayedOfBillOfBar(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId,
+            @ApiParam(value = "ID value for the bar you want to update the bill from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") Long billId,
             @RequestParam(value = "isPayed") Boolean isPayed
             ) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.setIsPayedOfBillOfSession(barId, sessionId, billId, isPayed);
@@ -87,6 +113,10 @@ public class BillController {
     }
 
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
+    @ApiOperation(
+            value = "Deletes bill of session of bar",
+            notes = "Provide id of bar, session and bill to delete bill of session of the bar"
+    )
     public ResponseEntity<Void> deleteBill(
             @PathVariable("barId") Long barId,
             @PathVariable("sessionId") Long sessionId,
