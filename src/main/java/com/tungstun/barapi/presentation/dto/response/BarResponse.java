@@ -1,17 +1,31 @@
 package com.tungstun.barapi.presentation.dto.response;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+@ApiModel(description = "Response details about the bar")
 public class BarResponse {
+
+    @ApiModelProperty(notes = "The bar's id")
     private Long id;
-    private String adres;
+
+    @ApiModelProperty(notes = "The bar's address")
+    private String address;
+
+    @ApiModelProperty(notes = "The bar's name")
     private String name;
+
+    @ApiModelProperty(notes = "The bar's mail")
     private String mail;
+
+    @ApiModelProperty(notes = "The bar's phone number")
     private String phoneNumber;
 
     public BarResponse() {}
 
     public void setId(Long id) { this.id = id; }
 
-    public void setAdres(String adres) { this.adres = adres; }
+    public String getAddress() { return address; }
 
     public void setName(String name) { this.name = name; }
 
@@ -21,7 +35,7 @@ public class BarResponse {
 
     public Long getId() { return id; }
 
-    public String getAdres() { return adres; }
+    public void setAddress(String address) { this.address = address; }
 
     public String getName() { return name; }
 
