@@ -89,7 +89,7 @@ public class BillController {
             response = BillResponse.class
     )
     public ResponseEntity<BillResponse> createBillForBar(
-            @ApiParam(value = "ID value for the bar you want to add a new bill to") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the bar you want to create a new bill for") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to add a new bill to") @PathVariable("sessionId") Long sessionId,
             @Valid @RequestBody BillRequest billRequest) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.createNewBillForSession(barId, sessionId, billRequest);
@@ -99,7 +99,7 @@ public class BillController {
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
     @ApiOperation(
             value = "Updates the payment state of the bill of session of bar",
-            notes = "Provide id of bar, session and bill to updates isPayed to the requested isPayed state ",
+            notes = "Provide id of bar, session and bill to update isPayed to the requested isPayed state ",
             response = BillResponse.class
     )
     public ResponseEntity<BillResponse> setIsPayedOfBillOfBar(
