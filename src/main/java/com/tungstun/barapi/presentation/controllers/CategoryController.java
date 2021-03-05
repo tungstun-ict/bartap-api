@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("bars/{barId}/categories")
+@RequestMapping("/api/bars/{barId}/categories")
 @RolesAllowed("ROLE_BAR_OWNER")
 public class CategoryController {
     private final CategoryService CATEGORY_SERVICE;

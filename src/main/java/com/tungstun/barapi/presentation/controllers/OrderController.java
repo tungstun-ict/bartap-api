@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("bars/{barId}/")
+@RequestMapping("/api/bars/{barId}/")
 @RolesAllowed("ROLE_BAR_OWNER")
 public class OrderController {
     private final OrderService ORDER_SERVICE;

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/bars")
+@RequestMapping("/api/bars")
 @RolesAllowed("ROLE_BAR_OWNER")
 public class BarController {
     private final BarService BAR_SERVICE;

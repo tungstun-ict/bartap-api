@@ -13,7 +13,7 @@ import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
-@RequestMapping("bars/{barId}/sessions")
+@RequestMapping("/api/bars/{barId}/sessions")
 @RolesAllowed("ROLE_BAR_OWNER")
 public class SessionController {
     private final SessionService SESSION_SERVICE;

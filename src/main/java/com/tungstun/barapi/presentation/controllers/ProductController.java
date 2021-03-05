@@ -17,7 +17,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 @Controller
-@RequestMapping("bars/{barId}/products")
+@RequestMapping("/api/bars/{barId}/products")
 @RolesAllowed("ROLE_BAR_OWNER")
 public class ProductController {
     private final ProductService PRODUCT_SERVICE;

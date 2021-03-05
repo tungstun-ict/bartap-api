@@ -22,8 +22,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         securedEnabled = true,
         jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    public final static String LOGIN_PATH = "/login";
-    public final static String REGISTER_PATH = "/register";
+    public final static String LOGIN_PATH = "/api/login";
+    public final static String REGISTER_PATH = "/api/register";
+    private static final String[] SWAGGER_PATHS = {
+            // -- Swagger UI v2
+            "/v2/api-docs",
+            "/swagger-resources",
+            "/swagger-resources/**",
+            "/configuration/ui",
+            "/configuration/security",
+            "/swagger-ui.html",
+            "/webjars/**",
+            // -- Swagger UI v3 (OpenAPI)
+            "/v3/api-docs/**",
+            "/swagger-ui/**"
+    };
 
     @Value("${security.jwt.secret}")
     private String jwtSecret;
@@ -33,6 +46,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
+//        http.authorizeRequests().antMatchers("/").permitAll();
         http
             .cors()
                 .and()
@@ -41,6 +55,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .authorizeRequests()
                 .antMatchers(HttpMethod.POST, REGISTER_PATH).permitAll()
                 .antMatchers(HttpMethod.POST, LOGIN_PATH).permitAll()
+                .antMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
             .addFilterBefore(
