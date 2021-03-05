@@ -5,6 +5,8 @@ import com.tungstun.barapi.domain.Person;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -45,36 +47,57 @@ public class PersonController {
     }
 
     @GetMapping
+    @ApiOperation(
+            value = "Finds all people of bar",
+            notes = "Provide id of bar to look up all people that are linked to the bar",
+            response = PersonResponse.class,
+            responseContainer = "List"
+    )
     public ResponseEntity<List<PersonResponse>> getAllPeopleOfBar(
-            @PathVariable Long barId)
-            throws NotFoundException {
+            @ApiParam(value = "ID value for the bar you want to retrieve people from") @PathVariable Long barId
+    ) throws NotFoundException {
         List<Person> allPeople = this.PERSON_SERVICE.getAllPeopleOfBar(barId);
         List<PersonResponse> peopleResponses = convertToPersonResponsesList(allPeople);
         return new ResponseEntity<>(peopleResponses, HttpStatus.OK);
     }
 
     @GetMapping(path = "/{personId}")
+    @ApiOperation(
+            value = "Finds person of bar",
+            notes = "Provide id of bar and person to look up a specific person of the bar",
+            response = PersonResponse.class
+    )
     public ResponseEntity<PersonResponse> getPersonOfBar(
-            @PathVariable("barId") Long barId,
-            @PathVariable("personId") Long personId)
-            throws NotFoundException {
+            @ApiParam(value = "ID value for the bar you want to retrieve the person from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the person you want to retrieve") @PathVariable("personId") Long personId
+    ) throws NotFoundException {
         Person person = this.PERSON_SERVICE.getPersonOfBar(barId, personId);
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.OK);
     }
 
     @PostMapping
+    @ApiOperation(
+            value = "Creates person for bar",
+            notes = "Provide id of bar to create a new person with the information from the request body for the bar",
+            response = PersonResponse.class
+    )
     public ResponseEntity<PersonResponse> createNewPersonForBar(
-            @PathVariable("barId") Long barId,
-            @Valid @RequestBody PersonRequest personRequest)
-            throws NotFoundException {
+            @ApiParam(value = "ID value for the bar you want to create the new person for") @PathVariable("barId") Long barId,
+            @Valid @RequestBody PersonRequest personRequest
+    ) throws NotFoundException {
         Person person = this.PERSON_SERVICE.createNewPerson(barId, personRequest);
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.CREATED);
     }
 
     @PatchMapping("/{personId}")
+    @ApiOperation(
+            value = "Updates the person of bar",
+            notes = "Provide id of bar and person to update the person with the information from the request body",
+            response = PersonResponse.class
+    )
     public ResponseEntity<PersonResponse> updatePerson(
-            @PathVariable("barId") Long barId,
-            @PathVariable("personId") Long personId,
+            @ApiParam(value = "ID value for the bar you want to update the person from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") Long personId,
             @RequestBody PersonRequest personRequest)
             throws NotFoundException {
         Person person = this.PERSON_SERVICE.updatePerson(barId, personId, personRequest);
@@ -82,9 +105,13 @@ public class PersonController {
     }
 
     @DeleteMapping("/{personId}")
+    @ApiOperation(
+            value = "Deletes the person from bar",
+            notes = "Provide id of bar and person to delete the person from the bar"
+    )
     public ResponseEntity<Void> deletePerson(
-            @PathVariable("barId") Long barId,
-            @PathVariable("personId") Long personId)
+            @ApiParam(value = "ID value for the bar you want to delete the person from")  @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the bar you want to delete")  @PathVariable("personId") Long personId)
             throws NotFoundException {
         this.PERSON_SERVICE.deletePersonFromBar(barId, personId);
         return new ResponseEntity<>(HttpStatus.OK);
