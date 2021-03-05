@@ -3,19 +3,33 @@ package com.tungstun.barapi.presentation.dto.response;
 import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.order.Order;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
 
+@ApiModel(description = "Response details about the bill")
 public class BillResponse {
+
+    @ApiModelProperty(notes = "The bill's id")
     private String id;
+
+    @ApiModelProperty(notes = "The bill's payment state")
     private boolean isPayed;
+
+    @ApiModelProperty(notes = "The bill's customer")
     private Customer customer;
+
+    @ApiModelProperty(notes = "The bill's total price")
     private Double totalPrice;
+
+    @ApiModelProperty(notes = "The bill's orders")
     private List<Order> orders;
+
+    @ApiModelProperty(notes = "The bill's affiliated session")
     private Session session;
 
     public BillResponse() { }
-
     public BillResponse(String id,
                         boolean isPayed,
                         Customer customer,
