@@ -64,7 +64,7 @@ public class BarController {
 
     @PostMapping(consumes = "application/json")
     @ApiOperation(
-            value = "Create a new bar",
+            value = "Creates a new bar",
             notes = "Provide bar information in the request body to create a new bar",
             response = BarResponse.class
     )
@@ -80,7 +80,7 @@ public class BarController {
 
     @PatchMapping(path = "/{id}", consumes = "application/json")
     @ApiOperation(
-            value = "Update a bar",
+            value = "Updates bar",
             notes = "Provide id of bar to update the bar with bar information in the request body",
             response = BarResponse.class
     )
@@ -99,7 +99,7 @@ public class BarController {
 
     @DeleteMapping("/{barId}")
     @ApiOperation(
-            value = "Delete a bar",
+            value = "Deletes a bar",
             notes = "Provide id to delete a specific bar"
     )
     public ResponseEntity<BarResponse> deleteBar(
