@@ -5,11 +5,11 @@ import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotBlank;
 
-@ApiModel(description = "Details about the bar")
+@ApiModel(description = "Request details about the bar")
 public class BarRequest {
     @ApiModelProperty(notes = "The bar's address")
     @NotBlank
-    public String adres;
+    public String address;
 
     @ApiModelProperty(notes = "The bar's name")
     @NotBlank

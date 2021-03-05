@@ -70,7 +70,7 @@ public class BarController {
     )
     public ResponseEntity<BarResponse> addBar(@Valid @RequestBody BarRequest barRequest) {
         Bar bar = this.BAR_SERVICE.addBar(
-                barRequest.adres,
+                barRequest.address,
                 barRequest.name,
                 barRequest.mail,
                 barRequest.phoneNumber
@@ -89,7 +89,7 @@ public class BarController {
             @RequestBody BarRequest barRequest) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.editBar(
                 id,
-                barRequest.adres,
+                barRequest.address,
                 barRequest.name,
                 barRequest.mail,
                 barRequest.phoneNumber
