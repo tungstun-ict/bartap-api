@@ -2,15 +2,34 @@ package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Category;
 import com.tungstun.barapi.domain.product.ProductType;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(description = "Response details about the product")
 public class ProductResponse {
+
+    @ApiModelProperty(notes = "The product's id")
     private Long id;
+
+    @ApiModelProperty(notes = "The product's name")
     private String name;
+
+    @ApiModelProperty(notes = "The product's brand")
     private String brand;
+
+    @ApiModelProperty(notes = "The product's size")
     private double size;
+
+    @ApiModelProperty(notes = "The product's price")
     private double price;
+
+    @ApiModelProperty(notes = "Is product favorited")
     private boolean isFavorite;
+
+    @ApiModelProperty(notes = "The product's category")
     private Category category;
+
+    @ApiModelProperty(notes = "The product's type")
     private ProductType productType;
 
     public ProductResponse() { }
