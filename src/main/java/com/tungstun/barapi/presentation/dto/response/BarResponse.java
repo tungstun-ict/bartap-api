@@ -1,16 +1,11 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import java.util.List;
-
 public class BarResponse {
     private Long id;
     private String adres;
     private String name;
     private String mail;
     private String phoneNumber;
-    private List<String> users;
-    private List<String> products;
-    private List<String> sessions;
 
     public BarResponse() {}
 
@@ -24,12 +19,6 @@ public class BarResponse {
 
     public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
 
-    public void setUsers(List<String> users) { this.users = users; }
-
-    public void setProducts(List<String> products) { this.products = products; }
-
-    public void setSessions(List<String> sessions) { this.sessions = sessions; }
-
     public Long getId() { return id; }
 
     public String getAdres() { return adres; }
@@ -40,9 +29,4 @@ public class BarResponse {
 
     public String getPhoneNumber() { return phoneNumber; }
 
-    public List<String> getUsers() { return users; }
-
-    public List<String> getProducts() { return products; }
-
-    public List<String> getSessions() { return sessions; }
 }
