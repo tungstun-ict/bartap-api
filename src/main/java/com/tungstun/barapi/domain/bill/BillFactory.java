@@ -19,7 +19,6 @@ public class BillFactory {
                 session,
                 customer,
                 new ArrayList<>(),
-                false,
-                0.0);
+                false);
     }
 }

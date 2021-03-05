@@ -1,6 +1,7 @@
 package com.tungstun.barapi.domain.bill;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.Customer;
@@ -14,6 +15,7 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
+@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "bill")
 public class Bill {
@@ -24,10 +26,6 @@ public class Bill {
     @Column(name = "is_payed")
     private boolean isPayed;
 
-    @Column(name = "price")
-    private double price;
-
-    @JsonManagedReference
     @ManyToOne(optional = false)
     @JoinColumn(name = "session_id")
     private Session session;
@@ -44,12 +42,11 @@ public class Bill {
     private List<Order> orders;
 
     public Bill() { }
-    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed, double price) {
+    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed) {
         this.session = session;
         this.customer = customer;
         this.orders = orders;
         this.isPayed = isPayed;
-        this.price = price;
     }
 
     public Long getId() { return id; }
@@ -73,7 +70,11 @@ public class Bill {
 
     public void setPayed(boolean payed) { isPayed = payed; }
 
-    public double getPrice() { return price; }
-
-    public void setPrice(double price) { this.price = price; }
+    public double calculateTotalPrice() {
+        double totalPrice = 0.0;
+        for (Order order : this.orders){
+            totalPrice += order.getAmount()*order.getProduct().getPrice();
+        }
+        return totalPrice;
+    }
 }
