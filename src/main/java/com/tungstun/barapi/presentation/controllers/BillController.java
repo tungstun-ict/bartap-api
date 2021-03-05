@@ -25,10 +25,17 @@ public class BillController {
     public BillController(BillService billService, ResponseMapper responseMapper) {
         this.BILL_SERVICE = billService;
         this.RESPONSE_MAPPER = responseMapper;
+//        TypeMap<Bill, BillResponse> typeMap = this.RESPONSE_MAPPER.createTypeMap(Bill.class, BillResponse.class)
+//                .addMapping(Bill::calculateTotalPrice, BillResponse::setTotalPrice);
+
+
+
     }
 
     private BillResponse convertToBillResult(Bill bill){
-        return RESPONSE_MAPPER.convert(bill, BillResponse.class);
+        BillResponse billResponse = RESPONSE_MAPPER.convert(bill, BillResponse.class);
+        billResponse.setTotalPrice(bill.calculateTotalPrice());
+        return billResponse;
     }
 
     @GetMapping("bills")
@@ -45,6 +52,7 @@ public class BillController {
             @PathVariable("sessionId") Long sessionId,
             @PathVariable("billId") Long billId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        System.out.println(bill.getOrders());
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
