@@ -5,6 +5,8 @@ import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,8 +34,14 @@ public class OrderController {
     }
 
     @GetMapping("orders")
+    @ApiOperation(
+            value = "Finds all orders of bar",
+            notes = "Provide id of bar to look up all orders that are linked to the bar",
+            response = OrderResponse.class,
+            responseContainer = "List"
+    )
     public ResponseEntity<List<OrderResponse>> getAllBarOrders(
-            @PathVariable("barId") Long barId
+            @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId
     ) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBar(barId);
         List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
@@ -41,9 +49,15 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/orders")
+    @ApiOperation(
+            value = "Finds all orders of session of bar",
+            notes = "Provide id of bar and session to look up all orders that are linked session of the bar",
+            response = OrderResponse.class,
+            responseContainer = "List"
+    )
     public ResponseEntity<List<OrderResponse>> getAllSessionOrders(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId
+            @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfSession(barId, sessionId);
         List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
@@ -51,20 +65,30 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
+    @ApiOperation(
+            value = "Finds order of session of bar",
+            notes = "Provide id of bar, session and order to look up specific order of session of the bar",
+            response = OrderResponse.class
+    )
     public ResponseEntity<OrderResponse> getOrderFromSession(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("orderId") Long orderId
+            @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
         Order order = this.ORDER_SERVICE.getOrderOfSession(barId, sessionId, orderId);
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
+    @ApiOperation(
+            value = "Finds orders of bill of session of bar",
+            notes = "Provide id of bar, session, bill and order to look up orders of bill of session of the bar",
+            response = OrderResponse.class
+    )
     public ResponseEntity<List<OrderResponse>> getAllSessionOrders(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId
+            @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") Long billId
     ) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBill(barId, sessionId, billId);
         List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
@@ -72,32 +96,46 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
+    @ApiOperation(
+            value = "Finds order of bill of session of bar",
+            notes = "Provide id of bar, session, bill and order to look up specific order of bill of session of the bar",
+            response = OrderResponse.class
+    )
     public ResponseEntity<OrderResponse> getOrderFromSession(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId,
-            @PathVariable("orderId") Long orderId
+            @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to retrieve the order from") @PathVariable("billId") Long billId,
+            @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
         Order order = this.ORDER_SERVICE.getOrderOfBill(barId, sessionId, billId, orderId);
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
+    @ApiOperation(
+            value = "Deletes order of bill of session of bar",
+            notes = "Provide id of bar, session, bill and order to delete specific order of bill of session of the bar"
+    )
     public ResponseEntity<Void> deleteOrder(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId,
-            @PathVariable("orderId") Long orderId
+            @ApiParam(value = "ID value for the bar you want to delete the order from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to delete the order from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to delete the order from") @PathVariable("billId") Long billId,
+            @ApiParam(value = "ID value for the order you want to delete") @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
         this.ORDER_SERVICE.deleteOrderFromBill(barId, sessionId, billId, orderId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PutMapping("sessions/{sessionId}/bills/{billId}")
+    @ApiOperation(
+            value = "Create new order for bill of session of bar",
+            notes = "Provide id of bar, session and bill to create a new order with information from request body",
+            response = OrderResponse.class
+    )
     public ResponseEntity<OrderResponse> addProductToOrder(
-            @PathVariable("barId") Long barId,
-            @PathVariable("sessionId") Long sessionId,
-            @PathVariable("billId") Long billId,
+            @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") Long billId,
             @Valid @RequestBody OrderRequest orderLineRequest
     ) throws NotFoundException {
         Order order = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest);
