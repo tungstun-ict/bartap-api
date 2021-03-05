@@ -62,7 +62,7 @@ public class BarController {
         return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.OK);
     }
 
-    @PostMapping(consumes = "application/json")
+    @PostMapping()
     @ApiOperation(
             value = "Creates a new bar",
             notes = "Provide bar information in the request body to create a new bar",
@@ -78,7 +78,7 @@ public class BarController {
         return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.CREATED);
     }
 
-    @PatchMapping(path = "/{id}", consumes = "application/json")
+    @PatchMapping("/{id}")
     @ApiOperation(
             value = "Updates bar",
             notes = "Provide id of bar to update the bar with bar information in the request body",
