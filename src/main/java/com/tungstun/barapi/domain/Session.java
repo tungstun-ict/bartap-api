@@ -29,6 +29,7 @@ public class Session {
     @Column(name = "closed_date")
     private LocalDateTime closedDate;
 
+    @JsonIdentityReference(alwaysAsId = true)
     @OneToMany(mappedBy = "session",
             orphanRemoval = true,
             fetch = FetchType.LAZY,

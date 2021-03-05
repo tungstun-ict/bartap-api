@@ -1,9 +1,17 @@
 package com.tungstun.barapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.product.ProductType;
 
 import javax.persistence.*;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "category")
 public class Category {

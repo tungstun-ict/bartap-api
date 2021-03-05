@@ -1,13 +1,17 @@
 package com.tungstun.barapi.domain;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.security.data.User;
 
 import javax.persistence.*;
 
-//@JsonIdentityInfo(
-//        generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "id"
-//)
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person {

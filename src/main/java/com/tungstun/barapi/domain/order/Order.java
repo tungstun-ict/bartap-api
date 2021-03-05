@@ -1,11 +1,19 @@
 package com.tungstun.barapi.domain.order;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "\"order\"")
 public class Order {
