@@ -1,4 +1,4 @@
-package com.tungstun.barapi;
+package com.tungstun.swagger.presentation.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
