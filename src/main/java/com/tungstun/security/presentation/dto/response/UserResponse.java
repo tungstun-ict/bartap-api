@@ -1,10 +1,18 @@
 package com.tungstun.security.presentation.dto.response;
 
 import com.tungstun.security.data.UserRole;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
+@ApiModel(description = "Request details about the user")
 public class UserResponse {
+    @ApiModelProperty(notes = "The user's id")
     private Long id;
+
+    @ApiModelProperty(notes = "The user's username")
     private String username;
+
+    @ApiModelProperty(notes = "The user's role")
     private UserRole role;
 
     public UserResponse() { }
