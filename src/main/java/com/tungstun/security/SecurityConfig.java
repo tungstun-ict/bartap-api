@@ -1,6 +1,5 @@
 package com.tungstun.security;
 
-import com.tungstun.security.presentation.filter.JwtAuthenticationFilter;
 import com.tungstun.security.presentation.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -22,9 +20,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
         securedEnabled = true,
         jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    public final static String LOGIN_PATH = "/api/login";
-    public final static String REGISTER_PATH = "/api/register";
-    private static final String[] SWAGGER_PATHS = {
+    public final static String LOGIN_PATH = "/api/users/login";
+    public final static String REGISTER_PATH = "/api/users/register";
+    private final static String[] SWAGGER_PATHS = {
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
@@ -46,7 +44,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http.authorizeRequests().antMatchers("/").permitAll();
         http
             .cors()
                 .and()
@@ -58,15 +55,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
-            .addFilterBefore(
-                    new JwtAuthenticationFilter(
-                            LOGIN_PATH,
-                            this.jwtSecret,
-                            this.jwtExpirationInMs,
-                            this.authenticationManager()
-                    ),
-                    UsernamePasswordAuthenticationFilter.class
-            )
             .addFilter(new JwtAuthorizationFilter(this.jwtSecret, this.authenticationManager()))
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -74,7 +62,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(4);
     }
-
 }
