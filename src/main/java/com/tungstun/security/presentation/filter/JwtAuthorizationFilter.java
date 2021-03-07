@@ -37,31 +37,22 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
-                                    FilterChain filterChain) throws IOException, ServletException {
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain
+    ) throws IOException, ServletException {
         Authentication authentication = this.getAuthentication(request);
         if (authentication != null) {
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
     }
 
     private Authentication getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-
-        if (token == null || token.isEmpty()) {
-            return null;
-        }
-
-        if (!token.startsWith("Bearer ")) {
-            return null;
-        }
-
-        byte[] signingKey = this.secret.getBytes();
+        String token = extractTokenFromRequest(request);
 
         JwtParser jwtParser = Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+                .setSigningKey(this.secret.getBytes())
                 .build();
 
         Jws<Claims> parsedToken = jwtParser
@@ -72,16 +63,26 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .getSubject();
 
         var authorities = ((List<?>) parsedToken.getBody()
-                .get("role")).stream()
+                .get("roles")).stream()
                 .map(authority -> new SimpleGrantedAuthority((String) authority))
                 .collect(Collectors.toList());
 
-        if (username.isEmpty()) {
-            return null;
-        }
+        if (username.isEmpty()) return null;
 
         UserProfile principal = new UserProfile(username);
 
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+    }
+
+    private String extractTokenFromRequest(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (!tokenIsValid(token)) token = null;
+        return token;
+    }
+
+    private boolean tokenIsValid(String token) {
+        if (token == null || token.isEmpty()) return false;
+        if (!token.startsWith("Bearer ")) return false;
+        return true;
     }
 }
