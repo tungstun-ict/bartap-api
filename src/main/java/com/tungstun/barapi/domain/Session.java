@@ -29,6 +29,9 @@ public class Session {
     @Column(name = "closed_date")
     private LocalDateTime closedDate;
 
+    @Column(name = "locked", nullable = false)
+    private boolean isLocked;
+
     @JsonIdentityReference(alwaysAsId = true)
     @OneToMany(mappedBy = "session",
             orphanRemoval = true,
@@ -42,11 +45,11 @@ public class Session {
     private List<Bartender> bartenders;
 
     public Session() {}
-    public Session(List<Bill> bills, List<Bartender> bartenders
-    ) {
+    public Session(List<Bill> bills, List<Bartender> bartenders) {
         this.creationDate = LocalDateTime.now();
         this.bills = bills;
         this.bartenders = bartenders;
+        this.isLocked = false;
     }
 
     public static Session create() {
@@ -66,6 +69,12 @@ public class Session {
     public LocalDateTime getClosedDate() { return closedDate; }
 
     public void setClosedDate(LocalDateTime closedDate) { this.closedDate = closedDate; }
+
+    public boolean isLocked() { return isLocked; }
+
+    public void lock() {
+        isLocked = true;
+    }
 
     public boolean addBill(Bill bill){
         if ( !this.bills.contains(bill) ) return this.bills.add(bill);
