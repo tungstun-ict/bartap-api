@@ -5,11 +5,7 @@ import com.tungstun.security.data.User;
 import com.tungstun.security.data.UserRole;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.GrantedAuthority;
+import com.tungstun.security.util.jwt.JwtGenerator;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,26 +13,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UserService implements UserDetailsService {
     private final SpringUserRepository SPRING_USER_REPOSITORY;
     private final PasswordEncoder PASSWORD_ENCODER;
-
-    @Value("${security.jwt.secret}")
-    private String jwtSecret;
-
-    @Value("${security.jwt.expiration-in-ms}")
-    private Integer jwtExpirationInMs;
+    private final JwtGenerator JWT_GENERATOR;
 
     public UserService(SpringUserRepository springUserRepository,
-                       PasswordEncoder passwordEncoder
+                       PasswordEncoder passwordEncoder,
+                       JwtGenerator jwtGenerator
     ) {
         this.SPRING_USER_REPOSITORY = springUserRepository;
         this.PASSWORD_ENCODER = passwordEncoder;
+        this.JWT_GENERATOR = jwtGenerator;
     }
 
     public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) {
@@ -60,28 +50,7 @@ public class UserService implements UserDetailsService {
     }
 
     private String generateAuthToken(User user) {
-        return String.format("Bearer: %s", generateJWT(user));
-    }
-
-    private String generateJWT(User user) {
-        List<String> roles = extractUserRoles(user);
-        byte[] signingKey = this.jwtSecret.getBytes();
-        return Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS256)
-                .setHeaderParam("type", "JWT")
-                .setIssuer("com-tungstun-bar-api")
-                .setAudience("com-tungstun-bar-api")
-                .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
-                .claim("roles", roles)
-                .compact();
-    }
-
-    private List<String> extractUserRoles(User user) {
-        return user.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+        return String.format("Bearer: %s", this.JWT_GENERATOR.generate(user));
     }
 
     @Override
