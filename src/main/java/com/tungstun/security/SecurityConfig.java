@@ -20,8 +20,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         securedEnabled = true,
         jsr250Enabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-    public final static String LOGIN_PATH = "/api/users/login";
-    public final static String REGISTER_PATH = "/api/users/register";
+    public final static String LOGIN_PATH = "/api/login";
+    public final static String REGISTER_PATH = "/api/register";
     private final static String[] SWAGGER_PATHS = {
             // -- Swagger UI v2
             "/v2/api-docs",
@@ -34,15 +34,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             // -- Swagger UI v3 (OpenAPI)
             "/v3/api-docs/**",
             "/swagger-ui/**",
-            // -- Simple swagger redirect URL
+            // -- Simple swagger redirect URI
             "/swagger"
     };
 
     @Value("${security.jwt.secret}")
     private String jwtSecret;
 
-    @Value("${security.jwt.expiration-in-ms}")
-    private Integer jwtExpirationInMs;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
