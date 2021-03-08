@@ -10,7 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public final static String LOGIN_PATH = "/api/login";
     public final static String REGISTER_PATH = "/api/register";
     private final static String[] SWAGGER_PATHS = {

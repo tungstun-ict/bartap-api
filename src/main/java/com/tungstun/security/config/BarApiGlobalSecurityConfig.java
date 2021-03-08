@@ -14,10 +14,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
-public class CustomGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
-
-    public CustomGlobalSecurityConfig() { }
-
+public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler =
@@ -32,5 +29,5 @@ public class CustomGlobalSecurityConfig extends GlobalMethodSecurityConfiguratio
             prePostEnabled = true,
             securedEnabled = true,
             jsr250Enabled = true)
-    public static class EmbeddedWebWebSecurityConfigurerAdapter extends WebSecurityConfig { }
+    public static class EmbeddedWebBarApiWebSecurityConfigurerAdapter extends BarApiWebSecurityConfig { }
 }
