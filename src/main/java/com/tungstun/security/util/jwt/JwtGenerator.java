@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
@@ -24,6 +25,7 @@ public class JwtGenerator {
     }
 
     private String generateJWT(User user) {
+        Map<Long, String> barAuthorization = user.getAuthoritiesMap();
         List<String> roles = extractUserRoles(user);
         byte[] signingKey = CREDENTIALS.jwtSecret.getBytes();
         return Jwts.builder()
@@ -33,7 +35,7 @@ public class JwtGenerator {
                 .setAudience("com-tungstun-bar-api")
                 .setSubject(user.getUsername())
                 .setExpiration(new Date(System.currentTimeMillis() + CREDENTIALS.jwtExpirationInMs))
-                .claim("roles", roles)
+                .claim("barRoles", barAuthorization)
                 .compact();
     }
 
