@@ -30,8 +30,8 @@ public class SessionController {
         return RESPONSE_MAPPER.convert(session, SessionResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all sessions of bar",
             notes = "Provide id of bar to look up all sessions that are linked to the bar",
@@ -46,8 +46,8 @@ public class SessionController {
         return new ResponseEntity<>(sessionResponses,  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping(path = "/{sessionId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds session of bar",
             notes = "Provide id of bar and session to look up the specific session of the bar",
@@ -60,8 +60,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates new session for bar",
             notes = "Provide id of bar to add a new session with information from the request body to the bar",
@@ -74,8 +74,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/end")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Ends the session of bar",
             notes = "Provide id of bar and session to end the session of the bar",
@@ -89,8 +89,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/lock")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Locks the session of bar",
             notes = "Provide id of bar and session to lock the session of the bar",
@@ -104,8 +104,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/bartenders/{bartenderId}/add")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Adds bartender to the session of bar",
             notes = "Provide id of bar, session and bartender to add the bartender to the session of the bar",
@@ -120,8 +120,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/bartenders/{bartenderId}/remove")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Removes bartender from the session of bar",
             notes = "Provide id of bar, session and bartender to remove the bartender from the session of the bar",
@@ -136,8 +136,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{sessionId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes the session of bar",
             notes = "Provide id of bar and session to delete the session from the bar",

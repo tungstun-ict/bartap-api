@@ -24,12 +24,6 @@ public class SessionService {
         this.PERSON_SERVICE = personService;
     }
 
-    /**
-     * Returns a list with all sessions of bar
-     * @return list of sessions
-     * @throws NotFoundException if no bar with given id is found or
-     *     if bar does not have any sessions
-     */
     public List<Session> getAllSessionsOfBar(Long barId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         List<Session> sessions = bar.getSessions();
@@ -37,13 +31,6 @@ public class SessionService {
         return sessions;
     }
 
-    /**
-     * Returns session with given id from bar with given id
-     * @return session
-     * @throws NotFoundException if no bar with given id is found or
-     *     if bar does not have any sessions or
-     *     if bar does not have a session with given id
-     */
     public Session getSessionOfBar(Long barId, Long sessionId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         List<Session> sessions = bar.getSessions();
@@ -54,12 +41,6 @@ public class SessionService {
         throw new NotFoundException("Bar does not have a session with id: " + sessionId);
     }
 
-    /**
-     * Creates a new session and adds it to bar with given id
-     * @return created session
-     * @throws NotFoundException if no bar with given id is found
-     * @throws DuplicateRequestException if bar already has a duplicate of the session
-     */
     public Session createNewSession(Long barId ) throws NotFoundException {
         Bar bar = BAR_SERVICE.getBar(barId);
         if(barHasActiveSession(bar)) throw new AlreadyActiveSessionException("Bar already has an active session.");
@@ -136,10 +117,6 @@ public class SessionService {
         if (session.getClosedDate() != null && session.isLocked()) throw new IllegalArgumentException("Cannot make changes to session if session has ended");
     }
 
-    /**
-     * Removes session from sessions of bar with given id and deletes it from the datastore
-     * @throws NotFoundException if no bar with given id is found 
-     */
     public void deleteSession(Long barId, Long sessionId) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Session session = getSessionOfBar(barId, sessionId);
@@ -148,10 +125,6 @@ public class SessionService {
         this.SPRING_SESSION_REPOSITORY.delete(session);
     }
 
-    /**
-     * Saves a Session object
-     * @param session to be saved
-     */
     public void saveSession(Session session){
         this.SPRING_SESSION_REPOSITORY.save(session);
     }
