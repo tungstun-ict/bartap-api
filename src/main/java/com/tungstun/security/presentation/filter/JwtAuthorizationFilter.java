@@ -8,7 +8,6 @@ import io.jsonwebtoken.Jwts;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
@@ -17,10 +16,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * Tries to authorize a user, based on the Bearer token (JWT) from
@@ -74,11 +72,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .getBody()
                 .getSubject();
 
-        var authorities = ((List<?>) parsedToken.getBody()
-                .get("roles")).stream()
-                .map(authority -> new SimpleGrantedAuthority((String) authority))
-                .collect(Collectors.toList());
-
         Map<Long, String> barAuthorities = new LinkedHashMap<>();
         for (var entry : ((LinkedHashMap<?, ?>) parsedToken.getBody().get("barRoles")).entrySet()) {
             barAuthorities.put(Long.valueOf((String) entry.getKey()), (String) entry.getValue());
@@ -90,6 +83,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
         UserProfile principal = new UserProfile(username, barAuthorities);
 
-        return new UsernamePasswordAuthenticationToken(principal, null, authorities);
+        return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 }
