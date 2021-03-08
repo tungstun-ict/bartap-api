@@ -21,6 +21,9 @@ public class SessionResponse {
     @ApiModelProperty(notes = "The date the session got close")
     private LocalDateTime closedDate;
 
+    @ApiModelProperty(notes = "Boolean if the session is locked")
+    private boolean isLocked;
+
     @ApiModelProperty(notes = "The session's bartenders")
     private List<Bartender> bartenders;
 
@@ -44,6 +47,10 @@ public class SessionResponse {
     public LocalDateTime getClosedDate() { return closedDate; }
 
     public void setClosedDate(LocalDateTime closedDate) { this.closedDate = closedDate; }
+
+    public boolean isLocked() { return isLocked; }
+
+    public void setLocked(boolean locked) { isLocked = locked; }
 
     public List<Bill> getBills() {
         return bills;

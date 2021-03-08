@@ -74,8 +74,8 @@ public class SessionController {
 
     @PatchMapping("/{sessionId}/end")
     @ApiOperation(
-            value = "End the session of bar",
-            notes = "Provide id of bar and session to close the session of the bar",
+            value = "Ends the session of bar",
+            notes = "Provide id of bar and session to end the session of the bar",
             response = SessionResponse.class
     )
     public ResponseEntity<SessionResponse> endSession(
@@ -83,6 +83,20 @@ public class SessionController {
             @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
         Session session = this.SESSION_SERVICE.endSession(barId, sessionId);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+    }
+
+    @PatchMapping("/{sessionId}/lock")
+    @ApiOperation(
+            value = "Locks the session of bar",
+            notes = "Provide id of bar and session to lock the session of the bar",
+            response = SessionResponse.class
+    )
+    public ResponseEntity<SessionResponse> lockSession(
+            @ApiParam(value = "ID value for the bar you want to lock the session from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to lock") @PathVariable("sessionId") Long sessionId
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.lockSession(barId, sessionId);
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 

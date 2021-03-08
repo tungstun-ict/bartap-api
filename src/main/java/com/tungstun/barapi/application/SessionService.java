@@ -72,10 +72,22 @@ public class SessionService {
     }
 
     public Session endSession(Long barId, Long sessionId) throws NotFoundException {
-        Session session = getSessionOfBar(barId, sessionId);
-        sessionIsActive(session);
+        Session session = getActiveSession(barId, sessionId);
         session.setClosedDate(LocalDateTime.now());
         return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    public Session lockSession(Long barId, Long sessionId) throws NotFoundException {
+        Session session = getActiveSession(barId, sessionId);
+        if (session.getClosedDate() != null) session.setClosedDate(LocalDateTime.now());
+        session.lock();
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private Session getActiveSession(Long barId, Long sessionId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
+        return session;
     }
 
     private boolean barHasActiveSession(Bar bar) {
@@ -121,7 +133,7 @@ public class SessionService {
     }
 
     public void sessionIsActive(Session session) {
-        if (session.getClosedDate() != null) throw new IllegalArgumentException("Cannot make changes to session if session has ended");
+        if (session.getClosedDate() != null && session.isLocked()) throw new IllegalArgumentException("Cannot make changes to session if session has ended");
     }
 
     /**
@@ -143,6 +155,4 @@ public class SessionService {
     public void saveSession(Session session){
         this.SPRING_SESSION_REPOSITORY.save(session);
     }
-
-
 }
