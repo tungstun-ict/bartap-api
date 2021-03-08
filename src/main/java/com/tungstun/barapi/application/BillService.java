@@ -3,10 +3,10 @@ package com.tungstun.barapi.application;
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBillRepository;
 import com.tungstun.barapi.domain.Customer;
+import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.BillFactory;
 import com.tungstun.barapi.domain.order.Order;
-import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -18,10 +18,12 @@ import java.util.List;
 public class BillService {
     private final SpringBillRepository SPRING_BILL_REPOSITORY;
     private final SessionService SESSION_SERVICE;
+    private final PersonService PERSON_SERVICE;
 
-    public BillService(SpringBillRepository springBillRepository, SessionService sessionService) {
+    public BillService(SpringBillRepository springBillRepository, SessionService sessionService, PersonService personService) {
         this.SPRING_BILL_REPOSITORY = springBillRepository;
         this.SESSION_SERVICE = sessionService;
+        this.PERSON_SERVICE = personService;
     }
 
     /**
@@ -86,12 +88,10 @@ public class BillService {
      */
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        Customer customer = null;
-        for (Bill bill : session.getBills()){
-            if (bill.getCustomer().getId().equals(billRequest.customerId)) customer = bill.getCustomer();
-        }
+        this.SESSION_SERVICE.sessionIsActive(session);
+        Customer customer = this.PERSON_SERVICE.getCustomerOfBar(barId, billRequest.customerId);
         if (sessionHasBillWithCustomer(session, customer))
-            throw new DuplicateRequestException("Session already contains a bill for requested customer");
+            throw new DuplicateRequestException(String.format("Session already contains a bill for customer with id %s", customer.getId()));
         Bill bill = new BillFactory(session, customer).create();
         session.addBill(bill);
         bill = this.SPRING_BILL_REPOSITORY.save(bill);
@@ -124,6 +124,7 @@ public class BillService {
      */
     public void deleteBillFromSessionOfBar(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = getBillOfBar(barId, sessionId, billId);
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.getSession().removeBill(bill);
         this.SPRING_BILL_REPOSITORY.delete(bill);
     }
@@ -149,11 +150,13 @@ public class BillService {
     }
 
     public Bill addOrderToBill(Bill bill, Order order) {
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.addOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 
     public Bill removeOrderFromBill(Bill bill, Order order) {
+        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }

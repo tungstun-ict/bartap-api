@@ -2,9 +2,10 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
+import com.tungstun.barapi.domain.Bartender;
+import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.domain.session.SessionFactory;
+import com.tungstun.barapi.exceptions.AlreadyActiveSessionException;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,12 @@ import java.util.List;
 public class SessionService {
     private final SpringSessionRepository SPRING_SESSION_REPOSITORY;
     private final BarService BAR_SERVICE;
+    private final PersonService PERSON_SERVICE;
 
-    public SessionService(SpringSessionRepository springSessionRepository, BarService barService) {
+    public SessionService(SpringSessionRepository springSessionRepository, BarService barService, PersonService personService) {
         this.SPRING_SESSION_REPOSITORY = springSessionRepository;
         this.BAR_SERVICE = barService;
+        this.PERSON_SERVICE = personService;
     }
 
     /**
@@ -59,10 +62,66 @@ public class SessionService {
      */
     public Session createNewSession(Long barId ) throws NotFoundException {
         Bar bar = BAR_SERVICE.getBar(barId);
-        Session session = new SessionFactory(LocalDateTime.now()).createSession();
+        if(barHasActiveSession(bar)) throw new AlreadyActiveSessionException("Bar already has an active session.");
+        Session session = Session.create();
         if(!bar.addSession(session)) throw new DuplicateRequestException("Bar already has this session");
+
+        session = this.SPRING_SESSION_REPOSITORY.save(session);
         this.BAR_SERVICE.saveBar(bar);
         return session;
+    }
+
+    public Session endSession(Long barId, Long sessionId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
+        session.setClosedDate(LocalDateTime.now());
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private boolean barHasActiveSession(Bar bar) {
+        for (Session session : bar.getSessions()) {
+            if (session.getClosedDate() == null) return true;
+        }
+        return false;
+    }
+
+    public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
+        Bartender bartender = this.PERSON_SERVICE.getBartenderOfBar(barId, bartenderId);
+        if (sessionHasBartender(session, bartender))
+            throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartender.getId()));
+        bartender.addShift(session);
+            session.addBartender(bartender);
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private boolean sessionHasBartender(Session session, Bartender bartender) {
+        for (Bartender bartenderIteration : session.getBartenders()) {
+            System.out.println(bartenderIteration + " " + bartender);
+            if  (bartenderIteration.equals(bartender)) return true;
+        }
+        return false;
+    }
+
+    public Session removeBartenderFromSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
+        Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
+        Bartender bartender = findBartenderInSession(session, bartenderId);
+        bartender.removeShift(session);
+        session.removeBartender(bartender);
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
+    private Bartender findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
+        for (Bartender bartender : session.getBartenders()) {
+            if (bartender.getId().equals(bartenderId)) return bartender;
+        }
+        throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartenderId));
+    }
+
+    public void sessionIsActive(Session session) {
+        if (session.getClosedDate() != null) throw new IllegalArgumentException("Cannot make changes to session if session has ended");
     }
 
     /**
@@ -84,4 +143,6 @@ public class SessionService {
     public void saveSession(Session session){
         this.SPRING_SESSION_REPOSITORY.save(session);
     }
+
+
 }

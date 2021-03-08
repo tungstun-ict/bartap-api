@@ -1,5 +1,6 @@
 package com.tungstun.barapi.application;
 
+import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringProductRepository;
 import com.tungstun.barapi.domain.Category;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -52,7 +53,7 @@ public class ProductService {
     }
 
     private void filterProductsByCategoryId(List<Product> products, Long categoryId) throws NotFoundException {
-        products.removeIf( product -> !product.getCategory().getId().equals(categoryId) );
+        products.removeIf( product -> product.getCategory() == null || !product.getCategory().getId().equals(categoryId) );
         if (products.isEmpty()) throw new NotFoundException(String.format("No products found of category with id %s", categoryId));
     }
 
@@ -112,12 +113,31 @@ public class ProductService {
 
     public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
+        if (barHasProductWithName(bar, productRequest.name)) throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
+    private boolean barHasProductWithName(Bar bar, String name) {
+        for (Product product : bar.getProducts()) {
+            if (product.getName().toLowerCase().equals(name.toLowerCase())) return true;
+        }
+        return false;
+    }
+
+    private boolean barHasProductWithNameAndIsntItself(Bar bar, Product product, String name) {
+        for (Product productIteration : bar.getProducts()) {
+            if (productIteration.getName().toLowerCase().equals(name.toLowerCase()) && !productIteration.equals(product)) return true;
+        }
+        return false;
+    }
+
     public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Product product = getProductOfBar(barId, productId);
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        if (barHasProductWithNameAndIsntItself(bar, product, productRequest.name))
+            throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
+
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         validateCategory(category, productRequest.productType);
         ProductType productType = convertStringToProductType(productRequest.productType);

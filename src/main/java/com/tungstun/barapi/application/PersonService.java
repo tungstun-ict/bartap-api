@@ -118,4 +118,14 @@ public class PersonService {
         if (!(person instanceof Bartender)) throw new NotFoundException(String.format("No Bartender found with id %s", bartenderId));
         return (Bartender) person;
     }
+
+    /**
+     * Finds a person with id then checks if it is a Customer by casting the person to it
+     * @throws NotFoundException if no customer with given id was found
+     */
+    public Customer getCustomerOfBar(Long barId, Long customerId) throws NotFoundException {
+        Person person = getPersonOfBar(barId, customerId);
+        if (!(person instanceof Customer)) throw new NotFoundException(String.format("No Customer found with id %s", customerId));
+        return (Customer) person;
+    }
 }

@@ -1,7 +1,7 @@
 package com.tungstun.barapi.domain.bill;
 
 import com.tungstun.barapi.domain.Customer;
-import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.domain.Session;
 
 import java.util.ArrayList;
 
@@ -19,7 +19,6 @@ public class BillFactory {
                 session,
                 customer,
                 new ArrayList<>(),
-                false,
-                0.0);
+                false);
     }
 }

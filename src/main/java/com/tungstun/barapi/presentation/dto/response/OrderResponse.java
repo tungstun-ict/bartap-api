@@ -2,18 +2,31 @@ package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.product.Product;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 
+@ApiModel(description = "Response details about the order")
 public class OrderResponse {
+
+    @ApiModelProperty(notes = "The order's id")
     private Long id;
+
+    @ApiModelProperty(notes = "The order's amount of products")
     private int amount;
+
+    @ApiModelProperty(notes = "The order's creation date")
     private LocalDateTime creationDate;
+
+    @ApiModelProperty(notes = "The order's product")
     private Product product;
+
+    @ApiModelProperty(notes = "The order's bartender")
     private Bartender bartender;
 
-    public OrderResponse() { }
 
+    public OrderResponse() { }
     public OrderResponse(Long id, int amount, LocalDateTime creationDate, Product product, Bartender bartender) {
         this.id = id;
         this.amount = amount;
