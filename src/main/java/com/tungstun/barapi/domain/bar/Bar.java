@@ -15,8 +15,8 @@ public class Bar {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "adres")
-    private String adres;
+    @Column(name = "address")
+    private String address;
 
     @Column(name = "name")
     private String name;
@@ -54,9 +54,9 @@ public class Bar {
     private List<Category> categories;
 
     public Bar() {}
-    public Bar(String adres, String name, String mail, String phoneNumber,
+    public Bar(String address, String name, String mail, String phoneNumber,
                List<Person> people, List<Product> products, List<Session> sessions, List<Category> categories) {
-        this.adres = adres;
+        this.address = address;
         this.name = name;
         this.mail = mail;
         this.phoneNumber = phoneNumber;
@@ -70,10 +70,10 @@ public class Bar {
         return id;
     }
 
-    public String getAdres() { return adres; }
+    public String getAddress() { return address; }
 
-    public void setAdres(String adres) {
-        this.adres = adres;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getName() {
