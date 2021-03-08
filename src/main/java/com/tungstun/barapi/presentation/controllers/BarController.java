@@ -24,16 +24,12 @@ public class BarController {
 
     public BarController(BarService BAR_SERVICE) {this.BAR_SERVICE = BAR_SERVICE;}
 
-    /**
-     * Converts Bar object to a BarResult object ready for request response
-     * @param bar bar to be converted
-     * @return BarResult
-     */
-    private BarResponse convertToBarResult(Bar bar){
+    private BarResponse convertBarToBarResult(Bar bar){
         return new ResponseMapper().convert(bar, BarResponse.class);
     }
 
     @GetMapping
+    @PreAuthorize("hasPermission('NO_ONE_ALLOWED')")
     @ApiOperation(
             value = "Finds all bars",
             notes = "Look up a all existing bars",
@@ -43,22 +39,22 @@ public class BarController {
     public ResponseEntity<List<BarResponse>> getAllBars() throws NotFoundException {
         List<Bar> allBars = this.BAR_SERVICE.getAllBars();
         List<BarResponse> barResponses = new ArrayList<>();
-        for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
+        for (Bar bar : allBars) barResponses.add(convertBarToBarResult(bar));
         return new ResponseEntity<>(barResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#id, 'ROLE_BAR_OWNER')")
     @GetMapping("/{barId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds bar by id",
             notes = "Provide id to look up a specific bar",
             response = BarResponse.class
     )
     public ResponseEntity<BarResponse> getBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") Long id
+            @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") Long barId
     ) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(id);
-        return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.OK);
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        return new ResponseEntity<>(convertBarToBarResult(bar), HttpStatus.OK);
     }
 
     @PostMapping()
@@ -68,45 +64,36 @@ public class BarController {
             response = BarResponse.class
     )
     public ResponseEntity<BarResponse> addBar(@Valid @RequestBody BarRequest barRequest) {
-        Bar bar = this.BAR_SERVICE.addBar(
-                barRequest.address,
-                barRequest.name,
-                barRequest.mail,
-                barRequest.phoneNumber
-        );
-        return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.CREATED);
+        Bar bar = this.BAR_SERVICE.addBar(barRequest);
+        return new ResponseEntity<>(convertBarToBarResult(bar), HttpStatus.CREATED);
     }
 
-    @PreAuthorize("hasPermission(#id, 'ROLE_BAR_OWNER')")
-    @PatchMapping("/{id}")
+
+    @PutMapping("/{barId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Updates bar",
             notes = "Provide id of bar to update the bar with bar information in the request body",
             response = BarResponse.class
     )
-    public ResponseEntity<BarResponse> editBar(
-            @ApiParam(value = "ID value for the bar you want to update") @PathVariable("id") Long id,
-            @RequestBody BarRequest barRequest) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.editBar(
-                id,
-                barRequest.address,
-                barRequest.name,
-                barRequest.mail,
-                barRequest.phoneNumber
-        );
-        return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.OK);
+    public ResponseEntity<BarResponse> updateBar(
+            @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") Long barId,
+            @Valid @RequestBody BarRequest barRequest) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.updateBar(barId, barRequest);
+        return new ResponseEntity<>(convertBarToBarResult(bar), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#id, 'ROLE_BAR_OWNER')")
+
     @DeleteMapping("/{barId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes a bar",
             notes = "Provide id to delete a specific bar"
     )
     public ResponseEntity<BarResponse> deleteBar(
-            @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") Long id
+            @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") Long barId
     ) throws NotFoundException {
-        this.BAR_SERVICE.deleteBar(id);
+        this.BAR_SERVICE.deleteBar(barId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
