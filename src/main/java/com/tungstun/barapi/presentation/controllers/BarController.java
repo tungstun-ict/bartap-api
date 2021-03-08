@@ -10,16 +10,15 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bars")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class BarController {
     private final BarService BAR_SERVICE;
 
@@ -33,7 +32,6 @@ public class BarController {
     private BarResponse convertToBarResult(Bar bar){
         return new ResponseMapper().convert(bar, BarResponse.class);
     }
-
 
     @GetMapping
     @ApiOperation(
@@ -49,6 +47,7 @@ public class BarController {
         return new ResponseEntity<>(barResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#id, 'ROLE_BAR_OWNER')")
     @GetMapping("/{barId}")
     @ApiOperation(
             value = "Finds bar by id",
@@ -78,6 +77,7 @@ public class BarController {
         return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasPermission(#id, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{id}")
     @ApiOperation(
             value = "Updates bar",
@@ -97,6 +97,7 @@ public class BarController {
         return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#id, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{barId}")
     @ApiOperation(
             value = "Deletes a bar",

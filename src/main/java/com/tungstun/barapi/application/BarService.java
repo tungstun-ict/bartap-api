@@ -69,9 +69,9 @@ public class BarService {
      * Edits bar object with all values that are not null. Returns altered bar, if succesfull.
      * @return edited bar
      */
-    public Bar editBar(Long id, String adres, String name, String mail, String phoneNumber) throws NotFoundException {
+    public Bar editBar(Long id, String address, String name, String mail, String phoneNumber) throws NotFoundException {
         Bar bar = getBar(id);
-        if (adres != null) bar.setAdres(adres);
+        if (address != null) bar.setAddress(address);
         if (name != null) bar.setName(name);
         if (mail != null) bar.setMail(mail);
         if (phoneNumber != null) bar.setPhoneNumber(phoneNumber);

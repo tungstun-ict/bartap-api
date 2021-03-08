@@ -1,4 +1,4 @@
-package com.tungstun.security.data;
+package com.tungstun.security.data.model;
 
 public enum UserRole {
     ROLE_BAR_OWNER,

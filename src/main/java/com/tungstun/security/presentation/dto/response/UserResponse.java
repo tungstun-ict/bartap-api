@@ -1,6 +1,6 @@
 package com.tungstun.security.presentation.dto.response;
 
-import com.tungstun.security.data.UserRole;
+import com.tungstun.security.data.model.UserRole;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

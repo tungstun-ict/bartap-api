@@ -1,8 +1,8 @@
 package com.tungstun.security.application;
 
-import com.tungstun.security.data.SpringUserRepository;
-import com.tungstun.security.data.User;
-import com.tungstun.security.data.UserRole;
+import com.tungstun.security.data.model.User;
+import com.tungstun.security.data.model.UserRole;
+import com.tungstun.security.data.repository.SpringUserRepository;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
 import com.tungstun.security.util.jwt.JwtGenerator;
@@ -50,7 +50,7 @@ public class UserService implements UserDetailsService {
     }
 
     private String generateAuthToken(User user) {
-        return String.format("Bearer: %s", this.JWT_GENERATOR.generate(user));
+        return String.format("Bearer %s", this.JWT_GENERATOR.generate(user));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.tungstun.security.data;
+package com.tungstun.security.data.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -6,7 +6,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Table(name = "\"user\"")
@@ -23,6 +25,12 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<UserBarAuthorization> userBarAuthorizations;
 
     public User() { }
     public User(String username, String password, UserRole role) {
@@ -44,6 +52,21 @@ public class User implements UserDetails {
     public UserRole getRole() { return role; }
 
     public void setRole(UserRole role) { this.role = role; }
+
+
+    public List<UserBarAuthorization> getUserBarAuthorizations() { return userBarAuthorizations; }
+
+    public void setUserBarAuthorizations(List<UserBarAuthorization> userBarAuthorization) {
+        this.userBarAuthorizations = userBarAuthorization;
+    }
+
+    public Map<Long, String> getAuthoritiesMap() {
+        Map<Long, String> barAuth = new HashMap<>();
+        for (UserBarAuthorization userBarAuthorization : userBarAuthorizations) {
+            barAuth.put(userBarAuthorization.getBarId(), userBarAuthorization.getRole().toString());
+        }
+        return barAuth;
+    }
 
     @Override
     public boolean isAccountNonExpired() { return true; }

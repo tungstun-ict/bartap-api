@@ -124,7 +124,9 @@ public class CategoryService {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Category category = findCategoryInCategories(bar.getCategories(), categoryId);
         for (Product product : bar.getProducts()) {
-            if (product.getCategory().equals(category)) {
+            if (product.getCategory() != null &&
+                product.getCategory().equals(category)
+            ) {
                 product.setCategory(null);
             }
         }

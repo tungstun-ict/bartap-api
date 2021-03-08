@@ -10,16 +10,15 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/categories")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class CategoryController {
     private final CategoryService CATEGORY_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
@@ -33,6 +32,7 @@ public class CategoryController {
         return RESPONSE_MAPPER.convert(category, CategoryResponse.class);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
     @ApiOperation(
             value = "Finds all categories of bar",
@@ -49,6 +49,7 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/{categoryId}")
     @ApiOperation(
             value = "Finds category of bar",
@@ -63,6 +64,7 @@ public class CategoryController {
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
     @ApiOperation(
             value = "Creates new category for bar",
@@ -77,6 +79,7 @@ public class CategoryController {
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("/{categoryId}")
     @ApiOperation(
             value = "Updates the category of bar",
@@ -92,6 +95,7 @@ public class CategoryController {
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{categoryId}")
     @ApiOperation(
             value = "Deletes the category of bar",
