@@ -10,16 +10,15 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class BillController {
     private final BillService BILL_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
@@ -35,6 +34,7 @@ public class BillController {
         return billResponse;
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("bills")
     @ApiOperation(
             value = "Finds all bills of bar",
@@ -50,22 +50,7 @@ public class BillController {
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
-    @GetMapping("/sessions/{sessionId}/bills/{billId}")
-    @ApiOperation(
-            value = "Finds bill of bar",
-            notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
-            response = BillResponse.class
-    )
-    public ResponseEntity<BillResponse> getBillOfBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to retrieve the bill from") @PathVariable("sessionId") Long sessionId,
-            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
-    ) throws NotFoundException {
-        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        System.out.println(bill.getOrders());
-        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
-    }
-
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/sessions/{sessionId}/bills")
     @ApiOperation(
             value = "Finds bills of session of bar",
@@ -82,6 +67,23 @@ public class BillController {
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @GetMapping("/sessions/{sessionId}/bills/{billId}")
+    @ApiOperation(
+            value = "Finds bill of bar",
+            notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
+            response = BillResponse.class
+    )
+    public ResponseEntity<BillResponse> getBillOfBar(
+            @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to retrieve the bill from") @PathVariable("sessionId") Long sessionId,
+            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
+    ) throws NotFoundException {
+        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
+    }
+
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping("/sessions/{sessionId}/")
     @ApiOperation(
             value = "Creates new bill for session of bar",
@@ -96,6 +98,7 @@ public class BillController {
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
     @ApiOperation(
             value = "Updates the payment state of the bill of session of bar",
@@ -112,6 +115,7 @@ public class BillController {
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
     @ApiOperation(
             value = "Deletes bill of session of bar",

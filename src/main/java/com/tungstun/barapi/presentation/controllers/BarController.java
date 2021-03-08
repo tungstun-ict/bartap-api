@@ -13,14 +13,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bars")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class BarController {
     private final BarService BAR_SERVICE;
 
@@ -34,7 +32,6 @@ public class BarController {
     private BarResponse convertToBarResult(Bar bar){
         return new ResponseMapper().convert(bar, BarResponse.class);
     }
-
 
     @GetMapping
     @ApiOperation(

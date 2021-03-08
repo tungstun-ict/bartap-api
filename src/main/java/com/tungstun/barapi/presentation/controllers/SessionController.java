@@ -10,14 +10,13 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bars/{barId}/sessions")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class SessionController {
     private final SessionService SESSION_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
@@ -31,6 +30,7 @@ public class SessionController {
         return RESPONSE_MAPPER.convert(session, SessionResponse.class);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
     @ApiOperation(
             value = "Finds all sessions of bar",
@@ -46,6 +46,7 @@ public class SessionController {
         return new ResponseEntity<>(sessionResponses,  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping(path = "/{sessionId}")
     @ApiOperation(
             value = "Finds session of bar",
@@ -59,6 +60,7 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
     @ApiOperation(
             value = "Creates new session for bar",
@@ -72,6 +74,7 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/end")
     @ApiOperation(
             value = "Ends the session of bar",
@@ -86,6 +89,7 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/lock")
     @ApiOperation(
             value = "Locks the session of bar",
@@ -100,6 +104,7 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/bartenders/{bartenderId}/add")
     @ApiOperation(
             value = "Adds bartender to the session of bar",
@@ -115,6 +120,7 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/bartenders/{bartenderId}/remove")
     @ApiOperation(
             value = "Removes bartender from the session of bar",
@@ -130,6 +136,7 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{sessionId}")
     @ApiOperation(
             value = "Deletes the session of bar",
