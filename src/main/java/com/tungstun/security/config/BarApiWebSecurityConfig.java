@@ -2,13 +2,10 @@ package com.tungstun.security.config;
 
 import com.tungstun.security.presentation.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
     public final static String LOGIN_PATH = "/api/login";
@@ -49,10 +46,5 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
             .addFilter(new JwtAuthorizationFilter(this.jwtSecret, this.authenticationManager()))
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(4);
     }
 }
