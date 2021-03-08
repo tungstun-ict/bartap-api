@@ -10,16 +10,15 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class OrderController {
     private final OrderService ORDER_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
@@ -33,6 +32,7 @@ public class OrderController {
         return RESPONSE_MAPPER.convert(order, OrderResponse.class);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("orders")
     @ApiOperation(
             value = "Finds all orders of bar",
@@ -48,6 +48,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/orders")
     @ApiOperation(
             value = "Finds all orders of session of bar",
@@ -64,6 +65,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
     @ApiOperation(
             value = "Finds order of session of bar",
@@ -79,6 +81,7 @@ public class OrderController {
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
     @ApiOperation(
             value = "Finds orders of bill of session of bar",
@@ -95,6 +98,7 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
     @ApiOperation(
             value = "Finds order of bill of session of bar",
@@ -111,6 +115,7 @@ public class OrderController {
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
     @ApiOperation(
             value = "Deletes order of bill of session of bar",
@@ -126,6 +131,7 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("sessions/{sessionId}/bills/{billId}")
     @ApiOperation(
             value = "Create new order for bill of session of bar",

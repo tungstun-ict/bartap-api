@@ -10,15 +10,14 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bars/{barId}/people")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class PersonController {
     private final ResponseMapper RESPONSE_MAPPER;
     private final PersonService PERSON_SERVICE;
@@ -46,6 +45,7 @@ public class PersonController {
         return this.RESPONSE_MAPPER.convertList(people, PersonResponse.class);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
     @ApiOperation(
             value = "Finds all people of bar",
@@ -61,6 +61,7 @@ public class PersonController {
         return new ResponseEntity<>(peopleResponses, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping(path = "/{personId}")
     @ApiOperation(
             value = "Finds person of bar",
@@ -75,6 +76,7 @@ public class PersonController {
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
     @ApiOperation(
             value = "Creates person for bar",
@@ -89,6 +91,7 @@ public class PersonController {
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.CREATED);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{personId}")
     @ApiOperation(
             value = "Updates the person of bar",
@@ -104,6 +107,7 @@ public class PersonController {
         return new ResponseEntity<>(convertToPersonResponse(person), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{personId}")
     @ApiOperation(
             value = "Deletes the person from bar",
