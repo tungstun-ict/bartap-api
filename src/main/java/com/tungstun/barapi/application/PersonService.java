@@ -70,6 +70,7 @@ public class PersonService {
         }else {
             person = new Bartender(personRequest.name);
         }
+        person = this.SPRING_PERSON_REPOSITORY.save(person);
         bar.addUser(person);
         this.BAR_SERVICE.saveBar(bar);
         return person;
