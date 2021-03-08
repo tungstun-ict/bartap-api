@@ -10,17 +10,16 @@ import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.naming.directory.InvalidAttributesException;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/products")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class ProductController {
     private final ProductService PRODUCT_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
@@ -34,6 +33,7 @@ public class ProductController {
         return RESPONSE_MAPPER.convert(product, ProductResponse.class);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
     @ApiOperation(
             value = "Finds all products of bar",
@@ -52,6 +52,7 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/{productId}")
     @ApiOperation(
             value = "Finds product of bar",
@@ -66,6 +67,7 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
     @ApiOperation(
             value = "Creates new product for bar",
@@ -80,6 +82,7 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("/{productId}")
     @ApiOperation(
             value = "Updates the product of bar",
@@ -95,6 +98,7 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{productId}")
     @ApiOperation(
             value = "Deletes the product of bar",
