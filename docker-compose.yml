@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+  db:
+    build: development/db
+    ports:
+      - "15432:5432"
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=pw4postgres"
+      - "DB_APP_NAME=bar-api"
+      - "DB_APP_USER=bar-api-user"
+      - "DB_APP_PASS=bar-api-user-password"
+    volumes:
+      - "./development/data:/var/data/db"
