@@ -17,7 +17,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -77,11 +79,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .map(authority -> new SimpleGrantedAuthority((String) authority))
                 .collect(Collectors.toList());
 
+        Map<Long, String> barAuthorities = new LinkedHashMap<>();
+        for (var entry : ((LinkedHashMap<?, ?>) parsedToken.getBody().get("barRoles")).entrySet()) {
+            barAuthorities.put(Long.valueOf((String) entry.getKey()), (String) entry.getValue());
+        }
+
         if (username.isEmpty()) {
             return null;
         }
 
-        UserProfile principal = new UserProfile(username);
+        UserProfile principal = new UserProfile(username, barAuthorities);
 
         return new UsernamePasswordAuthenticationToken(principal, null, authorities);
     }
