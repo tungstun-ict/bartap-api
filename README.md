@@ -31,7 +31,7 @@ This project is made for Bart's Bar, a local bar in Harmelen, The Netherlands.
     - [Pull Requests](#Pull-Requests)
 
 ## Domain  
- ![image](bar-api.png)
+ ![image](bar-api-domain.png)
 
 ## Release
 

@@ -2,9 +2,9 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
-import com.tungstun.barapi.domain.Bar;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.SessionFactory;
+import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.domain.session.SessionFactory;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 

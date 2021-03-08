@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.session;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

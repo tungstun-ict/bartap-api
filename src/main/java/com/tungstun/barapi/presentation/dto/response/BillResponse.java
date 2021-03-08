@@ -1,8 +1,8 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Customer;
-import com.tungstun.barapi.domain.Order;
-import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.session.Session;
 
 import java.util.List;
 

@@ -1,4 +1,9 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.bar;
+
+import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.domain.Person;
+import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +16,13 @@ public class BarBuilder {
     private List<Person> people;
     private List<Product> products;
     private List<Session> sessions;
+    private List<Category> categories;
 
     public BarBuilder() {
         this.people = new ArrayList<>();
         this.products = new ArrayList<>();
         this.sessions = new ArrayList<>();
+        this.categories = new ArrayList<>();
     }
 
     public BarBuilder setAdres(String adres) {
@@ -53,8 +60,20 @@ public class BarBuilder {
         return this;
     }
 
+    public BarBuilder setCategories(List<Category> categories) {
+        this.categories = categories;
+        return this;
+    }
+
     public Bar build() {
-        return new Bar(this.adres, this.name, this.mail, this.phoneNumber,
-                this.people, this.products, this.sessions);
+        return new Bar(this.adres,
+                this.name,
+                this.mail,
+                this.phoneNumber,
+                this.people,
+                this.products,
+                this.sessions,
+                this.categories
+        );
     }
 }

@@ -1,4 +1,9 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.bar;
+
+import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.domain.Person;
+import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.util.List;
@@ -28,18 +33,29 @@ public class Bar {
     )
     private List<Person> people;
 
-    @Transient
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<Product> products;
 
     @OneToMany(
         fetch = FetchType.LAZY,
         cascade = CascadeType.ALL,
-        orphanRemoval = true)
+        orphanRemoval = true
+    )
     private List<Session> sessions;
 
-    public Bar() {}
+    @OneToMany(
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<Category> categories;
 
-    public Bar(String adres, String name, String mail, String phoneNumber, List<Person> people, List<Product> products, List<Session> sessions) {
+    public Bar() {}
+    public Bar(String adres, String name, String mail, String phoneNumber,
+               List<Person> people, List<Product> products, List<Session> sessions, List<Category> categories) {
         this.adres = adres;
         this.name = name;
         this.mail = mail;
@@ -47,6 +63,7 @@ public class Bar {
         this.people = people;
         this.products = products;
         this.sessions = sessions;
+        this.categories = categories;
     }
 
     public Long getId() {
@@ -120,5 +137,16 @@ public class Bar {
 
     public boolean removeSession(Session session){
         return this.sessions.remove(session);
+    }
+
+    public List<Category> getCategories() { return categories; }
+
+    public boolean addCategory(Category category){
+        if ( !this.categories.contains(category) ) return this.categories.add(category);
+        return false;
+    }
+
+    public boolean removeCategory(Category category){
+        return this.categories.remove(category);
     }
 }

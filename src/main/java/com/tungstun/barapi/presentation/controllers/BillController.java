@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BillService;
-import com.tungstun.barapi.domain.Bill;
+import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -70,7 +70,7 @@ public class BillController {
             @PathVariable("barId") Long barId,
             @PathVariable("sessionId") Long sessionId,
             @PathVariable("billId") Long billId,
-            @RequestParam(value = "isPayed", required = true) Boolean isPayed
+            @RequestParam(value = "isPayed") Boolean isPayed
             ) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.setIsPayedOfBillOfSession(barId, sessionId, billId, isPayed);
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);

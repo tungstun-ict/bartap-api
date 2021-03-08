@@ -2,7 +2,11 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBillRepository;
-import com.tungstun.barapi.domain.*;
+import com.tungstun.barapi.domain.Customer;
+import com.tungstun.barapi.domain.bill.Bill;
+import com.tungstun.barapi.domain.bill.BillFactory;
+import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -145,12 +149,12 @@ public class BillService {
     }
 
     public Bill addOrderToBill(Bill bill, Order order) {
-        bill.getOrders().add(order);
+        bill.addOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 
     public Bill removeOrderFromBill(Bill bill, Order order) {
-        bill.getOrders().remove(order);
+        bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 }

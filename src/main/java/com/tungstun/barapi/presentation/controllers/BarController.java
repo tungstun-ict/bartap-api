@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BarService;
-import com.tungstun.barapi.domain.Bar;
+import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.barapi.presentation.dto.response.BarResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;

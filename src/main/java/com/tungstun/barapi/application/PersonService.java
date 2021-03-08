@@ -2,10 +2,10 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringPersonRepository;
-import com.tungstun.barapi.domain.Bar;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Person;
+import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -107,5 +107,15 @@ public class PersonService {
         Person person = getPersonOfBar(barId, personId);
         bar.removeUser(person);
         this.BAR_SERVICE.saveBar(bar);
+    }
+
+    /**
+     * Finds a person with id then checks if it is a Bartender by casting the person to it
+     * @throws NotFoundException if no bartender with given id was found
+     */
+    public Bartender getBartenderOfBar(Long barId, Long bartenderId) throws NotFoundException {
+        Person person = getPersonOfBar(barId, bartenderId);
+        if (!(person instanceof Bartender)) throw new NotFoundException(String.format("No Bartender found with id %s", bartenderId));
+        return (Bartender) person;
     }
 }

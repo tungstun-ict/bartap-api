@@ -1,64 +1,44 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.tungstun.barapi.domain.Bartender;
-import com.tungstun.barapi.domain.OrderLine;
+import com.tungstun.barapi.domain.product.Product;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 public class OrderResponse {
     private Long id;
-    private LocalDateTime date;
-    private double price;
+    private int amount;
+    private LocalDateTime creationDate;
+    private Product product;
     private Bartender bartender;
-    private List<OrderLine> orderLines;
 
     public OrderResponse() { }
-    public OrderResponse(Long id, LocalDateTime date, double price, Bartender bartender, List<OrderLine> orderLines) {
+
+    public OrderResponse(Long id, int amount, LocalDateTime creationDate, Product product, Bartender bartender) {
         this.id = id;
-        this.date = date;
-        this.price = price;
-        this.bartender = bartender;
-        this.orderLines = orderLines;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public LocalDateTime getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDateTime date) {
-        this.date = date;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-    public void setPrice(double price) {
-        this.price = price;
-    }
-
-    public Bartender getBartender() {
-        return bartender;
-    }
-
-    public void setBartender(Bartender bartender) {
+        this.amount = amount;
+        this.creationDate = creationDate;
+        this.product = product;
         this.bartender = bartender;
     }
 
-    public List<OrderLine> getOrderLines() {
-        return orderLines;
-    }
+    public Long getId() { return id; }
 
-    public void setOrderLines(List<OrderLine> orderLines) {
-        this.orderLines = orderLines;
-    }
+    public void setId(Long id) { this.id = id; }
+
+    public int getAmount() { return amount; }
+
+    public void setAmount(int amount) { this.amount = amount; }
+
+    public LocalDateTime getCreationDate() { return creationDate; }
+
+    public void setCreationDate(LocalDateTime creationDate) { this.creationDate = creationDate; }
+
+    public Product getProduct() { return product; }
+
+    public void setProduct(Product product) { this.product = product; }
+
+    public Bartender getBartender() { return bartender; }
+
+    public void setBartender(Bartender bartender) { this.bartender = bartender; }
 }

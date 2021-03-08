@@ -1,6 +1,6 @@
 package com.tungstun.barapi.data;
 
-import com.tungstun.barapi.domain.Bill;
+import com.tungstun.barapi.domain.bill.Bill;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

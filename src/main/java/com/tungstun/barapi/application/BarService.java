@@ -2,7 +2,8 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.domain.*;
+import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.bar.BarBuilder;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 

@@ -1,10 +1,14 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.bill;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.tungstun.barapi.domain.Customer;
+import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @JsonIdentityInfo(
@@ -20,6 +24,15 @@ public class Bill {
 
     @Column(name = "is_payed")
     private boolean isPayed;
+
+    @Column(name = "creation_date")
+    private LocalDateTime creationDate;
+
+    @Column(name = "closed_date")
+    private LocalDateTime closedDate;
+
+    @Column(name = "price")
+    private double price;
 
     @JsonManagedReference
     @ManyToOne(optional = false)
@@ -38,11 +51,13 @@ public class Bill {
     private List<Order> orders;
 
     public Bill() { }
-    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed) {
+    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed, double price) {
         this.session = session;
         this.customer = customer;
         this.orders = orders;
         this.isPayed = isPayed;
+        this.price = price;
+        this.creationDate = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -59,16 +74,26 @@ public class Bill {
         return this.orders;
     }
 
-    public boolean addBartender(Order order ){
+    public boolean addOrder(Order order){
         if ( !this.orders.contains(order) ) return this.orders.add(order);
         return false;
     }
 
-    public boolean removeBartender(Order order){
+    public boolean removeOrder(Order order){
         return this.orders.remove(order);
     }
 
     public boolean isPayed() { return isPayed; }
 
     public void setPayed(boolean payed) { isPayed = payed; }
+
+    public LocalDateTime getCreationDate() { return creationDate; }
+
+    public LocalDateTime getClosedDate() { return closedDate; }
+
+    public void setClosedDate(LocalDateTime closedDate) { this.closedDate = closedDate; }
+
+    public double getPrice() { return price; }
+
+    public void setPrice(double price) { this.price = price; }
 }
