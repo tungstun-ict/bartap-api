@@ -80,7 +80,7 @@ public class PersonController {
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.CREATED);
     }
 
-    @PatchMapping("/{personId}")
+    @PutMapping("/{personId}")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Updates the person of bar",
@@ -90,7 +90,7 @@ public class PersonController {
     public ResponseEntity<PersonResponse> updatePerson(
             @ApiParam(value = "ID value for the bar you want to update the person from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") Long personId,
-            @RequestBody PersonRequest personRequest)
+            @Valid @RequestBody PersonRequest personRequest)
             throws NotFoundException {
         Person person = this.PERSON_SERVICE.updatePerson(barId, personId, personRequest);
         return new ResponseEntity<>(convertToPersonResponse(person), HttpStatus.OK);
