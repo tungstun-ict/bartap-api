@@ -1,6 +1,6 @@
 package com.tungstun.security.util.jwt;
 
-import com.tungstun.security.data.User;
+import com.tungstun.security.data.model.User;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;

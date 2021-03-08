@@ -1,6 +1,6 @@
 package com.tungstun.security.config.evaluator;
 
-import com.tungstun.security.data.UserProfile;
+import com.tungstun.security.data.model.UserProfile;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 

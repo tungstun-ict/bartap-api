@@ -1,6 +1,6 @@
 package com.tungstun.security.presentation.filter;
 
-import com.tungstun.security.data.UserProfile;
+import com.tungstun.security.data.model.UserProfile;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtParser;

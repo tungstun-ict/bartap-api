@@ -3,7 +3,7 @@ package com.tungstun.barapi.domain;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.security.data.User;
+import com.tungstun.security.data.model.User;
 
 import javax.persistence.*;
 

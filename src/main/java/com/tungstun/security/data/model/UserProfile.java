@@ -1,4 +1,4 @@
-package com.tungstun.security.data;
+package com.tungstun.security.data.model;
 
 import java.util.HashMap;
 import java.util.Map;

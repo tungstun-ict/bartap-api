@@ -1,7 +1,7 @@
 package com.tungstun.security.application;
 
-import com.tungstun.security.data.User;
-import com.tungstun.security.data.UserRole;
+import com.tungstun.security.data.model.User;
+import com.tungstun.security.data.model.UserRole;
 import com.tungstun.security.data.repository.SpringUserRepository;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;

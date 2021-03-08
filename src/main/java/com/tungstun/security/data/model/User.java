@@ -1,4 +1,4 @@
-package com.tungstun.security.data;
+package com.tungstun.security.data.model;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
