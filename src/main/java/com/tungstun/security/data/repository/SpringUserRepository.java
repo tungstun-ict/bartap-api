@@ -1,5 +1,6 @@
-package com.tungstun.security.data;
+package com.tungstun.security.data.repository;
 
+import com.tungstun.security.data.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
