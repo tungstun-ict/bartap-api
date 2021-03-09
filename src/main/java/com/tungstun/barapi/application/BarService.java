@@ -2,7 +2,6 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -15,23 +14,32 @@ import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class BarService {
     private final SpringBarRepository SPRING_BAR_REPOSITORY;
     private final UserService USER_SERVICE;
-    private final SpringPersonRepository SPRING_PERSON_REPOSITORY;
 
-    public BarService(SpringBarRepository springBarRepository, UserService userService, SpringPersonRepository springPersonRepository) {
+    public BarService(SpringBarRepository springBarRepository, UserService userService) {
         this.SPRING_BAR_REPOSITORY = springBarRepository;
         this.USER_SERVICE = userService;
-        this.SPRING_PERSON_REPOSITORY = springPersonRepository;
     }
 
     public List<Bar> getAllBars() throws NotFoundException{
         List<Bar> bars = this.SPRING_BAR_REPOSITORY.findAll();
         if (bars.isEmpty()) throw new NotFoundException("There are no bars available");
         return bars;
+    }
+
+    public List<Bar> getAllBarOwnerBars(String username) throws NotFoundException {
+        User user = (User) this.USER_SERVICE.loadUserByUsername(username);
+        Set<Long> ownedBarIds = user.getAuthoritiesMap().keySet();
+        return getAllBars()
+                .stream()
+                .filter(bar -> ownedBarIds.contains(bar.getId()))
+                .collect(Collectors.toList());
     }
 
     public Bar getBar(Long id) throws NotFoundException {

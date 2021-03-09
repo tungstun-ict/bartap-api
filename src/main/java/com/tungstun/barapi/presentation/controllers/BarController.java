@@ -26,17 +26,12 @@ public class BarController {
 
     public BarController(BarService BAR_SERVICE) {this.BAR_SERVICE = BAR_SERVICE;}
 
-    /**
-     * Converts Bar object to a BarResult object ready for request response
-     * @param bar bar to be converted
-     * @return BarResult
-     */
     private BarResponse convertToBarResult(Bar bar){
         return new ResponseMapper().convert(bar, BarResponse.class);
     }
 
-    @GetMapping
-    @PreAuthorize("hasPermission('NO_ONE_ALLOWED')")
+    @GetMapping("/all")
+    @PreAuthorize("hasPermission(-1L, 'NO_ONE_ALLOWED')")
     @ApiOperation(
             value = "Finds all bars",
             notes = "Look up a all existing bars",
@@ -45,6 +40,23 @@ public class BarController {
     )
     public ResponseEntity<List<BarResponse>> getAllBars() throws NotFoundException {
         List<Bar> allBars = this.BAR_SERVICE.getAllBars();
+        List<BarResponse> barResponses = new ArrayList<>();
+        for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
+        return new ResponseEntity<>(barResponses, HttpStatus.OK);
+    }
+
+    @GetMapping
+    @ApiOperation(
+            value = "Finds all bars",
+            notes = "Look up a all existing bars",
+            response = BarResponse.class,
+            responseContainer = "List"
+    )
+    public ResponseEntity<List<BarResponse>> getAllBarOwnerBars(
+            Authentication authentication
+    ) throws NotFoundException {
+        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
+        List<Bar> allBars = this.BAR_SERVICE.getAllBarOwnerBars(userProfile.getUsername());
         List<BarResponse> barResponses = new ArrayList<>();
         for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
         return new ResponseEntity<>(barResponses, HttpStatus.OK);
