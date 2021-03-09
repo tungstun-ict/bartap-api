@@ -56,6 +56,15 @@ public class Session {
         return new Session(new ArrayList<>(), new ArrayList<>());
     }
 
+    public void endSession() {
+        this.closedDate = LocalDateTime.now();
+    }
+
+    public void lock() {
+        if (this.closedDate == null) endSession();
+        isLocked = true;
+    }
+
     public boolean isActive() {
         return this.closedDate == null && !this.isLocked;
     }
@@ -72,14 +81,7 @@ public class Session {
 
     public LocalDateTime getClosedDate() { return closedDate; }
 
-    public void setClosedDate(LocalDateTime closedDate) { this.closedDate = closedDate; }
-
     public boolean isLocked() { return isLocked; }
-
-    public void lock() {
-        isLocked = true;
-        this.closedDate = LocalDateTime.now();
-    }
 
     public boolean addBill(Bill bill){
         if (!this.bills.contains(bill)) return this.bills.add(bill);
