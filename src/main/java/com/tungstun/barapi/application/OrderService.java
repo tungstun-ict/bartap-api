@@ -18,39 +18,18 @@ public class OrderService {
     private final ProductService PRODUCT_SERVICE;
     private final SpringOrderRepository SPRING_ORDER_REPOSITORY;
     private final SessionService SESSION_SERVICE;
-    private final PersonService PERSON_SERVICE;
     private final BillService BILL_SERVICE;
 
 
     public OrderService(SessionService sessionService,
-                        PersonService personService,
                         BillService billService,
                         SpringOrderRepository springOrderRepository,
                         ProductService productService
     ) {
         this.SESSION_SERVICE = sessionService;
-        this.PERSON_SERVICE = personService;
         this.BILL_SERVICE = billService;
         this.SPRING_ORDER_REPOSITORY = springOrderRepository;
         this.PRODUCT_SERVICE = productService;
-    }
-
-    private List<Order> extractOrdersFromSession(Session session) {
-        List<Order> orders = new ArrayList<>();
-        for (Bill bill : session.getBills()) {
-            orders.addAll(bill.getOrders());
-        }
-        return orders;
-    }
-
-    private Order findOrderInSession(Session session, Long orderId) throws NotFoundException {
-        List<Order> orders = extractOrdersFromSession(session);
-        for (Order order : orders) {
-            if (order.getId().equals(orderId)) {
-                return order;
-            }
-        }
-        throw new NotFoundException(String.format("No order found with id: %s", orderId));
     }
 
     private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
@@ -72,6 +51,14 @@ public class OrderService {
         return orders;
     }
 
+    private List<Order> extractOrdersFromSession(Session session) {
+        List<Order> orders = new ArrayList<>();
+        for (Bill bill : session.getBills()) {
+            orders.addAll(bill.getOrders());
+        }
+        return orders;
+    }
+
     public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
         List<Order> orders = extractOrdersFromSession(session);
@@ -85,6 +72,14 @@ public class OrderService {
         return findOrderInSession(session, orderId);
     }
 
+    private Order findOrderInSession(Session session, Long orderId) throws NotFoundException {
+        List<Order> orders = extractOrdersFromSession(session);
+        for (Order order : orders) {
+            if (order.getId().equals(orderId)) return order;
+        }
+        throw new NotFoundException(String.format("No order found with id: %s", orderId));
+    }
+
     public List<Order> getAllOrdersOfBill(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
         List<Order> orders = bill.getOrders();
@@ -96,9 +91,7 @@ public class OrderService {
     public Order getOrderOfBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
         for (Order order : bill.getOrders()) {
-            if (order.getId().equals(orderId)) {
-                return order;
-            }
+            if (order.getId().equals(orderId)) return order;
         }
         throw new NotFoundException(String.format("No order found with id '%s' in bill with id '%s'", orderId, billId));
     }
@@ -124,7 +117,7 @@ public class OrderService {
         return new Order(product, amount, bartender);
     }
 
-    private Order addOrderToBill(Bill bill, Order order) {
+    private Order saveOrderToBill(Bill bill, Order order) {
         order = this.SPRING_ORDER_REPOSITORY.save(order);
         this.BILL_SERVICE.addOrderToBill(bill, order);
         return order;
@@ -134,6 +127,6 @@ public class OrderService {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
         this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         Order order = buildOrder(barId, orderRequest, bill);
-        return addOrderToBill(bill, order);
+        return saveOrderToBill(bill, order);
     }
 }

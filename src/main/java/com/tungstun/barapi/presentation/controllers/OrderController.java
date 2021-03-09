@@ -32,8 +32,8 @@ public class OrderController {
         return RESPONSE_MAPPER.convert(order, OrderResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("orders")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all orders of bar",
             notes = "Provide id of bar to look up all orders that are linked to the bar",
@@ -48,8 +48,8 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/orders")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all orders of session of bar",
             notes = "Provide id of bar and session to look up all orders that are linked session of the bar",
@@ -65,8 +65,8 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds order of session of bar",
             notes = "Provide id of bar, session and order to look up specific order of session of the bar",
@@ -81,8 +81,8 @@ public class OrderController {
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds orders of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to look up orders of bill of session of the bar",
@@ -98,8 +98,8 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds order of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to look up specific order of bill of session of the bar",
@@ -115,8 +115,8 @@ public class OrderController {
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes order of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to delete specific order of bill of session of the bar"
@@ -131,14 +131,14 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("sessions/{sessionId}/bills/{billId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Create new order for bill of session of bar",
             notes = "Provide id of bar, session and bill to create a new order with information from request body",
             response = OrderResponse.class
     )
-    public ResponseEntity<OrderResponse> addProductToOrder(
+    public ResponseEntity<OrderResponse> createNewOrder(
             @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") Long billId,
