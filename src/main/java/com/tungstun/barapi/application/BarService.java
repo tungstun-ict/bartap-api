@@ -19,12 +19,12 @@ import java.util.List;
 public class BarService {
     private final SpringBarRepository SPRING_BAR_REPOSITORY;
     private final UserService USER_SERVICE;
-    private final SpringPersonRepository SPRING_USER_REPOSITORY;
+    private final SpringPersonRepository SPRING_PERSON_REPOSITORY;
 
     public BarService(SpringBarRepository springBarRepository, UserService userService, SpringPersonRepository springPersonRepository) {
         this.SPRING_BAR_REPOSITORY = springBarRepository;
         this.USER_SERVICE = userService;
-        this.SPRING_USER_REPOSITORY = springPersonRepository;
+        this.SPRING_PERSON_REPOSITORY = springPersonRepository;
     }
 
     /**
