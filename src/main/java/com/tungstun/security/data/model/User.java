@@ -56,8 +56,13 @@ public class User implements UserDetails {
 
     public List<UserBarAuthorization> getUserBarAuthorizations() { return userBarAuthorizations; }
 
-    public void setUserBarAuthorizations(List<UserBarAuthorization> userBarAuthorization) {
-        this.userBarAuthorizations = userBarAuthorization;
+    public boolean addUserBarAuthorizations(UserBarAuthorization userBarAuthorization) {
+        if (!this.userBarAuthorizations.contains(userBarAuthorization)) return this.userBarAuthorizations.add(userBarAuthorization);
+        return false;
+    }
+
+    public boolean removeUserBarAuthorizations(UserBarAuthorization userBarAuthorization) {
+        return this.userBarAuthorizations.remove(userBarAuthorization);
     }
 
     public Map<Long, String> getAuthoritiesMap() {
