@@ -6,7 +6,8 @@ import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
-import com.tungstun.barapi.exceptions.LockedSessionException;
+import com.tungstun.barapi.exceptions.InvalidSessionStateException;
+import com.tungstun.barapi.presentation.dto.request.SessionRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -51,15 +52,22 @@ public class SessionService {
                 .orElseThrow(() -> new NotFoundException("No active session found"));
     }
 
-    public Session createNewSession(Long barId ) throws NotFoundException {
+    public Session createNewSession(Long barId, SessionRequest sessionRequest) throws NotFoundException {
         Bar bar = BAR_SERVICE.getBar(barId);
         if(barHasActiveSession(bar)) throw new DuplicateActiveSessionException("Bar already has an active session.");
-        Session session = Session.create();
+        Session session = Session.create(sessionRequest.name);
         if(!bar.addSession(session)) throw new DuplicateRequestException("Bar already has this session");
         session = this.SPRING_SESSION_REPOSITORY.save(session);
         this.BAR_SERVICE.saveBar(bar);
         return session;
     }
+
+    public Session updateSession(Long barId, Long sessionId, SessionRequest sessionRequest) throws NotFoundException {
+        Session session = getSessionIfActive(barId, sessionId);
+        session.setName(sessionRequest.name);
+        return this.SPRING_SESSION_REPOSITORY.save(session);
+    }
+
     private boolean barHasActiveSession(Bar bar) {
         for (Session session : bar.getSessions()) {
             if (session.isActive()) return true;
@@ -74,7 +82,8 @@ public class SessionService {
     }
 
     public Session lockSession(Long barId, Long sessionId) throws NotFoundException {
-        Session session = getSessionIfActive(barId, sessionId);
+        Session session = getSessionOfBar(barId, sessionId);
+        if (session.isLocked())throw new InvalidSessionStateException("Cannot lock an already locked session");
         session.lock();
         return this.SPRING_SESSION_REPOSITORY.save(session);
     }
@@ -82,7 +91,7 @@ public class SessionService {
     private Session getSessionIfActive(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
         if (session.isActive())
-            throw new LockedSessionException("Cannot make changes to session if session has ended");
+            throw new InvalidSessionStateException("Cannot make changes to session if session is not active");
         return session;
     }
 
@@ -127,4 +136,5 @@ public class SessionService {
     public void saveSession(Session session){
         this.SPRING_SESSION_REPOSITORY.save(session);
     }
+
 }

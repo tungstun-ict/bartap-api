@@ -2,6 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.SessionService;
 import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.presentation.dto.request.SessionRequest;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -13,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -82,9 +84,26 @@ public class SessionController {
             response = SessionResponse.class
     )
     public ResponseEntity<SessionResponse> createNewSession(
-            @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId)
-            throws NotFoundException {
-        Session session = this.SESSION_SERVICE.createNewSession(barId);
+            @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId,
+            @Valid @RequestBody SessionRequest sessionRequest
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.createNewSession(barId, sessionRequest);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{sessionId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Creates new session for bar",
+            notes = "Provide id of bar to update the session with information from the request body",
+            response = SessionResponse.class
+    )
+    public ResponseEntity<SessionResponse> updateSession(
+            @ApiParam(value = "ID value for the bar you want to update the session from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") Long sessionId,
+            @Valid @RequestBody SessionRequest sessionRequest
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.updateSession(barId, sessionId, sessionRequest);
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
     }
 
