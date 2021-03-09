@@ -74,10 +74,11 @@ public class Session {
 
     public void lock() {
         isLocked = true;
+        this.closedDate = LocalDateTime.now();
     }
 
     public boolean addBill(Bill bill){
-        if ( !this.bills.contains(bill) ) return this.bills.add(bill);
+        if (!this.bills.contains(bill)) return this.bills.add(bill);
         return false;
     }
 
@@ -86,7 +87,7 @@ public class Session {
     public List<Bartender> getBartenders() { return this.bartenders; }
 
     public boolean addBartender(Bartender bartender){
-        if ( !this.bartenders.contains(bartender) && !bartender.getShifts().contains(this)) return false;
+        if (!this.bartenders.contains(bartender) && !bartender.getShifts().contains(this)) return false;
         return this.bartenders.add(bartender);
     }
 
