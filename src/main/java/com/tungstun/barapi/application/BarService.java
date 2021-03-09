@@ -6,11 +6,11 @@ import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
 import com.tungstun.security.data.model.UserBarAuthorization;
 import com.tungstun.security.data.model.UserRole;
-import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +40,7 @@ public class BarService {
                  String.format("Bar with id %s doesn't exist", id)) );
     }
 
-    public Bar addBar(BarRequest barRequest, String ownerName) {
+    public Bar addBar(BarRequest barRequest, String ownerUsername) {
         checkIfBarExists(barRequest.name);
         Bar bar = new BarBuilder()
                 .setAdres(barRequest.address)
@@ -49,9 +49,9 @@ public class BarService {
                 .setPhoneNumber(barRequest.phoneNumber)
                 .build();
         bar = this.SPRING_BAR_REPOSITORY.save(bar);
-        User user = (User) this.USER_SERVICE.loadUserByUsername(username);
+        User user = (User) this.USER_SERVICE.loadUserByUsername(ownerUsername);
         user.addUserBarAuthorizations(new UserBarAuthorization(bar.getId(), user.getId(), UserRole.ROLE_BAR_OWNER));
-        Bartender bartender = new Bartender(username);
+        Bartender bartender = new Bartender(ownerUsername);
         bartender.setUser(user);
         bar.addUser(bartender);
         return this.SPRING_BAR_REPOSITORY.save(bar);
