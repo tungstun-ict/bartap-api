@@ -2,7 +2,6 @@ package com.tungstun.barapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tungstun.barapi.domain.Bartender;
-import com.tungstun.barapi.domain.bill.Bill;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -28,7 +27,7 @@ public class SessionResponse {
     private List<Bartender> bartenders;
 
     @ApiModelProperty(notes = "The session's bills")
-    private List<Bill> bills;
+    private List<BillResponse> bills;
 
     public SessionResponse() { }
 
@@ -52,11 +51,11 @@ public class SessionResponse {
 
     public void setLocked(boolean locked) { isLocked = locked; }
 
-    public List<Bill> getBills() {
+    public List<BillResponse> getBills() {
         return bills;
     }
 
-    public void setBills(List<Bill> bills) {
+    public void setBills(List<BillResponse> bills) {
         this.bills = bills;
     }
 

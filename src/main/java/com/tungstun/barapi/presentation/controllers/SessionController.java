@@ -2,7 +2,9 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.SessionService;
 import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;
+import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -29,7 +31,15 @@ public class SessionController {
     }
 
     private SessionResponse convertToSessionResult(Session session){
-        return RESPONSE_MAPPER.convert(session, SessionResponse.class);
+        SessionResponse sessionResponse = RESPONSE_MAPPER.convert(session, SessionResponse.class);
+        for (BillResponse billResponse : sessionResponse.getBills()) {
+            double billTotal = 0.0;
+            for (Order order : billResponse.getOrders()) {
+                billTotal += order.getProduct().getPrice()*order.getAmount();
+            }
+            billResponse.setTotalPrice(billTotal);
+        }
+        return sessionResponse;
     }
 
     @GetMapping
