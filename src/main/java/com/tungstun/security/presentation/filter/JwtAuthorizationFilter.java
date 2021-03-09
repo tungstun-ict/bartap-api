@@ -17,8 +17,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Tries to authorize a user, based on the Bearer token (JWT) from
@@ -72,16 +70,11 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .getBody()
                 .getSubject();
 
-        Map<Long, String> barAuthorities = new LinkedHashMap<>();
-        for (var entry : ((LinkedHashMap<?, ?>) parsedToken.getBody().get("barRoles")).entrySet()) {
-            barAuthorities.put(Long.valueOf((String) entry.getKey()), (String) entry.getValue());
-        }
-
         if (username.isEmpty()) {
             return null;
         }
 
-        UserProfile principal = new UserProfile(username, barAuthorities);
+        UserProfile principal = new UserProfile(username);
 
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
