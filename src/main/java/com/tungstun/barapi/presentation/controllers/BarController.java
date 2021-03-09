@@ -5,12 +5,14 @@ import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.barapi.presentation.dto.response.BarResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
+import com.tungstun.security.data.model.UserProfile;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -67,12 +69,16 @@ public class BarController {
             notes = "Provide bar information in the request body to create a new bar",
             response = BarResponse.class
     )
-    public ResponseEntity<BarResponse> addBar(@Valid @RequestBody BarRequest barRequest) {
+    public ResponseEntity<BarResponse> addBar(
+            @Valid @RequestBody BarRequest barRequest,
+            Authentication authentication
+    ) {
         Bar bar = this.BAR_SERVICE.addBar(
                 barRequest.address,
                 barRequest.name,
                 barRequest.mail,
-                barRequest.phoneNumber
+                barRequest.phoneNumber,
+                ((UserProfile) authentication.getPrincipal()).getUsername()
         );
         return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.CREATED);
     }
