@@ -46,6 +46,20 @@ public class SessionController {
         return new ResponseEntity<>(sessionResponses,  HttpStatus.OK);
     }
 
+    @GetMapping(path = "/active")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Finds active session of bar",
+            notes = "Provide id of bar and session to look up the currectly active session of the bar",
+            response = SessionResponse.class
+    )
+    public ResponseEntity<SessionResponse> getActiveBarSessions(
+            @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.getActiveSessionOfBar(barId);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+    }
+
     @GetMapping(path = "/{sessionId}")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(

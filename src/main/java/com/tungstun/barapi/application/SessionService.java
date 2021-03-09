@@ -33,13 +33,23 @@ public class SessionService {
     }
 
     public Session getSessionOfBar(Long barId, Long sessionId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
-        List<Session> sessions = bar.getSessions();
-        if (sessions.isEmpty()) throw new NotFoundException("There are no sessions available for this bar");
+        List<Session> sessions = getAllSessionsOfBar(barId);
         for(Session session : sessions){
             if(session.getId().equals(sessionId)) return session;
         }
         throw new NotFoundException("Bar does not have a session with id: " + sessionId);
+    }
+
+    public Session getActiveSessionOfBar(Long barId) throws NotFoundException {
+        List<Session> sessions = getAllSessionsOfBar(barId);
+        return findActiveSession(sessions);
+    }
+
+    private Session findActiveSession(List<Session> sessions) throws NotFoundException {
+        return sessions.stream()
+                .filter(session -> !session.isLocked())
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No active session found"));
     }
 
     public Session createNewSession(Long barId ) throws NotFoundException {
@@ -53,7 +63,7 @@ public class SessionService {
     }
     private boolean barHasActiveSession(Bar bar) {
         for (Session session : bar.getSessions()) {
-            if (session.getClosedDate() == null) return true;
+            if (!session.isLocked()) return true;
         }
         return false;
     }
