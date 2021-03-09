@@ -10,7 +10,6 @@ import com.tungstun.barapi.exceptions.LockedSessionException;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -70,26 +69,21 @@ public class SessionService {
 
     public Session endSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionIfActive(barId, sessionId);
-        session.setClosedDate(LocalDateTime.now());
+        session.endSession();
         return this.SPRING_SESSION_REPOSITORY.save(session);
     }
 
     public Session lockSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionIfActive(barId, sessionId);
-        if (session.getClosedDate() != null) session.setClosedDate(LocalDateTime.now());
         session.lock();
         return this.SPRING_SESSION_REPOSITORY.save(session);
     }
 
     private Session getSessionIfActive(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
-        sessionIsActive(session);
-        return session;
-    }
-
-    public void sessionIsActive(Session session) {
-        if (session.isLocked())
+        if (session.isActive())
             throw new LockedSessionException("Cannot make changes to session if session has ended");
+        return session;
     }
 
     public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
