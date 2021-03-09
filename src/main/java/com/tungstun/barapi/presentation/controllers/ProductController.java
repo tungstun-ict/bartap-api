@@ -33,8 +33,8 @@ public class ProductController {
         return RESPONSE_MAPPER.convert(product, ProductResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all products of bar",
             notes = "Provide id of bar to look up all products that are linked to the bar",
@@ -52,8 +52,8 @@ public class ProductController {
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/{productId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds product of bar",
             notes = "Provide id of bar and product to look up the specific from the bar",
@@ -67,8 +67,8 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates new product for bar",
             notes = "Provide id of bar to add a new product with information from the request body to the bar",
@@ -82,8 +82,8 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("/{productId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Updates the product of bar",
             notes = "Provide id of bar and product to update the product with information from the request body",
@@ -98,8 +98,8 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{productId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes the product of bar",
             notes = "Provide id of bar and product to delete the product from the bar",
