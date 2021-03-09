@@ -1,7 +1,6 @@
 package com.tungstun.barapi.domain.bill;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.Customer;
@@ -15,7 +14,6 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
-@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "bill")
 public class Bill {
