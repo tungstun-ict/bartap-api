@@ -25,12 +25,15 @@ public class Bartender extends Person {
         super(name);
     }
 
+    public List<Session> getShifts() { return shifts; }
+
     public boolean addShift(Session session) {
-        if ( !this.shifts.contains(session) ) return this.shifts.add(session);
-        return false;
+        if (this.shifts.contains(session) && session.getBartenders().contains(this)) return false;
+        return this.shifts.add(session);
     }
 
     public boolean removeShift(Session session){
+        if (session.getBartenders().contains(this)) session.removeBartender(this);
         return this.shifts.remove(session);
     }
 }

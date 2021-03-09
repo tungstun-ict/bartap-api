@@ -86,9 +86,12 @@ public class Session {
     public List<Bartender> getBartenders() { return this.bartenders; }
 
     public boolean addBartender(Bartender bartender){
-        if ( !this.bartenders.contains(bartender) ) return this.bartenders.add(bartender);
-        return false;
+        if ( !this.bartenders.contains(bartender) && !bartender.getShifts().contains(this)) return false;
+        return this.bartenders.add(bartender);
     }
 
-    public boolean removeBartender(Bartender bartender){ return this.bartenders.remove(bartender); }
+    public boolean removeBartender(Bartender bartender){
+        if (bartender.getShifts().contains(this)) bartender.removeShift(this);
+        return this.bartenders.remove(bartender);
+    }
 }
