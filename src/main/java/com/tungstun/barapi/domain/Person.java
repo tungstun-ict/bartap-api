@@ -1,6 +1,7 @@
 package com.tungstun.barapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.security.data.model.User;
@@ -23,6 +24,7 @@ public class Person {
     private String name;
 
     @OneToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private User user;
 
     public Person() { }
