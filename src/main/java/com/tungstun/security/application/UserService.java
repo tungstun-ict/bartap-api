@@ -1,7 +1,6 @@
 package com.tungstun.security.application;
 
 import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserRole;
 import com.tungstun.security.data.repository.SpringUserRepository;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
@@ -13,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.security.auth.login.LoginException;
+import java.util.ArrayList;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -31,7 +31,7 @@ public class UserService implements UserDetailsService {
 
     public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) {
         String encodedPassword = this.PASSWORD_ENCODER.encode(userRegistrationRequest.password);
-        User user = new User(userRegistrationRequest.username, encodedPassword, UserRole.ROLE_BAR_OWNER);
+        User user = new User(userRegistrationRequest.username, encodedPassword, new ArrayList<>());
         this.SPRING_USER_REPOSITORY.save(user);
     }
 

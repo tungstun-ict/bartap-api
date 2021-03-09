@@ -14,6 +14,9 @@ public class SessionResponse {
     @ApiModelProperty(notes = "The session's id")
     private Long id;
 
+    @ApiModelProperty(notes = "The session's name")
+    private String name;
+
     @ApiModelProperty(notes = "The session's creation date")
     private LocalDateTime creationDate;
 
@@ -38,6 +41,10 @@ public class SessionResponse {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     public LocalDateTime getCreationDate() { return creationDate; }
 

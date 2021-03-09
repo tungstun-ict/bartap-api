@@ -95,7 +95,7 @@ public class SessionService {
     }
 
     public void sessionIsActive(Session session) {
-        if (session.isActive())
+        if (session.getClosedDate() != null && !session.isLocked())
             throw new InvalidSessionStateException("Cannot make changes to session if session is not active");
     }
 

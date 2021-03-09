@@ -1,14 +1,10 @@
 package com.tungstun.security.data.model;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Entity
 @Table(name = "\"user\"")
@@ -23,9 +19,6 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Enumerated(EnumType.STRING)
-    private UserRole role;
-
     @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
@@ -33,10 +26,10 @@ public class User implements UserDetails {
     private List<UserBarAuthorization> userBarAuthorizations;
 
     public User() { }
-    public User(String username, String password, UserRole role) {
+    public User(String username, String password, List<UserBarAuthorization> userBarAuthorization) {
         this.username = username;
         this.password = password;
-        this.role = role;
+        this.userBarAuthorizations = userBarAuthorization;
     }
 
     public Long getId() { return id; }
@@ -48,11 +41,6 @@ public class User implements UserDetails {
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
-
-    public UserRole getRole() { return role; }
-
-    public void setRole(UserRole role) { this.role = role; }
-
 
     public List<UserBarAuthorization> getUserBarAuthorizations() { return userBarAuthorizations; }
 
@@ -87,6 +75,6 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.toString()));
+        return Collections.emptyList();
     }
 }
