@@ -56,6 +56,10 @@ public class Session {
         return new Session(new ArrayList<>(), new ArrayList<>());
     }
 
+    public boolean isActive() {
+        return this.closedDate == null && !this.isLocked;
+    }
+
     public Long getId() {
         return id;
     }

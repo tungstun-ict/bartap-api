@@ -63,7 +63,7 @@ public class SessionService {
     }
     private boolean barHasActiveSession(Bar bar) {
         for (Session session : bar.getSessions()) {
-            if (!session.isLocked()) return true;
+            if (session.isActive()) return true;
         }
         return false;
     }
