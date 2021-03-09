@@ -90,9 +90,13 @@ public class SessionService {
 
     private Session getSessionIfActive(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionOfBar(barId, sessionId);
+        sessionIsActive(session);
+        return session;
+    }
+
+    public void sessionIsActive(Session session) {
         if (session.isActive())
             throw new InvalidSessionStateException("Cannot make changes to session if session is not active");
-        return session;
     }
 
     public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
