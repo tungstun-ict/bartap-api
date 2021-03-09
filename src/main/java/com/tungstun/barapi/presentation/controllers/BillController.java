@@ -34,8 +34,8 @@ public class BillController {
         return billResponse;
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("bills")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all bills of bar",
             notes = "Provide id of bar to look up all bills that are linked to the bar",
@@ -50,8 +50,8 @@ public class BillController {
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/sessions/{sessionId}/bills")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds bills of session of bar",
             notes = "Provide id of bar and session to look up bills from the session from the bar",
@@ -67,8 +67,8 @@ public class BillController {
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds bill of bar",
             notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
@@ -83,8 +83,8 @@ public class BillController {
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping("/sessions/{sessionId}/")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates new bill for session of bar",
             notes = "Provide id of bar and session to add a new bill with information from the request body to session of the bar",
@@ -98,8 +98,8 @@ public class BillController {
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Updates the payment state of the bill of session of bar",
             notes = "Provide id of bar, session and bill to update isPayed to the requested isPayed state ",
@@ -115,8 +115,8 @@ public class BillController {
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes bill of session of bar",
             notes = "Provide id of bar, session and bill to delete bill of session of the bar"
