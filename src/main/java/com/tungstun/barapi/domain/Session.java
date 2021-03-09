@@ -23,6 +23,9 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "name")
+    private String name;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
@@ -45,15 +48,16 @@ public class Session {
     private List<Bartender> bartenders;
 
     public Session() {}
-    public Session(List<Bill> bills, List<Bartender> bartenders) {
+    public Session(String name, List<Bill> bills, List<Bartender> bartenders) {
+        this.name = name;
         this.creationDate = LocalDateTime.now();
         this.bills = bills;
         this.bartenders = bartenders;
         this.isLocked = false;
     }
 
-    public static Session create() {
-        return new Session(new ArrayList<>(), new ArrayList<>());
+    public static Session create(String name) {
+        return new Session(name, new ArrayList<>(), new ArrayList<>());
     }
 
     public void endSession() {
@@ -72,6 +76,10 @@ public class Session {
     public Long getId() {
         return id;
     }
+
+    public String getName() { return name; }
+
+    public void setName(String title) { this.name = title; }
 
     public List<Bill> getBills() {
         return bills;
