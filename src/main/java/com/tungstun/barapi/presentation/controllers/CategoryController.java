@@ -32,8 +32,8 @@ public class CategoryController {
         return RESPONSE_MAPPER.convert(category, CategoryResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all categories of bar",
             notes = "Provide id of bar to look up all categories that are linked to the bar",
@@ -49,8 +49,8 @@ public class CategoryController {
         return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/{categoryId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds category of bar",
             notes = "Provide id of bar and category to look up the specific category from the bar",
@@ -64,8 +64,8 @@ public class CategoryController {
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates new category for bar",
             notes = "Provide id of bar to add new category with information from the request body to the bar",
@@ -79,8 +79,8 @@ public class CategoryController {
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("/{categoryId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Updates the category of bar",
             notes = "Provide id of bar to update the category with information from the request body",
@@ -95,8 +95,8 @@ public class CategoryController {
         return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{categoryId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes the category of bar",
             notes = "Provide id of bar to delete the category of bar",
