@@ -5,7 +5,8 @@ import com.tungstun.barapi.data.SpringSessionRepository;
 import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.exceptions.AlreadyActiveSessionException;
+import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
+import com.tungstun.barapi.exceptions.LockedSessionException;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -43,7 +44,7 @@ public class SessionService {
 
     public Session createNewSession(Long barId ) throws NotFoundException {
         Bar bar = BAR_SERVICE.getBar(barId);
-        if(barHasActiveSession(bar)) throw new AlreadyActiveSessionException("Bar already has an active session.");
+        if(barHasActiveSession(bar)) throw new DuplicateActiveSessionException("Bar already has an active session.");
         Session session = Session.create();
         if(!bar.addSession(session)) throw new DuplicateRequestException("Bar already has this session");
         session = this.SPRING_SESSION_REPOSITORY.save(session);
@@ -76,10 +77,9 @@ public class SessionService {
         return session;
     }
 
-
     public void sessionIsActive(Session session) {
-        if (session.getClosedDate() != null && session.isLocked())
-            throw new IllegalArgumentException("Cannot make changes to session if session has ended");
+        if (session.isLocked())
+            throw new LockedSessionException("Cannot make changes to session if session has ended");
     }
 
     public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
