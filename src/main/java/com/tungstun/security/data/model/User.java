@@ -13,11 +13,20 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "username")
+    @Column(name = "username", unique = true)
     private String username;
 
     @Column(name = "password")
     private String password;
+
+    @Column(name = "mail", unique = true)
+    private String mail;
+
+    @Column(name = "first_name")
+    private String firstName;
+
+    @Column(name = "last_name")
+    private String lastName;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -26,10 +35,13 @@ public class User implements UserDetails {
     private List<UserBarAuthorization> userBarAuthorizations;
 
     public User() { }
-    public User(String username, String password, List<UserBarAuthorization> userBarAuthorization) {
+    public User(String username, String password, String mail, String firstName, String lastName, List<UserBarAuthorization> userBarAuthorizations) {
         this.username = username;
         this.password = password;
-        this.userBarAuthorizations = userBarAuthorization;
+        this.mail = mail;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.userBarAuthorizations = userBarAuthorizations;
     }
 
     public Long getId() { return id; }
@@ -41,6 +53,18 @@ public class User implements UserDetails {
     public String getPassword() { return password; }
 
     public void setPassword(String password) { this.password = password; }
+
+    public String getMail() { return mail; }
+
+    public void setMail(String mail) { this.mail = mail; }
+
+    public String getFirstName() { return firstName; }
+
+    public void setFirstName(String firstName) { this.firstName = firstName; }
+
+    public String getLastName() { return lastName; }
+
+    public void setLastName(String lastName) { this.lastName = lastName; }
 
     public List<UserBarAuthorization> getUserBarAuthorizations() { return userBarAuthorizations; }
 
