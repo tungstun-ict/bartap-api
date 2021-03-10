@@ -15,4 +15,14 @@ public class UserRegistrationRequest {
     @ApiModelProperty(notes = "The user's password. Minimum length: 5")
     @Size(min = 5)
     public String password;
+
+    @ApiModelProperty(notes = "The user's first name")
+    public String firstName;
+
+    @ApiModelProperty(notes = "The user's last name")
+    public String lastName;
+
+    @ApiModelProperty(notes = "The user's mail address")
+    @NotBlank
+    public String mail;
 }
