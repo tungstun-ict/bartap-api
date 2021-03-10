@@ -16,6 +16,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 /**
@@ -24,14 +25,25 @@ import java.util.Collections;
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final String secret;
+    private final String[] ignoredPaths;
 
+    public JwtAuthorizationFilter(String secret, AuthenticationManager authenticationManager) {
+        this(secret, authenticationManager, new String[]{});
+    }
     public JwtAuthorizationFilter(
             String secret,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            String[] ignoredPaths
     ) {
         super(authenticationManager);
-
         this.secret = secret;
+        this.ignoredPaths = ignoredPaths;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+       return Arrays.stream(this.ignoredPaths)
+               .anyMatch(path -> path.equals(request.getRequestURI()));
     }
 
     @Override

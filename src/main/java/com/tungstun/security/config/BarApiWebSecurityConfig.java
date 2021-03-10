@@ -43,7 +43,14 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
-            .addFilter(new JwtAuthorizationFilter(this.jwtSecret, this.authenticationManager()))
+            .addFilter(new JwtAuthorizationFilter(
+                    this.jwtSecret,
+                    this.authenticationManager(),
+                    new String[]{
+                            LOGIN_PATH,
+                            REGISTER_PATH
+                    }
+            ))
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
