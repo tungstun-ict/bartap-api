@@ -31,7 +31,14 @@ public class UserService implements UserDetailsService {
 
     public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) {
         String encodedPassword = this.PASSWORD_ENCODER.encode(userRegistrationRequest.password);
-        User user = new User(userRegistrationRequest.username, encodedPassword, new ArrayList<>());
+        User user = new User(
+                userRegistrationRequest.username,
+                encodedPassword,
+                userRegistrationRequest.mail,
+                userRegistrationRequest.firstName,
+                userRegistrationRequest.lastName,
+                new ArrayList<>()
+        );
         this.SPRING_USER_REPOSITORY.save(user);
     }
 
