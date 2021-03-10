@@ -1,13 +1,17 @@
-
     create table "user"
-(
-    id       bigint not null
-        constraint user_pkey
-            primary key,
-    password varchar(255),
-    role     varchar(255),
-    username varchar(255)
-);
+    (
+        id         bigint not null
+            constraint user_pkey
+                primary key,
+        password   varchar(255),
+        role       varchar(255),
+        username   varchar(255),
+        first_name varchar(255),
+        last_name  varchar(255),
+        mail       varchar(255)
+            constraint uk_6sou31qus5dnws6dwfu61e71v
+                unique
+    );
 
 
 

@@ -1,6 +1,6 @@
-insert into "user"(id, password, username)
-values (1, '$2a$10$FAmWZOw692jCu0bkdVkj3ecSqlBqijjj5I3QMznGp2uLYiQXGr5hW', 'bart'),
-       (2, '$2a$10$FAmWZOw692jCu0bkdVkj3ecSqlBqijjj5I3QMznGp2uLYiQXGr5hW', 'user');
+insert into "user"(id, password, username, mail, first_name, last_name)
+values (1, '$2a$10$FAmWZOw692jCu0bkdVkj3ecSqlBqijjj5I3QMznGp2uLYiQXGr5hW', 'bart', 'bart@mail.com', 'Bart', 'Schouten'),
+       (2, '$2a$10$FAmWZOw692jCu0bkdVkj3ecSqlBqijjj5I3QMznGp2uLYiQXGr5hW', 'user', 'test@mail.com', 'testFirst', 'testLast');
 
 insert into user_bar_authorization(id, bar_id, role, user_id)
 values (1, 1, 'ROLE_BAR_OWNER', 1),
