@@ -165,7 +165,7 @@ values (1, true, 2, 1),
        (10, false, 2, 4),
        (11, false, 4, 4);
 
-insert into order(id, amount, creation_date, bartender_user_id, product_id)
+insert into "order"(id, amount, creation_date, bartender_user_id, product_id)
 values (1, 1, date('2021-03-06 22:50:00.0'), 1, 1),
        (2, 3, date('2021-03-06 22:55:00.0'), 1, 1),
        (3, 2, date('2021-03-06 23:00:00.0'), 1, 1),

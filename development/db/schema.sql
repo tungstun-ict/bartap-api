@@ -10,8 +10,6 @@
 );
 
 
-alter table "user"
-    owner to "bar-api-user";
 
     create table user_bar_authorization
 (
@@ -34,9 +32,6 @@ create table bar
     phone_number varchar(255)
 );
 
-alter table bar
-    owner to "bar-api-user";
-
 create table category
 (
     id           bigint not null
@@ -46,8 +41,6 @@ create table category
     product_type varchar(255)
 );
 
-alter table category
-    owner to "bar-api-user";
 
 
 create table bar_categories
@@ -62,11 +55,6 @@ create table bar_categories
             references category
 );
 
-alter table bar_categories
-    owner to "bar-api-user";
-
-
-
 
 
 create table person
@@ -80,9 +68,6 @@ create table person
             references "user"
 );
 
-alter table person
-    owner to "bar-api-user";
-
 create table bartender
 (
     user_id bigint not null
@@ -91,10 +76,6 @@ create table bartender
         constraint fkrriold829ilpiungxpau2iomq
             references person
 );
-
-alter table bartender
-    owner to "bar-api-user";
-
 
 
 create table customer
@@ -107,10 +88,6 @@ create table customer
             references person
 );
 
-alter table customer
-    owner to "bar-api-user";
-
-
 create table bar_people
 (
     bar_id    bigint not null
@@ -122,9 +99,6 @@ create table bar_people
         constraint fk3kykcllirre3g54vg13p74a6e
             references person
 );
-alter table bar_people
-    owner to "bar-api-user";
-
 create table session
 (
     id            bigint  not null
@@ -166,12 +140,7 @@ create table session
             references product
 );
 
-alter table bar_products
-    owner to "bar-api-user";
 
-
-alter table session
-    owner to "bar-api-user";
     create table session_bartender
 (
     user_id bigint not null
@@ -181,9 +150,6 @@ alter table session
         constraint fks9hrjajhvlbe354djdr4nus4a
             references session
 );
-
-alter table session_bartender
-    owner to "bar-api-user";
 
 create table bar_sessions
 (
@@ -196,9 +162,6 @@ create table bar_sessions
         constraint fkldkxmr8ohrf4g8irv56lo483i
             references session
 );
-
-alter table bar_sessions
-    owner to "bar-api-user";
 
     create table bill
 (
@@ -213,10 +176,6 @@ alter table bar_sessions
         constraint fknpdke1pihy8cr0lddxntf4hl2
             references session
 );
-
-alter table bill
-    owner to "bar-api-user";
-
 
 create table "order"
 (
@@ -233,9 +192,6 @@ create table "order"
             references product
 );
 
-alter table "order"
-    owner to "bar-api-user";
-
 create table bill_orders
 (
     bill_id   bigint not null
@@ -248,15 +204,6 @@ create table bill_orders
             references "order"
 );
 
-alter table bill_orders
-    owner to "bar-api-user";
-
-
-
-
-
-alter table user_bar_authorization
-    owner to "bar-api-user";
 
 create table user_user_bar_authorizations
 (
@@ -269,6 +216,54 @@ create table user_user_bar_authorizations
         constraint fkjbfxkryjvkflmaph6jg9yoouk
             references user_bar_authorization
 );
-
-alter table user_user_bar_authorizations
-    owner to "bar-api-user";
+--
+-- alter table bill_orders
+--     owner to "bar-api-user";
+--
+-- alter table "order"
+--     owner to "bar-api-user";
+--
+-- alter table bill
+--     owner to "bar-api-user";
+--
+-- alter table session
+--     owner to "bar-api-user";
+--
+-- alter table bar_sessions
+--     owner to "bar-api-user";
+--
+-- alter table session_bartender
+--     owner to "bar-api-user";
+--
+-- alter table bar_products
+--     owner to "bar-api-user";
+--
+-- alter table bar_people
+--     owner to "bar-api-user";
+--
+-- alter table customer
+--     owner to "bar-api-user";
+--
+-- alter table bartender
+--     owner to "bar-api-user";
+--
+-- alter table person
+--     owner to "bar-api-user";
+--
+-- alter table bar_categories
+--     owner to "bar-api-user";
+--
+-- alter table category
+--     owner to "bar-api-user";
+--
+-- alter table "user"
+--     owner to "bar-api-user";
+--
+-- alter table bar
+--     owner to "bar-api-user";
+--
+-- alter table user_bar_authorization
+--         owner to "bar-api-user";
+--
+-- alter table user_user_bar_authorizations
+--     owner to "bar-api-user";
