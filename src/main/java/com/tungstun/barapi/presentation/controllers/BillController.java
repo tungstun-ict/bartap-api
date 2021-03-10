@@ -2,6 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BillService;
 import com.tungstun.barapi.domain.bill.Bill;
+import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -47,6 +48,13 @@ public class BillController {
     ) throws NotFoundException {
         List<Bill> allBills = this.BILL_SERVICE.getAllBills(barId);
         List<BillResponse> billResponses = RESPONSE_MAPPER.convertList(allBills, BillResponse.class);
+        for (BillResponse billResponse : billResponses) {
+            double billTotal = 0.0;
+            for (Order order : billResponse.getOrders()) {
+                billTotal += order.getProduct().getPrice()*order.getAmount();
+            }
+            billResponse.setTotalPrice(billTotal);
+        }
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
