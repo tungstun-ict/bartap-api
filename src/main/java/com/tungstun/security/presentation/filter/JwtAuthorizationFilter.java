@@ -59,13 +59,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private Authentication getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+        String accessToken = request.getHeader("access_token");
+        String tokenType = request.getHeader("token_type");
 
-        if (token == null || token.isEmpty()) {
+        if (accessToken == null || accessToken.isEmpty()) {
             return null;
         }
 
-        if (!token.startsWith("Bearer ")) {
+        if (!tokenType.equals("bearer")) {
             return null;
         }
 
@@ -76,7 +77,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .build();
 
         Jws<Claims> parsedToken = jwtParser
-                .parseClaimsJws(token.replace("Bearer ", ""));
+                .parseClaimsJws(accessToken);
 
         var username = parsedToken
                 .getBody()

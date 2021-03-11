@@ -19,19 +19,28 @@ public class JwtGenerator {
         this.CREDENTIALS = jwtCredentials;
     }
 
-    public String generate(User user) {
-        return generateJWT(user);
+    public String generateAccessToken(User user) {
+        return generateJWT(user.getUsername(), CREDENTIALS.jwtSecret, CREDENTIALS.jwtExpirationInMs);
     }
 
-    private String generateJWT(User user) {
-        byte[] signingKey = CREDENTIALS.jwtSecret.getBytes();
+    public String refreshAccessTokenFromRefreshToken(String accessToken) {
+        String username = new JwtValidator(CREDENTIALS).extractUsernameFromRefreshToken(accessToken);
+        return generateJWT(username, CREDENTIALS.jwtSecret, CREDENTIALS.jwtExpirationInMs);
+    }
+
+    public String generateRefreshToken(User user) {
+        return generateJWT(user.getUsername(), CREDENTIALS.jwtRefreshSecret, CREDENTIALS.jwtRefreshExpirationInMs);
+    }
+
+    private String generateJWT(String username, String signingKey, Integer expirationTimeInMs) {
+        byte[] key = signingKey.getBytes();
         return Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS256)
+                .signWith(Keys.hmacShaKeyFor(key), SignatureAlgorithm.HS256)
                 .setHeaderParam("type", "JWT")
-                .setIssuer("com-tungstun-bar-api")
-                .setAudience("com-tungstun-bar-api")
-                .setSubject(user.getUsername())
-                .setExpiration(new Date(System.currentTimeMillis() + CREDENTIALS.jwtExpirationInMs))
+                .setIssuer(CREDENTIALS.jwtIssuer)
+                .setAudience(CREDENTIALS.jwtAudience)
+                .setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTimeInMs))
                 .compact();
     }
 
