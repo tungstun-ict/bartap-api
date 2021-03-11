@@ -43,7 +43,7 @@ public class UserService implements UserDetailsService {
     }
 
     public String loginUser(LoginRequest loginRequest) throws LoginException {
-        User user = (User) loadUserByUsername(loginRequest.username);
+        User user = (User) loadUserByMailOrUsername(loginRequest.userIdentification);
         attemptLogin(loginRequest.password, user.getPassword());
         return generateAuthToken(user);
     }
@@ -58,6 +58,11 @@ public class UserService implements UserDetailsService {
 
     private String generateAuthToken(User user) {
         return String.format("Bearer %s", this.JWT_GENERATOR.generate(user));
+    }
+
+    public UserDetails loadUserByMailOrUsername(String username) {
+        return this.SPRING_USER_REPOSITORY.findByMailOrUsername(username, username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the usename '%s'", username)));
     }
 
     @Override

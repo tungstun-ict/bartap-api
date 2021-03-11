@@ -7,9 +7,9 @@ import javax.validation.constraints.NotBlank;
 
 @ApiModel(description = "Request details about the user login")
 public class LoginRequest {
-    @ApiModelProperty(notes = "The user's username")
+    @ApiModelProperty(notes = "The user's username or email address")
     @NotBlank
-    public String username;
+    public String userIdentification;
 
     @ApiModelProperty(notes = "The user's password")
     @NotBlank
