@@ -5,6 +5,8 @@ import com.tungstun.security.data.repository.SpringUserRepository;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
 import com.tungstun.security.util.jwt.JwtGenerator;
+import com.tungstun.security.util.validation.NonSpaceValidator;
+import org.hibernate.validator.internal.constraintvalidators.AbstractEmailValidator;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,6 +32,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) {
+        validateRegistration(userRegistrationRequest);
         String encodedPassword = this.PASSWORD_ENCODER.encode(userRegistrationRequest.password);
         User user = new User(
                 userRegistrationRequest.username,
@@ -40,6 +43,22 @@ public class UserService implements UserDetailsService {
                 new ArrayList<>()
         );
         this.SPRING_USER_REPOSITORY.save(user);
+    }
+
+    private void validateRegistration(UserRegistrationRequest userRegistrationRequest) {
+        validateUsername(userRegistrationRequest.username);
+        validateMail(userRegistrationRequest.mail);
+        validatePassword(userRegistrationRequest.password);
+    }
+
+    private void validateUsername(String username) {
+        if (!NonSpaceValidator.validate(username)) throw new IllegalArgumentException("Username cannot contain spaces");
+    }
+    private void validateMail(String mail) {
+        if (!new AbstractEmailValidator<>().isValid(mail, null)) throw new IllegalArgumentException("Invalid Email address");
+    }
+    private void validatePassword(String password) {
+        if (!NonSpaceValidator.validate(password)) throw new IllegalArgumentException("Password cannot contain spaces");
     }
 
     public String loginUser(LoginRequest loginRequest) throws LoginException {
