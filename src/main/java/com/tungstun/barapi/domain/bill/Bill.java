@@ -3,9 +3,9 @@ package com.tungstun.barapi.domain.bill;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.person.Person;
 
 import javax.persistence.*;
 import java.util.List;
@@ -31,7 +31,7 @@ public class Bill {
     @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private Person customer;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -40,7 +40,7 @@ public class Bill {
     private List<Order> orders;
 
     public Bill() { }
-    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed) {
+    public Bill(Session session, Person customer, List<Order> orders, boolean isPayed) {
         this.session = session;
         this.customer = customer;
         this.orders = orders;
@@ -51,7 +51,7 @@ public class Bill {
 
     public Session getSession() { return session; }
 
-    public Customer getCustomer() { return customer; }
+    public Person getCustomer() { return customer; }
 
     public List<Order> getOrders() { return this.orders; }
 

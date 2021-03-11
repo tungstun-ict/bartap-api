@@ -2,11 +2,11 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBillRepository;
-import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.BillFactory;
 import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
@@ -63,14 +63,14 @@ public class BillService {
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
         this.SESSION_SERVICE.sessionIsActive(session);
-        Customer customer = this.PERSON_SERVICE.getCustomerOfBar(barId, billRequest.customerId);
+        Person customer = this.PERSON_SERVICE.getPersonOfBar(barId, billRequest.customerId);
         if (sessionHasBillWithCustomer(session, customer))
             throw new DuplicateRequestException(String.format("Session already contains a bill for customer with id %s", customer.getId()));
         Bill bill = new BillFactory(session, customer).create();
         return saveBillToSession(bill, session);
     }
 
-    private boolean sessionHasBillWithCustomer(Session session, Customer customer){
+    private boolean sessionHasBillWithCustomer(Session session, Person customer){
         for (Bill bill : session.getBills()){
             if (bill.getCustomer().equals(customer)) return true;
         }

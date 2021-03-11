@@ -2,9 +2,10 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
@@ -59,9 +60,11 @@ public class BarService {
         bar = this.SPRING_BAR_REPOSITORY.save(bar);
         User user = (User) this.USER_SERVICE.loadUserByUsername(ownerUsername);
         user.addUserBarAuthorizations(new UserBarAuthorization(bar.getId(), user.getId(), UserRole.ROLE_BAR_OWNER));
-        Bartender bartender = new Bartender(ownerUsername);
-        bartender.setUser(user);
-        bar.addUser(bartender);
+        Person owner = new PersonBuilder()
+                .setName(ownerUsername)
+                .setUser(user)
+                .build();
+        bar.addUser(owner);
         return this.SPRING_BAR_REPOSITORY.save(bar);
     }
 

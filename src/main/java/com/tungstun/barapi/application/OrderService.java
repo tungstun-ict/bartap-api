@@ -1,10 +1,10 @@
 package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringOrderRepository;
-import com.tungstun.barapi.domain.Bartender;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import javassist.NotFoundException;
@@ -103,8 +103,8 @@ public class OrderService {
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
     }
 
-    private Bartender findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
-        for (Bartender bartender : session.getBartenders()) {
+    private Person findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
+        for (Person bartender : session.getBartenders()) {
             if (bartender.getId().equals(bartenderId)) return bartender;
         }
         throw new NotFoundException(String.format("No bartender found with id %s in session", bartenderId));
@@ -112,7 +112,7 @@ public class OrderService {
 
     private Order buildOrder(Long barId, OrderRequest orderRequest, Bill bill) throws NotFoundException {
         int amount = (orderRequest.amount == null) ? 1 : orderRequest.amount;
-        Bartender bartender = findBartenderInSession(bill.getSession(), orderRequest.bartenderId);
+        Person bartender = findBartenderInSession(bill.getSession(), orderRequest.bartenderId);
         Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
         return new Order(product, amount, bartender);
     }

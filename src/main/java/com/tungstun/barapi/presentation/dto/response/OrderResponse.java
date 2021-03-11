@@ -1,6 +1,6 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.Bartender;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -23,11 +23,11 @@ public class OrderResponse {
     private Product product;
 
     @ApiModelProperty(notes = "The order's bartender")
-    private Bartender bartender;
+    private Person bartender;
 
 
     public OrderResponse() { }
-    public OrderResponse(Long id, int amount, LocalDateTime creationDate, Product product, Bartender bartender) {
+    public OrderResponse(Long id, int amount, LocalDateTime creationDate, Product product, Person bartender) {
         this.id = id;
         this.amount = amount;
         this.creationDate = creationDate;
@@ -51,7 +51,7 @@ public class OrderResponse {
 
     public void setProduct(Product product) { this.product = product; }
 
-    public Bartender getBartender() { return bartender; }
+    public Person getBartender() { return bartender; }
 
-    public void setBartender(Bartender bartender) { this.bartender = bartender; }
+    public void setBartender(Person bartender) { this.bartender = bartender; }
 }

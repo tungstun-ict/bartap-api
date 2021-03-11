@@ -2,15 +2,13 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringPersonRepository;
-import com.tungstun.barapi.domain.Bartender;
-import com.tungstun.barapi.domain.Customer;
-import com.tungstun.barapi.domain.Person;
 import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -42,12 +40,10 @@ public class PersonService {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         if (checkIfPersonExists(bar.getUsers(), personRequest.name))
             throw new DuplicateRequestException(String.format("User with name '%s' already exists", personRequest.name));
-        Person person;
-        if(personRequest.phoneNumber != null) {
-            person = new Customer(personRequest.name, personRequest.phoneNumber, new ArrayList<>());
-        }else {
-            person = new Bartender(personRequest.name);
-        }
+        PersonBuilder personBuilder = new PersonBuilder()
+                .setName(personRequest.name)
+                .setPhoneNumber(personRequest.phoneNumber);
+        Person person = personBuilder.build();
         return savePersonToBar(bar, person);
     }
 
@@ -67,11 +63,8 @@ public class PersonService {
 
     public Person updatePerson(Long barId, Long personId, PersonRequest personRequest) throws NotFoundException {
         Person person = getPersonOfBar(barId, personId);
-        if (personRequest.phoneNumber != null &&
-                person instanceof Customer) {
-            ((Customer) person).setPhoneNumber(personRequest.phoneNumber);
-        }
         person.setName(personRequest.name);
+        person.setPhoneNumber(personRequest.phoneNumber);
         return this.SPRING_PERSON_REPOSITORY.save(person);
     }
 
@@ -82,15 +75,15 @@ public class PersonService {
         this.BAR_SERVICE.saveBar(bar);
     }
 
-    public Bartender getBartenderOfBar(Long barId, Long bartenderId) throws NotFoundException {
-        Person person = getPersonOfBar(barId, bartenderId);
-        if (!(person instanceof Bartender)) throw new NotFoundException(String.format("No Bartender found with id %s", bartenderId));
-        return (Bartender) person;
-    }
-
-    public Customer getCustomerOfBar(Long barId, Long customerId) throws NotFoundException {
-        Person person = getPersonOfBar(barId, customerId);
-        if (!(person instanceof Customer)) throw new NotFoundException(String.format("No Customer found with id %s", customerId));
-        return (Customer) person;
-    }
+//    public Bartender getBartenderOfBar(Long barId, Long bartenderId) throws NotFoundException {
+//        Person person = getPersonOfBar(barId, bartenderId);
+//        if (!(person instanceof Bartender)) throw new NotFoundException(String.format("No Bartender found with id %s", bartenderId));
+//        return (Bartender) person;
+//    }
+//
+//    public Customer getCustomerOfBar(Long barId, Long customerId) throws NotFoundException {
+//        Person person = getPersonOfBar(barId, customerId);
+//        if (!(person instanceof Customer)) throw new NotFoundException(String.format("No Customer found with id %s", customerId));
+//        return (Customer) person;
+//    }
 }

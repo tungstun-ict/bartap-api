@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.PersonService;
-import com.tungstun.barapi.domain.Person;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;

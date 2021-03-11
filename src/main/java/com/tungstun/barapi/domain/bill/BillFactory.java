@@ -1,15 +1,15 @@
 package com.tungstun.barapi.domain.bill;
 
-import com.tungstun.barapi.domain.Customer;
 import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.domain.person.Person;
 
 import java.util.ArrayList;
 
 public class BillFactory {
     private Session session;
-    private Customer customer;
+    private Person customer;
 
-    public BillFactory(Session session, Customer customer) {
+    public BillFactory(Session session, Person customer) {
         this.session = session;
         this.customer = customer;
     }

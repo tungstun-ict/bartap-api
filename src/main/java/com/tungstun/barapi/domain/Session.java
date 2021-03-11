@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.bill.Bill;
+import com.tungstun.barapi.domain.person.Person;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -45,10 +46,10 @@ public class Session {
 
     @JsonManagedReference
     @ManyToMany(mappedBy = "shifts")
-    private List<Bartender> bartenders;
+    private List<Person> bartenders;
 
     public Session() {}
-    public Session(String name, List<Bill> bills, List<Bartender> bartenders) {
+    public Session(String name, List<Bill> bills, List<Person> bartenders) {
         this.name = name;
         this.creationDate = LocalDateTime.now();
         this.bills = bills;
@@ -98,14 +99,14 @@ public class Session {
 
     public boolean removeBill(Bill bill){ return this.bills.remove(bill); }
 
-    public List<Bartender> getBartenders() { return this.bartenders; }
+    public List<Person> getBartenders() { return this.bartenders; }
 
-    public boolean addBartender(Bartender bartender){
-        if (!this.bartenders.contains(bartender) && !bartender.getShifts().contains(this)) return false;
+    public boolean addBartender(Person bartender){
+        if (this.bartenders.contains(bartender) && bartender.getShifts().contains(this)) return false;
         return this.bartenders.add(bartender);
     }
 
-    public boolean removeBartender(Bartender bartender){
+    public boolean removeBartender(Person bartender){
         if (bartender.getShifts().contains(this)) bartender.removeShift(this);
         return this.bartenders.remove(bartender);
     }

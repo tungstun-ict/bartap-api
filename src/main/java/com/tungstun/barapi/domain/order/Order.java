@@ -3,7 +3,7 @@ package com.tungstun.barapi.domain.order;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.barapi.domain.Bartender;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 
 import javax.persistence.*;
@@ -36,10 +36,10 @@ public class Order {
             cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH},
             orphanRemoval = true
     )
-    private Bartender bartender;
+    private Person bartender;
 
     public Order() { }
-    public Order(Product product, int amount, Bartender bartender) {
+    public Order(Product product, int amount, Person bartender) {
         this.product = product;
         this.amount = amount;
         this.bartender = bartender;
@@ -56,5 +56,5 @@ public class Order {
 
     public LocalDateTime getCreationDate() { return creationDate; }
 
-    public Bartender getBartender() { return bartender; }
+    public Person getBartender() { return bartender; }
 }
