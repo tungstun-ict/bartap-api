@@ -24,30 +24,21 @@ VALUES  (1, 'Dorpsstraat 192', 'dorpsstraat@staat.nl', 'Bartjes Bar', '112233445
         (4, 'Schoolstraat 1a', 'schoolstraat@staat.nl', 'De School Pub', '1234567890'),
         (5, 'Molenweg 1', 'molenweg@staat.nl', 'De Molen', '6677889900');
 
-insert into person (id, name, user_id)
-values (1, 'Bart Schouten', 1),
-       (2, 'Jort Willemsen', null),
-       (3, 'Jona Leeflang', null),
-       (4, 'Sep de Geus', null),
-       (5, 'Fee Sanders', null),
-       (6, 'Test User', 2);
-
-insert into bartender(user_id)
-values (1),
-       (6);
-
-insert into customer(phone_number, user_id)
-values ('0912897344', 2),
-       ('4567890044', 3),
-       ('0632334233', 4),
-       ('0633144444', 5);
+insert into person (id, name, phone_number, user_id)
+values (1, 'Bart Schouten', '66772323332', 1),
+       (2, 'Jort Willemsen', '0912897344', null),
+       (3, 'Jona Leeflang', '4567890044', null),
+       (4, 'Sep de Geus', '0632334233', null),
+       (5, 'Fee Sanders', '0633144444', null),
+       (6, 'Test User', '1234670000', 2);
 
 insert into bar_people(bar_id, people_id)
 values (1, 1),
        (1, 2),
        (1, 3),
        (1, 4),
-       (1, 5);
+       (1, 5),
+       (2, 6);
 
 insert into category(id, name, product_type)
 VALUES (1, 'Bier', 'DRINK'),
@@ -165,7 +156,7 @@ values (1, true, 2, 1),
        (10, false, 2, 4),
        (11, false, 4, 4);
 
-insert into "order"(id, amount, creation_date, bartender_user_id, product_id)
+insert into "order"(id, amount, creation_date, bartender_id, product_id)
 values (1, 1, date('2021-03-06 22:50:00.0'), 1, 1),
        (2, 3, date('2021-03-06 22:55:00.0'), 1, 1),
        (3, 2, date('2021-03-06 23:00:00.0'), 1, 1),
