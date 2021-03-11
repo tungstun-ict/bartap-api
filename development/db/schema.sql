@@ -1,6 +1,5 @@
 create sequence hibernate_sequence;
 
-alter sequence hibernate_sequence owner to "bar-api-user";
 
 create table bar
 (
@@ -13,7 +12,6 @@ create table bar
     phone_number varchar(255)
 );
 
-alter table bar owner to "bar-api-user";
 
 create table category
 (
@@ -24,7 +22,6 @@ create table category
     product_type varchar(255)
 );
 
-alter table category owner to "bar-api-user";
 
 create table bar_categories
 (
@@ -38,7 +35,6 @@ create table bar_categories
             references category
 );
 
-alter table bar_categories owner to "bar-api-user";
 
 create table product
 (
@@ -56,7 +52,6 @@ create table product
             references category
 );
 
-alter table product owner to "bar-api-user";
 
 create table bar_products
 (
@@ -70,7 +65,6 @@ create table bar_products
             references product
 );
 
-alter table bar_products owner to "bar-api-user";
 
 create table session
 (
@@ -83,7 +77,6 @@ create table session
     name varchar(255)
 );
 
-alter table session owner to "bar-api-user";
 
 create table bar_sessions
 (
@@ -97,7 +90,6 @@ create table bar_sessions
             references session
 );
 
-alter table bar_sessions owner to "bar-api-user";
 
 create table "user"
 (
@@ -115,7 +107,6 @@ create table "user"
             unique
 );
 
-alter table "user" owner to "bar-api-user";
 
 create table person
 (
@@ -129,7 +120,6 @@ create table person
             references "user"
 );
 
-alter table person owner to "bar-api-user";
 
 create table bar_people
 (
@@ -143,7 +133,6 @@ create table bar_people
             references person
 );
 
-alter table bar_people owner to "bar-api-user";
 
 create table bill
 (
@@ -159,7 +148,6 @@ create table bill
             references session
 );
 
-alter table bill owner to "bar-api-user";
 
 create table "order"
 (
@@ -176,7 +164,6 @@ create table "order"
             references product
 );
 
-alter table "order" owner to "bar-api-user";
 
 create table bill_orders
 (
@@ -190,7 +177,6 @@ create table bill_orders
             references "order"
 );
 
-alter table bill_orders owner to "bar-api-user";
 
 create table session_bartender
 (
@@ -202,7 +188,6 @@ create table session_bartender
             references session
 );
 
-alter table session_bartender owner to "bar-api-user";
 
 create table user_bar_authorization
 (
@@ -214,7 +199,6 @@ create table user_bar_authorization
     user_id bigint
 );
 
-alter table user_bar_authorization owner to "bar-api-user";
 
 create table user_user_bar_authorizations
 (
@@ -227,5 +211,3 @@ create table user_user_bar_authorizations
         constraint fkjbfxkryjvkflmaph6jg9yoouk
             references user_bar_authorization
 );
-
-alter table user_user_bar_authorizations owner to "bar-api-user";
