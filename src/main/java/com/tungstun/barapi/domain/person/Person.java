@@ -1,6 +1,7 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.person;
 
 import com.fasterxml.jackson.annotation.*;
+import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.security.data.model.User;
 
