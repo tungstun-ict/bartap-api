@@ -74,16 +74,4 @@ public class PersonService {
         bar.removeUser(person);
         this.BAR_SERVICE.saveBar(bar);
     }
-
-//    public Bartender getBartenderOfBar(Long barId, Long bartenderId) throws NotFoundException {
-//        Person person = getPersonOfBar(barId, bartenderId);
-//        if (!(person instanceof Bartender)) throw new NotFoundException(String.format("No Bartender found with id %s", bartenderId));
-//        return (Bartender) person;
-//    }
-//
-//    public Customer getCustomerOfBar(Long barId, Long customerId) throws NotFoundException {
-//        Person person = getPersonOfBar(barId, customerId);
-//        if (!(person instanceof Customer)) throw new NotFoundException(String.format("No Customer found with id %s", customerId));
-//        return (Customer) person;
-//    }
 }
