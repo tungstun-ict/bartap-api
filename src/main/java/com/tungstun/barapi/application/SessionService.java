@@ -47,7 +47,7 @@ public class SessionService {
 
     private Session findActiveSession(List<Session> sessions) throws NotFoundException {
         return sessions.stream()
-                .filter(session -> !session.isActive())
+                .filter(Session::isActive)
                 .findFirst()
                 .orElseThrow(() -> new NotFoundException("No active session found"));
     }
