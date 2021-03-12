@@ -9,6 +9,8 @@ import com.tungstun.barapi.domain.person.Person;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +53,7 @@ public class Session {
     public Session() {}
     public Session(String name, List<Bill> bills, List<Person> bartenders) {
         this.name = name;
-        this.creationDate = LocalDateTime.now();
+        this.creationDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
         this.bills = bills;
         this.bartenders = bartenders;
         this.isLocked = false;
@@ -62,7 +64,7 @@ public class Session {
     }
 
     public void endSession() {
-        this.closedDate = LocalDateTime.now();
+        this.closedDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
     }
 
     public void lock() {

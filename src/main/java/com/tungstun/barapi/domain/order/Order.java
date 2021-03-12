@@ -7,6 +7,8 @@ import com.tungstun.barapi.domain.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -41,7 +43,8 @@ public class Order {
         this.product = product;
         this.amount = amount;
         this.bartender = bartender;
-        this.creationDate = LocalDateTime.now();
+        ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam"));
+        this.creationDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
     }
 
     public Long getId() { return id; }
