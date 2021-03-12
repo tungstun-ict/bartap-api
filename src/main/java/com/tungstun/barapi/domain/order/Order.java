@@ -1,7 +1,6 @@
 package com.tungstun.barapi.domain.order;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
@@ -13,7 +12,6 @@ import java.time.LocalDateTime;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
-@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "\"order\"")
 public class Order {
