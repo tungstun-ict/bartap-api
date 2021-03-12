@@ -5,14 +5,17 @@ import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
+import com.tungstun.security.data.model.UserProfile;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -142,9 +145,11 @@ public class OrderController {
             @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") Long billId,
-            @Valid @RequestBody OrderRequest orderLineRequest
+            @Valid @RequestBody OrderRequest orderLineRequest,
+            @ApiIgnore Authentication authentication
     ) throws NotFoundException {
-        Order order = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest);
+        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
+        Order order = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userProfile.getUsername());
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 }

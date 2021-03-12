@@ -2,11 +2,14 @@ package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringOrderRepository;
 import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
+import com.tungstun.security.application.UserService;
+import com.tungstun.security.data.model.User;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -15,21 +18,27 @@ import java.util.List;
 
 @Service
 public class OrderService {
-    private final ProductService PRODUCT_SERVICE;
     private final SpringOrderRepository SPRING_ORDER_REPOSITORY;
+    private final ProductService PRODUCT_SERVICE;
     private final SessionService SESSION_SERVICE;
     private final BillService BILL_SERVICE;
+    private final UserService USER_SERVICE;
+    private final BarService BAR_SERVICE;
 
 
     public OrderService(SessionService sessionService,
                         BillService billService,
                         SpringOrderRepository springOrderRepository,
-                        ProductService productService
+                        ProductService productService,
+                        UserService userService,
+                        BarService barService
     ) {
         this.SESSION_SERVICE = sessionService;
         this.BILL_SERVICE = billService;
         this.SPRING_ORDER_REPOSITORY = springOrderRepository;
         this.PRODUCT_SERVICE = productService;
+        this.USER_SERVICE = userService;
+        this.BAR_SERVICE = barService;
     }
 
     private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
@@ -110,23 +119,33 @@ public class OrderService {
         throw new NotFoundException(String.format("No bartender found with id %s in session", bartenderId));
     }
 
-    private Order buildOrder(Long barId, OrderRequest orderRequest, Bill bill) throws NotFoundException {
-        int amount = (orderRequest.amount == null) ? 1 : orderRequest.amount;
-        Person bartender = findBartenderInSession(bill.getSession(), orderRequest.bartenderId);
-        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
-        return new Order(product, amount, bartender);
-    }
-
     private Order saveOrderToBill(Bill bill, Order order) {
         order = this.SPRING_ORDER_REPOSITORY.save(order);
         this.BILL_SERVICE.addOrderToBill(bill, order);
         return order;
     }
 
-    public Order addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest) throws NotFoundException {
+    public Order addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
         this.SESSION_SERVICE.sessionIsActive(bill.getSession());
-        Order order = buildOrder(barId, orderRequest, bill);
+        User user = (User) this.USER_SERVICE.loadUserByUsername(username);
+        Person bartender = findPersonOfUser(barId, user);
+        Order order = buildOrder(barId, orderRequest, bill, bartender);
         return saveOrderToBill(bill, order);
+    }
+
+    private Person findPersonOfUser(Long barId, User user) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        for (Person person : bar.getUsers()) {
+            if (person.getUser().equals(user)) return person;
+        }
+        throw new NotFoundException("No person found connected to you user account");
+    }
+
+
+    private Order buildOrder(Long barId, OrderRequest orderRequest, Bill bill, Person bartender) throws NotFoundException {
+        int amount = (orderRequest.amount == null) ? 1 : orderRequest.amount;
+        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
+        return new Order(product, amount, bartender);
     }
 }

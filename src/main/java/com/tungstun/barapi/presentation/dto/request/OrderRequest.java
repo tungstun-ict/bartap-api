@@ -7,10 +7,6 @@ import javax.validation.constraints.NotNull;
 
 @ApiModel(description = "Request details about the order")
 public class OrderRequest {
-    @ApiModelProperty(notes = "The ID of the order's bartender")
-    @NotNull
-    public Long bartenderId;
-
     @ApiModelProperty(notes = "The ID of the order's product")
     @NotNull
     public Long productId;
