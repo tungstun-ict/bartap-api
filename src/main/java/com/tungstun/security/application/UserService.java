@@ -74,7 +74,7 @@ public class UserService implements UserDetailsService {
         attemptLogin(loginRequest.password, user.getPassword());
         authTokenMap.put("token_type", "bearer");
         authTokenMap.put("access_token", this.JWT_GENERATOR.generateAccessToken(user));
-        authTokenMap.put("refresh_token", this.JWT_GENERATOR.generateRefreshToken(user));
+        authTokenMap.put("refresh_token", this.JWT_GENERATOR.generateRefreshToken());
         return authTokenMap;
     }
 
@@ -89,7 +89,7 @@ public class UserService implements UserDetailsService {
     public Map<String, String> refreshUserToken(RefreshTokenRequest refreshTokenRequest) {
         this.JWT_VALIDATOR.validateAccessJwt(refreshTokenRequest.accessToken);
         this.JWT_VALIDATOR.validateRefreshJwt(refreshTokenRequest.refreshToken);
-        String accessToken = this.JWT_GENERATOR.refreshAccessTokenFromRefreshToken(refreshTokenRequest.refreshToken);
+        String accessToken = this.JWT_GENERATOR.refreshAccessTokenFromAccessToken(refreshTokenRequest.accessToken);
         Map<String, String> authTokenMap = new HashMap<>();
         authTokenMap.put("access_token", accessToken);
         return authTokenMap;

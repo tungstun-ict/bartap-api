@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtValidator {
-    private JwtCredentials CREDENTIALS;
+    private final JwtCredentials CREDENTIALS;
 
     public JwtValidator(JwtCredentials CREDENTIALS) {
         this.CREDENTIALS = CREDENTIALS;
@@ -21,20 +21,18 @@ public class JwtValidator {
 
     public void validateJwt(String jwt, String secret) {
         if (jwt == null || jwt.isEmpty()) throw new JwtException("Empty JWT");
-        JwtParser jwtParser =createParser(secret);
+        JwtParser jwtParser = createParser(secret);
         tryToParseClaimsFromToken(jwtParser, jwt);
     }
 
     private JwtParser createParser(String secret) {
-        byte[] signingKey = secret.getBytes();
         return Jwts.parserBuilder()
-                .setSigningKey(signingKey)
+                .setSigningKey(secret.getBytes())
                 .build();
     }
 
     private Jws<Claims> tryToParseClaimsFromToken(JwtParser parser, String jwt) {
         Jws<Claims> parsedToken = null;
-
         try {
             parsedToken = parser.parseClaimsJws(jwt);
             validateTokenBody(parsedToken);
@@ -52,12 +50,15 @@ public class JwtValidator {
             throw new JwtException("Invalid JWT");
     }
 
-    protected String extractUsernameFromRefreshToken(String jwt) {
-        return Jwts.parserBuilder()
-                .setSigningKey(CREDENTIALS.jwtRefreshSecret.getBytes())
-                .build()
-                .parseClaimsJws(jwt)
-                .getBody()
-                .getSubject();
+    protected String extractUsernameFromExpiredAccessToken(String accessToken) {
+        JwtParser parser = createParser(CREDENTIALS.jwtSecret);
+        String username;
+        try {
+            username = parser.parseClaimsJws(accessToken).getBody().getSubject();
+        } catch (Exception e) {
+            if (e instanceof ExpiredJwtException) username = ((ExpiredJwtException) e).getClaims().getSubject();
+            else throw new JwtException("Invalid token, please login");
+        }
+        return username;
     }
 }
