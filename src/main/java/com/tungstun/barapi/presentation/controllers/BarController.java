@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.ArrayList;
@@ -47,13 +48,13 @@ public class BarController {
 
     @GetMapping
     @ApiOperation(
-            value = "Finds all bars",
-            notes = "Look up a all existing bars",
+            value = "Finds all bars owned by user",
+            notes = "Look up a all owned bars",
             response = BarResponse.class,
             responseContainer = "List"
     )
     public ResponseEntity<List<BarResponse>> getAllBarOwnerBars(
-            Authentication authentication
+            @ApiIgnore Authentication authentication
     ) throws NotFoundException {
         UserProfile userProfile = (UserProfile) authentication.getPrincipal();
         List<Bar> allBars = this.BAR_SERVICE.getAllBarOwnerBars(userProfile.getUsername());
