@@ -5,16 +5,16 @@ import com.tungstun.security.data.repository.SpringUserRepository;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.RefreshTokenRequest;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
+import com.tungstun.security.util.account.RegistrationValidator;
 import com.tungstun.security.util.jwt.JwtGenerator;
 import com.tungstun.security.util.jwt.JwtValidator;
-import com.tungstun.security.util.validation.NonSpaceValidator;
-import org.hibernate.validator.internal.constraintvalidators.AbstractEmailValidator;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.security.auth.login.AccountException;
 import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,20 +26,23 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder PASSWORD_ENCODER;
     private final JwtGenerator JWT_GENERATOR;
     private final JwtValidator JWT_VALIDATOR;
+    private final RegistrationValidator REGISTRATION_VALIDATOR;
 
     public UserService(SpringUserRepository springUserRepository,
                        PasswordEncoder passwordEncoder,
                        JwtGenerator jwtGenerator,
-                       JwtValidator jwtValidator
+                       JwtValidator jwtValidator,
+                       RegistrationValidator registrationValidator
     ) {
         this.SPRING_USER_REPOSITORY = springUserRepository;
         this.PASSWORD_ENCODER = passwordEncoder;
         this.JWT_GENERATOR = jwtGenerator;
         this.JWT_VALIDATOR = jwtValidator;
+        this.REGISTRATION_VALIDATOR = registrationValidator;
     }
 
-    public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) {
-        validateRegistration(userRegistrationRequest);
+    public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) throws AccountException {
+        this.REGISTRATION_VALIDATOR.validateRegistrationDetails(userRegistrationRequest);
         String encodedPassword = this.PASSWORD_ENCODER.encode(userRegistrationRequest.password);
         User user = new User(
                 userRegistrationRequest.username,
@@ -52,21 +55,6 @@ public class UserService implements UserDetailsService {
         this.SPRING_USER_REPOSITORY.save(user);
     }
 
-    private void validateRegistration(UserRegistrationRequest userRegistrationRequest) {
-        validateUsername(userRegistrationRequest.username);
-        validateMail(userRegistrationRequest.mail);
-        validatePassword(userRegistrationRequest.password);
-    }
-
-    private void validateUsername(String username) {
-        if (!NonSpaceValidator.validate(username)) throw new IllegalArgumentException("Username cannot contain spaces");
-    }
-    private void validateMail(String mail) {
-        if (!new AbstractEmailValidator<>().isValid(mail, null)) throw new IllegalArgumentException("Invalid Email address");
-    }
-    private void validatePassword(String password) {
-        if (!NonSpaceValidator.validate(password)) throw new IllegalArgumentException("Password cannot contain spaces");
-    }
 
     public Map<String, String> loginUser(LoginRequest loginRequest) throws LoginException {
         Map<String, String> authTokenMap = new HashMap<>();
