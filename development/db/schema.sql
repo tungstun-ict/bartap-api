@@ -1,4 +1,4 @@
-create sequence hibernate_sequence;
+create sequence hibernate_sequence MINVALUE 5000;
 
 
 create table bar
