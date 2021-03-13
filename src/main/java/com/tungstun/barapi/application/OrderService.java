@@ -112,13 +112,6 @@ public class OrderService {
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
     }
 
-    private Person findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
-        for (Person bartender : session.getBartenders()) {
-            if (bartender.getId().equals(bartenderId)) return bartender;
-        }
-        throw new NotFoundException(String.format("No bartender found with id %s in session", bartenderId));
-    }
-
     private Order saveOrderToBill(Bill bill, Order order) {
         order = this.SPRING_ORDER_REPOSITORY.save(order);
         this.BILL_SERVICE.addOrderToBill(bill, order);
