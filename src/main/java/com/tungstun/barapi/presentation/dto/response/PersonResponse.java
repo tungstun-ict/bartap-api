@@ -14,7 +14,7 @@ public class PersonResponse {
     private String name;
 
     @ApiModelProperty(notes = "The person's phone number")
-    private String phonenumber;
+    private String phoneNumber;
 
     public PersonResponse() { }
 
@@ -26,7 +26,7 @@ public class PersonResponse {
 
     public void setName(String name) { this.name = name; }
 
-    public String getPhonenumber() { return phonenumber; }
+    public String getPhonenumber() { return phoneNumber; }
 
-    public void setPhonenumber(String phonenumber) { this.phonenumber = phonenumber; }
+    public void setPhonenumber(String phonenumber) { this.phoneNumber = phonenumber; }
 }

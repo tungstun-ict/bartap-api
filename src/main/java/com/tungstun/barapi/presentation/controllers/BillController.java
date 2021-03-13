@@ -5,6 +5,7 @@ import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
+import com.tungstun.barapi.presentation.dto.response.BillSummaryResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -33,6 +35,21 @@ public class BillController {
         BillResponse billResponse = RESPONSE_MAPPER.convert(bill, BillResponse.class);
         billResponse.setTotalPrice(bill.calculateTotalPrice());
         return billResponse;
+    }
+
+    private BillSummaryResponse convertToBillSummaryResult(Bill bill){
+        BillSummaryResponse billResponse = RESPONSE_MAPPER.convert(bill, BillSummaryResponse.class);
+        billResponse.setTotalPrice(bill.calculateTotalPrice());
+        billResponse.setDate(bill.getSession().getCreationDate());
+        return billResponse;
+    }
+
+    private List<BillSummaryResponse> convertListToBillSummaryResult(List<Bill> bills) {
+        List<BillSummaryResponse> billResponses = new ArrayList<>();
+        for (Bill bill : bills) {
+            billResponses.add(convertToBillSummaryResult(bill));
+        }
+        return billResponses;
     }
 
     @GetMapping("bills")
@@ -88,6 +105,38 @@ public class BillController {
             @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
     ) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
+    }
+
+    @GetMapping("/people/{personId}/bills")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Finds bills of customer of bar",
+            notes = "Provide id of bar and customer to look up all bills from session from the bar",
+            response = BillResponse.class
+    )
+    public ResponseEntity<List<BillSummaryResponse>> getBillsOfCustomerOfBar(
+            @ApiParam(value = "ID value for the bar you want to retrieve the bills from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the customer you want to retrieve the bill from") @PathVariable("personId") Long personId
+    ) throws NotFoundException {
+        List<Bill> bills = this.BILL_SERVICE.getBillsOfPerson(barId, personId);
+        List<BillSummaryResponse> billResponses = convertListToBillSummaryResult(bills);
+        return new ResponseEntity<>(billResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/people/{personId}/bills/{billId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Finds bill of customer of bar",
+            notes = "Provide id of bar and customer to look up the specific bill from session from the bar",
+            response = BillResponse.class
+    )
+    public ResponseEntity<BillResponse> getBillOfCustomerOfBar(
+            @ApiParam(value = "ID value for the bar you want to retrieve the bills from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the customer you want to retrieve the bill from") @PathVariable("personId") Long personId,
+            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
+    ) throws NotFoundException {
+        Bill bill = this.BILL_SERVICE.getBillOfPerson(barId, personId, billId);
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 

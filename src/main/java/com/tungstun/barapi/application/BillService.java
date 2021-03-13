@@ -60,6 +60,25 @@ public class BillService {
         return bills;
     }
 
+    public List<Bill> getBillsOfPerson(Long barId, Long customerId) throws NotFoundException {
+        List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
+        List<Bill> bills = getAllBillsFromSessions(sessions);
+        List<Bill> resBills = new ArrayList<>();
+        for (Bill bill : bills) {
+            if (bill.getCustomer().getId().equals(customerId)) resBills.add(bill);
+        }
+        return resBills;
+    }
+
+
+    public Bill getBillOfPerson(Long barId, Long customerId, Long billId) throws NotFoundException {
+        List<Bill> bills = getBillsOfPerson(barId, customerId);
+        for (Bill bill : bills) {
+            if (bill.getId().equals(billId)) return bill;
+        }
+        throw new NotFoundException(String.format("No bill found with id '%s' for customer in bar", billId));
+    }
+
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
         this.SESSION_SERVICE.sessionIsActive(session);
@@ -109,4 +128,5 @@ public class BillService {
         bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
+
 }
