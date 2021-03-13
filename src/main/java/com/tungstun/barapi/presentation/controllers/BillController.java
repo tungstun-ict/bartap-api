@@ -40,7 +40,6 @@ public class BillController {
     private BillSummaryResponse convertToBillSummaryResult(Bill bill){
         BillSummaryResponse billResponse = RESPONSE_MAPPER.convert(bill, BillSummaryResponse.class);
         billResponse.setTotalPrice(bill.calculateTotalPrice());
-        billResponse.setDate(bill.getSession().getCreationDate());
         return billResponse;
     }
 

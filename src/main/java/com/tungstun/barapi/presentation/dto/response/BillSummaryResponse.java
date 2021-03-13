@@ -1,9 +1,8 @@
 package com.tungstun.barapi.presentation.dto.response;
 
+import com.tungstun.barapi.domain.Session;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.time.LocalDateTime;
 
 @ApiModel(description = "Response detail summary about the bill")
 public class BillSummaryResponse {
@@ -16,8 +15,11 @@ public class BillSummaryResponse {
     @ApiModelProperty(notes = "The bill's total price")
     private Double totalPrice;
 
-    @ApiModelProperty(notes = "The bill's session's date")
-    private LocalDateTime date;
+//    @ApiModelProperty(notes = "The bill's session's date")
+//    private LocalDateTime date;
+
+    @ApiModelProperty(notes = "The bill's session")
+    private Session session;
 
     public BillSummaryResponse() { }
 
@@ -33,7 +35,10 @@ public class BillSummaryResponse {
 
     public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
 
-    public LocalDateTime getDate() { return date; }
+    public Session getSession() { return session; }
 
-    public void setDate(LocalDateTime date) { this.date = date; }
+    public void setSession(Session session) { this.session = session; }
+    //    public LocalDateTime getDate() { return date; }
+//
+//    public void setDate(LocalDateTime date) { this.date = date; }
 }
