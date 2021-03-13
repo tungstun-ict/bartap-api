@@ -2,10 +2,9 @@ package com.tungstun.barapi.domain;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.bill.Bill;
-import com.tungstun.barapi.domain.person.Person;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -18,7 +17,7 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
-@JsonIdentityReference(alwaysAsId = true)
+//@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "session")
 public class Session {
@@ -39,6 +38,7 @@ public class Session {
     private boolean isLocked;
 
     @JsonIdentityReference(alwaysAsId = true)
+    @JsonIgnore
     @OneToMany(mappedBy = "session",
             orphanRemoval = true,
             fetch = FetchType.LAZY,
@@ -46,21 +46,19 @@ public class Session {
     )
     private List<Bill> bills;
 
-    @JsonManagedReference
-    @ManyToMany(mappedBy = "shifts")
-    private List<Person> bartenders;
-
     public Session() {}
-    public Session(String name, List<Bill> bills, List<Person> bartenders) {
+    public Session(String name, LocalDateTime creationDate, List<Bill> bills) {
         this.name = name;
-        this.creationDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
+        this.creationDate = creationDate;
         this.bills = bills;
-        this.bartenders = bartenders;
         this.isLocked = false;
     }
 
     public static Session create(String name) {
-        return new Session(name, new ArrayList<>(), new ArrayList<>());
+        return new Session(name,
+                ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime(),
+                new ArrayList<>()
+        );
     }
 
     public void endSession() {
@@ -100,16 +98,4 @@ public class Session {
     }
 
     public boolean removeBill(Bill bill){ return this.bills.remove(bill); }
-
-    public List<Person> getBartenders() { return this.bartenders; }
-
-    public boolean addBartender(Person bartender){
-        if (this.bartenders.contains(bartender) && bartender.getShifts().contains(this)) return false;
-        return this.bartenders.add(bartender);
-    }
-
-    public boolean removeBartender(Person bartender){
-        if (bartender.getShifts().contains(this)) bartender.removeShift(this);
-        return this.bartenders.remove(bartender);
-    }
 }

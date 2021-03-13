@@ -147,38 +147,6 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PatchMapping("/{sessionId}/bartenders/{bartenderId}/add")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
-    @ApiOperation(
-            value = "Adds bartender to the session of bar",
-            notes = "Provide id of bar, session and bartender to add the bartender to the session of the bar",
-            response = SessionResponse.class
-    )
-    public ResponseEntity<SessionResponse> addBartenderToSession(
-            @ApiParam(value = "ID value for the bar you want to add the bartend to") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to add the bartend to") @PathVariable("sessionId") Long sessionId,
-            @ApiParam(value = "ID value for the bartender you want to add") @PathVariable("bartenderId") Long bartenderId
-    ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.addBartenderToSession(barId, sessionId, bartenderId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
-    }
-
-    @PatchMapping("/{sessionId}/bartenders/{bartenderId}/remove")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
-    @ApiOperation(
-            value = "Removes bartender from the session of bar",
-            notes = "Provide id of bar, session and bartender to remove the bartender from the session of the bar",
-            response = SessionResponse.class
-    )
-    public ResponseEntity<SessionResponse> removeBartenderFromSession(
-            @ApiParam(value = "ID value for the bar you want to remove the bartend from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to remove the bartend from") @PathVariable("sessionId") Long sessionId,
-            @ApiParam(value = "ID value for the bartender you want to remove") @PathVariable("bartenderId") Long bartenderId
-    ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.removeBartenderFromSession(barId, sessionId, bartenderId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
-    }
-
     @DeleteMapping("/{sessionId}")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(

@@ -4,7 +4,6 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
 import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;
@@ -97,37 +96,6 @@ public class SessionService {
     public void sessionIsActive(Session session) {
         if (session.getClosedDate() != null && !session.isLocked())
             throw new InvalidSessionStateException("Cannot make changes to session if session is not active");
-    }
-
-    public Session addBartenderToSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
-        Session session = getSessionIfActive(barId, sessionId);
-        Person bartender = this.PERSON_SERVICE.getPersonOfBar(barId, bartenderId);
-        if (sessionHasBartender(session, bartender))
-            throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartender.getId()));
-        session.addBartender(bartender);
-        bartender.addShift(session);
-        return this.SPRING_SESSION_REPOSITORY.save(session);
-    }
-
-    private boolean sessionHasBartender(Session session, Person bartender) {
-        for (Person bartenderIteration : session.getBartenders()) {
-            if  (bartenderIteration.equals(bartender)) return true;
-        }
-        return false;
-    }
-
-    public Session removeBartenderFromSession(Long barId, Long sessionId, Long bartenderId) throws NotFoundException {
-        Session session = getSessionIfActive(barId, sessionId);
-        Person bartender = findBartenderInSession(session, bartenderId);
-        session.removeBartender(bartender);
-        return this.SPRING_SESSION_REPOSITORY.save(session);
-    }
-
-    private Person findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
-        for (Person bartender : session.getBartenders()) {
-            if (bartender.getId().equals(bartenderId)) return bartender;
-        }
-        throw new NotFoundException(String.format("Session does not have a bartender with the id %s", bartenderId));
     }
 
     public void deleteSession(Long barId, Long sessionId) throws NotFoundException {
