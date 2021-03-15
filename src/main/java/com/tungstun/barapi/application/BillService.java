@@ -114,6 +114,7 @@ public class BillService {
         Bill bill = getBillOfBar(barId, sessionId, billId);
         this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.getSession().removeBill(bill);
+        bill.setSession(null);
         this.SPRING_BILL_REPOSITORY.delete(bill);
     }
 

@@ -51,6 +51,8 @@ public class Bill {
 
     public Session getSession() { return session; }
 
+    public void setSession(Session session) { this.session = session; }
+
     public Person getCustomer() { return customer; }
 
     public List<Order> getOrders() { return this.orders; }
