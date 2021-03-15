@@ -33,8 +33,7 @@ public class Order {
     private Product product;
 
     @OneToOne(
-            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH},
-            orphanRemoval = true
+            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH}
     )
     private Person bartender;
 
