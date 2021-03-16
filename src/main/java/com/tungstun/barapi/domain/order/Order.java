@@ -28,7 +28,7 @@ public class Order {
     private LocalDateTime creationDate;
 
     @OneToOne(
-            cascade = CascadeType.ALL
+            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH}
     )
     private Product product;
 
