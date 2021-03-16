@@ -107,6 +107,7 @@ public class OrderService {
 
     public void deleteOrderFromBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        if  (!bill.getSession().isActive()) throw new IllegalStateException("Cannot delete order from bill when session of bill is not active");
         Order order = findOrderInBill(bill, orderId);
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
         this.SPRING_ORDER_REPOSITORY.delete(order);
