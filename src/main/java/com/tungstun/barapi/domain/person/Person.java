@@ -32,8 +32,6 @@ public class Person {
     @JsonBackReference
     @OneToMany(
             mappedBy = "customer",
-            targetEntity = Bill.class,
-            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )

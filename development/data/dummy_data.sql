@@ -131,11 +131,7 @@ values (1, 'Eerst sessie', date('2021-03-06 22:45:00.0'), date('2021-03-07 01:45
        (3, 'Derde sessie', date('2021-03-08 22:45:00.0'), date('2021-03-09 01:45:00.0'), false),
        (4, 'Vierde sessie', date('2021-03-09 22:45:00.0'), null, false);
 
-insert into session_bartender (user_id, id)
-values (1, 1),
-       (1, 2),
-       (1, 3),
-       (1, 4);
+
 
 insert into bar_sessions (bar_id, sessions_id)
 values (1, 1),
