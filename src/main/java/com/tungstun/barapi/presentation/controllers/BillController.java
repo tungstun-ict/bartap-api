@@ -87,7 +87,10 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to retrieve bills from") @PathVariable("sessionId") Long sessionId
     )throws NotFoundException {
         List<Bill> allBills = this.BILL_SERVICE.getAllBillsOfSession(barId, sessionId);
-        List<BillResponse> billResponses = RESPONSE_MAPPER.convertList(allBills, BillResponse.class);
+        List<BillResponse> billResponses = new ArrayList<>();
+        for (Bill bill : allBills) {
+            billResponses.add(convertToBillResult(bill));
+        }
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
