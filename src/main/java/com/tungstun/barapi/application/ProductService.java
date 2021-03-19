@@ -73,16 +73,6 @@ public class ProductService {
         return bar.getProducts();
     }
 
-    private void validateCategory(Category category, String type) throws InvalidAttributesException {
-        ProductType productType = convertStringToProductType(type);
-        if (!category.getProductType().equals(productType))
-            throw new InvalidAttributesException(String.format(
-                    "Category is of different product type '%s', then given product type '%s'",
-                    category.getProductType(),
-                    productType)
-            );
-    }
-
     public List<Product> getProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
         List<Product> products = getAllProductsOfBar(barId);
         if (type != null) filterProductsByTypeString(products, type);
