@@ -15,9 +15,6 @@ public class BillSummaryResponse {
     @ApiModelProperty(notes = "The bill's total price")
     private Double totalPrice;
 
-//    @ApiModelProperty(notes = "The bill's session's date")
-//    private LocalDateTime date;
-
     @ApiModelProperty(notes = "The bill's session")
     private Session session;
 
@@ -38,7 +35,4 @@ public class BillSummaryResponse {
     public Session getSession() { return session; }
 
     public void setSession(Session session) { this.session = session; }
-    //    public LocalDateTime getDate() { return date; }
-//
-//    public void setDate(LocalDateTime date) { this.date = date; }
 }
