@@ -131,7 +131,7 @@ public class OrderService {
     private Person findPersonOfUser(Long barId, User user) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         for (Person person : bar.getUsers()) {
-            if (person.getUser().equals(user)) return person;
+            if (person.getUser() != null && person.getUser().equals(user)) return person;
         }
         throw new NotFoundException("No person found connected to you user account");
     }

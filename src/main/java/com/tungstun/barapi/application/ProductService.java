@@ -98,8 +98,6 @@ public class ProductService {
     }
     private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
-        validateCategory(category, productRequest.productType);
-        ProductType productType = convertStringToProductType(productRequest.productType);
         return new ProductBuilder()
                 .setName(productRequest.name)
                 .setBrand(productRequest.brand)
@@ -107,22 +105,13 @@ public class ProductService {
                 .setPrice(productRequest.price)
                 .setFavorite(productRequest.isFavorite)
                 .setCategory(category)
-                .setProductType(productType)
                 .build();
     }
 
     public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
-        if (barHasProductWithName(bar, productRequest.name)) throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
-    }
-
-    private boolean barHasProductWithName(Bar bar, String name) {
-        for (Product product : bar.getProducts()) {
-            if (product.getName().toLowerCase().equals(name.toLowerCase())) return true;
-        }
-        return false;
     }
 
     private boolean barHasProductWithNameAndIsntItself(Bar bar, Product product, String name) {
@@ -139,7 +128,6 @@ public class ProductService {
             throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
 
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
-        validateCategory(category, productRequest.productType);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
         product.setSize(productRequest.size);
