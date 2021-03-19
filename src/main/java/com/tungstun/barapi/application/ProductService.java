@@ -73,16 +73,6 @@ public class ProductService {
         return bar.getProducts();
     }
 
-    private void validateCategory(Category category, String type) throws InvalidAttributesException {
-        ProductType productType = convertStringToProductType(type);
-        if (!category.getProductType().equals(productType))
-            throw new InvalidAttributesException(String.format(
-                    "Category is of different product type '%s', then given product type '%s'",
-                    category.getProductType(),
-                    productType)
-            );
-    }
-
     public List<Product> getProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
         List<Product> products = getAllProductsOfBar(barId);
         if (type != null) filterProductsByTypeString(products, type);
@@ -98,8 +88,6 @@ public class ProductService {
     }
     private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
-        validateCategory(category, productRequest.productType);
-        ProductType productType = convertStringToProductType(productRequest.productType);
         return new ProductBuilder()
                 .setName(productRequest.name)
                 .setBrand(productRequest.brand)
@@ -107,7 +95,6 @@ public class ProductService {
                 .setPrice(productRequest.price)
                 .setFavorite(productRequest.isFavorite)
                 .setCategory(category)
-                .setProductType(productType)
                 .build();
     }
 
@@ -139,7 +126,6 @@ public class ProductService {
             throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
 
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
-        validateCategory(category, productRequest.productType);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
         product.setSize(productRequest.size);

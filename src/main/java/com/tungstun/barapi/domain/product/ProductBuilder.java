@@ -9,7 +9,6 @@ public class ProductBuilder {
     private double price;
     private boolean isFavorite;
     private Category category;
-    private ProductType productType;
 
     public ProductBuilder() {
         this.name = "Unknown";
@@ -18,7 +17,6 @@ public class ProductBuilder {
         this.price = 0.0;
         this.isFavorite = false;
         this.category = null;
-        this.productType = ProductType.OTHER;
     }
 
     public ProductBuilder setName(String name) {
@@ -48,11 +46,6 @@ public class ProductBuilder {
 
     public ProductBuilder setCategory(Category category) {
         this.category = category;
-        return this;
-    }
-
-    public ProductBuilder setProductType(ProductType productType) {
-        this.productType = productType;
         return this;
     }
 
