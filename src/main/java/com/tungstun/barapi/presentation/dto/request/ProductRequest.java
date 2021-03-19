@@ -30,8 +30,4 @@ public class ProductRequest {
     @ApiModelProperty(notes = "The ID of the product's category")
     @NotNull
     public Long categoryId;
-
-    @ApiModelProperty(notes = "The product's type")
-    @NotNull
-    public String productType;
 }
