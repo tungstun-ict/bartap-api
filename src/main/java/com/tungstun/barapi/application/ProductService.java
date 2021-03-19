@@ -110,16 +110,8 @@ public class ProductService {
 
     public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
-        if (barHasProductWithName(bar, productRequest.name)) throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
-    }
-
-    private boolean barHasProductWithName(Bar bar, String name) {
-        for (Product product : bar.getProducts()) {
-            if (product.getName().toLowerCase().equals(name.toLowerCase())) return true;
-        }
-        return false;
     }
 
     private boolean barHasProductWithNameAndIsntItself(Bar bar, Product product, String name) {
