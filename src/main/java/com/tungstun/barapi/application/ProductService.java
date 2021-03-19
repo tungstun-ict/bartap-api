@@ -59,7 +59,7 @@ public class ProductService {
 
     private void filterProductsByTypeString(List<Product> products, String type) throws NotFoundException {
         ProductType productType = convertStringToProductType(type);
-        products.removeIf( product -> !product.getProductType().equals(productType) );
+        products.removeIf( product -> !product.getCategory().getProductType().equals(productType) );
         if (products.isEmpty()) throw new NotFoundException(String.format("No products found of type %s", productType));
     }
 
@@ -140,14 +140,12 @@ public class ProductService {
 
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         validateCategory(category, productRequest.productType);
-        ProductType productType = convertStringToProductType(productRequest.productType);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
         product.setSize(productRequest.size);
         product.setPrice(productRequest.price);
         product.setFavorite(productRequest.isFavorite);
         product.setCategory(category);
-        product.setProductType(productType);
         return this.SPRING_PRODUCT_REPOSITORY.save(product);
     }
 

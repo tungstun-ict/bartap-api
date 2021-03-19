@@ -63,8 +63,7 @@ public class ProductBuilder {
                 this.size,
                 this.price,
                 this.isFavorite,
-                this.category,
-                this.productType
+                this.category
         );
     }
 }

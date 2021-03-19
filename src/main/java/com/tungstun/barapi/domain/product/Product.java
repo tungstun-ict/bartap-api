@@ -30,18 +30,14 @@ public class Product {
     @ManyToOne(cascade = CascadeType.ALL)
     private Category category;
 
-    @Enumerated(EnumType.STRING)
-    private ProductType productType;
-
     public Product() { }
-    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category, ProductType productType) {
+    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category) {
         this.name = name;
         this.brand = brand;
         this.size = size;
         this.price = price;
         this.isFavorite = isFavorite;
         this.category = category;
-        this.productType = productType;
     }
 
     public Long getId() {
@@ -72,7 +68,6 @@ public class Product {
         return category;
     }
 
-    public ProductType getProductType() { return productType; }
 
     public void setName(String name) { this.name = name; }
 
@@ -85,6 +80,4 @@ public class Product {
     public void setFavorite(boolean favorite) { isFavorite = favorite; }
 
     public void setCategory(Category category) { this.category = category; }
-
-    public void setProductType(ProductType productType) { this.productType = productType; }
 }
