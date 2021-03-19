@@ -99,8 +99,7 @@ public class ProductService {
     }
 
     public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
-        Product product = buildProduct(barId, productRequest);
+        Bar bar = this.BAR_SERVICE.getBar(barId); Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
