@@ -68,7 +68,6 @@ public class Product {
         return category;
     }
 
-
     public void setName(String name) { this.name = name; }
 
     public void setBrand(String brand) { this.brand = brand; }
