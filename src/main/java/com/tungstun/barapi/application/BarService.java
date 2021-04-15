@@ -69,17 +69,17 @@ public class BarService {
     }
 
     private void checkIfBarExists(String name){
-        SPRING_BAR_REPOSITORY.findBarByName(name).ifPresent(error ->{
+        SPRING_BAR_REPOSITORY.findBarByDetails_Name(name).ifPresent(error ->{
             throw new DuplicateRequestException(
                     String.format("Bar with name %s already exists", name)); });
     }
 
     public Bar updateBar(Long id, BarRequest barRequest) throws NotFoundException {
         Bar bar = getBar(id);
-        bar.setAddress(barRequest.address);
-        bar.setMail(barRequest.mail);
-        bar.setName(barRequest.name);
-        bar.setPhoneNumber(barRequest.phoneNumber);
+        bar.getDetails().setAddress(barRequest.address);
+        bar.getDetails().setMail(barRequest.mail);
+        bar.getDetails().setName(barRequest.name);
+        bar.getDetails().setPhoneNumber(barRequest.phoneNumber);
         return this.SPRING_BAR_REPOSITORY.save(bar);
     }
 

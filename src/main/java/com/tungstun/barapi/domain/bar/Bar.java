@@ -15,17 +15,8 @@ public class Bar {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "address")
-    private String address;
-
-    @Column(name = "name")
-    private String name;
-
-    @Column(name = "mail")
-    private String mail;
-
-    @Column(name = "phone_number")
-    private String phoneNumber;
+    @Embedded
+    private BarDetails details;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -40,26 +31,26 @@ public class Bar {
     private List<Product> products;
 
     @OneToMany(
-        fetch = FetchType.LAZY,
-        cascade = CascadeType.ALL,
-        orphanRemoval = true
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<Session> sessions;
 
     @OneToMany(
-            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
     private List<Category> categories;
 
-    public Bar() {}
-    public Bar(String address, String name, String mail, String phoneNumber,
-               List<Person> people, List<Product> products, List<Session> sessions, List<Category> categories) {
-        this.address = address;
-        this.name = name;
-        this.mail = mail;
-        this.phoneNumber = phoneNumber;
+    public Bar() {
+    }
+    public Bar(BarDetails details,
+               List<Person> people,
+               List<Product> products,
+               List<Session> sessions,
+               List<Category> categories
+    ) {
+        this.details = details;
         this.people = people;
         this.products = products;
         this.sessions = sessions;
@@ -70,46 +61,20 @@ public class Bar {
         return id;
     }
 
-    public String getAddress() { return address; }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getMail() {
-        return mail;
-    }
-
-    public void setMail(String mail) {
-        this.mail = mail;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public BarDetails getDetails() {
+        return details;
     }
 
     public List<Person> getUsers() {
         return this.people;
     }
 
-    public boolean addUser(Person person){
-        if ( !this.people.contains(person) ) return this.people.add(person);
+    public boolean addUser(Person person) {
+        if (!this.people.contains(person)) return this.people.add(person);
         return false;
     }
 
-    public boolean removeUser(Person person){
+    public boolean removeUser(Person person) {
         return this.people.remove(person);
     }
 
@@ -117,12 +82,12 @@ public class Bar {
         return this.products;
     }
 
-    public boolean addProduct(Product product){
-        if ( !this.products.contains(product) ) return this.products.add(product);
+    public boolean addProduct(Product product) {
+        if (!this.products.contains(product)) return this.products.add(product);
         return false;
     }
 
-    public boolean removeProduct(Product product){
+    public boolean removeProduct(Product product) {
         return this.products.remove(product);
     }
 
@@ -130,23 +95,25 @@ public class Bar {
         return this.sessions;
     }
 
-    public boolean addSession(Session session){
-        if ( !this.sessions.contains(session) ) return this.sessions.add(session);
+    public boolean addSession(Session session) {
+        if (!this.sessions.contains(session)) return this.sessions.add(session);
         return false;
     }
 
-    public boolean removeSession(Session session){
+    public boolean removeSession(Session session) {
         return this.sessions.remove(session);
     }
 
-    public List<Category> getCategories() { return categories; }
+    public List<Category> getCategories() {
+        return categories;
+    }
 
-    public boolean addCategory(Category category){
-        if ( !this.categories.contains(category) ) return this.categories.add(category);
+    public boolean addCategory(Category category) {
+        if (!this.categories.contains(category)) return this.categories.add(category);
         return false;
     }
 
-    public boolean removeCategory(Category category){
+    public boolean removeCategory(Category category) {
         return this.categories.remove(category);
     }
 }

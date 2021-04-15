@@ -7,5 +7,5 @@ import java.util.Optional;
 
 public interface SpringBarRepository extends JpaRepository<Bar, Long> {
     Optional<Bar> findById(Long id);
-    Optional<Bar> findBarByName(String name);
+    Optional<Bar> findBarByDetails_Name(String name);
 }
