@@ -43,15 +43,13 @@ public class CategoryService {
     }
 
     private ProductType convertStringToProductType(String type) {
-        ProductType productType = ProductType.OTHER;
         if (type != null) {
             try {
-                productType = ProductType.valueOf(type.toUpperCase());
+                return ProductType.valueOf(type.toUpperCase());
             }catch (Exception e) {
-                throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
             }
         }
-        return productType;
+        throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
     }
 
     private List<Category> findCategoriesOfProductType(List<Category> categories, ProductType productType) throws NotFoundException {
