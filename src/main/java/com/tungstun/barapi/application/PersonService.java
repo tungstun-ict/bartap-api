@@ -13,8 +13,8 @@ import java.util.List;
 
 @Service
 public class PersonService {
-    private SpringPersonRepository SPRING_PERSON_REPOSITORY;
-    private BarService BAR_SERVICE;
+    private final SpringPersonRepository SPRING_PERSON_REPOSITORY;
+    private final BarService BAR_SERVICE;
 
     public PersonService(SpringPersonRepository SPRING_PERSON_REPOSITORY, BarService BAR_SERVICE) {
         this.SPRING_PERSON_REPOSITORY = SPRING_PERSON_REPOSITORY;
