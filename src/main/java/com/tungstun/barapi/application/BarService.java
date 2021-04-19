@@ -28,10 +28,8 @@ public class BarService {
         this.USER_SERVICE = userService;
     }
 
-    public List<Bar> getAllBars() throws NotFoundException{
-        List<Bar> bars = this.SPRING_BAR_REPOSITORY.findAll();
-        if (bars.isEmpty()) throw new NotFoundException("There are no bars available");
-        return bars;
+    public List<Bar> getAllBars() {
+        return this.SPRING_BAR_REPOSITORY.findAll();
     }
 
     public List<Bar> getAllBarOwnerBars(String username) throws NotFoundException {
@@ -45,20 +43,20 @@ public class BarService {
 
     public Bar getBar(Long id) throws NotFoundException {
         return this.SPRING_BAR_REPOSITORY.findById(id)
-         .orElseThrow(() -> new NotFoundException(
-                 String.format("Bar with id %s doesn't exist", id)) );
+                .orElseThrow(() -> new NotFoundException(
+                        String.format("Bar with id %s doesn't exist", id)));
     }
 
     public Bar addBar(BarRequest barRequest, String ownerUsername) {
-        checkIfBarExists(barRequest.name);
+        User user = (User) this.USER_SERVICE.loadUserByUsername(ownerUsername);
+        checkIfBarExistsForPerson(barRequest.name, user);
         Bar bar = new BarBuilder()
-                .setAdres(barRequest.address)
+                .setAddress(barRequest.address)
                 .setName(barRequest.name)
                 .setMail(barRequest.mail)
                 .setPhoneNumber(barRequest.phoneNumber)
                 .build();
         bar = this.SPRING_BAR_REPOSITORY.save(bar);
-        User user = (User) this.USER_SERVICE.loadUserByUsername(ownerUsername);
         user.addUserBarAuthorizations(new UserBarAuthorization(bar.getId(), user.getId(), UserRole.ROLE_BAR_OWNER));
         Person owner = new PersonBuilder()
                 .setName(ownerUsername)
@@ -68,10 +66,13 @@ public class BarService {
         return this.SPRING_BAR_REPOSITORY.save(bar);
     }
 
-    private void checkIfBarExists(String name){
-        SPRING_BAR_REPOSITORY.findBarByDetails_Name(name).ifPresent(error ->{
-            throw new DuplicateRequestException(
-                    String.format("Bar with name %s already exists", name)); });
+    private void checkIfBarExistsForPerson(String name, User user) {
+        SPRING_BAR_REPOSITORY.findBarByDetails_Name(name).ifPresent(bar -> {
+           if ( bar.getUsers().stream()
+                   .anyMatch(barUser -> barUser.getUser().equals(user))) {
+               throw new DuplicateRequestException(String.format("Bar with name %s already exists", name));
+           }
+        });
     }
 
     public Bar updateBar(Long id, BarRequest barRequest) throws NotFoundException {
@@ -83,7 +84,11 @@ public class BarService {
         return this.SPRING_BAR_REPOSITORY.save(bar);
     }
 
-    public Bar saveBar(Bar bar){ return this.SPRING_BAR_REPOSITORY.save(bar); }
+    public Bar saveBar(Bar bar) {
+        return this.SPRING_BAR_REPOSITORY.save(bar);
+    }
 
-    public void deleteBar(Long id) throws NotFoundException { this.SPRING_BAR_REPOSITORY.delete(getBar(id)); }
+    public void deleteBar(Long id) {
+        this.SPRING_BAR_REPOSITORY.deleteById(id);
+    }
 }
