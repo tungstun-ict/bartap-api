@@ -23,7 +23,7 @@ public class BarBuilder {
         this.categories = new ArrayList<>();
     }
 
-    public BarBuilder setAdres(String adres) {
+    public BarBuilder setAddress(String adres) {
         this.details.setAddress(adres);
         return this;
     }
