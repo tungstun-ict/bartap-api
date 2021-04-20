@@ -43,7 +43,6 @@ public class Order {
         this.amount = amount;
         this.bartender = bartender;
         this.creationDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
-        System.out.println(ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime());
     }
 
     public Long getId() { return id; }
