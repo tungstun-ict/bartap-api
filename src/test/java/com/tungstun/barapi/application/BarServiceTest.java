@@ -29,17 +29,19 @@ class BarServiceTest {
     private static final UserService userService = mock(UserService.class);
     private static final BarService service= new BarService(repository, userService);
 
+
+
+    @AfterEach
+    void teardown() {
+        clearInvocations(repository, userService);
+    }
+
     private static Stream<Arguments> provideAllBars() {
         return Stream.of(
                 Arguments.of(List.of()),
                 Arguments.of(List.of(new BarBuilder().build())),
                 Arguments.of(List.of(new BarBuilder().build(), new BarBuilder().build()))
         );
-    }
-
-    @AfterEach
-    void teardown() {
-        clearInvocations(repository, userService);
     }
 
     @ParameterizedTest
