@@ -2,8 +2,8 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringCategoryRepository;
-import com.tungstun.barapi.domain.Category;
 import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
@@ -24,11 +24,9 @@ public class CategoryService {
     }
 
     public List<Category> getCategoriesOfBar(Long barId, String productType) throws NotFoundException {
-        if (productType != null) {
-            return getCategoriesOfProductTypeOfBar(barId, productType);
-        }else{
-            return getAllCategoriesOfBar(barId);
-        }
+        return productType != null ?
+                getCategoriesOfProductTypeOfBar(barId, productType)
+                : getAllCategoriesOfBar(barId);
     }
 
     private List<Category> getCategoriesOfProductTypeOfBar(Long barId, String type) throws NotFoundException {
@@ -46,7 +44,7 @@ public class CategoryService {
         if (type != null) {
             try {
                 return ProductType.valueOf(type.toUpperCase());
-            }catch (Exception e) {
+            } catch (Exception e) {
             }
         }
         throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
@@ -59,7 +57,8 @@ public class CategoryService {
                 resCategories.add(category);
             }
         }
-        if (resCategories.isEmpty()) throw new NotFoundException(String.format("No categories found with product type %s", productType));
+        if (resCategories.isEmpty())
+            throw new NotFoundException(String.format("No categories found with product type %s", productType));
         return resCategories;
     }
 
@@ -86,7 +85,7 @@ public class CategoryService {
     }
 
     private void checkIfCategoryNameIsAvailable(Bar bar, String categoryName) {
-        if (barHasCategoryWithName(bar, categoryName)){
+        if (barHasCategoryWithName(bar, categoryName)) {
             throw new DuplicateRequestException(String.format("Bar already has category with name '%s'", categoryName));
         }
     }

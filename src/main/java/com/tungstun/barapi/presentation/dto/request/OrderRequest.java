@@ -2,6 +2,7 @@ package com.tungstun.barapi.presentation.dto.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,5 +13,6 @@ public class OrderRequest {
     public Long productId;
 
     @ApiModelProperty(notes = "The order's amount of products")
+    @Value("1")
     public Integer amount;
 }

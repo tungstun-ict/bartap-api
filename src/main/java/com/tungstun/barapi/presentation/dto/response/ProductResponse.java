@@ -1,6 +1,6 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.Category;
+import com.tungstun.barapi.domain.product.Category;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 

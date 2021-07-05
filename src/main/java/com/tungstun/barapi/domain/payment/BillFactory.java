@@ -1,7 +1,7 @@
-package com.tungstun.barapi.domain.bill;
+package com.tungstun.barapi.domain.payment;
 
-import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.session.Session;
 
 import java.util.ArrayList;
 

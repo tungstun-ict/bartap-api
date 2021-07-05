@@ -2,8 +2,8 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringSessionRepository;
-import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;

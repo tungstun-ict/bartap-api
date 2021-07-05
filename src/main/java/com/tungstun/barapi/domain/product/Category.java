@@ -1,9 +1,8 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.barapi.domain.product.ProductType;
 
 import javax.persistence.*;
 

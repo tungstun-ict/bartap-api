@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain.order;
+package com.tungstun.barapi.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;

@@ -1,5 +1,6 @@
 package com.tungstun.barapi.domain;
 
+import com.tungstun.barapi.domain.session.Session;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

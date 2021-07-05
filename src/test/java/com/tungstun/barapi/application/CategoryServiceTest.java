@@ -1,9 +1,9 @@
 package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringCategoryRepository;
-import com.tungstun.barapi.domain.Category;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.ProductType;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.DisplayName;

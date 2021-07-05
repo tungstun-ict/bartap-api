@@ -1,8 +1,10 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.OrderService;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
+import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import com.tungstun.security.data.model.UserProfile;
@@ -33,6 +35,9 @@ public class OrderController {
 
     private OrderResponse convertToOrderResult(Order order){
         return RESPONSE_MAPPER.convert(order, OrderResponse.class);
+    }
+    private BillResponse convertToBillResult(Bill bill){
+        return RESPONSE_MAPPER.convert(bill, BillResponse.class);
     }
 
     @GetMapping("orders")
@@ -141,7 +146,7 @@ public class OrderController {
             notes = "Provide id of bar, session and bill to create a new order with information from request body",
             response = OrderResponse.class
     )
-    public ResponseEntity<OrderResponse> createNewOrder(
+    public ResponseEntity<BillResponse> createNewOrder(
             @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") Long billId,
@@ -149,7 +154,7 @@ public class OrderController {
             @ApiIgnore Authentication authentication
     ) throws NotFoundException {
         UserProfile userProfile = (UserProfile) authentication.getPrincipal();
-        Order order = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userProfile.getUsername());
-        return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
+        Bill bill = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userProfile.getUsername());
+        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 }

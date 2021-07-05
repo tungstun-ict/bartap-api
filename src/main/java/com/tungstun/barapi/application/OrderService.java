@@ -1,15 +1,15 @@
 package com.tungstun.barapi.application;
 
+import com.tungstun.barapi.data.SpringBillRepository;
 import com.tungstun.barapi.data.SpringOrderRepository;
-import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.domain.bill.Bill;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.security.application.UserService;
-import com.tungstun.security.data.model.User;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Service
 public class OrderService {
     private final SpringOrderRepository SPRING_ORDER_REPOSITORY;
+    private final SpringBillRepository BILL_REPOSITORY;
     private final ProductService PRODUCT_SERVICE;
     private final SessionService SESSION_SERVICE;
     private final BillService BILL_SERVICE;
@@ -26,13 +27,15 @@ public class OrderService {
     private final BarService BAR_SERVICE;
 
 
-    public OrderService(SessionService sessionService,
+    public OrderService(SpringBillRepository billRepository,
+                        SessionService sessionService,
                         BillService billService,
                         SpringOrderRepository springOrderRepository,
                         ProductService productService,
                         UserService userService,
                         BarService barService
     ) {
+        this.BILL_REPOSITORY = billRepository;
         this.SESSION_SERVICE = sessionService;
         this.BILL_SERVICE = billService;
         this.SPRING_ORDER_REPOSITORY = springOrderRepository;
@@ -105,34 +108,21 @@ public class OrderService {
         this.SPRING_ORDER_REPOSITORY.delete(order);
     }
 
-    private Order saveOrderToBill(Bill bill, Order order) {
-        order = this.SPRING_ORDER_REPOSITORY.save(order);
-        this.BILL_SERVICE.addOrderToBill(bill, order);
-        return order;
-    }
-
-    public Order addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
+    public Bill addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
         this.SESSION_SERVICE.sessionIsActive(bill.getSession());
-        User user = (User) this.USER_SERVICE.loadUserByUsername(username);
-        Person bartender = findPersonOfUser(barId, user);
-        Order order = buildOrder(barId, orderRequest, bartender);
-        return saveOrderToBill(bill, order);
+        Person bartender = findPersonOfUser(barId, username);
+        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
+        bill.addOrder(product, orderRequest.amount, bartender);
+        return BILL_REPOSITORY.save(bill);
     }
 
-    private Person findPersonOfUser(Long barId, User user) throws NotFoundException {
+    private Person findPersonOfUser(Long barId, String username) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         return bar.getUsers().stream()
                 .filter(person -> person.getUser() != null)
-                .filter(person -> person.getUser().equals(user))
+                .filter(person -> person.getUser().getUsername().equals(username))
                 .findAny()
                 .orElseThrow(() -> new NotFoundException("No person found connected to you user account"));
-    }
-
-
-    private Order buildOrder(Long barId, OrderRequest orderRequest, Person bartender) throws NotFoundException {
-        int amount = (orderRequest.amount == null) ? 1 : orderRequest.amount;
-        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
-        return new Order(product, amount, bartender);
     }
 }

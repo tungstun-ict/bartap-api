@@ -1,11 +1,11 @@
-package com.tungstun.barapi.domain.bill;
+package com.tungstun.barapi.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.util.List;
@@ -56,6 +56,11 @@ public class Bill {
     public Person getCustomer() { return customer; }
 
     public List<Order> getOrders() { return this.orders; }
+
+    public boolean addOrder(Product product, int amount, Person bartender){
+        Order order = new Order(product, amount, bartender);
+        return this.orders.add(order);
+    }
 
     public boolean addOrder(Order order){
         if ( !this.orders.contains(order) ) return this.orders.add(order);

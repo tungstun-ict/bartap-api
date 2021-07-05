@@ -1,7 +1,5 @@
 package com.tungstun.barapi.domain.product;
 
-import com.tungstun.barapi.domain.Category;
-
 public class ProductBuilder {
     private String name;
     private String brand;

@@ -1,6 +1,5 @@
-package com.tungstun.barapi.domain.bill;
+package com.tungstun.barapi.domain.payment;
 
-import com.tungstun.barapi.domain.order.Order;
 import com.tungstun.barapi.domain.product.Product;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;

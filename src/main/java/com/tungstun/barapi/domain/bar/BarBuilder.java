@@ -1,9 +1,9 @@
 package com.tungstun.barapi.domain.bar;
 
-import com.tungstun.barapi.domain.Category;
-import com.tungstun.barapi.domain.Session;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;

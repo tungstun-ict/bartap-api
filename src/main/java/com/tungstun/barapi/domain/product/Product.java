@@ -1,7 +1,6 @@
 package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.domain.Category;
 
 import javax.persistence.*;
 

@@ -1,5 +1,6 @@
 package com.tungstun.barapi.domain;
 
+import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.ProductType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
