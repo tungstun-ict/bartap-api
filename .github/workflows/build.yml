@@ -1,14 +1,13 @@
-
 name: Java CI with Maven
 on:
   push:
     branches:
       - 'main'
       - 'development'
-    pull_request:
-      branches:
-        - 'main'
-        - 'development'
+  pull_request:
+    branches:
+      - 'main'
+      - 'development'
 jobs:
   build:
     runs-on: ubuntu-latest

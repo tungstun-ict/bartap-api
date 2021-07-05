@@ -31,7 +31,7 @@ values (1, 'Bart Schouten', '66772323332', 3),
        (3, 'Jona Leeflang', '4567890044', null),
        (4, 'Sep de Geus', '0632334233', null),
        (5, 'Fee Sanders', '0633144444', null),
-       (6, 'Test User', '1234670000', 2);
+       (6, 'admin', '1234670000', 1);
 
 insert into bar_people(bar_id, people_id)
 values (1, 1),
