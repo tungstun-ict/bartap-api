@@ -58,6 +58,7 @@ public class Bill {
     public List<Order> getOrders() { return this.orders; }
 
     public boolean addOrder(Product product, int amount, Person bartender){
+        if (product == null || amount < 1 || bartender == null) return false;
         Order order = new Order(product, amount, bartender);
         return this.orders.add(order);
     }
@@ -76,10 +77,8 @@ public class Bill {
     public void setPayed(boolean payed) { isPayed = payed; }
 
     public double calculateTotalPrice() {
-        double totalPrice = 0.0;
-        for (Order order : this.orders){
-            totalPrice += order.getAmount()*order.getProduct().getPrice();
-        }
-        return totalPrice;
+        return this.orders.stream()
+                .mapToDouble(order -> order.getProduct().getPrice() * order.getAmount())
+                .sum();
     }
 }
