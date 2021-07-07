@@ -118,12 +118,6 @@ public class BillService {
         this.SPRING_BILL_REPOSITORY.delete(bill);
     }
 
-    public Bill addOrderToBill(Bill bill, Order order) {
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
-        bill.addOrder(order);
-        return this.SPRING_BILL_REPOSITORY.save(bill);
-    }
-
     public Bill removeOrderFromBill(Bill bill, Order order) {
         this.SESSION_SERVICE.sessionIsActive(bill.getSession());
         bill.removeOrder(order);

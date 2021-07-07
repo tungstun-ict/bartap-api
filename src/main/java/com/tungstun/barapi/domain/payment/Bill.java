@@ -63,11 +63,6 @@ public class Bill {
         return this.orders.add(order);
     }
 
-    public boolean addOrder(Order order){
-        if ( !this.orders.contains(order) ) return this.orders.add(order);
-        return false;
-    }
-
     public boolean removeOrder(Order order){
         return this.orders.remove(order);
     }

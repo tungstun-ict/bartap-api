@@ -1,6 +1,5 @@
-package com.tungstun.barapi.domain;
+package com.tungstun.barapi.domain.session;
 
-import com.tungstun.barapi.domain.session.Session;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -44,28 +43,17 @@ class SessionTest {
     }
 
     @Test
-    @DisplayName("Session.create returns new Session")
-    void createSession_ReturnsNewSession() {
-        LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
-
-        Session session = Session.create("session");
-
-        LocalDateTime sessionDateTime = session.getCreationDate().truncatedTo(ChronoUnit.SECONDS);
-        assertEquals(currentDateTime, sessionDateTime);
-    }
-
-    @Test
     @DisplayName("End session ends session")
     void endSession_EndsSession() {
         Session session = Session.create("session");
-
-        session.endSession();
-
         LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
+
+        boolean ended = session.endSession();
+
         LocalDateTime sessionEndDateTime = session.getClosedDate().truncatedTo(ChronoUnit.SECONDS);
         assertEquals(currentDateTime, sessionEndDateTime);
+        assertTrue(ended);
     }
-
     @ParameterizedTest
     @MethodSource("provideSessionsToLock")
     @DisplayName("Lock session")
@@ -76,11 +64,23 @@ class SessionTest {
         assertNotNull(session.getClosedDate());
     }
 
+    @Test
+    @DisplayName("End session when session is already ended")
+    void endSession_WhenSessionIsEndedAlready() {
+        Session session = Session.create("session");
+        session.endSession();
+
+        boolean ended = session.endSession();
+
+        assertFalse(ended);
+    }
+
     @ParameterizedTest
     @MethodSource("provideSessionsToCheckIsActive")
     @DisplayName("Check if session is active session")
     void sessionIsActive(Session session, boolean expectedIsActive) {
+        boolean isActive = session.isActive();
 
-        assertEquals(session.isActive(), expectedIsActive);
+        assertEquals(isActive, expectedIsActive);
     }
 }

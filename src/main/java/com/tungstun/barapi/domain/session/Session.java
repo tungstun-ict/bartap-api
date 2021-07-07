@@ -61,12 +61,14 @@ public class Session {
         );
     }
 
-    public void endSession() {
+    public boolean endSession() {
+        if (this.closedDate == null) return false;
         this.closedDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
+        return true;
     }
 
     public void lock() {
-        if (this.closedDate == null) endSession();
+        endSession();
         isLocked = true;
     }
 
