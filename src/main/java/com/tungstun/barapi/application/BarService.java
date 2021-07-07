@@ -57,7 +57,7 @@ public class BarService {
                 .setPhoneNumber(barRequest.phoneNumber)
                 .build();
         bar = this.SPRING_BAR_REPOSITORY.save(bar);
-        user.addUserBarAuthorizations(new UserBarAuthorization(bar.getId(), user.getId(), UserRole.ROLE_BAR_OWNER));
+        user.addUserBarAuthorizations(new UserBarAuthorization(bar, user, UserRole.ROLE_BAR_OWNER));
         Person owner = new PersonBuilder()
                 .setName(ownerUsername)
                 .setUser(user)

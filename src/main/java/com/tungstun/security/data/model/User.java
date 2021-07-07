@@ -80,7 +80,7 @@ public class User implements UserDetails {
     public Map<Long, String> getAuthoritiesMap() {
         Map<Long, String> barAuth = new HashMap<>();
         for (UserBarAuthorization userBarAuthorization : userBarAuthorizations) {
-            barAuth.put(userBarAuthorization.getBarId(), userBarAuthorization.getRole().toString());
+            barAuth.put(userBarAuthorization.getBar().getId(), userBarAuthorization.getRole().toString());
         }
         return barAuth;
     }
