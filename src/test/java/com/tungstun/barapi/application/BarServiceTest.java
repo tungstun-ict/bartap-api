@@ -8,6 +8,8 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
+import com.tungstun.security.data.model.UserBarAuthorization;
+import com.tungstun.security.data.model.UserRole;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,6 +21,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -28,8 +31,6 @@ class BarServiceTest {
     private static final SpringBarRepository repository = mock(SpringBarRepository.class);
     private static final UserService userService = mock(UserService.class);
     private static final BarService service= new BarService(repository, userService);
-
-
 
     @AfterEach
     void teardown() {
@@ -43,7 +44,6 @@ class BarServiceTest {
                 Arguments.of(List.of(new BarBuilder().build(), new BarBuilder().build()))
         );
     }
-
     @ParameterizedTest
     @MethodSource("provideAllBars")
     @DisplayName("Get all bars returns bars")
@@ -95,16 +95,23 @@ class BarServiceTest {
         verify(repository, times(1)).findById(anyLong());
     }
 
-    @Test
-    @DisplayName("Get not existing bar throws")
-    void getNotExistingBar_ThrowsNotFound() {
-        when(repository.findById(anyLong())).thenReturn(Optional.empty());
-
-        assertThrows(
-                NotFoundException.class,
-                () -> service.getBar(123L)
+    static Stream<Arguments> provideBarOwners() {
+        Bar bar = new BarBuilder().build();
+        Bar bar2 = new BarBuilder().build();
+        return Stream.of(
+                Arguments.of(
+                        new User("u", "u", "u", "u", "u",
+                        List.of())
+                ),
+                Arguments.of(
+                        new User("u", "u", "u", "u", "u",
+                        List.of(new UserBarAuthorization(bar, null, UserRole.ROLE_BAR_OWNER)))
+                ),
+                Arguments.of(
+                        new User("u", "u", "u", "u", "u",
+                        List.of(new UserBarAuthorization(bar, null, UserRole.ROLE_BAR_OWNER), new UserBarAuthorization(bar2, null, UserRole.ROLE_BAR_OWNER)))
+                )
         );
-        verify(repository, times(1)).findById(anyLong());
     }
 
     @Test
@@ -242,5 +249,32 @@ class BarServiceTest {
         );
 
         verify(repository, times(1)).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Get not existing bar throws")
+    void getNotExistingBar_ThrowsNotFound() {
+        when(repository.findById(anyLong())).thenReturn(Optional.empty());
+
+        assertThrows(
+                NotFoundException.class,
+                () -> service.getBar(123L)
+        );
+
+        verify(repository, times(1)).findById(anyLong());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideBarOwners")
+    @DisplayName("Get all bars owned by owner")
+    void getBarsOfOwner(User user){
+        when(userService.loadUserByUsername(user.getUsername())).thenReturn(user);
+        List<Bar> actualBars =  user.getUserBarAuthorizations().stream()
+                .map(UserBarAuthorization::getBar)
+                .collect(Collectors.toList());
+
+        List<Bar> bars =  service.getAllBarOwnerBars(user.getUsername());
+
+        assertEquals(actualBars, bars);
     }
 }

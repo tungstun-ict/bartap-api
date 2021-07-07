@@ -7,6 +7,7 @@ import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "bar")
@@ -115,5 +116,19 @@ public class Bar {
 
     public boolean removeCategory(Category category) {
         return this.categories.remove(category);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bar bar = (Bar) o;
+        return id.equals(bar.id) &&
+                details.equals(bar.details);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, details);
     }
 }

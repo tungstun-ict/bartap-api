@@ -32,7 +32,7 @@ public class BarService {
         return this.SPRING_BAR_REPOSITORY.findAll();
     }
 
-    public List<Bar> getAllBarOwnerBars(String username) throws NotFoundException {
+    public List<Bar> getAllBarOwnerBars(String username) {
         User user = (User) this.USER_SERVICE.loadUserByUsername(username);
         Set<Long> ownedBarIds = user.getAuthoritiesMap().keySet();
         return getAllBars()
@@ -43,8 +43,7 @@ public class BarService {
 
     public Bar getBar(Long id) throws NotFoundException {
         return this.SPRING_BAR_REPOSITORY.findById(id)
-                .orElseThrow(() -> new NotFoundException(
-                        String.format("Bar with id %s doesn't exist", id)));
+                .orElseThrow(() -> new NotFoundException(String.format("Bar with id %s doesn't exist", id)));
     }
 
     public Bar addBar(BarRequest barRequest, String ownerUsername) {

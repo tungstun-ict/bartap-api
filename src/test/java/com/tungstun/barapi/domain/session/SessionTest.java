@@ -18,30 +18,6 @@ class SessionTest {
         return LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
-    static Stream<Arguments> provideSessionsToLock() {
-        Session session = Session.create("session");
-        Session session2 = Session.create("session");
-        session2.endSession();
-        return Stream.of(
-                Arguments.of(session),
-                Arguments.of(session2)
-        );
-    }
-
-    static Stream<Arguments> provideSessionsToCheckIsActive() {
-        Session session = Session.create("session");
-        Session session2 = Session.create("session");
-        session2.endSession();
-        Session session3 = Session.create("session");
-        session3.endSession();
-        session3.lock();
-        return Stream.of(
-                Arguments.of(session, true),
-                Arguments.of(session2, false),
-                Arguments.of(session3, false)
-        );
-    }
-
     @Test
     @DisplayName("End session ends session")
     void endSession_EndsSession() {
@@ -53,6 +29,16 @@ class SessionTest {
         LocalDateTime sessionEndDateTime = session.getClosedDate().truncatedTo(ChronoUnit.SECONDS);
         assertEquals(currentDateTime, sessionEndDateTime);
         assertTrue(ended);
+    }
+
+    static Stream<Arguments> provideSessionsToLock() {
+        Session session = Session.create("session");
+        Session session2 = Session.create("session");
+        session2.endSession();
+        return Stream.of(
+                Arguments.of(session),
+                Arguments.of(session2)
+        );
     }
     @ParameterizedTest
     @MethodSource("provideSessionsToLock")
@@ -75,6 +61,20 @@ class SessionTest {
         assertFalse(ended);
     }
 
+
+    static Stream<Arguments> provideSessionsToCheckIsActive() {
+        Session session = Session.create("session");
+        Session session2 = Session.create("session");
+        session2.endSession();
+        Session session3 = Session.create("session");
+        session3.endSession();
+        session3.lock();
+        return Stream.of(
+                Arguments.of(session, true),
+                Arguments.of(session2, false),
+                Arguments.of(session3, false)
+        );
+    }
     @ParameterizedTest
     @MethodSource("provideSessionsToCheckIsActive")
     @DisplayName("Check if session is active session")
