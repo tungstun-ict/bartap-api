@@ -10,8 +10,8 @@ import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CategoryService {
@@ -30,9 +30,14 @@ public class CategoryService {
     }
 
     private List<Category> getCategoriesOfProductTypeOfBar(Long barId, String type) throws NotFoundException {
-        List<Category> allCategories = getAllCategoriesOfBar(barId);
         ProductType productType = convertStringToProductType(type);
+        List<Category> allCategories = getAllCategoriesOfBar(barId);
         return findCategoriesOfProductType(allCategories, productType);
+    }
+
+    private ProductType convertStringToProductType(String type) {
+        if (type == null) throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
+        return ProductType.valueOf(type.toUpperCase());
     }
 
     private List<Category> getAllCategoriesOfBar(Long barId) throws NotFoundException {
@@ -40,40 +45,23 @@ public class CategoryService {
         return bar.getCategories();
     }
 
-    private ProductType convertStringToProductType(String type) {
-        if (type != null) {
-            try {
-                return ProductType.valueOf(type.toUpperCase());
-            } catch (Exception e) {
-            }
-        }
-        throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
-    }
-
     private List<Category> findCategoriesOfProductType(List<Category> categories, ProductType productType) throws NotFoundException {
-        List<Category> resCategories = new ArrayList<>();
-        for (Category category : categories) {
-            if (category.getProductType().equals(productType)) {
-                resCategories.add(category);
-            }
-        }
-        if (resCategories.isEmpty())
-            throw new NotFoundException(String.format("No categories found with product type %s", productType));
-        return resCategories;
-    }
+        return categories.stream()
+                .filter(category -> category.getProductType().equals(productType))
+                .collect(Collectors.toList());
 
-    private Category findCategoryInCategories(List<Category> categories, Long categoryId) throws NotFoundException {
-        for (Category category : categories) {
-            if (category.getId().equals(categoryId)) {
-                return category;
-            }
-        }
-        throw new NotFoundException(String.format("No category found with id %s", categoryId));
     }
 
     public Category getCategoryOfBar(Long barId, Long categoryId) throws NotFoundException {
         List<Category> allCategories = getAllCategoriesOfBar(barId);
         return findCategoryInCategories(allCategories, categoryId);
+    }
+
+    private Category findCategoryInCategories(List<Category> categories, Long categoryId) throws NotFoundException {
+        return categories.stream()
+                .filter(category -> category.getId().equals(categoryId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No category found with id %s", categoryId)));
     }
 
     public Category addCategoryToBar(Long barId, CategoryRequest categoryRequest) throws NotFoundException {
@@ -103,15 +91,10 @@ public class CategoryService {
     }
 
     private boolean barHasCategoryWithNameAndIsNotItself(Bar bar, Category category, String name) {
-        for (Category categoryIteration : bar.getCategories()) {
-            if (category != null &&
-                    categoryIteration.getName().toLowerCase().equals(name.toLowerCase()) &&
-                    !categoryIteration.equals(category)
-            ) {
-                return true;
-            }
-        }
-        return false;
+        return bar.getCategories().stream()
+                .anyMatch(categoryIteration -> categoryIteration.getName().equalsIgnoreCase(name)
+                        && (category == null || !categoryIteration.getId().equals(category.getId()))
+        );
     }
 
     public Category updateCategoryOfBar(Long barId, Long categoryId, CategoryRequest categoryRequest) throws NotFoundException {
@@ -138,12 +121,8 @@ public class CategoryService {
     }
 
     private void removeCategoryFromProducts(List<Product> products, Category category) {
-        for (Product product : products) {
-            if (product.getCategory() != null &&
-                    product.getCategory().equals(category)
-            ) {
-                product.setCategory(null);
-            }
-        }
+        products.stream()
+                .filter(product -> product.getCategory() != null && product.getCategory().equals(category))
+                .forEach(product -> product.setCategory(null));
     }
 }
