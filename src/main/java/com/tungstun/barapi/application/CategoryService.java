@@ -10,9 +10,11 @@ import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class CategoryService {
     private final SpringCategoryRepository SPRING_CATEGORY_REPOSITORY;

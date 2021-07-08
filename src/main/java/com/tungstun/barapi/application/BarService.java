@@ -14,10 +14,12 @@ import com.tungstun.security.data.model.UserRole;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class BarService {
     private final SpringBarRepository SPRING_BAR_REPOSITORY;

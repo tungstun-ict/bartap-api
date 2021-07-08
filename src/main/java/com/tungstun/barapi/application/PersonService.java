@@ -9,8 +9,10 @@ import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @Service
 public class PersonService {
     private final SpringPersonRepository SPRING_PERSON_REPOSITORY;

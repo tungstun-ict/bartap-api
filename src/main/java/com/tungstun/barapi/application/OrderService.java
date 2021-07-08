@@ -13,9 +13,11 @@ import com.tungstun.security.application.UserService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class OrderService {
     private final SpringOrderRepository SPRING_ORDER_REPOSITORY;

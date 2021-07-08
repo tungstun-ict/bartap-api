@@ -11,9 +11,11 @@ import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+@Transactional
 @Service
 public class BillService {
     private final SpringBillRepository SPRING_BILL_REPOSITORY;

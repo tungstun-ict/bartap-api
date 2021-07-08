@@ -12,8 +12,10 @@ import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.transaction.Transactional;
 import java.util.List;
 
+@Transactional
 @Service
 public class ProductService {
     private final SpringProductRepository SPRING_PRODUCT_REPOSITORY;

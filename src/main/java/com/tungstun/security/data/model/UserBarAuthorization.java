@@ -12,11 +12,11 @@ public class UserBarAuthorization {
     private Long id;
 
     @ManyToOne(optional = false)
-    @Column(name = "bar_id")
+    @JoinColumn(name = "bar_id")
     private Bar bar;
 
     @ManyToOne(optional = false)
-    @Column(name = "user_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
