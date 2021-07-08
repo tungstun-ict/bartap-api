@@ -1,6 +1,7 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import com.tungstun.barapi.data.SpringBarRepository;
 import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -16,32 +17,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-class CategoryServiceTest {
-    private static final BarService barService = mock(BarService.class);
-    private static final SpringCategoryRepository repository = mock(SpringCategoryRepository.class);
-    private static final CategoryService service = new CategoryService(repository, barService);
-
+@Transactional
+@SpringBootTest
+public class CategoryServiceIntegrationTest {
     private static Bar bar;
     private static Category category;
-
-    @BeforeEach
-    void setup() throws NotFoundException {
-        bar = new BarBuilder().build();
-        category = new Category("category", ProductType.FOOD);
-        ReflectionTestUtils.setField(category, "id", 123L);
-        bar.addCategory(category);
-        when(barService.getBar(123L)).thenReturn(bar);
-    }
+    @Autowired
+    private SpringCategoryRepository repository;
+    @Autowired
+    private SpringBarRepository barRepository;
+    @Autowired
+    private CategoryService service;
 
     private static Stream<Arguments> provideBarsWithCategories() {
         Bar bar = new BarBuilder().build();
@@ -59,10 +56,10 @@ class CategoryServiceTest {
         );
         Bar bar4 = new Bar(null, null, null, null, bar4Categories);
         return Stream.of(
-                Arguments.of(bar, List.of()),
-                Arguments.of(bar2, bar2Categories),
-                Arguments.of(bar3, bar3Categories),
-                Arguments.of(bar4, bar4Categories)
+                Arguments.of(bar),
+                Arguments.of(bar2),
+                Arguments.of(bar3),
+                Arguments.of(bar4)
         );
     }
 
@@ -71,35 +68,45 @@ class CategoryServiceTest {
         Category food = new Category("category", ProductType.FOOD);
         Category other = new Category("category", ProductType.OTHER);
 
-        List<Category> barCategories = List.of(drink, food, other);
-        Bar bar = new Bar(null, null, null, null, barCategories);
+        List<Category> barCategories = new ArrayList<>(List.of(drink, food, other));
+        Bar bar = new BarBuilder().setCategories(barCategories).build();
         return Stream.of(
-                Arguments.of(bar, List.of(food), "FOOD"),
-                Arguments.of(bar, List.of(drink), "DRINK"),
-                Arguments.of(bar, List.of(other), "OTHER")
+                Arguments.of(bar, new ArrayList<>(List.of(food)), "FOOD"),
+                Arguments.of(bar, new ArrayList<>(List.of(drink)), "DRINK"),
+                Arguments.of(bar, new ArrayList<>(List.of(other)), "OTHER")
         );
+    }
+
+    @BeforeEach
+    void setup() {
+        bar = new BarBuilder().build();
+        category =  repository.save(new Category("category", ProductType.FOOD));
+        bar = barRepository.save(bar);
+        bar.addCategory(category);
+        bar = barRepository.save(bar);
     }
 
     @ParameterizedTest
     @MethodSource("provideBarsWithCategories")
     @DisplayName("Get all categories of bar")
-    void getCategoriesOfBar_ReturnsCategories(Bar bar, List<Category> expectedCategories) throws NotFoundException {
-        when(barService.getBar(any()))
-                .thenReturn(bar);
+    void getCategoriesOfBar_ReturnsCategories(Bar bar) throws NotFoundException {
+        bar = barRepository.save(bar);
+        List<Category> expectedCategories = bar.getCategories();
 
-        List<Category> categories = service.getCategoriesOfBar(any(), null);
+        List<Category> categories = service.getCategoriesOfBar(bar.getId(), null);
 
-        assertEquals(expectedCategories, categories);
+        assertEquals(categories.size(), expectedCategories.size());
     }
 
     @ParameterizedTest
     @MethodSource("provideBarsWithCategoriesAndType")
     @DisplayName("Get all categories of bar of type")
     void getCategoriesOfBarOfType_ReturnsCategories(Bar bar, List<Category> expectedCategories, String type) throws NotFoundException {
-        when(barService.getBar(any()))
-                .thenReturn(bar);
-        List<Category> categories = service.getCategoriesOfBar(any(), type);
-        assertEquals(expectedCategories, categories);
+        bar = barRepository.save(bar);
+
+        List<Category> categories = service.getCategoriesOfBar(bar.getId(), type);
+
+        assertEquals(categories.size(), expectedCategories.size());
     }
 
     @Test
@@ -114,7 +121,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Get existing category of bar")
     void getCategoryOfBar() throws NotFoundException {
-        Category c = service.getCategoryOfBar(123L, category.getId());
+        Category c = service.getCategoryOfBar(bar.getId(), category.getId());
 
         assertNotNull(c);
     }
@@ -124,7 +131,7 @@ class CategoryServiceTest {
     void getNotExistingCategoryOfBar() {
         assertThrows(
                 NotFoundException.class,
-                () -> service.getCategoryOfBar(123L, 999L)
+                () -> service.getCategoryOfBar(bar.getId(), 999L)
         );
     }
 
@@ -135,7 +142,7 @@ class CategoryServiceTest {
         request.name = "category2";
         request.productType = ProductType.FOOD.toString();
 
-        assertDoesNotThrow(() -> service.addCategoryToBar(123L, request));
+        assertDoesNotThrow(() -> service.addCategoryToBar(bar.getId(), request));
     }
 
     @Test
@@ -146,19 +153,18 @@ class CategoryServiceTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addCategoryToBar(123L, request)
+                () -> service.addCategoryToBar(bar.getId(), request)
         );
     }
 
     @Test
     @DisplayName("Update existing category name bar")
     void updateExistingCategory() throws NotFoundException {
-        when(repository.save(any())).thenReturn(new Category("categoryNew", ProductType.FOOD));
         CategoryRequest request = new CategoryRequest();
         request.name = "categoryNew";
         request.productType = ProductType.FOOD.toString();
 
-        Category updatedCategory = service.updateCategoryOfBar(123L, 123L, request);
+        Category updatedCategory = service.updateCategoryOfBar(bar.getId(), category.getId(), request);
 
         assertEquals("categoryNew", updatedCategory.getName());
     }
@@ -169,14 +175,15 @@ class CategoryServiceTest {
         Category category2 = new Category("categoryNew", ProductType.FOOD);
         ReflectionTestUtils.setField(category2, "id", 321L);
         bar.addCategory(category2);
-        when(repository.save(any())).thenReturn(new Category("categoryNew", ProductType.FOOD));
+        bar = barRepository.save(bar);
+
         CategoryRequest request = new CategoryRequest();
         request.name = "categoryNew";
         request.productType = ProductType.FOOD.toString();
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.updateCategoryOfBar(123L, 123L, request)
+                () -> service.updateCategoryOfBar(bar.getId(), category.getId(), request)
         );
     }
 
@@ -184,7 +191,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Delete existing category in bar")
     void deleteExistingCategory(){
-        assertDoesNotThrow(() -> service.deleteCategoryFromBar(123L, 123L));
+        assertDoesNotThrow(() -> service.deleteCategoryFromBar(bar.getId(), category.getId()));
     }
 
     @Test
@@ -195,8 +202,9 @@ class CategoryServiceTest {
                 .build();
         bar.addProduct(product);
 
-        service.deleteCategoryFromBar(123L, 123L);
+        service.deleteCategoryFromBar(bar.getId(), category.getId());
 
-        assertNull(bar.getProducts().get(0).getCategory());
+        Bar loadedBar = barRepository.findById(bar.getId()).get();
+        assertNull(loadedBar.getProducts().get(0).getCategory());
     }
 }
