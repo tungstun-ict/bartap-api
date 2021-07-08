@@ -180,7 +180,6 @@ class CategoryServiceTest {
         );
     }
 
-
     @Test
     @DisplayName("Delete existing category in bar")
     void deleteExistingCategory(){
@@ -190,9 +189,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Delete existing category in bar sets products of it to null category")
     void deleteExistingCategory_SetsProductsCategoriesOfItToNull() throws NotFoundException {
-        Product product = new ProductBuilder()
-                .setCategory(category)
-                .build();
+        Product product = new ProductBuilder().setCategory(category).build();
         bar.addProduct(product);
 
         service.deleteCategoryFromBar(123L, 123L);
