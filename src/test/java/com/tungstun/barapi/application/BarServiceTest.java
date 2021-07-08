@@ -8,8 +8,6 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserBarAuthorization;
-import com.tungstun.security.data.model.UserRole;
 import javassist.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +19,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,32 +54,6 @@ class BarServiceTest {
         verify(repository, times(1)).findAll();
     }
 
-//    @ParameterizedTest
-//    @MethodSource("provideAllOwnerBars")
-//    @DisplayName("Get all bars of bar owner returns bars")
-//    void getAllBarsOfBarOwner_ReturnsBars(String username, List<UserBarAuthorization> barAuthorizations, List<Bar> expectedBars) throws NotFoundException {
-//        when(userService.loadUserByMailOrUsername(username))
-//                .thenReturn(new User(username, "", "", "", "", barAuthorizations));
-//        when(repository.findAll())
-//                .thenReturn(expectedBars);
-//
-//        List<Bar> resBars = service.getAllBarOwnerBars(username);
-//
-//        assertEquals(expectedBars, resBars);
-//    }
-//    private static Stream<Arguments> provideAllOwnerBars() {
-//        return Stream.of(
-//                Arguments.of(
-//                        "hans",
-//                        List.of(),
-//                        List.of(List.of(new BarBuilder().build(), new BarBuilder().build()))
-//
-//                        ),
-//                Arguments.of(List.of(new BarBuilder().build())),
-//                Arguments.of(List.of(new BarBuilder().build(), new BarBuilder().build()))
-//        );
-//    }
-
     @Test
     @DisplayName("Get bar returns bar")
     void getBar_ReturnsBar() throws NotFoundException {
@@ -95,24 +66,6 @@ class BarServiceTest {
         verify(repository, times(1)).findById(anyLong());
     }
 
-    static Stream<Arguments> provideBarOwners() {
-        Bar bar = new BarBuilder().build();
-        Bar bar2 = new BarBuilder().build();
-        return Stream.of(
-                Arguments.of(
-                        new User("u", "u", "u", "u", "u",
-                        List.of())
-                ),
-                Arguments.of(
-                        new User("u", "u", "u", "u", "u",
-                        List.of(new UserBarAuthorization(bar, null, UserRole.ROLE_BAR_OWNER)))
-                ),
-                Arguments.of(
-                        new User("u", "u", "u", "u", "u",
-                        List.of(new UserBarAuthorization(bar, null, UserRole.ROLE_BAR_OWNER), new UserBarAuthorization(bar2, null, UserRole.ROLE_BAR_OWNER)))
-                )
-        );
-    }
 
     @Test
     @DisplayName("Create bar returns bar")
@@ -262,19 +215,5 @@ class BarServiceTest {
         );
 
         verify(repository, times(1)).findById(anyLong());
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideBarOwners")
-    @DisplayName("Get all bars owned by owner")
-    void getBarsOfOwner(User user){
-        when(userService.loadUserByUsername(user.getUsername())).thenReturn(user);
-        List<Bar> actualBars =  user.getUserBarAuthorizations().stream()
-                .map(UserBarAuthorization::getBar)
-                .collect(Collectors.toList());
-
-        List<Bar> bars =  service.getAllBarOwnerBars(user.getUsername());
-
-        assertEquals(actualBars, bars);
     }
 }

@@ -69,8 +69,7 @@ public class BarService {
 
     private void checkIfBarExistsForPerson(String name, User user) {
         SPRING_BAR_REPOSITORY.findBarByDetails_Name(name).ifPresent(bar -> {
-           if ( bar.getUsers().stream()
-                   .anyMatch(barUser -> barUser.getUser().equals(user))) {
+           if ( bar.getUsers().stream().anyMatch(barUser -> barUser.getUser().equals(user))) {
                throw new DuplicateRequestException(String.format("Bar with name %s already exists", name));
            }
         });
