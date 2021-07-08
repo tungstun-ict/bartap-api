@@ -7,13 +7,11 @@ import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
-import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
 import com.tungstun.security.data.model.UserBarAuthorization;
 import com.tungstun.security.data.model.UserRole;
 import com.tungstun.security.data.repository.SpringUserRepository;
 import javassist.NotFoundException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -39,8 +37,6 @@ public class BarServiceIntegrationTest {
     @Autowired
     private SpringBarRepository repository;
     @Autowired
-    private UserService userService;
-    @Autowired
     private BarService service;
 
     private static Stream<Arguments> provideAllBars() {
@@ -50,12 +46,6 @@ public class BarServiceIntegrationTest {
                 Arguments.of(List.of(new BarBuilder().build(), new BarBuilder().build()))
         );
     }
-
-    @BeforeEach
-    void setup() {
-
-    }
-
     @ParameterizedTest
     @MethodSource("provideAllBars")
     @DisplayName("Get all bars returns bars")
