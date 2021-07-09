@@ -112,7 +112,7 @@ public class OrderService {
 
     public Bill addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
+        this.SESSION_SERVICE.checkEditable(bill.getSession());
         Person bartender = findPersonOfUser(barId, username);
         Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
         bill.addOrder(product, orderRequest.amount, bartender);

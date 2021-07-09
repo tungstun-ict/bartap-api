@@ -62,7 +62,7 @@ public class Session {
     }
 
     public boolean endSession() {
-        if (this.closedDate == null) return false;
+        if (this.closedDate != null) return false;
         this.closedDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
         return true;
     }

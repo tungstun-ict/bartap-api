@@ -26,9 +26,23 @@ class SessionTest {
 
         boolean ended = session.endSession();
 
+        assertTrue(ended);
         LocalDateTime sessionEndDateTime = session.getClosedDate().truncatedTo(ChronoUnit.SECONDS);
         assertEquals(currentDateTime, sessionEndDateTime);
-        assertTrue(ended);
+    }
+
+    @Test
+    @DisplayName("End ended session keeps session ended")
+    void endEndedSession_keepsSessionEnded() {
+        Session session = Session.create("session");
+        LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
+        session.endSession();
+
+        boolean ended = session.endSession();
+
+        assertFalse(ended);
+        LocalDateTime sessionEndDateTime = session.getClosedDate().truncatedTo(ChronoUnit.SECONDS);
+        assertEquals(currentDateTime, sessionEndDateTime);
     }
 
     static Stream<Arguments> provideSessionsToLock() {

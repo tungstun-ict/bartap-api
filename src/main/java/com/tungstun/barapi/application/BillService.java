@@ -73,7 +73,7 @@ public class BillService {
 
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        this.SESSION_SERVICE.sessionIsActive(session);
+        this.SESSION_SERVICE.checkEditable(session);
         Person customer = this.PERSON_SERVICE.getPersonOfBar(barId, billRequest.customerId);
         if (sessionHasBillWithCustomer(session, customer))
             throw new DuplicateRequestException(String.format("Session already contains a bill for customer with id %s", customer.getId()));
@@ -103,14 +103,14 @@ public class BillService {
 
     public void deleteBillFromSessionOfBar(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = getBillOfBar(barId, sessionId, billId);
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
+        this.SESSION_SERVICE.checkEditable(bill.getSession());
         bill.getSession().removeBill(bill);
         bill.setSession(null);
         this.SPRING_BILL_REPOSITORY.delete(bill);
     }
 
     public Bill removeOrderFromBill(Bill bill, Order order) {
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
+        this.SESSION_SERVICE.checkEditable(bill.getSession());
         bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }
