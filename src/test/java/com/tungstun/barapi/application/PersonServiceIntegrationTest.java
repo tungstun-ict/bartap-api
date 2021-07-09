@@ -2,7 +2,6 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringBillRepository;
 import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -24,8 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 @SpringBootTest
 class PersonServiceIntegrationTest {
-    @Autowired
-    private SpringBillRepository billRepository;
     @Autowired
     private SpringPersonRepository repository;
     @Autowired
