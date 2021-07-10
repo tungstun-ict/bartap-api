@@ -9,7 +9,6 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
-import com.tungstun.security.application.UserService;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +24,6 @@ public class OrderService {
     private final ProductService PRODUCT_SERVICE;
     private final SessionService SESSION_SERVICE;
     private final BillService BILL_SERVICE;
-    private final UserService USER_SERVICE;
     private final BarService BAR_SERVICE;
 
 
@@ -34,7 +32,6 @@ public class OrderService {
                         BillService billService,
                         SpringOrderRepository springOrderRepository,
                         ProductService productService,
-                        UserService userService,
                         BarService barService
     ) {
         this.BILL_REPOSITORY = billRepository;
@@ -42,15 +39,7 @@ public class OrderService {
         this.BILL_SERVICE = billService;
         this.SPRING_ORDER_REPOSITORY = springOrderRepository;
         this.PRODUCT_SERVICE = productService;
-        this.USER_SERVICE = userService;
         this.BAR_SERVICE = barService;
-    }
-
-    private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
-        return bill.getOrders().stream()
-                .filter(order -> order.getId().equals(orderId))
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("No Order with id %s found in bill", orderId)));
     }
 
     public List<Order> getAllOrdersOfBar(Long barId) throws NotFoundException {
@@ -68,18 +57,11 @@ public class OrderService {
 
     public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        List<Order> orders = extractOrdersFromSession(session);
-        if (orders.isEmpty())
-            throw new NotFoundException(String.format("No orders found for session with id: %s", sessionId));
-        return orders;
+        return extractOrdersFromSession(session);
     }
 
     public Order getOrderOfSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        return findOrderInSession(session, orderId);
-    }
-
-    private Order findOrderInSession(Session session, Long orderId) throws NotFoundException {
         return extractOrdersFromSession(session).stream()
                 .filter(order -> order.getId().equals(orderId))
                 .findFirst()
@@ -88,22 +70,24 @@ public class OrderService {
 
     public List<Order> getAllOrdersOfBill(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        List<Order> orders = bill.getOrders();
-        if (orders.isEmpty()) throw new NotFoundException(String.format("No orders found for bill with id '%s'", billId));
-        return orders;
+        return bill.getOrders();
     }
 
     public Order getOrderOfBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        return findOrderInBill(bill, orderId);
+    }
+
+    private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
         return bill.getOrders().stream()
                 .filter(order -> order.getId().equals(orderId))
-                .findAny()
-                .orElseThrow(() -> new NotFoundException(String.format("No order found with id '%s' in bill with id '%s'", orderId, billId)));
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No Order with id %s found in bill", orderId)));
     }
 
     public void deleteOrderFromBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        if (!bill.getSession().isActive())
+        if (bill.getSession().isLocked())
             throw new IllegalStateException("Cannot delete order from bill when session of bill is not active");
         Order order = findOrderInBill(bill, orderId);
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
@@ -122,9 +106,8 @@ public class OrderService {
     private Person findPersonOfUser(Long barId, String username) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         return bar.getUsers().stream()
-                .filter(person -> person.getUser() != null)
-                .filter(person -> person.getUser().getUsername().equals(username))
-                .findAny()
+                .filter(person -> person.getUser() != null && person.getUser().getUsername().equals(username))
+                .findFirst()
                 .orElseThrow(() -> new NotFoundException("No person found connected to you user account"));
     }
 }
