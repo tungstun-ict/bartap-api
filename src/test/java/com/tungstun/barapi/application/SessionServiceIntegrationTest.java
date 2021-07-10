@@ -23,6 +23,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -152,6 +153,18 @@ class SessionServiceIntegrationTest {
                 InvalidSessionStateException.class,
                 () -> service.updateSession(bar.getId(), session.getId(), request)
         );
+    }
+
+    @Test
+    @DisplayName("Delete session")
+    void deleteSession() throws NotFoundException {
+        SessionRequest request = new SessionRequest();
+        request.name = "newTest";
+
+        service.deleteSession(bar.getId(), session.getId());
+
+        Optional<Session> resSession = repository.findById(session.getId());
+        assertTrue(resSession.isEmpty());
     }
 
     @Test
