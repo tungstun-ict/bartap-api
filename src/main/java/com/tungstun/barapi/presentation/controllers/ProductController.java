@@ -47,7 +47,7 @@ public class ProductController {
             @ApiParam(value = "(Optional) Long value to filter products on category with id") @RequestParam(value = "categoryId", required = false) Long categoryId,
             @ApiParam(value = "(Optional) Boolean value to filter favorite products") @RequestParam(value = "onlyFavorites", required = false) Boolean onlyFavorites
     ) throws NotFoundException {
-        List<Product> products = this.PRODUCT_SERVICE.getProductsOfBar(barId, productType, categoryId, onlyFavorites);
+        List<Product> products = this.PRODUCT_SERVICE.searchProductsOfBar(barId, productType, categoryId, onlyFavorites);
         List<ProductResponse> productResponse = RESPONSE_MAPPER.convertList(products, ProductResponse.class);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }

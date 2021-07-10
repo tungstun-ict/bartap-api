@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import javax.naming.directory.InvalidAttributesException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Transactional
 @Service
@@ -28,24 +32,7 @@ public class ProductService {
         this.CATEGORY_SERVICE = categoryService;
     }
 
-    private Product findProductInProducts(List<Product> products, Long productId) throws NotFoundException {
-        return products.stream()
-                .filter( product -> product.getId().equals(productId) )
-                .findFirst()
-                .orElseThrow( () -> new NotFoundException(String.format("No product found with id %s", productId)) );
-    }
-
-    private ProductType convertStringToProductType(String type) {
-        ProductType productType = ProductType.OTHER;
-        if (type != null) {
-            try {
-                productType = ProductType.valueOf(type.toUpperCase());
-            }catch (Exception e) {
-                throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
-            }
-        }
-        return productType;
-    }
+    private final BiPredicate<Product, ProductType> isProductType = (product, productType) -> product.getCategory().getProductType().equals(productType);
 
     private Product saveProductForBar(Bar bar, Product product) {
         product = this.SPRING_PRODUCT_REPOSITORY.save(product);
@@ -53,21 +40,25 @@ public class ProductService {
         this.BAR_SERVICE.saveBar(bar);
         return product;
     }
+    private final BiPredicate<Product, Long> hasCategoryId = (product, categoryId) -> product.getCategory() != null && product.getCategory().getId().equals(categoryId);
+    private final BiPredicate<Product, Boolean> isFavorite = (product, onlyFavorites) -> product.isFavorite() == onlyFavorites;
 
-    private void filterProductsByCategoryId(List<Product> products, Long categoryId) throws NotFoundException {
-        products.removeIf( product -> product.getCategory() == null || !product.getCategory().getId().equals(categoryId) );
-        if (products.isEmpty()) throw new NotFoundException(String.format("No products found of category with id %s", categoryId));
+    private Product findProductInProducts(List<Product> products, Long productId) throws NotFoundException {
+        return products.stream()
+                .filter(product -> product.getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No product found with id %s", productId)));
     }
 
-    private void filterProductsByTypeString(List<Product> products, String type) throws NotFoundException {
-        ProductType productType = convertStringToProductType(type);
-        products.removeIf( product -> !product.getCategory().getProductType().equals(productType) );
-        if (products.isEmpty()) throw new NotFoundException(String.format("No products found of type %s", productType));
-    }
-
-    private void filterProductsOnFavorites(List<Product> products, Boolean onlyFavorites) throws NotFoundException {
-        products.removeIf( product -> product.isFavorite() != onlyFavorites );
-        if (products.isEmpty()) throw new NotFoundException("No favorite products found");
+    public List<Product> searchProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
+        Stream<Product> products = getAllProductsOfBar(barId).stream();
+        if (type != null) {
+            ProductType productType = convertStringToProductType(type);
+            products = products.filter(p -> isProductType.test(p, productType));
+        }
+        if (categoryId != null) products = products.filter(p -> hasCategoryId.test(p, categoryId));
+        if (onlyFavorites != null) products = products.filter(p -> isFavorite.test(p, onlyFavorites));
+        return products.collect(Collectors.toList());
     }
 
     private List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
@@ -75,19 +66,22 @@ public class ProductService {
         return bar.getProducts();
     }
 
-    public List<Product> getProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
-        List<Product> products = getAllProductsOfBar(barId);
-        if (type != null) filterProductsByTypeString(products, type);
-        if (categoryId != null) filterProductsByCategoryId(products, categoryId);
-        if (onlyFavorites != null) filterProductsOnFavorites(products, onlyFavorites);
-        if (products.isEmpty()) throw new NotFoundException(String.format("No products found for bar with id %s", barId));
-        return products;
+    private ProductType convertStringToProductType(String type) {
+        if (type == null) throw new IllegalArgumentException(String.format("Invalid product type '%s'", type));
+        return ProductType.valueOf(type.toUpperCase());
     }
 
     public Product getProductOfBar(Long barId, Long productId) throws NotFoundException {
         List<Product> allProducts = getAllProductsOfBar(barId);
         return findProductInProducts(allProducts, productId);
     }
+
+    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Product product = buildProduct(barId, productRequest);
+        return saveProductForBar(bar, product);
+    }
+
     private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         return new ProductBuilder()
@@ -100,25 +94,11 @@ public class ProductService {
                 .build();
     }
 
-    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
-        Product product = buildProduct(barId, productRequest);
-        return saveProductForBar(bar, product);
-    }
-
-    private boolean barHasProductWithNameAndIsntItself(Bar bar, Product product, String name) {
-        for (Product productIteration : bar.getProducts()) {
-            if (productIteration.getName().equalsIgnoreCase(name) && !productIteration.equals(product)) return true;
-        }
-        return false;
-    }
-
     public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
         Product product = getProductOfBar(barId, productId);
         Bar bar = this.BAR_SERVICE.getBar(barId);
-        if (barHasProductWithNameAndIsntItself(bar, product, productRequest.name))
+        if (barHasProductWithNameAndIsNotItself(bar, product, productRequest.name))
             throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
-
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
@@ -127,6 +107,14 @@ public class ProductService {
         product.setFavorite(productRequest.isFavorite);
         product.setCategory(category);
         return this.SPRING_PRODUCT_REPOSITORY.save(product);
+    }
+
+    private boolean barHasProductWithNameAndIsNotItself(Bar bar, Product product, String name) {
+        Predicate<Product> nameEquals = iterate -> iterate.getName().equalsIgnoreCase(name);
+        Predicate<Product> productEquals = iterate -> !iterate.equals(product);
+        return bar.getProducts()
+                .stream()
+                .anyMatch(nameEquals.and(productEquals));
     }
 
     public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
