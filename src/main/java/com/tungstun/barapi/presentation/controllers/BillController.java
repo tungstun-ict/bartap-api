@@ -2,7 +2,6 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BillService;
 import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.BillSummaryResponse;
@@ -17,8 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/")
@@ -44,11 +43,9 @@ public class BillController {
     }
 
     private List<BillSummaryResponse> convertListToBillSummaryResult(List<Bill> bills) {
-        List<BillSummaryResponse> billResponses = new ArrayList<>();
-        for (Bill bill : bills) {
-            billResponses.add(convertToBillSummaryResult(bill));
-        }
-        return billResponses;
+        return bills.stream()
+                .map(this::convertToBillSummaryResult)
+                .collect(Collectors.toList());
     }
 
     @GetMapping("bills")
@@ -63,14 +60,9 @@ public class BillController {
             @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") Long barId
     ) throws NotFoundException {
         List<Bill> allBills = this.BILL_SERVICE.getAllBills(barId);
-        List<BillResponse> billResponses = RESPONSE_MAPPER.convertList(allBills, BillResponse.class);
-        for (BillResponse billResponse : billResponses) {
-            double billTotal = 0.0;
-            for (Order order : billResponse.getOrders()) {
-                billTotal += order.getProduct().getPrice()*order.getAmount();
-            }
-            billResponse.setTotalPrice(billTotal);
-        }
+        List<BillResponse> billResponses = allBills.stream()
+                .map(this::convertToBillResult)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
@@ -87,10 +79,9 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to retrieve bills from") @PathVariable("sessionId") Long sessionId
     )throws NotFoundException {
         List<Bill> allBills = this.BILL_SERVICE.getAllBillsOfSession(barId, sessionId);
-        List<BillResponse> billResponses = new ArrayList<>();
-        for (Bill bill : allBills) {
-            billResponses.add(convertToBillResult(bill));
-        }
+        List<BillResponse> billResponses = allBills.stream()
+                .map(this::convertToBillResult)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(billResponses, HttpStatus.OK);
     }
 
@@ -168,7 +159,7 @@ public class BillController {
             @ApiParam(value = "ID value for the bar you want to update the bill from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") Long billId,
-            @ApiParam(value = "Boolean value for the payment state you want to set the bill to") @RequestParam(value = "isPayed") Boolean isPayed
+            @ApiParam(value = "Boolean value for the payment state you want to set the bill to") @RequestParam(value = "isPayed", required = false) Boolean isPayed
             ) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.setIsPayedOfBillOfSession(barId, sessionId, billId, isPayed);
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
