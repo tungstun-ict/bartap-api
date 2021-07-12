@@ -122,5 +122,6 @@ public class ProductService {
         Product product = getProductOfBar(barId, productId);
         bar.removeProduct(product);
         this.BAR_SERVICE.saveBar(bar);
+        this.SPRING_PRODUCT_REPOSITORY.delete(product);
     }
 }
