@@ -7,7 +7,6 @@ import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
-import com.tungstun.security.data.model.UserProfile;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -15,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -153,8 +153,8 @@ public class OrderController {
             @Valid @RequestBody OrderRequest orderLineRequest,
             @ApiIgnore Authentication authentication
     ) throws NotFoundException {
-        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
-        Bill bill = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userProfile.getUsername());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Bill bill = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 }

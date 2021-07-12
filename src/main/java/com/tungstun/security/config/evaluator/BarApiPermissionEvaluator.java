@@ -2,9 +2,9 @@ package com.tungstun.security.config.evaluator;
 
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserProfile;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
@@ -23,7 +23,7 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
         Long barId = (Long) targetDomainObject;
-        String username = ((UserProfile) auth.getPrincipal()).getUsername();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
         return hasPrivilege(username, barId, permission.toString().toUpperCase());
     }
 
@@ -32,7 +32,7 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
         if ((auth == null) || (targetType == null) || !(permission instanceof String)) {
             return false;
         }
-        String username = ((UserProfile) auth.getPrincipal()).getUsername();
+        String username = ((UserDetails) auth.getPrincipal()).getUsername();
         return hasPrivilege(username, Long.valueOf((String) targetId), permission.toString().toUpperCase());
     }
 
