@@ -1,7 +1,6 @@
 package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -9,7 +8,6 @@ import javax.persistence.*;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "product")
-@SQLDelete(sql = "UPDATE product SET deleted = true WHERE id=?")
 @Where(clause = "deleted = false")
 public class Product {
     @Id
