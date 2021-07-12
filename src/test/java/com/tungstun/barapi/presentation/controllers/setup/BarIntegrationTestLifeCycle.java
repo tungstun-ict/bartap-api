@@ -80,11 +80,11 @@ public class BarIntegrationTestLifeCycle {
     private void addUsersToBar() {
         User user2 = new User("testUser", "", "", "", "", new ArrayList<>());
         user2.addUserBarAuthorizations(new UserBarAuthorization(bar, user2, UserRole.ROLE_BAR_OWNER));
-        person = new PersonBuilder().setName("testPerson").setUser(user2).build();
+        person = new PersonBuilder().setName("testPerson").setPhoneNumber("0600000000").setUser(user2).build();
         bar.addUser(person);
 
         User user = new User("notConnectedUser", "ss", "mail@mail.com", "sam", "fisher", new ArrayList<>());
-        Person person2 = new PersonBuilder().setName("notConnectedPerson").setUser(user).build();
+        Person person2 = new PersonBuilder().setName("notConnectedPerson").setPhoneNumber("0600000000").setUser(user).build();
         bar.addUser(person2);
     }
 
