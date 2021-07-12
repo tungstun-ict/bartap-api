@@ -76,7 +76,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryRequest categoryRequest
     ) throws NotFoundException {
         Category category = this.CATEGORY_SERVICE.addCategoryToBar(barId, categoryRequest);
-        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
+        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.CREATED);
     }
 
     @PutMapping("/{categoryId}")
