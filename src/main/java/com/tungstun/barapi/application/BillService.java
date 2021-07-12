@@ -52,9 +52,7 @@ public class BillService {
 
     public List<Bill> getAllBillsOfSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        List<Bill> bills = session.getBills();
-        if (bills == null || bills.isEmpty()) throw new NotFoundException(String.format("No bills found of session with id: %s", sessionId));
-        return bills;
+        return session.getBills();
     }
 
     public List<Bill> getBillsOfPerson(Long barId, Long customerId) throws NotFoundException {

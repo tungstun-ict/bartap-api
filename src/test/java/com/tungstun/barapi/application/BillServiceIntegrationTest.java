@@ -117,15 +117,6 @@ class BillServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get Bill of session empty")
-    void getBillsOfSessionEmpty() {
-        assertThrows(
-                NotFoundException.class,
-                () -> service.getBillOfBar(bar.getId(), session.getId(), session.getId())
-        );
-    }
-
-    @Test
     @DisplayName("Get Bills of person")
     void getBillsOfPerson() throws NotFoundException {
         List<Bill> bills = service.getBillsOfPerson(bar.getId(), person.getId());
