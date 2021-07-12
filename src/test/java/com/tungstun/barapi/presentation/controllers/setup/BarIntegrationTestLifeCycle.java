@@ -30,18 +30,20 @@ import java.util.ArrayList;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BarIntegrationTestLifeCycle {
+    public Person person2;
     @Autowired
     public MockMvc mockMvc;
 
     public Bar bar;
     public Person person;
+    @Autowired
+    private SpringBarRepository barRepository;
     public Session session;
     public Bill bill;
     public Order order;
     public Product product;
     public Category category;
-    @Autowired
-    private SpringBarRepository barRepository;
+
 
     @BeforeEach
     void setUp() {
@@ -107,6 +109,7 @@ public class BarIntegrationTestLifeCycle {
 
     private void setTestClassVariables() {
         person = bar.getUsers().stream().filter(person -> person.getName().equals("testPerson")).findFirst().get();
+        person2 = bar.getUsers().stream().filter(person -> person.getName().equals("notConnectedPerson")).findFirst().get();
         session = bar.getSessions().get(0);
         bill = session.getBills().get(0);
         order = bill.getOrders().get(0);
