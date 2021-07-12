@@ -36,8 +36,11 @@ public class OrderController {
     private OrderResponse convertToOrderResult(Order order){
         return RESPONSE_MAPPER.convert(order, OrderResponse.class);
     }
+
     private BillResponse convertToBillResult(Bill bill){
-        return RESPONSE_MAPPER.convert(bill, BillResponse.class);
+        BillResponse response = RESPONSE_MAPPER.convert(bill, BillResponse.class);
+        response.setTotalPrice(bill.calculateTotalPrice());
+        return response;
     }
 
     @GetMapping("orders")
@@ -96,7 +99,7 @@ public class OrderController {
             notes = "Provide id of bar, session, bill and order to look up orders of bill of session of the bar",
             response = OrderResponse.class
     )
-    public ResponseEntity<List<OrderResponse>> getAllSessionOrders(
+    public ResponseEntity<List<OrderResponse>> getAllBillOrders(
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") Long billId
@@ -113,7 +116,7 @@ public class OrderController {
             notes = "Provide id of bar, session, bill and order to look up specific order of bill of session of the bar",
             response = OrderResponse.class
     )
-    public ResponseEntity<OrderResponse> getOrderFromSession(
+    public ResponseEntity<OrderResponse> getOrderFromBill(
             @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve the order from") @PathVariable("billId") Long billId,
