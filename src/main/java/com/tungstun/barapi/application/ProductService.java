@@ -40,6 +40,7 @@ public class ProductService {
         this.BAR_SERVICE.saveBar(bar);
         return product;
     }
+
     private final BiPredicate<Product, Long> hasCategoryId = (product, categoryId) -> product.getCategory() != null && product.getCategory().getId().equals(categoryId);
     private final BiPredicate<Product, Boolean> isFavorite = (product, onlyFavorites) -> product.isFavorite() == onlyFavorites;
 
@@ -118,10 +119,7 @@ public class ProductService {
     }
 
     public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
         Product product = getProductOfBar(barId, productId);
-        bar.removeProduct(product);
-        this.BAR_SERVICE.saveBar(bar);
         this.SPRING_PRODUCT_REPOSITORY.delete(product);
     }
 }
