@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.3.2.RELEASE</version>
+		<version>2.4.1</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.tungstun</groupId>
@@ -16,6 +16,7 @@
 
 	<properties>
 		<java.version>15</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
 	<dependencies>
@@ -31,6 +32,13 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
 
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -99,7 +107,99 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>2.4.2</version>
 			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>15</source>
+					<target>15</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.22.2</version>
+				<configuration>
+					<useSystemClassLoader>false</useSystemClassLoader>
+				</configuration>
+			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.jacoco</groupId>-->
+<!--				<artifactId>jacoco-maven-plugin</artifactId>-->
+<!--				<version>0.8.6</version>-->
+<!--				<executions>-->
+<!--					<execution>-->
+<!--						<id>pre-unit-test</id>-->
+<!--						<goals>-->
+<!--							<goal>prepare-agent</goal>-->
+<!--						</goals>-->
+<!--					</execution>-->
+
+<!--					<execution>-->
+<!--						<id>post-unit-test</id>-->
+<!--						<phase>test</phase>-->
+<!--						<goals>-->
+<!--							<goal>report</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<excludes>-->
+<!--								<exclude>**/LingoApplication.*</exclude>-->
+<!--							</excludes>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+
+<!--					<execution>-->
+<!--						<id>jacoco-check</id>-->
+<!--						<goals>-->
+<!--							<goal>check</goal>-->
+<!--						</goals>-->
+<!--						<configuration>-->
+<!--							<rules>-->
+<!--								<rule>-->
+<!--									<element>BUNDLE</element>-->
+<!--									<limits>-->
+<!--										<limit>-->
+<!--											<counter>INSTRUCTION</counter>-->
+<!--											<value>COVEREDRATIO</value>-->
+<!--											<minimum>0.90</minimum>-->
+<!--										</limit>-->
+<!--										<limit>-->
+<!--											<counter>BRANCH</counter>-->
+<!--											<value>COVEREDRATIO</value>-->
+<!--											<minimum>0.90</minimum>-->
+<!--										</limit>-->
+<!--										<limit>-->
+<!--											<counter>CLASS</counter>-->
+<!--											<value>MISSEDCOUNT</value>-->
+<!--											<maximum>0</maximum>-->
+<!--										</limit>-->
+<!--									</limits>-->
+<!--								</rule>-->
+<!--							</rules>-->
+<!--						</configuration>-->
+<!--					</execution>-->
+<!--				</executions>-->
+<!--			</plugin>-->
+<!--			<plugin>-->
+<!--				<groupId>org.pitest</groupId>-->
+<!--				<artifactId>pitest-maven</artifactId>-->
+<!--				<version>1.6.2</version>-->
+<!--				<dependencies>-->
+<!--					<dependency>-->
+<!--						<groupId>org.pitest</groupId>-->
+<!--						<artifactId>pitest-junit5-plugin</artifactId>-->
+<!--						<version>0.12</version>-->
+<!--					</dependency>-->
+<!--				</dependencies>-->
+<!--				<configuration>-->
+<!--					<mutationThreshold>80</mutationThreshold>-->
+<!--					<timestampedReports>false</timestampedReports>-->
+<!--				</configuration>-->
+
+<!--			</plugin>-->
 		</plugins>
 	</build>
 

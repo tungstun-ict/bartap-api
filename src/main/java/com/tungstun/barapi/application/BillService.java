@@ -2,18 +2,20 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBillRepository;
-import com.tungstun.barapi.domain.Customer;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.bill.Bill;
-import com.tungstun.barapi.domain.bill.BillFactory;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.payment.BillFactory;
+import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class BillService {
     private final SpringBillRepository SPRING_BILL_REPOSITORY;
@@ -26,137 +28,87 @@ public class BillService {
         this.PERSON_SERVICE = personService;
     }
 
-    /**
-     * Returns a list with all bills of a bar
-     * @return list of bills
-     * @throws NotFoundException if no bar with given id is found or
-     *      if bar does not have any sessions
-     */
     public List<Bill> getAllBills(Long barId) throws NotFoundException {
         List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
-        List<Bill> bills = new ArrayList<>();
-        for (Session session : sessions){
-            List<Bill> sessionBills = session.getBills();
-            if ( sessionBills != null && !sessionBills.isEmpty() ) {
-                bills.addAll(sessionBills);
-            }
-        }
-        if (bills.isEmpty()) throw new NotFoundException(String.format("No bills found for bar with id: %s", barId));
-        return bills;
+        return getAllBillsFromSessions(sessions);
     }
 
-    /**
-     * Returns bill with given id of session with given id of bar with given id
-     * @return bill
-     * @throws NotFoundException if no bar with given id is found or
-     *      if bar does not have any sessions or
-     *      if bar does not have a session with given id or
-     *      if no session has a bill with given id
-     */
+    private List<Bill> getAllBillsFromSessions(List<Session> sessions) {
+        return sessions.stream()
+                .map(Session::getBills)
+                .flatMap(List::stream)
+                .collect(Collectors.toList());
+    }
+
     public Bill getBillOfBar(Long barId, Long sessionId, Long billId) throws NotFoundException {
         List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
-        for (Session session : sessions){
-            for (Bill bill : session.getBills()){
-                if ( bill.getId().equals(billId)
-                        && session.getId().equals(sessionId) ) return bill;
-            }
-        }
-        throw new NotFoundException(String.format("No bill with id: %s was found in session with id:  %s", billId, sessionId));
+        return sessions.stream()
+                .map(Session::getBills)
+                .flatMap(List::stream)
+                .filter(bill -> bill.getId().equals(billId) && bill.getSession().getId().equals(sessionId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No bill with id: %s was found in session with id:  %s", billId, sessionId)));
     }
 
-    /**
-     * Returns a list with all bills of session of a bar
-     * @return list of bills
-     * @throws NotFoundException if no bar with given id is found or
-     *      if bar does not have any sessions or
-     *      if bar does not have a session with given id
-     */
     public List<Bill> getAllBillsOfSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        List<Bill> bills = session.getBills();
-        if (bills == null || bills.isEmpty()) throw new NotFoundException(
-                String.format("No bills found of session with id: %s", sessionId));
-        return bills;
+        return session.getBills();
     }
 
-    /**
-     * Creates a new bill and adds it to the session with given id of bar with given id
-     * @return created bill
-     * @throws NotFoundException if no bar with given id is found or
-     *      if bar does not have any sessions or
-     *      if bar does not have a session with given id
-     */
+    public List<Bill> getBillsOfPerson(Long barId, Long customerId) throws NotFoundException {
+        Person customer = this.PERSON_SERVICE.getPersonOfBar(barId, customerId);
+        return customer.getBills();
+    }
+
+    public Bill getBillOfPerson(Long barId, Long customerId, Long billId) throws NotFoundException {
+        List<Bill> bills = getBillsOfPerson(barId, customerId);
+        return bills
+                .stream()
+                .filter(bill -> bill.getId().equals(billId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No bill found with id '%s' for customer in bar", billId)));
+    }
+
     public Bill createNewBillForSession(Long barId, Long sessionId, BillRequest billRequest) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        this.SESSION_SERVICE.sessionIsActive(session);
-        Customer customer = this.PERSON_SERVICE.getCustomerOfBar(barId, billRequest.customerId);
+        this.SESSION_SERVICE.checkEditable(session);
+        Person customer = this.PERSON_SERVICE.getPersonOfBar(barId, billRequest.customerId);
         if (sessionHasBillWithCustomer(session, customer))
             throw new DuplicateRequestException(String.format("Session already contains a bill for customer with id %s", customer.getId()));
         Bill bill = new BillFactory(session, customer).create();
+        return saveBillToSession(bill, session);
+    }
+
+    private boolean sessionHasBillWithCustomer(Session session, Person customer) {
+        return session.getBills()
+                .stream()
+                .anyMatch(bill -> bill.getCustomer().equals(customer));
+    }
+
+    private Bill saveBillToSession(Bill bill, Session session) {
         session.addBill(bill);
         bill = this.SPRING_BILL_REPOSITORY.save(bill);
         this.SESSION_SERVICE.saveSession(session);
         return bill;
     }
 
-    /**
-     * Sets the isPayed attribute of bill with given id of session with given id
-     * of bar with given id
-     * @return altered bill
-     * @throws NotFoundException if no bar with given id is found or
-     *      if bar does not have any sessions or
-     *      if bar does not have a session with given id
-     *      if no session has a bill with given id
-     */
     public Bill setIsPayedOfBillOfSession(Long barId, Long sessionId, Long billId, Boolean isPayed) throws NotFoundException {
-       Bill bill = getBillOfBar(barId, sessionId, billId);
-       if (isPayed == null) throw new IllegalArgumentException("isPayed must be true or false");
-       bill.setPayed(isPayed);
-       return this.SPRING_BILL_REPOSITORY.save(bill);
+        Bill bill = getBillOfBar(barId, sessionId, billId);
+        if (isPayed == null) throw new IllegalArgumentException("Parameter isPayed must be true or false");
+        bill.setPayed(isPayed);
+        return this.SPRING_BILL_REPOSITORY.save(bill);
     }
 
-    /**
-     * Deletes bill with given id of session with given id of bar with given id
-     * @throws NotFoundException if no bar with given id is found or
-     *      if bar does not have any sessions or
-     *      if bar does not have a session with given id
-     *      if no session has a bill with given id
-     */
     public void deleteBillFromSessionOfBar(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = getBillOfBar(barId, sessionId, billId);
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
+        this.SESSION_SERVICE.checkEditable(bill.getSession());
         bill.getSession().removeBill(bill);
+        bill.setSession(null);
         this.SPRING_BILL_REPOSITORY.delete(bill);
     }
 
-    /**
-     * Checks if session already has an existing bill for customer
-     * @return true if session has bill with customer
-     *      false if session does not have a bill with customer
-     */
-    private boolean sessionHasBillWithCustomer(Session session, Customer customer){
-        for (Bill bill : session.getBills()){
-            if (bill.getCustomer().equals(customer)) return true;
-        }
-        return false;
-    }
-
-    /**
-     * Saves a Bill object
-     * @return saved bill
-     */
-    public Bill saveBill(Bill bill) {
-        return this.SPRING_BILL_REPOSITORY.save(bill);
-    }
-
-    public Bill addOrderToBill(Bill bill, Order order) {
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
-        bill.addOrder(order);
-        return this.SPRING_BILL_REPOSITORY.save(bill);
-    }
-
     public Bill removeOrderFromBill(Bill bill, Order order) {
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
+        this.SESSION_SERVICE.checkEditable(bill.getSession());
         bill.removeOrder(order);
         return this.SPRING_BILL_REPOSITORY.save(bill);
     }

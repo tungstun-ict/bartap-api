@@ -1,5 +1,7 @@
 package com.tungstun.security.data.model;
 
+import com.tungstun.barapi.domain.bar.Bar;
+
 import javax.persistence.*;
 
 @Entity
@@ -9,27 +11,29 @@ public class UserBarAuthorization {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "bar_id")
-    private Long barId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "bar_id")
+    private Bar bar;
 
-    @Column(name = "user_id")
-    private Long userId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id")
+    private User user;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
     public UserBarAuthorization() { }
-    public UserBarAuthorization(Long barId, Long userId, UserRole role) {
-        this.barId = barId;
-        this.userId = userId;
+    public UserBarAuthorization(Bar bar, User user, UserRole role) {
+        this.bar = bar;
+        this.user = user;
         this.role = role;
     }
 
     public Long getId() { return id; }
 
-    public Long getBarId() { return barId; }
+    public Bar getBar() { return bar; }
 
-    public Long getUserId() { return userId; }
+    public User getUser() { return user; }
 
     public UserRole getRole() { return role; }
 

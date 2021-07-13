@@ -4,88 +4,91 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
+import com.tungstun.barapi.presentation.dto.request.BarRequest;
+import com.tungstun.security.application.UserService;
+import com.tungstun.security.data.model.User;
+import com.tungstun.security.data.model.UserBarAuthorization;
+import com.tungstun.security.data.model.UserRole;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class BarService {
     private final SpringBarRepository SPRING_BAR_REPOSITORY;
+    private final UserService USER_SERVICE;
 
-    public BarService(SpringBarRepository SPRING_BAR_REPOSITORY) {
-        this.SPRING_BAR_REPOSITORY = SPRING_BAR_REPOSITORY;
+    public BarService(SpringBarRepository springBarRepository, UserService userService) {
+        this.SPRING_BAR_REPOSITORY = springBarRepository;
+        this.USER_SERVICE = userService;
     }
 
-    /**
-     * Checks if bar with name already exists in datastore.
-     * If bar with name already exists, then throws exeption.
-     * @exception DuplicateRequestException if bar with given name already exists
-     */
-    private void checkIfBarExists(String name){
-        SPRING_BAR_REPOSITORY.findBarByName(name).ifPresent(error ->{
-            throw new DuplicateRequestException(
-                    String.format("Bar with name %s already exists", name)); });
+    public List<Bar> getAllBars() {
+        return this.SPRING_BAR_REPOSITORY.findAll();
     }
 
-    /**
-     * Returns a List of all existing bars.
-     * @return list with all existing bars
-     * @exception NotFoundException if no bars are found
-     */
-    public List<Bar> getAllBars() throws NotFoundException{
-        List<Bar> bars = this.SPRING_BAR_REPOSITORY.findAll();
-        if (bars.isEmpty()) throw new NotFoundException("There are no bars available");
-        return bars;
+    public List<Bar> getAllBarOwnerBars(String username) {
+        User user = (User) this.USER_SERVICE.loadUserByUsername(username);
+        Set<Long> ownedBarIds = user.getAuthoritiesMap().keySet();
+        return getAllBars()
+                .stream()
+                .filter(bar -> ownedBarIds.contains(bar.getId()))
+                .collect(Collectors.toList());
     }
 
-    /**
-     * Returns bar with given id.
-     * @return Bar
-     * @exception NotFoundException if no bar was found with {@param id}
-     */
     public Bar getBar(Long id) throws NotFoundException {
         return this.SPRING_BAR_REPOSITORY.findById(id)
-         .orElseThrow(() -> new NotFoundException(
-                 String.format("bar with id %s doesn't exist", id)) );
+                .orElseThrow(() -> new NotFoundException(String.format("Bar with id %s doesn't exist", id)));
     }
 
-    /**
-     * Will create a new bar with given bar information and return if succesfull.
-     * @return created bar
-     */
-    public Bar addBar(String adres, String name, String mail, String phoneNumber) {
-        checkIfBarExists(name);
+    public Bar addBar(BarRequest barRequest, String ownerUsername) {
+        User user = (User) this.USER_SERVICE.loadUserByUsername(ownerUsername);
+        checkIfBarExistsForPerson(barRequest.name, user);
         Bar bar = new BarBuilder()
-                .setAdres(adres)
-                .setName(name)
-                .setMail(mail)
-                .setPhoneNumber(phoneNumber)
+                .setAddress(barRequest.address)
+                .setName(barRequest.name)
+                .setMail(barRequest.mail)
+                .setPhoneNumber(barRequest.phoneNumber)
                 .build();
+        bar = this.SPRING_BAR_REPOSITORY.save(bar);
+        user.addUserBarAuthorizations(new UserBarAuthorization(bar, user, UserRole.ROLE_BAR_OWNER));
+        Person owner = new PersonBuilder()
+                .setName(ownerUsername)
+                .setUser(user)
+                .build();
+        bar.addUser(owner);
         return this.SPRING_BAR_REPOSITORY.save(bar);
     }
 
-    /**
-     * Edits bar object with all values that are not null. Returns altered bar, if succesfull.
-     * @return edited bar
-     */
-    public Bar editBar(Long id, String address, String name, String mail, String phoneNumber) throws NotFoundException {
+    private void checkIfBarExistsForPerson(String name, User user) {
+        SPRING_BAR_REPOSITORY.findBarByDetails_Name(name).ifPresent(bar -> {
+           if ( bar.getUsers().stream().anyMatch(barUser -> barUser.getUser().equals(user))) {
+               throw new DuplicateRequestException(String.format("Bar with name %s already exists", name));
+           }
+        });
+    }
+
+    public Bar updateBar(Long id, BarRequest barRequest) throws NotFoundException {
         Bar bar = getBar(id);
-        if (address != null) bar.setAddress(address);
-        if (name != null) bar.setName(name);
-        if (mail != null) bar.setMail(mail);
-        if (phoneNumber != null) bar.setPhoneNumber(phoneNumber);
+        bar.getDetails().setAddress(barRequest.address);
+        bar.getDetails().setMail(barRequest.mail);
+        bar.getDetails().setName(barRequest.name);
+        bar.getDetails().setPhoneNumber(barRequest.phoneNumber);
         return this.SPRING_BAR_REPOSITORY.save(bar);
     }
 
-    /**
-     * Persists a Bar object
-     * @return saved bar
-     */
-    public Bar saveBar(Bar bar){ return this.SPRING_BAR_REPOSITORY.save(bar); }
+    public Bar saveBar(Bar bar) {
+        return this.SPRING_BAR_REPOSITORY.save(bar);
+    }
 
-    /**
-     * Deletes bar with given id
-     */
-    public void deleteBar(Long id) throws NotFoundException { this.SPRING_BAR_REPOSITORY.delete(getBar(id)); }
+    public void deleteBar(Long id) {
+        this.SPRING_BAR_REPOSITORY.deleteById(id);
+    }
 }

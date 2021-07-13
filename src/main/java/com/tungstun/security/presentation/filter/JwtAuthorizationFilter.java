@@ -16,9 +16,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Tries to authorize a user, based on the Bearer token (JWT) from
@@ -26,14 +25,25 @@ import java.util.Map;
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final String secret;
+    private final String[] ignoredPaths;
 
+    public JwtAuthorizationFilter(String secret, AuthenticationManager authenticationManager) {
+        this(secret, authenticationManager, new String[]{});
+    }
     public JwtAuthorizationFilter(
             String secret,
-            AuthenticationManager authenticationManager
+            AuthenticationManager authenticationManager,
+            String[] ignoredPaths
     ) {
         super(authenticationManager);
-
         this.secret = secret;
+        this.ignoredPaths = ignoredPaths;
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+       return Arrays.stream(this.ignoredPaths)
+               .anyMatch(path -> path.equals(request.getRequestURI()));
     }
 
     @Override
@@ -49,13 +59,14 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     }
 
     private Authentication getAuthentication(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
+        String accessToken = request.getHeader("access_token");
+        String tokenType = request.getHeader("token_type");
 
-        if (token == null || token.isEmpty()) {
+        if (accessToken == null || accessToken.isEmpty()) {
             return null;
         }
 
-        if (!token.startsWith("Bearer ")) {
+        if (!tokenType.equals("bearer")) {
             return null;
         }
 
@@ -66,22 +77,17 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                 .build();
 
         Jws<Claims> parsedToken = jwtParser
-                .parseClaimsJws(token.replace("Bearer ", ""));
+                .parseClaimsJws(accessToken);
 
         var username = parsedToken
                 .getBody()
                 .getSubject();
 
-        Map<Long, String> barAuthorities = new LinkedHashMap<>();
-        for (var entry : ((LinkedHashMap<?, ?>) parsedToken.getBody().get("barRoles")).entrySet()) {
-            barAuthorities.put(Long.valueOf((String) entry.getKey()), (String) entry.getValue());
-        }
-
         if (username.isEmpty()) {
             return null;
         }
 
-        UserProfile principal = new UserProfile(username, barAuthorities);
+        UserProfile principal = new UserProfile(username);
 
         return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }

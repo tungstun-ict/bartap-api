@@ -1,48 +1,61 @@
 package com.tungstun.security.util.jwt;
 
 import com.tungstun.security.data.model.User;
+import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 public class JwtGenerator {
-    private JwtCredentials CREDENTIALS;
+    private final JwtCredentials CREDENTIALS;
 
     public JwtGenerator(JwtCredentials jwtCredentials) {
         this.CREDENTIALS = jwtCredentials;
     }
 
-    public String generate(User user) {
-        return generateJWT(user);
+    public String generateAccessToken(User user) {
+        return createAccessToken(user.getUsername());
     }
 
-    private String generateJWT(User user) {
-        Map<Long, String> barAuthorization = user.getAuthoritiesMap();
-        List<String> roles = extractUserRoles(user);
-        byte[] signingKey = CREDENTIALS.jwtSecret.getBytes();
-        return Jwts.builder()
-                .signWith(Keys.hmacShaKeyFor(signingKey), SignatureAlgorithm.HS256)
-                .setHeaderParam("type", "JWT")
-                .setIssuer("com-tungstun-bar-api")
-                .setAudience("com-tungstun-bar-api")
-                .setSubject(user.getUsername())
+    public String refreshAccessTokenFromAccessToken(String accessToken) {
+        String username = new JwtValidator(CREDENTIALS).extractUsernameFromExpiredAccessToken(accessToken);
+        return createAccessToken(username);
+    }
+
+    public String generateRefreshToken() {
+        return createRefreshToken();
+    }
+
+    private String createAccessToken(String username) {
+        JwtBuilder builder = createBuilderSetup();
+        return builder.signWith(Keys.hmacShaKeyFor(CREDENTIALS.jwtSecret.getBytes()), SignatureAlgorithm.HS256)
                 .setExpiration(new Date(System.currentTimeMillis() + CREDENTIALS.jwtExpirationInMs))
-                .claim("barRoles", barAuthorization)
+                .setSubject(username)
                 .compact();
     }
 
-    private List<String> extractUserRoles(User user) {
-        return user.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+    private String createRefreshToken() {
+        JwtBuilder builder = createBuilderSetup();
+        return builder.signWith(Keys.hmacShaKeyFor(CREDENTIALS.jwtRefreshSecret.getBytes()), SignatureAlgorithm.HS256)
+                .setExpiration(new Date(System.currentTimeMillis() + CREDENTIALS.jwtRefreshExpirationInMs))
+                .compact();
     }
+
+    private JwtBuilder createBuilderSetup(){
+        return Jwts.builder()
+                .setHeaderParam("type", "JWT")
+                .setIssuer(CREDENTIALS.jwtIssuer)
+                .setAudience(CREDENTIALS.jwtAudience);
+    }
+
+//    private List<String> extractUserRoles(User user) {
+//        return user.getAuthorities()
+//                .stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .collect(Collectors.toList());
+//    }
 }

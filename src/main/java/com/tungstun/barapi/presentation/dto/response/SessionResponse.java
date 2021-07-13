@@ -1,8 +1,6 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.domain.Bartender;
-import com.tungstun.barapi.domain.bill.Bill;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -15,6 +13,9 @@ public class SessionResponse {
     @ApiModelProperty(notes = "The session's id")
     private Long id;
 
+    @ApiModelProperty(notes = "The session's name")
+    private String name;
+
     @ApiModelProperty(notes = "The session's creation date")
     private LocalDateTime creationDate;
 
@@ -24,11 +25,8 @@ public class SessionResponse {
     @ApiModelProperty(notes = "Boolean if the session is locked")
     private boolean isLocked;
 
-    @ApiModelProperty(notes = "The session's bartenders")
-    private List<Bartender> bartenders;
-
     @ApiModelProperty(notes = "The session's bills")
-    private List<Bill> bills;
+    private List<BillResponse> bills;
 
     public SessionResponse() { }
 
@@ -39,6 +37,10 @@ public class SessionResponse {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public String getName() { return name; }
+
+    public void setName(String name) { this.name = name; }
 
     public LocalDateTime getCreationDate() { return creationDate; }
 
@@ -52,19 +54,11 @@ public class SessionResponse {
 
     public void setLocked(boolean locked) { isLocked = locked; }
 
-    public List<Bill> getBills() {
+    public List<BillResponse> getBills() {
         return bills;
     }
 
-    public void setBills(List<Bill> bills) {
+    public void setBills(List<BillResponse> bills) {
         this.bills = bills;
-    }
-
-    public List<Bartender> getBartenders() {
-        return bartenders;
-    }
-
-    public void setBartenders(List<Bartender> bartenders) {
-        this.bartenders = bartenders;
     }
 }

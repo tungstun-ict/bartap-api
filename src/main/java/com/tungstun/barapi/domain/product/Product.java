@@ -1,16 +1,21 @@
 package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.domain.Category;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
+@Table(name = "product")
+@Where(clause = "deleted = false")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "deleted")
+    private final boolean deleted = Boolean.FALSE;
 
     @Column(name = "name")
     private String name;
@@ -27,21 +32,17 @@ public class Product {
     @Column(name = "is_favorite")
     private boolean isFavorite;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Category category;
 
-    @Enumerated(EnumType.STRING)
-    private ProductType productType;
-
     public Product() { }
-    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category, ProductType productType) {
+    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category) {
         this.name = name;
         this.brand = brand;
         this.size = size;
         this.price = price;
         this.isFavorite = isFavorite;
         this.category = category;
-        this.productType = productType;
     }
 
     public Long getId() {
@@ -72,8 +73,6 @@ public class Product {
         return category;
     }
 
-    public ProductType getProductType() { return productType; }
-
     public void setName(String name) { this.name = name; }
 
     public void setBrand(String brand) { this.brand = brand; }
@@ -85,6 +84,4 @@ public class Product {
     public void setFavorite(boolean favorite) { isFavorite = favorite; }
 
     public void setCategory(Category category) { this.category = category; }
-
-    public void setProductType(ProductType productType) { this.productType = productType; }
 }

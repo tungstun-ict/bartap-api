@@ -1,7 +1,10 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.SessionService;
-import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.presentation.dto.request.SessionRequest;
+import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -13,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -27,11 +31,19 @@ public class SessionController {
     }
 
     private SessionResponse convertToSessionResult(Session session){
-        return RESPONSE_MAPPER.convert(session, SessionResponse.class);
+        SessionResponse sessionResponse = RESPONSE_MAPPER.convert(session, SessionResponse.class);
+        for (BillResponse billResponse : sessionResponse.getBills()) {
+            double billTotal = 0.0;
+            for (Order order : billResponse.getOrders()) {
+                billTotal += order.getProduct().getPrice()*order.getAmount();
+            }
+            billResponse.setTotalPrice(billTotal);
+        }
+        return sessionResponse;
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all sessions of bar",
             notes = "Provide id of bar to look up all sessions that are linked to the bar",
@@ -46,8 +58,22 @@ public class SessionController {
         return new ResponseEntity<>(sessionResponses,  HttpStatus.OK);
     }
 
+    @GetMapping(path = "/active")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Finds active session of bar",
+            notes = "Provide id of bar and session to look up the currectly active session of the bar",
+            response = SessionResponse.class
+    )
+    public ResponseEntity<SessionResponse> getActiveBarSessions(
+            @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.getActiveSessionOfBar(barId);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+    }
+
     @GetMapping(path = "/{sessionId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds session of bar",
             notes = "Provide id of bar and session to look up the specific session of the bar",
@@ -60,22 +86,39 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates new session for bar",
             notes = "Provide id of bar to add a new session with information from the request body to the bar",
             response = SessionResponse.class
     )
     public ResponseEntity<SessionResponse> createNewSession(
-            @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId)
-            throws NotFoundException {
-        Session session = this.SESSION_SERVICE.createNewSession(barId);
+            @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId,
+            @Valid @RequestBody SessionRequest sessionRequest
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.createNewSession(barId, sessionRequest);
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
     }
 
+    @PutMapping("/{sessionId}")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Creates new session for bar",
+            notes = "Provide id of bar to update the session with information from the request body",
+            response = SessionResponse.class
+    )
+    public ResponseEntity<SessionResponse> updateSession(
+            @ApiParam(value = "ID value for the bar you want to update the session from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") Long sessionId,
+            @Valid @RequestBody SessionRequest sessionRequest
+    ) throws NotFoundException {
+        Session session = this.SESSION_SERVICE.updateSession(barId, sessionId, sessionRequest);
+        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+    }
+
     @PatchMapping("/{sessionId}/end")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Ends the session of bar",
             notes = "Provide id of bar and session to end the session of the bar",
@@ -89,8 +132,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PatchMapping("/{sessionId}/lock")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Locks the session of bar",
             notes = "Provide id of bar and session to lock the session of the bar",
@@ -104,40 +147,8 @@ public class SessionController {
         return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
-    @PatchMapping("/{sessionId}/bartenders/{bartenderId}/add")
-    @ApiOperation(
-            value = "Adds bartender to the session of bar",
-            notes = "Provide id of bar, session and bartender to add the bartender to the session of the bar",
-            response = SessionResponse.class
-    )
-    public ResponseEntity<SessionResponse> addBartenderToSession(
-            @ApiParam(value = "ID value for the bar you want to add the bartend to") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to add the bartend to") @PathVariable("sessionId") Long sessionId,
-            @ApiParam(value = "ID value for the bartender you want to add") @PathVariable("bartenderId") Long bartenderId
-    ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.addBartenderToSession(barId, sessionId, bartenderId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
-    @PatchMapping("/{sessionId}/bartenders/{bartenderId}/remove")
-    @ApiOperation(
-            value = "Removes bartender from the session of bar",
-            notes = "Provide id of bar, session and bartender to remove the bartender from the session of the bar",
-            response = SessionResponse.class
-    )
-    public ResponseEntity<SessionResponse> removeBartenderFromSession(
-            @ApiParam(value = "ID value for the bar you want to remove the bartend from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to remove the bartend from") @PathVariable("sessionId") Long sessionId,
-            @ApiParam(value = "ID value for the bartender you want to remove") @PathVariable("bartenderId") Long bartenderId
-    ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.removeBartenderFromSession(barId, sessionId, bartenderId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
-    }
-
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{sessionId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes the session of bar",
             notes = "Provide id of bar and session to delete the session from the bar",

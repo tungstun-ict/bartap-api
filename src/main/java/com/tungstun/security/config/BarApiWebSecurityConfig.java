@@ -8,7 +8,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 
 public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
-    public final static String LOGIN_PATH = "/api/login";
+    public final static String LOGIN_PATH = "/api/authenticate";
+    public final static String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
     public final static String REGISTER_PATH = "/api/register";
     private final static String[] SWAGGER_PATHS = {
             // -- Swagger UI v2
@@ -38,12 +39,23 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
             .csrf()
                 .disable()
             .authorizeRequests()
-                .antMatchers(HttpMethod.POST, REGISTER_PATH).permitAll()
-                .antMatchers(HttpMethod.POST, LOGIN_PATH).permitAll()
+                .antMatchers(HttpMethod.POST, new String[]{
+                        REGISTER_PATH,
+                        LOGIN_PATH,
+                        LOGIN_REFRESH_PATH
+                }).permitAll()
                 .antMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
-            .addFilter(new JwtAuthorizationFilter(this.jwtSecret, this.authenticationManager()))
+            .addFilter(new JwtAuthorizationFilter(
+                    this.jwtSecret,
+                    this.authenticationManager(),
+                    new String[]{
+                            LOGIN_PATH,
+                            REGISTER_PATH,
+                            LOGIN_REFRESH_PATH
+                    }
+            ))
             .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }

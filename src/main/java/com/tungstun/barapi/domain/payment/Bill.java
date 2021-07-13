@@ -1,12 +1,11 @@
-package com.tungstun.barapi.domain.bill;
+package com.tungstun.barapi.domain.payment;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-import com.tungstun.barapi.domain.Customer;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.List;
         generator = ObjectIdGenerators.PropertyGenerator.class,
         property = "id"
 )
-@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "bill")
 public class Bill {
@@ -33,7 +31,7 @@ public class Bill {
     @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "customer_id")
-    private Customer customer;
+    private Person customer;
 
     @OneToMany(
             cascade = CascadeType.ALL,
@@ -42,7 +40,7 @@ public class Bill {
     private List<Order> orders;
 
     public Bill() { }
-    public Bill(Session session, Customer customer, List<Order> orders, boolean isPayed) {
+    public Bill(Session session, Person customer, List<Order> orders, boolean isPayed) {
         this.session = session;
         this.customer = customer;
         this.orders = orders;
@@ -53,13 +51,16 @@ public class Bill {
 
     public Session getSession() { return session; }
 
-    public Customer getCustomer() { return customer; }
+    public void setSession(Session session) { this.session = session; }
+
+    public Person getCustomer() { return customer; }
 
     public List<Order> getOrders() { return this.orders; }
 
-    public boolean addOrder(Order order){
-        if ( !this.orders.contains(order) ) return this.orders.add(order);
-        return false;
+    public boolean addOrder(Product product, int amount, Person bartender){
+        if (product == null || amount < 1 || bartender == null) return false;
+        Order order = new Order(product, amount, bartender);
+        return this.orders.add(order);
     }
 
     public boolean removeOrder(Order order){
@@ -71,10 +72,8 @@ public class Bill {
     public void setPayed(boolean payed) { isPayed = payed; }
 
     public double calculateTotalPrice() {
-        double totalPrice = 0.0;
-        for (Order order : this.orders){
-            totalPrice += order.getAmount()*order.getProduct().getPrice();
-        }
-        return totalPrice;
+        return this.orders.stream()
+                .mapToDouble(order -> order.getProduct().getPrice() * order.getAmount())
+                .sum();
     }
 }

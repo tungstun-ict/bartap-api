@@ -22,4 +22,14 @@ public class BarRequest {
     @ApiModelProperty(notes = "The bar's phone number")
     @NotBlank
     public String phoneNumber;
+
+    public BarRequest() {
+    }
+
+    public BarRequest(@NotBlank String address, @NotBlank String name, @NotBlank String mail, @NotBlank String phoneNumber) {
+        this.address = address;
+        this.name = name;
+        this.mail = mail;
+        this.phoneNumber = phoneNumber;
+    }
 }

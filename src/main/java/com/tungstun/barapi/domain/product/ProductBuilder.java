@@ -1,7 +1,5 @@
 package com.tungstun.barapi.domain.product;
 
-import com.tungstun.barapi.domain.Category;
-
 public class ProductBuilder {
     private String name;
     private String brand;
@@ -9,7 +7,6 @@ public class ProductBuilder {
     private double price;
     private boolean isFavorite;
     private Category category;
-    private ProductType productType;
 
     public ProductBuilder() {
         this.name = "Unknown";
@@ -18,7 +15,6 @@ public class ProductBuilder {
         this.price = 0.0;
         this.isFavorite = false;
         this.category = null;
-        this.productType = ProductType.OTHER;
     }
 
     public ProductBuilder setName(String name) {
@@ -51,11 +47,6 @@ public class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder setProductType(ProductType productType) {
-        this.productType = productType;
-        return this;
-    }
-
     public Product build(){
         return new Product(
                 this.name,
@@ -63,8 +54,7 @@ public class ProductBuilder {
                 this.size,
                 this.price,
                 this.isFavorite,
-                this.category,
-                this.productType
+                this.category
         );
     }
 }

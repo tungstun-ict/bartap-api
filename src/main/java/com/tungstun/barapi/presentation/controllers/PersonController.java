@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.PersonService;
-import com.tungstun.barapi.domain.Person;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
@@ -27,26 +27,16 @@ public class PersonController {
         this.RESPONSE_MAPPER = responseMapper;
     }
 
-    /**
-     * Converts Person object to a PersonResponse object ready for request response
-     * @param person person to be converted
-     * @return PersonResponse
-     */
     private PersonResponse convertToPersonResponse(Person person){
         return this.RESPONSE_MAPPER.convert(person, PersonResponse.class);
     }
 
-    /**
-     * Converts List of person objects to a List of PersonResponse objects ready for request response
-     * @param people people to be converted
-     * @return List<PersonResponse>
-     */
     private List<PersonResponse> convertToPersonResponsesList(List<Person> people){
         return this.RESPONSE_MAPPER.convertList(people, PersonResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all people of bar",
             notes = "Provide id of bar to look up all people that are linked to the bar",
@@ -57,12 +47,11 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to retrieve people from") @PathVariable Long barId
     ) throws NotFoundException {
         List<Person> allPeople = this.PERSON_SERVICE.getAllPeopleOfBar(barId);
-        List<PersonResponse> peopleResponses = convertToPersonResponsesList(allPeople);
-        return new ResponseEntity<>(peopleResponses, HttpStatus.OK);
+        return new ResponseEntity<>(convertToPersonResponsesList(allPeople), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping(path = "/{personId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds person of bar",
             notes = "Provide id of bar and person to look up a specific person of the bar",
@@ -76,8 +65,8 @@ public class PersonController {
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates person for bar",
             notes = "Provide id of bar to create a new person with the information from the request body for the bar",
@@ -91,8 +80,8 @@ public class PersonController {
         return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.CREATED);
     }
 
+    @PutMapping("/{personId}")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
-    @PatchMapping("/{personId}")
     @ApiOperation(
             value = "Updates the person of bar",
             notes = "Provide id of bar and person to update the person with the information from the request body",
@@ -101,14 +90,14 @@ public class PersonController {
     public ResponseEntity<PersonResponse> updatePerson(
             @ApiParam(value = "ID value for the bar you want to update the person from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") Long personId,
-            @RequestBody PersonRequest personRequest)
+            @Valid @RequestBody PersonRequest personRequest)
             throws NotFoundException {
         Person person = this.PERSON_SERVICE.updatePerson(barId, personId, personRequest);
         return new ResponseEntity<>(convertToPersonResponse(person), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{personId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes the person from bar",
             notes = "Provide id of bar and person to delete the person from the bar"

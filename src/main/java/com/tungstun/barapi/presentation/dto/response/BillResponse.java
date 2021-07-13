@@ -1,8 +1,8 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.Customer;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.session.Session;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -17,7 +17,7 @@ public class BillResponse {
     private boolean isPayed;
 
     @ApiModelProperty(notes = "The bill's customer")
-    private Customer customer;
+    private Person customer;
 
     @ApiModelProperty(notes = "The bill's total price")
     private Double totalPrice;
@@ -31,7 +31,7 @@ public class BillResponse {
     public BillResponse() { }
     public BillResponse(String id,
                         boolean isPayed,
-                        Customer customer,
+                        Person customer,
                         Double totalPrice,
                         List<Order> orders,
                         Session session)
@@ -52,9 +52,9 @@ public class BillResponse {
 
     public void setPayed(boolean payed) { isPayed = payed; }
 
-    public Customer getCustomer() { return customer; }
+    public Person getCustomer() { return customer; }
 
-    public void setCustomer(Customer customer) { this.customer = customer; }
+    public void setCustomer(Person customer) { this.customer = customer; }
 
     public Double getTotalPrice() { return totalPrice; }
 

@@ -1,47 +1,45 @@
 package com.tungstun.barapi.domain.bar;
 
-import com.tungstun.barapi.domain.Category;
-import com.tungstun.barapi.domain.Person;
-import com.tungstun.barapi.domain.Session;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class BarBuilder {
-    private String adres;
-    private String name;
-    private String mail;
-    private String phoneNumber;
+    private BarDetails details;
     private List<Person> people;
     private List<Product> products;
     private List<Session> sessions;
     private List<Category> categories;
 
     public BarBuilder() {
+        this.details = new BarDetails();
         this.people = new ArrayList<>();
         this.products = new ArrayList<>();
         this.sessions = new ArrayList<>();
         this.categories = new ArrayList<>();
     }
 
-    public BarBuilder setAdres(String adres) {
-        this.adres = adres;
+    public BarBuilder setAddress(String adres) {
+        this.details.setAddress(adres);
         return this;
     }
 
     public BarBuilder setName(String name) {
-        this.name = name;
+        this.details.setName(name);
         return this;
     }
 
     public BarBuilder setMail(String mail) {
-        this.mail = mail;
+        this.details.setMail(mail);
         return this;
     }
 
     public BarBuilder setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.details.setPhoneNumber(phoneNumber);
         return this;
     }
 
@@ -66,10 +64,8 @@ public class BarBuilder {
     }
 
     public Bar build() {
-        return new Bar(this.adres,
-                this.name,
-                this.mail,
-                this.phoneNumber,
+        return new Bar(
+                this.details,
                 this.people,
                 this.products,
                 this.sessions,

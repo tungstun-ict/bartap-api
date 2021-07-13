@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.security.auth.login.AccountException;
 import javax.validation.Valid;
 
 @RestController
@@ -26,7 +27,7 @@ public class RegistrationController {
     )
     public ResponseEntity<Void> register(
             @Valid @RequestBody UserRegistrationRequest userRegistrationRequest
-    ) {
+    ) throws AccountException {
         this.USER_SERVICE.registerBarOwner(userRegistrationRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

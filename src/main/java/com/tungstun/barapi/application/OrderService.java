@@ -1,139 +1,113 @@
 package com.tungstun.barapi.application;
 
+import com.tungstun.barapi.data.SpringBillRepository;
 import com.tungstun.barapi.data.SpringOrderRepository;
-import com.tungstun.barapi.domain.Bartender;
-import com.tungstun.barapi.domain.Session;
-import com.tungstun.barapi.domain.bill.Bill;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.stream.Collectors;
 
+@Transactional
 @Service
 public class OrderService {
-    private final ProductService PRODUCT_SERVICE;
     private final SpringOrderRepository SPRING_ORDER_REPOSITORY;
+    private final SpringBillRepository BILL_REPOSITORY;
+    private final ProductService PRODUCT_SERVICE;
     private final SessionService SESSION_SERVICE;
-    private final PersonService PERSON_SERVICE;
     private final BillService BILL_SERVICE;
+    private final BarService BAR_SERVICE;
 
 
-    public OrderService(SessionService sessionService,
-                        PersonService personService,
+    public OrderService(SpringBillRepository billRepository,
+                        SessionService sessionService,
                         BillService billService,
                         SpringOrderRepository springOrderRepository,
-                        ProductService productService
+                        ProductService productService,
+                        BarService barService
     ) {
+        this.BILL_REPOSITORY = billRepository;
         this.SESSION_SERVICE = sessionService;
-        this.PERSON_SERVICE = personService;
         this.BILL_SERVICE = billService;
         this.SPRING_ORDER_REPOSITORY = springOrderRepository;
         this.PRODUCT_SERVICE = productService;
-    }
-
-    private List<Order> extractOrdersFromSession(Session session) {
-        List<Order> orders = new ArrayList<>();
-        for (Bill bill : session.getBills()) {
-            orders.addAll(bill.getOrders());
-        }
-        return orders;
-    }
-
-    private Order findOrderInSession(Session session, Long orderId) throws NotFoundException {
-        List<Order> orders = extractOrdersFromSession(session);
-        for (Order order : orders) {
-            if (order.getId().equals(orderId)) {
-                return order;
-            }
-        }
-        throw new NotFoundException(String.format("No order found with id: %s", orderId));
-    }
-
-    private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
-        for (Order order : bill.getOrders()) {
-            if (order.getId().equals(orderId)) {
-                return order;
-            }
-        }
-        throw new NotFoundException(String.format("No Order with id %s found in bill", orderId));
+        this.BAR_SERVICE = barService;
     }
 
     public List<Order> getAllOrdersOfBar(Long barId) throws NotFoundException {
         List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
-        List<Order> orders = new ArrayList<>();
-        for (Session session : sessions) {
-            orders.addAll(extractOrdersFromSession(session));
-        }
-        if (orders.isEmpty()) throw new NotFoundException(String.format("No orders found for bar with id: %s", barId));
-        return orders;
+        return sessions.stream()
+                .flatMap(session -> extractOrdersFromSession(session).stream())
+                .collect(Collectors.toList());
+    }
+
+    private List<Order> extractOrdersFromSession(Session session) {
+        return session.getBills().stream()
+                .flatMap(bill -> bill.getOrders().stream())
+                .collect(Collectors.toList());
     }
 
     public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        List<Order> orders = extractOrdersFromSession(session);
-        if (orders.isEmpty())
-            throw new NotFoundException(String.format("No orders found for session with id: %s", sessionId));
-        return orders;
+        return extractOrdersFromSession(session);
     }
 
     public Order getOrderOfSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
         Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        return findOrderInSession(session, orderId);
+        return extractOrdersFromSession(session).stream()
+                .filter(order -> order.getId().equals(orderId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No order found with id: %s", orderId)));
     }
 
     public List<Order> getAllOrdersOfBill(Long barId, Long sessionId, Long billId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        List<Order> orders = bill.getOrders();
-        if (orders.isEmpty())
-            throw new NotFoundException(String.format("No orders found for bill with id '%s'", billId));
-        return orders;
+        return bill.getOrders();
     }
 
     public Order getOrderOfBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        for (Order order : bill.getOrders()) {
-            if (order.getId().equals(orderId)) {
-                return order;
-            }
-        }
-        throw new NotFoundException(String.format("No order found with id '%s' in bill with id '%s'", orderId, billId));
+        return findOrderInBill(bill, orderId);
+    }
+
+    private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
+        return bill.getOrders().stream()
+                .filter(order -> order.getId().equals(orderId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException(String.format("No Order with id %s found in bill", orderId)));
     }
 
     public void deleteOrderFromBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
+        if (bill.getSession().isLocked())
+            throw new IllegalStateException("Cannot delete order from bill when session of bill is not active");
         Order order = findOrderInBill(bill, orderId);
         this.BILL_SERVICE.removeOrderFromBill(bill, order);
+        this.SPRING_ORDER_REPOSITORY.delete(order);
     }
 
-    private Bartender findBartenderInSession(Session session, Long bartenderId) throws NotFoundException {
-        for (Bartender bartender : session.getBartenders()) {
-            if (bartender.getId().equals(bartenderId)) return bartender;
-        }
-        throw new NotFoundException(String.format("No bartender found with id %s in session", bartenderId));
-    }
-
-    private Order buildOrder(Long barId, OrderRequest orderRequest, Bill bill) throws NotFoundException {
-        int amount = (orderRequest.amount == null) ? 1 : orderRequest.amount;
-        Bartender bartender = findBartenderInSession(bill.getSession(), orderRequest.bartenderId);
-        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
-        return new Order(product, amount, bartender);
-    }
-
-    private Order addOrderToBill(Bill bill, Order order) {
-        order = this.SPRING_ORDER_REPOSITORY.save(order);
-        this.BILL_SERVICE.addOrderToBill(bill, order);
-        return order;
-    }
-
-    public Order addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest) throws NotFoundException {
+    public Bill addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
         Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        this.SESSION_SERVICE.sessionIsActive(bill.getSession());
-        Order order = buildOrder(barId, orderRequest, bill);
-        return addOrderToBill(bill, order);
+        this.SESSION_SERVICE.checkEditable(bill.getSession());
+        Person bartender = findPersonOfUser(barId, username);
+        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
+        bill.addOrder(product, orderRequest.amount, bartender);
+        return BILL_REPOSITORY.save(bill);
+    }
+
+    private Person findPersonOfUser(Long barId, String username) throws NotFoundException {
+        Bar bar = this.BAR_SERVICE.getBar(barId);
+        return bar.getUsers().stream()
+                .filter(person -> person.getUser() != null && person.getUser().getUsername().equals(username))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No person found connected to you user account"));
     }
 }

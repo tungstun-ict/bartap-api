@@ -1,8 +1,10 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.OrderService;
-import com.tungstun.barapi.domain.order.Order;
+import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
+import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
@@ -11,8 +13,11 @@ import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -32,8 +37,14 @@ public class OrderController {
         return RESPONSE_MAPPER.convert(order, OrderResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    private BillResponse convertToBillResult(Bill bill){
+        BillResponse response = RESPONSE_MAPPER.convert(bill, BillResponse.class);
+        response.setTotalPrice(bill.calculateTotalPrice());
+        return response;
+    }
+
     @GetMapping("orders")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all orders of bar",
             notes = "Provide id of bar to look up all orders that are linked to the bar",
@@ -48,8 +59,8 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/orders")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all orders of session of bar",
             notes = "Provide id of bar and session to look up all orders that are linked session of the bar",
@@ -65,8 +76,8 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds order of session of bar",
             notes = "Provide id of bar, session and order to look up specific order of session of the bar",
@@ -81,14 +92,14 @@ public class OrderController {
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds orders of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to look up orders of bill of session of the bar",
             response = OrderResponse.class
     )
-    public ResponseEntity<List<OrderResponse>> getAllSessionOrders(
+    public ResponseEntity<List<OrderResponse>> getAllBillOrders(
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") Long billId
@@ -98,14 +109,14 @@ public class OrderController {
         return new ResponseEntity<>(orderResponses, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds order of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to look up specific order of bill of session of the bar",
             response = OrderResponse.class
     )
-    public ResponseEntity<OrderResponse> getOrderFromSession(
+    public ResponseEntity<OrderResponse> getOrderFromBill(
             @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve the order from") @PathVariable("billId") Long billId,
@@ -115,8 +126,8 @@ public class OrderController {
         return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes order of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to delete specific order of bill of session of the bar"
@@ -131,20 +142,22 @@ public class OrderController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("sessions/{sessionId}/bills/{billId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Create new order for bill of session of bar",
             notes = "Provide id of bar, session and bill to create a new order with information from request body",
             response = OrderResponse.class
     )
-    public ResponseEntity<OrderResponse> addProductToOrder(
+    public ResponseEntity<BillResponse> createNewOrder(
             @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") Long billId,
-            @Valid @RequestBody OrderRequest orderLineRequest
+            @Valid @RequestBody OrderRequest orderLineRequest,
+            @ApiIgnore Authentication authentication
     ) throws NotFoundException {
-        Order order = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest);
-        return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        Bill bill = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
+        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 }

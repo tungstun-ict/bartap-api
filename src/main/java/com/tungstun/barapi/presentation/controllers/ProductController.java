@@ -14,14 +14,12 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.security.RolesAllowed;
 import javax.naming.directory.InvalidAttributesException;
 import javax.validation.Valid;
 import java.util.List;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/products")
-@RolesAllowed("ROLE_BAR_OWNER")
 public class ProductController {
     private final ProductService PRODUCT_SERVICE;
     private final ResponseMapper RESPONSE_MAPPER;
@@ -35,8 +33,8 @@ public class ProductController {
         return RESPONSE_MAPPER.convert(product, ProductResponse.class);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds all products of bar",
             notes = "Provide id of bar to look up all products that are linked to the bar",
@@ -49,13 +47,13 @@ public class ProductController {
             @ApiParam(value = "(Optional) Long value to filter products on category with id") @RequestParam(value = "categoryId", required = false) Long categoryId,
             @ApiParam(value = "(Optional) Boolean value to filter favorite products") @RequestParam(value = "onlyFavorites", required = false) Boolean onlyFavorites
     ) throws NotFoundException {
-        List<Product> products = this.PRODUCT_SERVICE.getProductsOfBar(barId, productType, categoryId, onlyFavorites);
+        List<Product> products = this.PRODUCT_SERVICE.searchProductsOfBar(barId, productType, categoryId, onlyFavorites);
         List<ProductResponse> productResponse = RESPONSE_MAPPER.convertList(products, ProductResponse.class);
         return new ResponseEntity<>(productResponse, HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @GetMapping("/{productId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Finds product of bar",
             notes = "Provide id of bar and product to look up the specific from the bar",
@@ -69,8 +67,8 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PostMapping
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Creates new product for bar",
             notes = "Provide id of bar to add a new product with information from the request body to the bar",
@@ -84,8 +82,8 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @PutMapping("/{productId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Updates the product of bar",
             notes = "Provide id of bar and product to update the product with information from the request body",
@@ -100,8 +98,8 @@ public class ProductController {
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }
 
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @DeleteMapping("/{productId}")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
             value = "Deletes the product of bar",
             notes = "Provide id of bar and product to delete the product from the bar",
