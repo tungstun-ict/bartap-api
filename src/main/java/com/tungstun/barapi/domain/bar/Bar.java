@@ -4,6 +4,8 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -12,10 +14,15 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "bar")
+@SQLDelete(sql = "UPDATE category SET deleted = true WHERE id=?")
+@Where(clause = "deleted = false")
 public class Bar {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(name = "deleted", columnDefinition = "BOOLEAN default false")
+    private final boolean deleted = Boolean.FALSE;
 
     @Embedded
     private BarDetails details;
@@ -47,6 +54,7 @@ public class Bar {
 
     public Bar() {
     }
+
     public Bar(BarDetails details,
                List<Person> people,
                List<Product> products,
@@ -58,6 +66,21 @@ public class Bar {
         this.products = products;
         this.sessions = sessions;
         this.categories = categories;
+    }
+
+    public Session activeSession() {
+        return sessions.stream()
+                .filter(Session::isActive)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Session newSession(String name) {
+        if (this.activeSession() != null)
+            throw new DuplicateActiveSessionException("Bar already has an active session");
+        Session session = Session.create(name);
+        this.sessions.add(session);
+        return session;
     }
 
     public Long getId() {

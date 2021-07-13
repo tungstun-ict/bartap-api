@@ -30,14 +30,14 @@ import java.util.ArrayList;
 @SpringBootTest
 @AutoConfigureMockMvc
 public class BarIntegrationTestLifeCycle {
+    @Autowired
+    private SpringBarRepository barRepository;
     public Person person2;
     @Autowired
     public MockMvc mockMvc;
 
     public Bar bar;
     public Person person;
-    @Autowired
-    private SpringBarRepository barRepository;
     public Session session;
     public Bill bill;
     public Order order;
@@ -99,11 +99,13 @@ public class BarIntegrationTestLifeCycle {
         Bill bill2 = new BillFactory(session2, person).create();
         bill2.addOrder(product, 1, person);
         session2.addBill(bill2);
+        session2.lock();
         bar.addSession(session2);
 
         Session session3 = Session.create("test3");
         Bill bill3 = new BillFactory(session3, person).create();
         session3.addBill(bill3);
+        session3.lock();
         bar.addSession(session3);
     }
 

@@ -40,20 +40,22 @@ public class BarController {
         return response;
     }
 
-    @GetMapping("/all")
-    @PreAuthorize("hasPermission(-1L, 'NO_ONE_ALLOWED')")
-    @ApiOperation(
-            value = "Finds all bars",
-            notes = "Look up a all existing bars",
-            response = BarResponse.class,
-            responseContainer = "List"
-    )
-    public ResponseEntity<List<BarResponse>> getAllBars() throws NotFoundException {
-        List<Bar> allBars = this.BAR_SERVICE.getAllBars();
-        List<BarResponse> barResponses = new ArrayList<>();
-        for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
-        return new ResponseEntity<>(barResponses, HttpStatus.OK);
-    }
+//    Commented out because it is of no use if cross user's bar security is to be held
+//
+//    @GetMapping("/all")
+//    @PreAuthorize("hasPermission(-1L, 'NO_ONE_ALLOWED')")
+//    @ApiOperation(
+//            value = "Finds all bars",
+//            notes = "Look up a all existing bars",
+//            response = BarResponse.class,
+//            responseContainer = "List"
+//    )
+//    public ResponseEntity<List<BarResponse>> getAllBars() throws NotFoundException {
+//        List<Bar> allBars = this.BAR_SERVICE.getAllBars();
+//        List<BarResponse> barResponses = new ArrayList<>();
+//        for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
+//        return new ResponseEntity<>(barResponses, HttpStatus.OK);
+//    }
 
     @GetMapping
     @ApiOperation(
