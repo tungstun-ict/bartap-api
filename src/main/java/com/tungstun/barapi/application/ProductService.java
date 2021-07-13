@@ -25,11 +25,13 @@ public class ProductService {
     private final SpringProductRepository SPRING_PRODUCT_REPOSITORY;
     private final BarService BAR_SERVICE;
     private final CategoryService CATEGORY_SERVICE;
+    private StringSimilarityStrategy<Product> strategy;
 
     public ProductService(SpringProductRepository springProductRepository, BarService barService, CategoryService categoryService) {
         this.SPRING_PRODUCT_REPOSITORY = springProductRepository;
         this.BAR_SERVICE = barService;
         this.CATEGORY_SERVICE = categoryService;
+        this.strategy = new ProductJaccardSimilarityStrategy();
     }
 
     private final BiPredicate<Product, ProductType> isProductType = (product, productType) -> product.getCategory().getProductType().equals(productType);
@@ -121,5 +123,10 @@ public class ProductService {
     public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
         this.SPRING_PRODUCT_REPOSITORY.delete(product);
+    }
+
+    public List<Product> searchProduct(Long barId, String searchName) throws NotFoundException {
+        List<Product> allProducts = getAllProductsOfBar(barId);
+        return strategy.filterList(allProducts, searchName);
     }
 }

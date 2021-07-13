@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.naming.directory.InvalidAttributesException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/products")
@@ -111,5 +112,24 @@ public class ProductController {
     ) throws NotFoundException {
         this.PRODUCT_SERVICE.deleteProductOfBar(barId, productId);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Searches products",
+            notes = "Provide id of bar and search value to search for products with",
+            response = ProductResponse.class
+    )
+    public ResponseEntity<List<ProductResponse>> deleteProductFromBar(
+            @ApiParam(value = "ID value for the bar you want to search the product from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "The name to filter your search with") @Valid @RequestParam(value = "name") String name
+
+    ) throws NotFoundException {
+        List<Product> foundProducts = this.PRODUCT_SERVICE.searchProduct(barId, name);
+        List<ProductResponse> foundProductResponses = foundProducts.stream()
+                .map(this::convertToProductResult)
+                .collect(Collectors.toList());
+        return new ResponseEntity<>(foundProductResponses, HttpStatus.OK);
     }
 }
