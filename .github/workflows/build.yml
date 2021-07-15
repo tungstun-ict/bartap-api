@@ -1,4 +1,4 @@
-name: Bartap Java CI with Maven
+name: Bartap Java CI pipeline with Maven
 on:
   push:
     branches:
