@@ -2,11 +2,11 @@ name: Java CI with Maven
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
       - 'development'
   pull_request:
     branches:
-      - 'main'
+      - 'master'
       - 'development'
 jobs:
   build:
