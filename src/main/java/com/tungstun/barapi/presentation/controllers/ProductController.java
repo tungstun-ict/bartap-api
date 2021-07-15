@@ -94,7 +94,7 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to update the product from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("productId") Long productId,
             @Valid @RequestBody ProductRequest productRequest
-    ) throws NotFoundException, InvalidAttributesException {
+    ) throws NotFoundException {
         Product product = this.PRODUCT_SERVICE.updateProductOfBar(barId, productId, productRequest);
         return new ResponseEntity<>(convertToProductResult(product), HttpStatus.OK);
     }

@@ -1,6 +1,5 @@
 package com.tungstun.barapi.application;
 
-import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringProductRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.product.Category;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.BiPredicate;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -99,9 +97,6 @@ public class ProductService {
 
     public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
-        Bar bar = this.BAR_SERVICE.getBar(barId);
-        if (barHasProductWithNameAndIsNotItself(bar, product, productRequest.name))
-            throw new DuplicateRequestException(String.format("Bar already has product with name '%s'", productRequest.name));
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
@@ -110,14 +105,6 @@ public class ProductService {
         product.setFavorite(productRequest.isFavorite);
         product.setCategory(category);
         return this.SPRING_PRODUCT_REPOSITORY.save(product);
-    }
-
-    private boolean barHasProductWithNameAndIsNotItself(Bar bar, Product product, String name) {
-        Predicate<Product> nameEquals = iterate -> iterate.getName().equalsIgnoreCase(name);
-        Predicate<Product> productEquals = iterate -> !iterate.equals(product);
-        return bar.getProducts()
-                .stream()
-                .anyMatch(nameEquals.and(productEquals));
     }
 
     public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
