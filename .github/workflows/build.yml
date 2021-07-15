@@ -1,4 +1,4 @@
-name: Bartap Java CI pipeline
+name: Bartap Java CI pipeline ;)
 on:
   push:
     branches:
