@@ -1,12 +1,12 @@
-name: Java CI with Maven
+name: Bartap Java CI pipeline ;)
 on:
   push:
     branches:
-      - 'main'
+      - 'master'
       - 'development'
   pull_request:
     branches:
-      - 'main'
+      - 'master'
       - 'development'
 jobs:
   build:
