@@ -7,11 +7,11 @@ import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
+import com.tungstun.barapi.domain.search.engine.product.ProductSearchEngine;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
-import javax.naming.directory.InvalidAttributesException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -25,11 +25,13 @@ public class ProductService {
     private final SpringProductRepository SPRING_PRODUCT_REPOSITORY;
     private final BarService BAR_SERVICE;
     private final CategoryService CATEGORY_SERVICE;
+    private final ProductSearchEngine searchEngine;
 
-    public ProductService(SpringProductRepository springProductRepository, BarService barService, CategoryService categoryService) {
+    public ProductService(SpringProductRepository springProductRepository, BarService barService, CategoryService categoryService, ProductSearchEngine searchEngine) {
         this.SPRING_PRODUCT_REPOSITORY = springProductRepository;
         this.BAR_SERVICE = barService;
         this.CATEGORY_SERVICE = categoryService;
+        this.searchEngine = searchEngine;
     }
 
     private final BiPredicate<Product, ProductType> isProductType = (product, productType) -> product.getCategory().getProductType().equals(productType);
@@ -77,13 +79,13 @@ public class ProductService {
         return findProductInProducts(allProducts, productId);
     }
 
-    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
+    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException {
         Bar bar = this.BAR_SERVICE.getBar(barId);
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
-    private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
+    private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException {
         Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
         return new ProductBuilder()
                 .setName(productRequest.name)
@@ -95,7 +97,7 @@ public class ProductService {
                 .build();
     }
 
-    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException, InvalidAttributesException {
+    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
         Bar bar = this.BAR_SERVICE.getBar(barId);
         if (barHasProductWithNameAndIsNotItself(bar, product, productRequest.name))
@@ -121,5 +123,10 @@ public class ProductService {
     public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
         this.SPRING_PRODUCT_REPOSITORY.delete(product);
+    }
+
+    public List<Product> searchProduct(Long barId, String searchString) throws NotFoundException {
+        List<Product> allProducts = getAllProductsOfBar(barId);
+        return searchEngine.search(allProducts, searchString);
     }
 }
