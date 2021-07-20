@@ -16,7 +16,7 @@ public class UserResponse {
     private UserRole role;
 
     public UserResponse() { }
-    public UserResponse(Long id, String username,UserRole role) {
+    public UserResponse(Long id, String username, UserRole role) {
         this.id = id;
         this.username = username;
         this.role = role;

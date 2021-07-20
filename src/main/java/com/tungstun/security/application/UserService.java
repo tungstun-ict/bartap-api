@@ -85,13 +85,12 @@ public class UserService implements UserDetailsService {
 
     public UserDetails loadUserByMailOrUsername(String username) {
         return this.SPRING_USER_REPOSITORY.findByMailOrUsername(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the usename '%s'", username)));
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the username '%s'", username)));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
         return this.SPRING_USER_REPOSITORY.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the usename '%s'", username)));
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the username '%s'", username)));
     }
-
 }
