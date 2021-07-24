@@ -77,7 +77,7 @@ create table product (
                          price float8,
                          size float8,
                          category_id int8,
-                         stock_id varchar(255),
+                         stock_id int8,
                          primary key (id)
 );
 
@@ -91,7 +91,7 @@ create table session (
 );
 
 create table stock (
-                       id varchar(255) not null,
+                       id int8 not null,
                        amount float8,
                        primary key (id)
 );
