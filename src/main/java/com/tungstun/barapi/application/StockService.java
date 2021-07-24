@@ -11,7 +11,6 @@ import javax.transaction.Transactional;
 @Transactional
 @Service
 public class StockService {
-
     private final ProductService productService;
 
     public StockService(ProductService productService) {
@@ -25,13 +24,13 @@ public class StockService {
 
     public Stock increaseStock(Long barId, Long productId, StockRequest request) throws NotFoundException {
         Stock stock = getStock(barId, productId);
-        stock.addAmount(request.amount);
+        stock.increaseAmount(request.amount);
         return stock;
     }
 
     public Stock decreaseStock(Long barId, Long productId, StockRequest request) throws NotFoundException {
         Stock stock = getStock(barId, productId);
-        stock.removeAmount(request.amount);
+        stock.decreaseAmount(request.amount);
         return stock;
     }
 

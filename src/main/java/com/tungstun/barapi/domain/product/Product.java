@@ -36,7 +36,7 @@ public class Product {
     @ManyToOne
     private Category category;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Stock stock;
 
     public Product() { }

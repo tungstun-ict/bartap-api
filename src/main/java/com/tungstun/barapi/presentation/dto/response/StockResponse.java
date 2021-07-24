@@ -5,9 +5,17 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Response details about the product's stock")
 public class StockResponse {
-    @ApiModelProperty(notes = "The stock's id")
-    private Long id;
-
     @ApiModelProperty(notes = "The stock's amount")
-    private double amount;
+    private long amount;
+
+    public StockResponse() {
+    }
+
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
 }

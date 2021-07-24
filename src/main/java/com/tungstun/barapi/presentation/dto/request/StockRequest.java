@@ -9,5 +9,5 @@ import javax.validation.constraints.Min;
 public class StockRequest {
     @ApiModelProperty(notes = "The stock's amount")
     @Min(value = 0, message = " cannot be 0 or lower")
-    public double amount;
+    public long amount;
 }

@@ -7,36 +7,46 @@ import javax.persistence.*;
 public class Stock {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private String id;
+    private Long id;
+
     @Column(name = "amount")
-    private double amount;
+    private long amount;
 
     public Stock() { }
-    public Stock(double amount) {
+    public Stock(long amount) {
         this.amount = amount;
     }
 
-    public String getId() {
+    public boolean increaseAmount(long amount) {
+        if (!isValidAmount(amount)) return false;
+        this.amount += amount;
+        return true;
+    }
+
+    public boolean decreaseAmount(long amount) {
+        if (!isValidAmount(amount)) return false;
+        this.amount -= amount;
+        return true;
+    }
+
+    private boolean isValidAmount (long amount) {
+        return amount > 0;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public double getAmount() {
+    public long getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(long amount) {
         this.amount = amount;
     }
 
-    public void addAmount(double amount) {
-        this.amount += amount;
-    }
-
-    public void removeAmount(double amount) {
-        this.amount += amount;
-    }
 }
