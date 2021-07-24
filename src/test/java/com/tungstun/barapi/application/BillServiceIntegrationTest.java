@@ -92,10 +92,10 @@ class BillServiceIntegrationTest {
     @Test
     @DisplayName("Get not existing Bill of bar")
     void getNotExistingBillOfBar() {
-       assertThrows(
-               NotFoundException.class,
-               () -> service.getBillOfBar(bar.getId(), session.getId(), 999L)
-       );
+        assertThrows(
+                NotFoundException.class,
+                () -> service.getBillOfBar(bar.getId(), session.getId(), 999L)
+        );
     }
 
     @Test
@@ -114,6 +114,35 @@ class BillServiceIntegrationTest {
 
         assertEquals(1, bills.size());
         assertTrue(bills.contains(bill));
+    }
+
+    @Test
+    @DisplayName("Get Bill of customer from active session")
+    void getBillOfCustomerFromActiveSession() throws NotFoundException {
+        Bill bill = service.getBillOfCustomerFromActiveSession(bar.getId(), person.getId());
+
+        assertEquals(bill.getId(), bill.getId());
+    }
+
+    @Test
+    @DisplayName("Get Bill of customer from active session when no session is active")
+    void getBillOfCustomerFromActiveSessionWhenNoActiveSession() {
+        session.lock();
+        session = sessionRepository.save(session);
+
+        assertThrows(
+                NotFoundException.class,
+                () ->service.getBillOfCustomerFromActiveSession(bar.getId(), person.getId())
+        );
+    }
+
+    @Test
+    @DisplayName("Get Bill of customer from active session when person does not have bill in session")
+    void getBillOfCustomerFromActiveSessionWhenNoBillExists() {
+        assertThrows(
+                NotFoundException.class,
+                () ->service.getBillOfCustomerFromActiveSession(bar.getId(), 999L)
+        );
     }
 
     @Test
@@ -163,8 +192,8 @@ class BillServiceIntegrationTest {
         request.customerId = person.getId();
 
         assertThrows(
-            DuplicateRequestException.class,
-            () -> service.createNewBillForSession(bar.getId(), session.getId(), request)
+                DuplicateRequestException.class,
+                () -> service.createNewBillForSession(bar.getId(), session.getId(), request)
         );
     }
 
@@ -186,10 +215,10 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Set is payed null of bill ")
-    void setIsPayedNullOfBill(){
+    void setIsPayedNullOfBill() {
         assertThrows(
-            IllegalArgumentException.class,
-            () -> service.setIsPayedOfBillOfSession(bar.getId(), session.getId(), bill.getId(), null)
+                IllegalArgumentException.class,
+                () -> service.setIsPayedOfBillOfSession(bar.getId(), session.getId(), bill.getId(), null)
         );
     }
 
@@ -203,7 +232,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Remove order from bill")
-    void removeOrderFromBill() throws NotFoundException {
+    void removeOrderFromBill() {
         bill.addOrder(new ProductBuilder().build(), 1, person);
         bill = repository.save(bill);
         Order order = bill.getOrders().get(0);

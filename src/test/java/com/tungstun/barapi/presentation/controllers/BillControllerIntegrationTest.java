@@ -66,7 +66,7 @@ class BillControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     @DisplayName("get bill of session which you arent connected with")
     void getBillOfSessionNotOwned() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .get(String.format(String.format("/api/bars/%s/sessions/%s/bills", bar.getId(), session.getId())))
+                .get(String.format("/api/bars/%s/sessions/%s/bills", bar.getId(), session.getId()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
@@ -89,6 +89,36 @@ class BillControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$.customer").exists())
                 .andExpect(jsonPath("$.orders").exists())
                 .andExpect(jsonPath("$.session").exists());
+    }
+
+    @Test
+    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @DisplayName("Get bill of person from active session")
+    void getBillOfPersonFromActiveSession() throws Exception {
+        RequestBuilder request = MockMvcRequestBuilders
+                .get(String.format("/api/bars/%s/sessions/active/people/%s/bill", bar.getId(), person.getId()))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").exists())
+                .andExpect(jsonPath("$.payed").value(false))
+                .andExpect(jsonPath("$.totalPrice").value(bill.calculateTotalPrice()))
+                .andExpect(jsonPath("$.customer").exists())
+                .andExpect(jsonPath("$.orders").exists())
+                .andExpect(jsonPath("$.session").exists());
+    }
+
+    @Test
+    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @DisplayName("get bill of person of active session not allowd")
+    void getBillOfPersonOfActiveSessionNotOwned() throws Exception {
+        RequestBuilder request = MockMvcRequestBuilders
+                .get(String.format("/api/bars/%s/sessions/active/people/%s/bill", bar.getId(), person.getId()))
+                .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(request)
+                .andExpect(status().isForbidden());
     }
 
     @Test
