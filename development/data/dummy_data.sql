@@ -3,6 +3,14 @@ values (1, '$2a$10$FAmWZOw692jCu0bkdVkj3ecSqlBqijjj5I3QMznGp2uLYiQXGr5hW', 'admi
        (2, '$2a$10$FAmWZOw692jCu0bkdVkj3ecSqlBqijjj5I3QMznGp2uLYiQXGr5hW', 'user', 'test@mail.com', 'testFirst', 'testLast'),
        (3, '$2a$04$dKIufHL4vTOUG7e2f4.plu3tHUqbGdhuf14Ss.GZyuPUTOUp.r4wi', 'Bart', 'bartschouten02@live.nl', 'Bart', 'Schouten');
 
+insert into bar(id, address, mail, name, phone_number)
+
+VALUES  (1, 'Molenstraat 15', 'molenstraat@staat.nl', 'De Kerker Bar', '7812344562'),
+        (2, 'Dorpsstraat 192', 'dorpsstraat@staat.nl', 'Bartjes Bar', '1122334455'),
+        (3, 'Kerkstraat 6', 'kerkstraat@staat.nl', 'De Kerker Bar', '0987654321'),
+        (4, 'Schoolstraat 1a', 'schoolstraat@staat.nl', 'De School Pub', '1234567890'),
+        (5, 'Molenweg 1', 'molenweg@staat.nl', 'De Molen', '6677889900');
+
 insert into user_bar_authorization(id, bar_id, role, user_id)
 values (1, 1, 'ROLE_BAR_OWNER', 1),
        (2, 2, 'ROLE_BAR_OWNER', 3),
@@ -16,14 +24,6 @@ values (3, 2),
        (2, 3),
        (2, 4),
        (2, 5);
-
-insert into bar(id, address, mail, name, phone_number)
-
-VALUES  (1, 'Molenstraat 15', 'molenstraat@staat.nl', 'De Kerker Bar', '7812344562'),
-        (2, 'Dorpsstraat 192', 'dorpsstraat@staat.nl', 'Bartjes Bar', '1122334455'),
-        (3, 'Kerkstraat 6', 'kerkstraat@staat.nl', 'De Kerker Bar', '0987654321'),
-        (4, 'Schoolstraat 1a', 'schoolstraat@staat.nl', 'De School Pub', '1234567890'),
-        (5, 'Molenweg 1', 'molenweg@staat.nl', 'De Molen', '6677889900');
 
 insert into person (id, name, phone_number, user_id)
 values (1, 'Bart Schouten', '66772323332', 3),
@@ -153,38 +153,38 @@ values (1, true, 2, 1),
        (10, false, 2, 4),
        (11, false, 4, 4);
 
-insert into "order"(id, amount, creation_date, bartender_id, product_id)
-values (1, 1, date('2021-03-06 22:50:00.0'), 1, 1),
-       (2, 3, date('2021-03-06 22:55:00.0'), 1, 1),
-       (3, 2, date('2021-03-06 23:00:00.0'), 1, 1),
-       (4, 5, date('2021-03-06 23:05:00.0'), 1, 1),
-       (5, 1, date('2021-03-06 23:10:00.0'), 1, 4),
-       (6, 2, date('2021-03-06 23:15:00.0'), 1, 1),
-       (7, 1, date('2021-03-06 23:20:00.0'), 1, 7),
-       (8, 1, date('2021-03-06 23:25:00.0'), 1, 4),
-       (9, 2, date('2021-03-06 23:30:00.0'), 1, 1),
+insert into "order"(id, amount, creation_date, bartender_id, product_id, bill_id)
+values (1, 1, date('2021-03-06 22:50:00.0'), 1, 1, 1),
+       (2, 3, date('2021-03-06 22:55:00.0'), 1, 1, 1),
+       (3, 2, date('2021-03-06 23:00:00.0'), 1, 1, 1),
+       (4, 5, date('2021-03-06 23:05:00.0'), 1, 1, 1),
+       (5, 1, date('2021-03-06 23:10:00.0'), 1, 4, 1),
+       (6, 2, date('2021-03-06 23:15:00.0'), 1, 1, 1),
+       (7, 1, date('2021-03-06 23:20:00.0'), 1, 7, 1),
+       (8, 1, date('2021-03-06 23:25:00.0'), 1, 4, 1),
+       (9, 2, date('2021-03-06 23:30:00.0'), 1, 1, 1),
 
-       (10, 2, date('2021-03-06 23:35:00.0'), 1, 1),
-       (11, 1, date('2021-03-06 23:40:00.0'), 1, 10),
-       (12, 5, date('2021-03-06 23:45:00.0'), 1, 1),
-       (13, 1, date('2021-03-06 23:50:00.0'), 1, 1),
-       (14, 4, date('2021-03-06 23:55:00.0'), 1, 12),
-       (15, 2, date('2021-03-07 00:00:00.0'), 1, 1),
-       (16, 1, date('2021-03-07 00:00:00.0'), 1, 1),
+       (10, 2, date('2021-03-06 23:35:00.0'), 1, 1, 2),
+       (11, 1, date('2021-03-06 23:40:00.0'), 1, 10, 2),
+       (12, 5, date('2021-03-06 23:45:00.0'), 1, 1, 2),
+       (13, 1, date('2021-03-06 23:50:00.0'), 1, 1, 2),
+       (14, 4, date('2021-03-06 23:55:00.0'), 1, 12, 2),
+       (15, 2, date('2021-03-07 00:00:00.0'), 1, 1, 2),
+       (16, 1, date('2021-03-07 00:00:00.0'), 1, 1, 2),
 
-       (17, 5, date('2021-03-07 23:30:00.0'), 1, 1),
-       (18, 1, date('2021-03-07 23:35:00.0'), 1, 4),
-       (19, 1, date('2021-03-07 23:40:00.0'), 1, 7),
+       (17, 5, date('2021-03-07 23:30:00.0'), 1, 1, 3),
+       (18, 1, date('2021-03-07 23:35:00.0'), 1, 4, 3),
+       (19, 1, date('2021-03-07 23:40:00.0'), 1, 7, 3),
 
-       (20, 1, date('2021-03-09 22:50:00.0'), 1, 1),
-       (21, 3, date('2021-03-09 22:55:00.0'), 1, 1),
-       (22, 2, date('2021-03-09 23:00:00.0'), 1, 1),
-       (23, 5, date('2021-03-09 23:05:00.0'), 1, 1),
-       (24, 1, date('2021-03-09 23:10:00.0'), 1, 4),
-       (25, 2, date('2021-03-09 23:15:00.0'), 1, 1),
-       (26, 1, date('2021-03-09 23:20:00.0'), 1, 7),
-       (27, 1, date('2021-03-09 23:25:00.0'), 1, 4),
-       (28, 2, date('2021-03-09 23:30:00.0'), 1, 1);
+       (20, 1, date('2021-03-09 22:50:00.0'), 1, 1, 4),
+       (21, 3, date('2021-03-09 22:55:00.0'), 1, 1, 4),
+       (22, 2, date('2021-03-09 23:00:00.0'), 1, 1, 4),
+       (23, 5, date('2021-03-09 23:05:00.0'), 1, 1, 4),
+       (24, 1, date('2021-03-09 23:10:00.0'), 1, 4, 4),
+       (25, 2, date('2021-03-09 23:15:00.0'), 1, 1, 4),
+       (26, 1, date('2021-03-09 23:20:00.0'), 1, 7, 4),
+       (27, 1, date('2021-03-09 23:25:00.0'), 1, 4, 4),
+       (28, 2, date('2021-03-09 23:30:00.0'), 1, 1, 4);
 
 insert into bill_orders(bill_id, orders_id)
 values (1, 1),

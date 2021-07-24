@@ -22,7 +22,7 @@ class BillTest {
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 1,
-                                null
+                                null, null
                         )
                         ), false),
                         1
@@ -31,7 +31,7 @@ class BillTest {
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 2,
-                                null
+                                null, null
                         )
                         ), false),
                         2
@@ -40,12 +40,12 @@ class BillTest {
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 1,
-                                null
+                                null, null
                         ),
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 1,
-                                null
+                                null, null
                         )
                         ), false),
                         2),
@@ -53,12 +53,12 @@ class BillTest {
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 2,
-                                null
+                                null, null
                         ),
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 1,
-                                null
+                                null, null
                         )
                         ), false),
                         3)
@@ -72,7 +72,7 @@ class BillTest {
                         new Order(
                                 new Product(null, null, 0, 1.0, false, null),
                                 1,
-                                null
+                                null, null
                         )
                         )), false)
                 )
