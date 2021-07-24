@@ -55,6 +55,14 @@ public class BillService {
         return session.getBills();
     }
 
+    public Bill getBillOfCustomerFromActiveSession(Long barId, Long personId) throws NotFoundException {
+        Session activeSession = this.SESSION_SERVICE.getActiveSessionOfBar(barId);
+        return activeSession.getBills().stream()
+                .filter(bill -> bill.getCustomer().getId().equals(personId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No bill in session for given customer with id" + personId));
+    }
+
     public List<Bill> getBillsOfPerson(Long barId, Long customerId) throws NotFoundException {
         Person customer = this.PERSON_SERVICE.getPersonOfBar(barId, customerId);
         return customer.getBills();
