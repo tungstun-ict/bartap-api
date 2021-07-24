@@ -101,6 +101,21 @@ public class BillController {
         return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
     }
 
+    @GetMapping("/sessions/active/people/{personId}/bill")
+    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @ApiOperation(
+            value = "Finds bill of bar",
+            notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
+            response = BillResponse.class
+    )
+    public ResponseEntity<BillResponse> getBillOfBar(
+            @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") Long barId,
+            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("personId") Long personId
+    ) throws NotFoundException {
+        Bill bill = this.BILL_SERVICE.getBillOfCustomerFromActiveSession(barId, personId);
+        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
+    }
+
     @GetMapping("/people/{personId}/bills")
     @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
     @ApiOperation(
