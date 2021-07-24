@@ -8,14 +8,15 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StockTest {
     private Stock stock;
 
     private static Stream<Arguments> validValues() {
         return Stream.of(
+                Arguments.of(0),
                 Arguments.of(1),
                 Arguments.of(999999999999999999L)
         );
@@ -23,7 +24,6 @@ class StockTest {
 
     private static Stream<Arguments> invalidValues() {
         return Stream.of(
-                Arguments.of(0),
                 Arguments.of(-1),
                 Arguments.of(-999999999999999999L)
         );
@@ -38,35 +38,39 @@ class StockTest {
     @MethodSource("validValues")
     @DisplayName("Increase stock valid")
     void increaseStockValid(long amount) {
-        boolean succeeded = stock.increaseAmount(amount);
+        long expectedAmount = stock.getAmount() + amount;
+        stock.increaseAmount(amount);
 
-        assertTrue(succeeded);
+        assertEquals(expectedAmount, stock.getAmount());
     }
 
     @ParameterizedTest
     @MethodSource("invalidValues")
     @DisplayName("Increase stock invalid")
     void increaseStockInvalid(long amount) {
-        boolean succeeded = stock.increaseAmount(amount);
-
-        assertFalse(succeeded);
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> stock.increaseAmount(amount)
+        );
     }
 
     @ParameterizedTest
     @MethodSource("validValues")
     @DisplayName("Decrease stock valid")
     void decreaseStockValid(long amount) {
-        boolean succeeded = stock.decreaseAmount(amount);
+        long expectedAmount = stock.getAmount() - amount;
+        stock.decreaseAmount(amount);
 
-        assertTrue(succeeded);
+        assertEquals(expectedAmount, stock.getAmount());
     }
 
     @ParameterizedTest
     @MethodSource("invalidValues")
     @DisplayName("Decrease stock invalid")
     void decreaseStockInvalid(long amount) {
-        boolean succeeded = stock.decreaseAmount(amount);
-
-        assertFalse(succeeded);
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> stock.decreaseAmount(amount)
+        );
     }
 }

@@ -81,7 +81,7 @@ class StockServiceIntegrationTest{
 
         Stock stock = stockService.decreaseStock(barId, productId, request);
 
-        assertEquals(request.amount, stock.getAmount());
+        assertEquals(-request.amount, stock.getAmount());
     }
 
     @Test

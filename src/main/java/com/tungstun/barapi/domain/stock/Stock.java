@@ -17,20 +17,18 @@ public class Stock {
         this.amount = amount;
     }
 
-    public boolean increaseAmount(long amount) {
-        if (!isValidAmount(amount)) return false;
+    public void increaseAmount(long amount) {
+        validateAmount(amount);
         this.amount += amount;
-        return true;
     }
 
-    public boolean decreaseAmount(long amount) {
-        if (!isValidAmount(amount)) return false;
+    public void decreaseAmount(long amount) {
+        validateAmount(amount);
         this.amount -= amount;
-        return true;
     }
 
-    private boolean isValidAmount (long amount) {
-        return amount > 0;
+    private void validateAmount(long amount) {
+        if (amount < 0) throw new IllegalArgumentException("Amount not allowed to be smaller than 0");
     }
 
     public Long getId() {
