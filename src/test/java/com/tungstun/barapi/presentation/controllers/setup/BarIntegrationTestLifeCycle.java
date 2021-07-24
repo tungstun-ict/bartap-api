@@ -35,7 +35,6 @@ public class BarIntegrationTestLifeCycle {
     public Person person2;
     @Autowired
     public MockMvc mockMvc;
-
     public Bar bar;
     public Person person;
     public Session session;
@@ -46,7 +45,7 @@ public class BarIntegrationTestLifeCycle {
 
 
     @BeforeEach
-    void setUp() {
+    public void setUp() throws Exception {
         barRepository.deleteAll();
         createBar();
         addProductToBar();
