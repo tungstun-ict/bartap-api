@@ -20,45 +20,45 @@ class BillTest {
                 Arguments.of(new Bill(null, null, List.of(), false), 0),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 1,
-                                null
+                                null, null
                         )
                         ), false),
                         1
                 ),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 2,
-                                null
+                                null, null
                         )
                         ), false),
                         2
                 ),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 1,
-                                null
+                                null, null
                         ),
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 1,
-                                null
+                                null, null
                         )
                         ), false),
                         2),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 2,
-                                null
+                                null, null
                         ),
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 1,
-                                null
+                                null, null
                         )
                         ), false),
                         3)
@@ -70,9 +70,9 @@ class BillTest {
                 Arguments.of(new Bill(null, null, new ArrayList<>(), false)),
                 Arguments.of(new Bill(null, null, new ArrayList<>(Collections.singletonList(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new Product(null, null, 0, 1.0, false, null, null),
                                 1,
-                                null
+                                null, null
                         )
                         )), false)
                 )
@@ -81,9 +81,9 @@ class BillTest {
 
     static Stream<Arguments> provideIllegalProductArgs() {
         return Stream.of(
-                Arguments.of(new Product(null, null, 0, 1.0, false, null), 1, null),
-                Arguments.of(new Product(null, null, 0, 1.0, false, null), 0, new Person()),
-                Arguments.of(new Product(null, null, 0, 1.0, false, null), -1, new Person()),
+                Arguments.of(new Product(null, null, 0, 1.0, false, null, null), 1, null),
+                Arguments.of(new Product(null, null, 0, 1.0, false, null, null), 0, new Person()),
+                Arguments.of(new Product(null, null, 0, 1.0, false, null, null), -1, new Person()),
                 Arguments.of(null, 1, new Person())
         );
     }
@@ -101,7 +101,7 @@ class BillTest {
     @MethodSource("provideAddBills")
     @DisplayName("Add order to bill")
     void addOrderToBill(Bill bill) {
-        Product product = new Product(null, null, 0, 1.0, false, null);
+        Product product = new Product(null, null, 0, 1.0, false, null, null);
         Person person = new Person();
 
         boolean isSuccessful = bill.addOrder(product, 1, person);
@@ -114,7 +114,7 @@ class BillTest {
     @DisplayName("Add product to bill with illegal arguments")
     void addWithIllegalArguments() {
         Bill bill = new Bill(null, null, new ArrayList<>(), false);
-        Product product = new Product(null, null, 0, 1.0, false, null);
+        Product product = new Product(null, null, 0, 1.0, false, null, null);
 
         boolean isSuccessful = bill.addOrder(product, 1, null);
 

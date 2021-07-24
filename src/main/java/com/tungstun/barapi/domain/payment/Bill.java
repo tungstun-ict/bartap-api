@@ -59,7 +59,7 @@ public class Bill {
 
     public boolean addOrder(Product product, int amount, Person bartender){
         if (product == null || amount < 1 || bartender == null) return false;
-        Order order = new Order(product, amount, bartender);
+        Order order = new Order(product, amount, this, bartender);
         return this.orders.add(order);
     }
 

@@ -6,6 +6,7 @@ import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
+import com.tungstun.barapi.presentation.dto.response.PersonResponse;
 import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -21,6 +22,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/")
@@ -33,8 +35,19 @@ public class OrderController {
         this.RESPONSE_MAPPER = responseMapper;
     }
 
-    private OrderResponse convertToOrderResult(Order order){
-        return RESPONSE_MAPPER.convert(order, OrderResponse.class);
+    private List<OrderResponse> convertToOrderResults(List<Order> orders) {
+        return orders.stream()
+                .map(this::convertToOrderResult)
+                .collect(Collectors.toList());
+    }
+
+    private OrderResponse convertToOrderResult(Order order) {
+        OrderResponse response = RESPONSE_MAPPER.convert(order, OrderResponse.class);
+        PersonResponse bartender = RESPONSE_MAPPER.convert(order.getBartender(), PersonResponse.class);
+        PersonResponse customer = RESPONSE_MAPPER.convert(order.getBill().getCustomer(), PersonResponse.class);
+        response.setBartender(bartender);
+        response.setCustomer(customer);
+        return response;
     }
 
     private BillResponse convertToBillResult(Bill bill){
@@ -55,8 +68,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId
     ) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBar(barId);
-        List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
-        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        return new ResponseEntity<>(convertToOrderResults(orders), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/orders")
@@ -72,8 +84,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfSession(barId, sessionId);
-        List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
-        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        return new ResponseEntity<>(convertToOrderResults(orders), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
@@ -105,8 +116,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") Long billId
     ) throws NotFoundException {
         List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBill(barId, sessionId, billId);
-        List<OrderResponse> orderResponses = RESPONSE_MAPPER.convertList(orders, OrderResponse.class);
-        return new ResponseEntity<>(orderResponses, HttpStatus.OK);
+        return new ResponseEntity<>(convertToOrderResults(orders), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
