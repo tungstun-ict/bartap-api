@@ -27,6 +27,9 @@ public class Order {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @ManyToOne
+    private Bill bill;
+
     @OneToOne(
             cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH}
     )
@@ -38,9 +41,10 @@ public class Order {
     private Person bartender;
 
     public Order() { }
-    public Order(Product product, int amount, Person bartender) {
+    public Order(Product product, int amount, Bill bill, Person bartender) {
         this.product = product;
         this.amount = amount;
+        this.bill = bill;
         this.bartender = bartender;
         this.creationDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
     }
@@ -56,4 +60,8 @@ public class Order {
     public LocalDateTime getCreationDate() { return creationDate; }
 
     public Person getBartender() { return bartender; }
+
+    public Bill getBill() {
+        return bill;
+    }
 }

@@ -1,4 +1,4 @@
-create sequence hibernate_sequence start 1000 increment 1;
+create sequence hibernate_sequence start 1000 increment 1
 
 create table bar (
                      id int8 not null,
@@ -37,6 +37,7 @@ create table bill (
                       session_id int8 not null,
                       primary key (id)
 );
+
 
 create table "bill_orders" (
                                bill_id int8 not null,
@@ -88,7 +89,6 @@ create table session (
                          locked boolean not null,
                          name varchar(255),
                          primary key (id)
-);
 
 create table stock (
                        id int8 not null,
@@ -212,7 +212,6 @@ alter table if exists "order"
     add constraint FKknjaoi59nxmpxhr452bj95tgg
         foreign key (product_id)
             references product;
-
 alter table if exists person
     add constraint FKdunok34g8d08mu7mtocmhfptn
         foreign key ("user_id")
