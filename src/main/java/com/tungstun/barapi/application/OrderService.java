@@ -99,7 +99,7 @@ public class OrderService {
         this.SESSION_SERVICE.checkEditable(bill.getSession());
         Person bartender = findPersonOfUser(barId, username);
         Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
-        bill.addOrder(product, orderRequest.amount, bartender);
+        Order order = bill.addOrder(product, orderRequest.amount, bartender);
         return BILL_REPOSITORY.save(bill);
     }
 
