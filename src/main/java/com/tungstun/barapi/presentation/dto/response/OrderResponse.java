@@ -30,14 +30,6 @@ public class OrderResponse {
     private PersonResponse customer;
 
     public OrderResponse() { }
-    public OrderResponse(Long id, int amount, LocalDateTime creationDate, Product product, PersonResponse bartender, PersonResponse customer) {
-        this.id = id;
-        this.amount = amount;
-        this.creationDate = creationDate;
-        this.product = product;
-        this.bartender = bartender;
-        this.customer = customer;
-    }
 
     public Long getId() { return id; }
 

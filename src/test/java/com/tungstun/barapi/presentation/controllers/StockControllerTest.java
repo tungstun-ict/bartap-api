@@ -15,7 +15,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class ProductStockControllerTest extends BarIntegrationTestLifeCycle {
+class StockControllerTest extends BarIntegrationTestLifeCycle {
     private String defaultUrl;
     private JSONObject jsonObject;
 

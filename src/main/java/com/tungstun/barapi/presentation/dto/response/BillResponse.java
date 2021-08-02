@@ -1,6 +1,5 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.session.Session;
 import io.swagger.annotations.ApiModel;
@@ -11,7 +10,7 @@ import java.util.List;
 @ApiModel(description = "Response details about the bill")
 public class BillResponse {
     @ApiModelProperty(notes = "The bill's id")
-    private String id;
+    private Long id;
 
     @ApiModelProperty(notes = "The bill's payment state")
     private boolean isPayed;
@@ -23,30 +22,16 @@ public class BillResponse {
     private Double totalPrice;
 
     @ApiModelProperty(notes = "The bill's orders")
-    private List<Order> orders;
+    private List<OrderResponse> orders;
 
     @ApiModelProperty(notes = "The bill's affiliated session")
     private Session session;
 
     public BillResponse() { }
-    public BillResponse(String id,
-                        boolean isPayed,
-                        Person customer,
-                        Double totalPrice,
-                        List<Order> orders,
-                        Session session)
-    {
-        this.id = id;
-        this.isPayed = isPayed;
-        this.customer = customer;
-        this.totalPrice = totalPrice;
-        this.orders = orders;
-        this.session = session;
-    }
 
-    public String getId() { return id; }
+    public Long getId() { return id; }
 
-    public void setId(String id) { this.id = id; }
+    public void setId(Long id) { this.id = id; }
 
     public boolean isPayed() { return isPayed; }
 
@@ -60,9 +45,9 @@ public class BillResponse {
 
     public void setTotalPrice(Double totalPrice) { this.totalPrice = totalPrice; }
 
-    public List<Order> getOrders() { return orders; }
+    public List<OrderResponse> getOrders() { return orders; }
 
-    public void setOrders(List<Order> orders) { this.orders = orders; }
+    public void setOrders(List<OrderResponse> orders) { this.orders = orders; }
 
     public Session getSession() { return session; }
 

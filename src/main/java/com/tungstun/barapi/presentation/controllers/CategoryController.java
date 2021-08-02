@@ -2,9 +2,9 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.CategoryService;
 import com.tungstun.barapi.domain.product.Category;
+import com.tungstun.barapi.presentation.dto.converter.CategoryConverter;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import com.tungstun.barapi.presentation.dto.response.CategoryResponse;
-import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -20,16 +20,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/api/bars/{barId}/categories")
 public class CategoryController {
-    private final CategoryService CATEGORY_SERVICE;
-    private final ResponseMapper RESPONSE_MAPPER;
+    private final CategoryService categoryService;
+    private final CategoryConverter converter;
 
-    public CategoryController(CategoryService categoryService, ResponseMapper responseMapper) {
-        this.CATEGORY_SERVICE = categoryService;
-        this.RESPONSE_MAPPER = responseMapper;
-    }
-
-    private CategoryResponse convertToCategoryResult(Category category){
-        return RESPONSE_MAPPER.convert(category, CategoryResponse.class);
+    public CategoryController(CategoryService categoryService, CategoryConverter converter) {
+        this.categoryService = categoryService;
+        this.converter = converter;
     }
 
     @GetMapping
@@ -37,16 +33,14 @@ public class CategoryController {
     @ApiOperation(
             value = "Finds all categories of bar",
             notes = "Provide id of bar to look up all categories that are linked to the bar",
-            response = CategoryResponse.class,
-            responseContainer = "List"
+            response = CategoryResponse.class
     )
     public ResponseEntity<List<CategoryResponse>> getCategoriesOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve categories from") @PathVariable("barId") Long barId,
             @ApiParam(value = "(Optional) Product type of categories you want to retrieve") @RequestParam(value = "productType", required = false) String productType
     ) throws NotFoundException {
-        List<Category> categories = this.CATEGORY_SERVICE.getCategoriesOfBar(barId, productType);
-        List<CategoryResponse> categoryResponses = RESPONSE_MAPPER.convertList(categories, CategoryResponse.class);
-        return new ResponseEntity<>(categoryResponses, HttpStatus.OK);
+        List<Category> categories = this.categoryService.getCategoriesOfBar(barId, productType);
+        return new ResponseEntity<>(converter.convertAll(categories), HttpStatus.OK);
     }
 
     @GetMapping("/{categoryId}")
@@ -60,8 +54,8 @@ public class CategoryController {
             @ApiParam(value = "ID value for the bar you want to retrieve the category from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the category you want to retrieve") @PathVariable("categoryId") Long categoryId
     ) throws NotFoundException {
-        Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, categoryId);
-        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
+        Category category = this.categoryService.getCategoryOfBar(barId, categoryId);
+        return new ResponseEntity<>(converter.convert(category), HttpStatus.OK);
     }
 
     @PostMapping
@@ -75,8 +69,8 @@ public class CategoryController {
             @ApiParam(value = "ID value for the bar you want to create a new category for") @PathVariable("barId") Long barId,
             @Valid @RequestBody CategoryRequest categoryRequest
     ) throws NotFoundException {
-        Category category = this.CATEGORY_SERVICE.addCategoryToBar(barId, categoryRequest);
-        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.CREATED);
+        Category category = this.categoryService.addCategoryToBar(barId, categoryRequest);
+        return new ResponseEntity<>(converter.convert(category), HttpStatus.CREATED);
     }
 
     @PutMapping("/{categoryId}")
@@ -91,8 +85,8 @@ public class CategoryController {
             @ApiParam(value = "ID value for the category you want to update") @PathVariable("categoryId") Long categoryId,
             @Valid @RequestBody CategoryRequest categoryRequest
     ) throws NotFoundException {
-        Category category = this.CATEGORY_SERVICE.updateCategoryOfBar(barId, categoryId, categoryRequest);
-        return new ResponseEntity<>(convertToCategoryResult(category), HttpStatus.OK);
+        Category category = this.categoryService.updateCategoryOfBar(barId, categoryId, categoryRequest);
+        return new ResponseEntity<>(converter.convert(category), HttpStatus.OK);
     }
 
     @DeleteMapping("/{categoryId}")
@@ -106,7 +100,7 @@ public class CategoryController {
             @ApiParam(value = "ID value for the bar you want to delete the category from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the category you want to delete") @PathVariable("categoryId") Long categoryId
     ) throws NotFoundException {
-        this.CATEGORY_SERVICE.deleteCategoryFromBar(barId, categoryId);
+        this.categoryService.deleteCategoryFromBar(barId, categoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

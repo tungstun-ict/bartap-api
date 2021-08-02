@@ -3,11 +3,11 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.OrderService;
 import com.tungstun.barapi.domain.payment.Bill;
 import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.presentation.dto.converter.BillConverter;
+import com.tungstun.barapi.presentation.dto.converter.OrderConverter;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
-import com.tungstun.barapi.presentation.dto.response.PersonResponse;
-import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -22,38 +22,18 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/api/bars/{barId}/")
 public class OrderController {
-    private final OrderService ORDER_SERVICE;
-    private final ResponseMapper RESPONSE_MAPPER;
+    private final OrderService orderService;
+    private final OrderConverter orderConverter;
+    private final BillConverter billConverter;
 
-    public OrderController(OrderService orderService, ResponseMapper responseMapper) {
-        this.ORDER_SERVICE = orderService;
-        this.RESPONSE_MAPPER = responseMapper;
-    }
-
-    private List<OrderResponse> convertToOrderResults(List<Order> orders) {
-        return orders.stream()
-                .map(this::convertToOrderResult)
-                .collect(Collectors.toList());
-    }
-
-    private OrderResponse convertToOrderResult(Order order) {
-        OrderResponse response = RESPONSE_MAPPER.convert(order, OrderResponse.class);
-        PersonResponse bartender = RESPONSE_MAPPER.convert(order.getBartender(), PersonResponse.class);
-        PersonResponse customer = RESPONSE_MAPPER.convert(order.getBill().getCustomer(), PersonResponse.class);
-        response.setBartender(bartender);
-        response.setCustomer(customer);
-        return response;
-    }
-
-    private BillResponse convertToBillResult(Bill bill){
-        BillResponse response = RESPONSE_MAPPER.convert(bill, BillResponse.class);
-        response.setTotalPrice(bill.calculateTotalPrice());
-        return response;
+    public OrderController(OrderService orderService, OrderConverter orderConverter, BillConverter billConverter) {
+        this.orderService = orderService;
+        this.orderConverter = orderConverter;
+        this.billConverter = billConverter;
     }
 
     @GetMapping("orders")
@@ -67,8 +47,8 @@ public class OrderController {
     public ResponseEntity<List<OrderResponse>> getAllBarOrders(
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId
     ) throws NotFoundException {
-        List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBar(barId);
-        return new ResponseEntity<>(convertToOrderResults(orders), HttpStatus.OK);
+        List<Order> orders = this.orderService.getAllOrdersOfBar(barId);
+        return new ResponseEntity<>(orderConverter.convertAll(orders), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/orders")
@@ -83,8 +63,8 @@ public class OrderController {
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
-        List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfSession(barId, sessionId);
-        return new ResponseEntity<>(convertToOrderResults(orders), HttpStatus.OK);
+        List<Order> orders = this.orderService.getAllOrdersOfSession(barId, sessionId);
+        return new ResponseEntity<>(orderConverter.convertAll(orders), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
@@ -99,8 +79,8 @@ public class OrderController {
             @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
-        Order order = this.ORDER_SERVICE.getOrderOfSession(barId, sessionId, orderId);
-        return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
+        Order order = this.orderService.getOrderOfSession(barId, sessionId, orderId);
+        return new ResponseEntity<>(orderConverter.convert(order), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
@@ -115,8 +95,8 @@ public class OrderController {
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") Long billId
     ) throws NotFoundException {
-        List<Order> orders = this.ORDER_SERVICE.getAllOrdersOfBill(barId, sessionId, billId);
-        return new ResponseEntity<>(convertToOrderResults(orders), HttpStatus.OK);
+        List<Order> orders = this.orderService.getAllOrdersOfBill(barId, sessionId, billId);
+        return new ResponseEntity<>(orderConverter.convertAll(orders), HttpStatus.OK);
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
@@ -132,8 +112,8 @@ public class OrderController {
             @ApiParam(value = "ID value for the bill you want to retrieve the order from") @PathVariable("billId") Long billId,
             @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
-        Order order = this.ORDER_SERVICE.getOrderOfBill(barId, sessionId, billId, orderId);
-        return new ResponseEntity<>(convertToOrderResult(order), HttpStatus.OK);
+        Order order = this.orderService.getOrderOfBill(barId, sessionId, billId, orderId);
+        return new ResponseEntity<>(orderConverter.convert(order), HttpStatus.OK);
     }
 
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
@@ -148,7 +128,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the bill you want to delete the order from") @PathVariable("billId") Long billId,
             @ApiParam(value = "ID value for the order you want to delete") @PathVariable("orderId") Long orderId
     ) throws NotFoundException {
-        this.ORDER_SERVICE.deleteOrderFromBill(barId, sessionId, billId, orderId);
+        this.orderService.deleteOrderFromBill(barId, sessionId, billId, orderId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -167,7 +147,7 @@ public class OrderController {
             @ApiIgnore Authentication authentication
     ) throws NotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        Bill bill = this.ORDER_SERVICE.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
-        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
+        Bill bill = this.orderService.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
+        return new ResponseEntity<>(billConverter.convert(bill), HttpStatus.OK);
     }
 }

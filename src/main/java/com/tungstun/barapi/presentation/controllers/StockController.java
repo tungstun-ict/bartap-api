@@ -2,9 +2,9 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.StockService;
 import com.tungstun.barapi.domain.stock.Stock;
+import com.tungstun.barapi.presentation.dto.converter.StockConverter;
 import com.tungstun.barapi.presentation.dto.request.StockRequest;
 import com.tungstun.barapi.presentation.dto.response.StockResponse;
-import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -17,17 +17,13 @@ import javax.validation.Valid;
 
 @RestController
 @RequestMapping("/api/bars/{barId}/products/{productId}/stock")
-public class ProductStockController {
+public class StockController {
     private final StockService stockService;
-    private final ResponseMapper responseMapper;
+    private final StockConverter converter;
 
-    public ProductStockController(StockService stockService, ResponseMapper responseMapper) {
+    public StockController(StockService stockService, StockConverter converter) {
         this.stockService = stockService;
-        this.responseMapper = responseMapper;
-    }
-
-    private StockResponse convertToStockResponse(Stock stock) {
-        return responseMapper.convert(stock, StockResponse.class);
+        this.converter = converter;
     }
 
     @GetMapping
@@ -42,7 +38,7 @@ public class ProductStockController {
             @ApiParam(value = "ID value for the product you want to retrieve the stock of") @PathVariable("productId") Long productId
     ) throws NotFoundException {
         Stock stock = this.stockService.getStock(barId, productId);
-        return new ResponseEntity<>(convertToStockResponse(stock), HttpStatus.OK);
+        return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
 
     @PatchMapping("/increase")
@@ -58,7 +54,7 @@ public class ProductStockController {
             @Valid @RequestBody StockRequest stockRequest
     ) throws NotFoundException {
         Stock stock = this.stockService.increaseStock(barId, productId, stockRequest);
-        return new ResponseEntity<>(convertToStockResponse(stock), HttpStatus.OK);
+        return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
 
     @PatchMapping("/decrease")
@@ -74,7 +70,7 @@ public class ProductStockController {
             @Valid @RequestBody StockRequest stockRequest
     ) throws NotFoundException {
         Stock stock = this.stockService.decreaseStock(barId, productId, stockRequest);
-        return new ResponseEntity<>(convertToStockResponse(stock), HttpStatus.OK);
+        return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
 
     @PatchMapping("/update")
@@ -90,6 +86,6 @@ public class ProductStockController {
             @Valid @RequestBody StockRequest stockRequest
     ) throws NotFoundException {
         Stock stock = this.stockService.updateStockAmount(barId, productId, stockRequest);
-        return new ResponseEntity<>(convertToStockResponse(stock), HttpStatus.OK);
+        return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
 }
