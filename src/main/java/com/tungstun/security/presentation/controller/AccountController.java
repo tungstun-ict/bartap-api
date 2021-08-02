@@ -30,8 +30,8 @@ public class AccountController {
             value = "Gets all information of logged in user"
     )
     public ResponseEntity<AccountResponse> getAccountInformation(@ApiIgnore Authentication authentication) {
-        var userDetails = (UserDetails) authentication.getPrincipal();
-        var user = (User) userService.loadUserByUsername(userDetails.getUsername());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        User user = (User) userService.loadUserByUsername(userDetails.getUsername());
 
         return new ResponseEntity<>(converter.convert(user), HttpStatus.OK);
     }

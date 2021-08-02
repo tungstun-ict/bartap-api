@@ -47,7 +47,7 @@ public class UserService implements UserDetailsService {
         User user = new User(
                 userRegistrationRequest.username,
                 encodedPassword,
-                userRegistrationRequest.mail,
+                userRegistrationRequest.mail.strip(),
                 userRegistrationRequest.firstName,
                 userRegistrationRequest.lastName,
                 new ArrayList<>()
