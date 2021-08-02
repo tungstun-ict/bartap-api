@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.converter;
+package com.tungstun.barapi.presentation.dto.converter;
 
 import com.tungstun.barapi.domain.payment.Bill;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;

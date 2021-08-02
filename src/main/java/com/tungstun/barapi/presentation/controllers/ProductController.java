@@ -2,7 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.ProductService;
 import com.tungstun.barapi.domain.product.Product;
-import com.tungstun.barapi.presentation.converter.ProductConverter;
+import com.tungstun.barapi.presentation.dto.converter.ProductConverter;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import io.swagger.annotations.ApiOperation;

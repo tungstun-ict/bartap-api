@@ -10,10 +10,10 @@ import javax.security.auth.login.AccountException;
 
 @Component
 public class RegistrationValidator {
-    private final SpringUserRepository SPRING_USER_REPOSITORY;
+    private final SpringUserRepository springUserRepository;
 
-    public RegistrationValidator(SpringUserRepository SPRING_USER_REPOSITORY) {
-        this.SPRING_USER_REPOSITORY = SPRING_USER_REPOSITORY;
+    public RegistrationValidator(SpringUserRepository springUserRepository) {
+        this.springUserRepository = springUserRepository;
     }
 
     public void validateRegistrationDetails(UserRegistrationRequest userRegistrationRequest) throws AccountException {
@@ -48,12 +48,12 @@ public class RegistrationValidator {
     }
 
     private void validateUniqueUsername(String username) throws AccountException {
-        boolean exists = this.SPRING_USER_REPOSITORY.findByUsername(username).isPresent();
+        boolean exists = this.springUserRepository.findByUsername(username).isPresent();
         if (exists) throw new AccountException("Account with username already exists");
     }
 
     private void validateUniqueMail(String mail) throws AccountException {
-        boolean exists = this.SPRING_USER_REPOSITORY.findByMail(mail).isPresent();;
+        boolean exists = this.springUserRepository.findByMail(mail).isPresent();;
         if (exists) throw new AccountException("Account with mail already exists");
     }
 }

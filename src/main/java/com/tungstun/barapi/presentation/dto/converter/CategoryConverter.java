@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.converter;
+package com.tungstun.barapi.presentation.dto.converter;
 
 import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.presentation.dto.response.CategoryResponse;

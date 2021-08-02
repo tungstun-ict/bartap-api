@@ -1,6 +1,6 @@
 package com.tungstun.security.config;
 
-import com.tungstun.security.presentation.filter.JwtAuthorizationFilter;
+import com.tungstun.security.config.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

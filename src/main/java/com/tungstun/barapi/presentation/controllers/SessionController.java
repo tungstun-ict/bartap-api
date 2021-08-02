@@ -2,7 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.SessionService;
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.presentation.converter.SessionConverter;
+import com.tungstun.barapi.presentation.dto.converter.SessionConverter;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;

@@ -2,7 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BarService;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.presentation.converter.BarConverter;
+import com.tungstun.barapi.presentation.dto.converter.BarConverter;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.barapi.presentation.dto.response.BarResponse;
 import io.swagger.annotations.ApiOperation;

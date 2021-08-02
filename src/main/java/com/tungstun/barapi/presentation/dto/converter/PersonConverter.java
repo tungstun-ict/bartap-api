@@ -1,8 +1,8 @@
-package com.tungstun.barapi.presentation.converter;
+package com.tungstun.barapi.presentation.dto.converter;
 
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;
-import com.tungstun.security.presentation.converter.UserConverter;
+import com.tungstun.security.presentation.dto.converter.UserConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -2,7 +2,7 @@ package com.tungstun.security.presentation.controller;
 
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
-import com.tungstun.security.presentation.converter.UserConverter;
+import com.tungstun.security.presentation.dto.converter.UserConverter;
 import com.tungstun.security.presentation.dto.response.AccountResponse;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;

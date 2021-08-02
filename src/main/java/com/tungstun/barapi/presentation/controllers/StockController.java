@@ -2,7 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.StockService;
 import com.tungstun.barapi.domain.stock.Stock;
-import com.tungstun.barapi.presentation.converter.StockConverter;
+import com.tungstun.barapi.presentation.dto.converter.StockConverter;
 import com.tungstun.barapi.presentation.dto.request.StockRequest;
 import com.tungstun.barapi.presentation.dto.response.StockResponse;
 import io.swagger.annotations.ApiOperation;

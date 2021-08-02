@@ -1,4 +1,4 @@
-package com.tungstun.security.presentation.converter;
+package com.tungstun.security.presentation.dto.converter;
 
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.security.data.model.User;

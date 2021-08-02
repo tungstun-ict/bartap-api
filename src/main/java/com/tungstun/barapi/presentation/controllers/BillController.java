@@ -2,7 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BillService;
 import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.barapi.presentation.converter.BillConverter;
+import com.tungstun.barapi.presentation.dto.converter.BillConverter;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.BillSummaryResponse;
