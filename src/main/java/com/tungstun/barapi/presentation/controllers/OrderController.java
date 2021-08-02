@@ -3,11 +3,11 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.OrderService;
 import com.tungstun.barapi.domain.payment.Bill;
 import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.presentation.converter.BillConverter;
 import com.tungstun.barapi.presentation.converter.OrderConverter;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
-import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -28,18 +28,12 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
     private final OrderConverter orderConverter;
-    private final ResponseMapper responseMapper;
+    private final BillConverter billConverter;
 
-    public OrderController(OrderService orderService, OrderConverter orderConverter, ResponseMapper response_mapper) {
+    public OrderController(OrderService orderService, OrderConverter orderConverter, BillConverter billConverter) {
         this.orderService = orderService;
         this.orderConverter = orderConverter;
-        responseMapper = response_mapper;
-    }
-
-    private BillResponse convertToBillResult(Bill bill){
-        BillResponse response = responseMapper.convert(bill, BillResponse.class);
-        response.setTotalPrice(bill.calculateTotalPrice());
-        return response;
+        this.billConverter = billConverter;
     }
 
     @GetMapping("orders")
@@ -154,6 +148,6 @@ public class OrderController {
     ) throws NotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Bill bill = this.orderService.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
-        return new ResponseEntity<>(convertToBillResult(bill), HttpStatus.OK);
+        return new ResponseEntity<>(billConverter.convert(bill), HttpStatus.OK);
     }
 }

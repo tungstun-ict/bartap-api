@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 @ApiModel(description = "Response detail summary about the bill")
 public class BillSummaryResponse {
     @ApiModelProperty(notes = "The bill's id")
-    private String id;
+    private Long id;
 
     @ApiModelProperty(notes = "The bill's payment state")
     private boolean isPayed;
@@ -20,9 +20,9 @@ public class BillSummaryResponse {
 
     public BillSummaryResponse() { }
 
-    public String getId() { return id; }
+    public Long getId() { return id; }
 
-    public void setId(String id) { this.id = id; }
+    public void setId(Long id) { this.id = id; }
 
     public boolean isPayed() { return isPayed; }
 
