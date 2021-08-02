@@ -5,18 +5,18 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class JwtValidator {
-    private final JwtCredentials CREDENTIALS;
+    private final JwtCredentials credentials;
 
-    public JwtValidator(JwtCredentials CREDENTIALS) {
-        this.CREDENTIALS = CREDENTIALS;
+    public JwtValidator(JwtCredentials credentials) {
+        this.credentials = credentials;
     }
 
     public void validateAccessJwt(String jwt) {
-        validateJwt(jwt, CREDENTIALS.jwtSecret);
+        validateJwt(jwt, credentials.jwtSecret);
     }
 
     public void validateRefreshJwt(String jwt) {
-        validateJwt(jwt, CREDENTIALS.jwtRefreshSecret);
+        validateJwt(jwt, credentials.jwtRefreshSecret);
     }
 
     public void validateJwt(String jwt, String secret) {
@@ -45,13 +45,13 @@ public class JwtValidator {
 
     private void validateTokenBody(Jws<Claims> claims) {
         if (claims != null &&
-                !claims.getBody().getAudience().equals(CREDENTIALS.jwtAudience) &&
-                !claims.getBody().getIssuer().equals(CREDENTIALS.jwtIssuer))
+                !claims.getBody().getAudience().equals(credentials.jwtAudience) &&
+                !claims.getBody().getIssuer().equals(credentials.jwtIssuer))
             throw new JwtException("Invalid JWT");
     }
 
     protected String extractUsernameFromExpiredAccessToken(String accessToken) {
-        JwtParser parser = createParser(CREDENTIALS.jwtSecret);
+        JwtParser parser = createParser(credentials.jwtSecret);
         String username;
         try {
             username = parser.parseClaimsJws(accessToken).getBody().getSubject();

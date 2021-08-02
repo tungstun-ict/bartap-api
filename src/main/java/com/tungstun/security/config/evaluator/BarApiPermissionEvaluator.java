@@ -11,10 +11,10 @@ import java.io.Serializable;
 
 @Component
 public class BarApiPermissionEvaluator implements PermissionEvaluator {
-    private final UserService USER_SERVICE;
+    private final UserService userService;
 
     public BarApiPermissionEvaluator(UserService userService) {
-        this.USER_SERVICE = userService;
+        this.userService = userService;
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
     }
 
     private boolean hasPrivilege(String username, Long barId, String permission) {
-        User user = (User) this.USER_SERVICE.loadUserByUsername(username);
+        User user = (User) this.userService.loadUserByUsername(username);
         String role = user.getAuthoritiesMap().get(barId);
         return role != null && role.equals(permission);
     }
