@@ -21,7 +21,9 @@ public class PersonConverter {
         response.setId(person.getId());
         response.setName(person.getName());
         response.setPhoneNumber(person.getPhoneNumber());
-        response.setUser(userConverter.convertToSummary(person.getUser()));
+        if (person.getUser() != null){
+            response.setUser(userConverter.convertToSummary(person.getUser()));
+        }
         return response;
     }
 

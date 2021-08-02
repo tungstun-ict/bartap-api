@@ -1,13 +1,11 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.SessionService;
-import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.presentation.converter.SessionConverter;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;
-import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;
-import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -22,24 +20,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bars/{barId}/sessions")
 public class SessionController {
-    private final SessionService SESSION_SERVICE;
-    private final ResponseMapper RESPONSE_MAPPER;
+    private final SessionService sessionService;
+    private final SessionConverter converter;
 
-    public SessionController(SessionService sessionService, ResponseMapper responseMapper) {
-        this.SESSION_SERVICE = sessionService;
-        this.RESPONSE_MAPPER = responseMapper;
-    }
-
-    private SessionResponse convertToSessionResult(Session session){
-        SessionResponse sessionResponse = RESPONSE_MAPPER.convert(session, SessionResponse.class);
-        for (BillResponse billResponse : sessionResponse.getBills()) {
-            double billTotal = 0.0;
-            for (Order order : billResponse.getOrders()) {
-                billTotal += order.getProduct().getPrice()*order.getAmount();
-            }
-            billResponse.setTotalPrice(billTotal);
-        }
-        return sessionResponse;
+    public SessionController(SessionService sessionService, SessionConverter converter) {
+        this.sessionService = sessionService;
+        this.converter = converter;
     }
 
     @GetMapping
@@ -53,9 +39,8 @@ public class SessionController {
     public ResponseEntity<List<SessionResponse>> getAllBarSessions(
             @ApiParam(value = "ID value for the bar you want to retrieve sessions from") @PathVariable("barId") Long barId)
             throws NotFoundException {
-        List<Session> allSessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
-        List<SessionResponse> sessionResponses = RESPONSE_MAPPER.convertList(allSessions, SessionResponse.class);
-        return new ResponseEntity<>(sessionResponses,  HttpStatus.OK);
+        List<Session> allSessions = this.sessionService.getAllSessionsOfBar(barId);
+        return new ResponseEntity<>(converter.convertAll(allSessions),  HttpStatus.OK);
     }
 
     @GetMapping(path = "/active")
@@ -68,8 +53,8 @@ public class SessionController {
     public ResponseEntity<SessionResponse> getActiveBarSessions(
             @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId
     ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.getActiveSessionOfBar(barId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+        Session session = this.sessionService.getActiveSessionOfBar(barId);
+        return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
 
     @GetMapping(path = "/{sessionId}")
@@ -82,8 +67,8 @@ public class SessionController {
     public ResponseEntity<SessionResponse> getBarSessionsById(
             @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve") @PathVariable("sessionId") Long sessionId) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+        Session session = this.sessionService.getSessionOfBar(barId, sessionId);
+        return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
 
     @PostMapping
@@ -97,8 +82,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId,
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.createNewSession(barId, sessionRequest);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+        Session session = this.sessionService.createNewSession(barId, sessionRequest);
+        return new ResponseEntity<>(converter.convert(session),  HttpStatus.CREATED);
     }
 
     @PutMapping("/{sessionId}")
@@ -113,8 +98,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") Long sessionId,
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.updateSession(barId, sessionId, sessionRequest);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.CREATED);
+        Session session = this.sessionService.updateSession(barId, sessionId, sessionRequest);
+        return new ResponseEntity<>(converter.convert(session),  HttpStatus.CREATED);
     }
 
     @PatchMapping("/{sessionId}/end")
@@ -128,8 +113,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to end the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.endSession(barId, sessionId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+        Session session = this.sessionService.endSession(barId, sessionId);
+        return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
 
     @PatchMapping("/{sessionId}/lock")
@@ -143,8 +128,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to lock the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to lock") @PathVariable("sessionId") Long sessionId
     ) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.lockSession(barId, sessionId);
-        return new ResponseEntity<>(convertToSessionResult(session),  HttpStatus.OK);
+        Session session = this.sessionService.lockSession(barId, sessionId);
+        return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
 
     @DeleteMapping("/{sessionId}")
@@ -158,7 +143,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to delete the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") Long sessionId)
             throws NotFoundException {
-        this.SESSION_SERVICE.deleteSession(barId, sessionId);
+        this.sessionService.deleteSession(barId, sessionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }
