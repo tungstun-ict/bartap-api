@@ -1,10 +1,10 @@
-package com.tungstun.barapi.presentation.dto.response;
+package com.tungstun.security.presentation.dto.response;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Response detail summary about the user account")
-public class UserAccountSummary {
+public class UserAccountSummaryResponse {
     @ApiModelProperty(notes = "The user's id")
     private Long id;
 
@@ -20,7 +20,7 @@ public class UserAccountSummary {
     @ApiModelProperty(notes = "The user's last name")
     private String lastName;
 
-    public UserAccountSummary() { }
+    public UserAccountSummaryResponse() { }
 
     public Long getId() { return id; }
 

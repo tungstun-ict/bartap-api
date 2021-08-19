@@ -16,41 +16,37 @@ import javax.validation.Valid;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/authenticate")
 public class AuthenticationController {
-    private final UserService USER_SERVICE;
+    private final UserService userService;
 
-    public AuthenticationController(UserService userService) { this.USER_SERVICE = userService; }
+    public AuthenticationController(UserService userService) {
+        this.userService = userService;
+    }
 
-    @PostMapping("/authenticate")
+    private ResponseEntity<Void> createResponseWithHeaders(Map<String, String> headers) {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setAll(headers);
+        return ResponseEntity.ok().headers(responseHeaders).build();
+    }
+
+    @PostMapping
     @ApiOperation(
             value = "Logs in user",
             notes = "Provide login credentials in the request body to receive an access and refresh token"
     )
-    public ResponseEntity<Void> login(
-            @Valid @RequestBody LoginRequest loginRequest
-    ) throws LoginException {
-        Map<String, String> authorization = this.USER_SERVICE.loginUser(loginRequest);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setAll(authorization);
-        return ResponseEntity.ok()
-                .headers(responseHeaders)
-                .body(null);
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) throws LoginException {
+        Map<String, String> authorization = this.userService.loginUser(loginRequest);
+        return createResponseWithHeaders(authorization);
     }
 
-    @PostMapping("/authenticate/refresh")
+    @PostMapping("/refresh")
     @ApiOperation(
             value = "Refreshes the user's access token",
             notes = "Provide refresh token, access token in the request body to receive a new access token"
     )
-    public ResponseEntity<Void> refreshToken(
-            @Valid @RequestBody RefreshTokenRequest refreshTokenRequest
-    ) {
-        Map<String, String> authorization = this.USER_SERVICE.refreshUserToken(refreshTokenRequest);
-        HttpHeaders responseHeaders = new HttpHeaders();
-        responseHeaders.setAll(authorization);
-        return ResponseEntity.ok()
-                .headers(responseHeaders)
-                .body(null);
+    public ResponseEntity<Void> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
+        Map<String, String> authorization = this.userService.refreshUserToken(refreshTokenRequest);
+        return createResponseWithHeaders(authorization);
     }
 }

@@ -1,6 +1,7 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tungstun.security.presentation.dto.response.UserAccountSummaryResponse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -17,7 +18,7 @@ public class PersonResponse {
     private String phoneNumber;
 
     @ApiModelProperty(notes = "The person's user account")
-    private UserAccountSummary user;
+    private UserAccountSummaryResponse user;
 
     public PersonResponse() { }
 
@@ -33,7 +34,7 @@ public class PersonResponse {
 
     public void setPhoneNumber(String phonenumber) { this.phoneNumber = phonenumber; }
 
-    public UserAccountSummary getUser() { return user; }
+    public UserAccountSummaryResponse getUser() { return user; }
 
-    public void setUser(UserAccountSummary user) { this.user = user; }
+    public void setUser(UserAccountSummaryResponse user) { this.user = user; }
 }

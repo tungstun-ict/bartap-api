@@ -1,6 +1,5 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.product.ProductType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -13,12 +12,13 @@ public class CategoryResponse {
     private String name;
 
     @ApiModelProperty(notes = "The category's product type")
-    private ProductType productType;
+    private String productType;
 
     public CategoryResponse() { }
-    public CategoryResponse(Long id, String name, ProductType productType) {
+    public CategoryResponse(Long id, String name, String productType) {
         this.id = id;
         this.name = name;
+        this.productType = productType;
     }
 
     public Long getId() { return id; }
@@ -29,7 +29,7 @@ public class CategoryResponse {
 
     public void setName(String name) { this.name = name; }
 
-    public ProductType getProductType() { return productType; }
+    public String getProductType() { return productType; }
 
-    public void setProductType(ProductType productType) { this.productType = productType; }
+    public void setProductType(String productType) { this.productType = productType; }
 }
