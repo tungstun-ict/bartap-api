@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class OrderService {
-    private final SpringOrderRepository SPRING_ORDER_REPOSITORY;
-    private final SpringBillRepository BILL_REPOSITORY;
-    private final ProductService PRODUCT_SERVICE;
-    private final SessionService SESSION_SERVICE;
-    private final BillService BILL_SERVICE;
-    private final BarService BAR_SERVICE;
+    private final SpringOrderRepository springOrderRepository;
+    private final SpringBillRepository billRepository;
+    private final ProductService productService;
+    private final SessionService sessionService;
+    private final BillService billService;
+    private final BarService barService;
 
 
     public OrderService(SpringBillRepository billRepository,
@@ -34,16 +34,16 @@ public class OrderService {
                         ProductService productService,
                         BarService barService
     ) {
-        this.BILL_REPOSITORY = billRepository;
-        this.SESSION_SERVICE = sessionService;
-        this.BILL_SERVICE = billService;
-        this.SPRING_ORDER_REPOSITORY = springOrderRepository;
-        this.PRODUCT_SERVICE = productService;
-        this.BAR_SERVICE = barService;
+        this.billRepository = billRepository;
+        this.sessionService = sessionService;
+        this.billService = billService;
+        this.springOrderRepository = springOrderRepository;
+        this.productService = productService;
+        this.barService = barService;
     }
 
     public List<Order> getAllOrdersOfBar(Long barId) throws NotFoundException {
-        List<Session> sessions = this.SESSION_SERVICE.getAllSessionsOfBar(barId);
+        List<Session> sessions = this.sessionService.getAllSessionsOfBar(barId);
         return sessions.stream()
                 .flatMap(session -> extractOrdersFromSession(session).stream())
                 .collect(Collectors.toList());
@@ -56,12 +56,12 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
+        Session session = this.sessionService.getSessionOfBar(barId, sessionId);
         return extractOrdersFromSession(session);
     }
 
     public Order getOrderOfSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
-        Session session = this.SESSION_SERVICE.getSessionOfBar(barId, sessionId);
+        Session session = this.sessionService.getSessionOfBar(barId, sessionId);
         return extractOrdersFromSession(session).stream()
                 .filter(order -> order.getId().equals(orderId))
                 .findFirst()
@@ -69,12 +69,12 @@ public class OrderService {
     }
 
     public List<Order> getAllOrdersOfBill(Long barId, Long sessionId, Long billId) throws NotFoundException {
-        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         return bill.getOrders();
     }
 
     public Order getOrderOfBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
-        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         return findOrderInBill(bill, orderId);
     }
 
@@ -86,25 +86,25 @@ public class OrderService {
     }
 
     public void deleteOrderFromBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
-        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
+        Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         if (bill.getSession().isLocked())
             throw new IllegalStateException("Cannot delete order from bill when session of bill is not active");
         Order order = findOrderInBill(bill, orderId);
-        this.BILL_SERVICE.removeOrderFromBill(bill, order);
-        this.SPRING_ORDER_REPOSITORY.delete(order);
+        this.billService.removeOrderFromBill(bill, order);
+        this.springOrderRepository.delete(order);
     }
 
     public Bill addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
-        Bill bill = this.BILL_SERVICE.getBillOfBar(barId, sessionId, billId);
-        this.SESSION_SERVICE.checkEditable(bill.getSession());
+        Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
+        this.sessionService.checkEditable(bill.getSession());
         Person bartender = findPersonOfUser(barId, username);
-        Product product = this.PRODUCT_SERVICE.getProductOfBar(barId, orderRequest.productId);
+        Product product = this.productService.getProductOfBar(barId, orderRequest.productId);
         bill.addOrder(product, orderRequest.amount, bartender);
-        return BILL_REPOSITORY.save(bill);
+        return billRepository.save(bill);
     }
 
     private Person findPersonOfUser(Long barId, String username) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         return bar.getUsers().stream()
                 .filter(person -> person.getUser() != null && person.getUser().getUsername().equals(username))
                 .findFirst()

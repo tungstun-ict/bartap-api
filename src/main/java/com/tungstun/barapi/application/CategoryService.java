@@ -17,12 +17,12 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class CategoryService {
-    private final SpringCategoryRepository SPRING_CATEGORY_REPOSITORY;
-    private final BarService BAR_SERVICE;
+    private final SpringCategoryRepository springCategoryRepository;
+    private final BarService barService;
 
     public CategoryService(SpringCategoryRepository springCategoryRepository, BarService barService) {
-        this.SPRING_CATEGORY_REPOSITORY = springCategoryRepository;
-        this.BAR_SERVICE = barService;
+        this.springCategoryRepository = springCategoryRepository;
+        this.barService = barService;
     }
 
     public List<Category> getCategoriesOfBar(Long barId, String productType) throws NotFoundException {
@@ -43,7 +43,7 @@ public class CategoryService {
     }
 
     private List<Category> getAllCategoriesOfBar(Long barId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         return bar.getCategories();
     }
 
@@ -67,7 +67,7 @@ public class CategoryService {
     }
 
     public Category addCategoryToBar(Long barId, CategoryRequest categoryRequest) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         checkIfCategoryNameIsAvailable(bar, categoryRequest.name);
         ProductType productType = convertStringToProductType(categoryRequest.productType);
         Category category = new Category(categoryRequest.name, productType);
@@ -86,9 +86,9 @@ public class CategoryService {
     }
 
     private Category saveCategoryToBar(Bar bar, Category category) {
-        category = this.SPRING_CATEGORY_REPOSITORY.save(category);
+        category = this.springCategoryRepository.save(category);
         bar.addCategory(category);
-        this.BAR_SERVICE.saveBar(bar);
+        this.barService.saveBar(bar);
         return category;
     }
 
@@ -100,13 +100,13 @@ public class CategoryService {
     }
 
     public Category updateCategoryOfBar(Long barId, Long categoryId, CategoryRequest categoryRequest) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         Category category = getCategoryOfBar(barId, categoryId);
         checkIfCategoryNameIsOccupied(bar, category, categoryRequest.name);
         ProductType productType = convertStringToProductType(categoryRequest.productType);
         category.setName(categoryRequest.name);
         category.setProductType(productType);
-        return this.SPRING_CATEGORY_REPOSITORY.save(category);
+        return this.springCategoryRepository.save(category);
     }
 
     private void checkIfCategoryNameIsOccupied(Bar bar, Category category, String categoryName) {
@@ -115,11 +115,11 @@ public class CategoryService {
     }
 
     public void deleteCategoryFromBar(Long barId, Long categoryId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         Category category = findCategoryInCategories(bar.getCategories(), categoryId);
         removeCategoryFromProducts(bar.getProducts(), category);
         bar.removeCategory(category);
-        this.BAR_SERVICE.saveBar(bar);
+        this.barService.saveBar(bar);
     }
 
     private void removeCategoryFromProducts(List<Product> products, Category category) {
