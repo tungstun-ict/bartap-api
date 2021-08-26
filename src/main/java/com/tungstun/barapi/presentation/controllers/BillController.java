@@ -138,7 +138,7 @@ public class BillController {
     }
 
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
     @ApiOperation(
             value = "Updates the payment state of the bill of session of bar",
             notes = "Provide id of bar, session and bill to update isPayed to the requested isPayed state ",

@@ -103,7 +103,7 @@ public class SessionController {
     }
 
     @PatchMapping("/{sessionId}/end")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
     @ApiOperation(
             value = "Ends the session of bar",
             notes = "Provide id of bar and session to end the session of the bar",
@@ -118,7 +118,7 @@ public class SessionController {
     }
 
     @PatchMapping("/{sessionId}/lock")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
     @ApiOperation(
             value = "Locks the session of bar",
             notes = "Provide id of bar and session to lock the session of the bar",
