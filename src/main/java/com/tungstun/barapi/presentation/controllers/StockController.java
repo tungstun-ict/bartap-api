@@ -27,7 +27,7 @@ public class StockController {
     }
 
     @GetMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Gets product's stock",
             notes = "Provide id of bar and product to find the stock",
@@ -42,7 +42,7 @@ public class StockController {
     }
 
     @PatchMapping("/increase")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Increases product's stock",
             notes = "Provide id of bar and product to increase the stock",
@@ -58,7 +58,7 @@ public class StockController {
     }
 
     @PatchMapping("/decrease")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Decreases product's stock",
             notes = "Provide id of bar and product to decrease the stock",
@@ -74,7 +74,7 @@ public class StockController {
     }
 
     @PatchMapping("/update")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Updates product's stock",
             notes = "Provide id of bar and product to update the stock",
