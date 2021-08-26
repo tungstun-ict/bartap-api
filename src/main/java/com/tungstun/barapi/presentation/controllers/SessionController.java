@@ -29,7 +29,7 @@ public class SessionController {
     }
 
     @GetMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds all sessions of bar",
             notes = "Provide id of bar to look up all sessions that are linked to the bar",
@@ -44,7 +44,7 @@ public class SessionController {
     }
 
     @GetMapping(path = "/active")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds active session of bar",
             notes = "Provide id of bar and session to look up the currectly active session of the bar",
@@ -58,7 +58,7 @@ public class SessionController {
     }
 
     @GetMapping(path = "/{sessionId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds session of bar",
             notes = "Provide id of bar and session to look up the specific session of the bar",
@@ -72,7 +72,7 @@ public class SessionController {
     }
 
     @PostMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Creates new session for bar",
             notes = "Provide id of bar to add a new session with information from the request body to the bar",
@@ -87,7 +87,7 @@ public class SessionController {
     }
 
     @PutMapping("/{sessionId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Creates new session for bar",
             notes = "Provide id of bar to update the session with information from the request body",
@@ -103,7 +103,7 @@ public class SessionController {
     }
 
     @PatchMapping("/{sessionId}/end")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
     @ApiOperation(
             value = "Ends the session of bar",
             notes = "Provide id of bar and session to end the session of the bar",
@@ -118,7 +118,7 @@ public class SessionController {
     }
 
     @PatchMapping("/{sessionId}/lock")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
     @ApiOperation(
             value = "Locks the session of bar",
             notes = "Provide id of bar and session to lock the session of the bar",
@@ -133,7 +133,7 @@ public class SessionController {
     }
 
     @DeleteMapping("/{sessionId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Deletes the session of bar",
             notes = "Provide id of bar and session to delete the session from the bar",

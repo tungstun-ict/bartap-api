@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.List;
 
 @Component
 public class BarApiPermissionEvaluator implements PermissionEvaluator {
@@ -18,27 +19,30 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
     }
 
     @Override
-    public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permission) {
-        if ((auth == null) || (targetDomainObject == null) || !(permission instanceof String)){
+    public boolean hasPermission(Authentication auth, Object targetDomainObject, Object permissions) {
+        if ((auth == null) || (targetDomainObject == null) || !(permissions instanceof List)){
             return false;
         }
         Long barId = (Long) targetDomainObject;
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
-        return hasPrivilege(username, barId, permission.toString().toUpperCase());
+        return hasPrivilege(username, barId, (List<String>) permissions);
     }
 
     @Override
-    public boolean hasPermission(Authentication auth, Serializable targetId, String targetType, Object permission) {
-        if ((auth == null) || (targetType == null) || !(permission instanceof String)) {
+    public boolean hasPermission(Authentication auth, Serializable targetId, String targetType, Object permissions) {
+        if ((auth == null) || (targetType == null) || !(permissions instanceof List)) {
             return false;
         }
         String username = ((UserDetails) auth.getPrincipal()).getUsername();
-        return hasPrivilege(username, Long.valueOf((String) targetId), permission.toString().toUpperCase());
+        return hasPrivilege(username, Long.valueOf((String) targetId), (List<String>) permissions);
     }
 
-    private boolean hasPrivilege(String username, Long barId, String permission) {
+    private boolean hasPrivilege(String username, Long barId, List<String> permissions) {
         User user = (User) this.userService.loadUserByUsername(username);
         String role = user.getAuthoritiesMap().get(barId);
-        return role != null && role.equals(permission);
+        for (String permission : permissions) {
+            if (role != null && role.equals(permission)) return true;
+        }
+        return false;
     }
 }

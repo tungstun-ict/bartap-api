@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     @GetMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds all products of bar",
             notes = "Provide id of bar to look up all products that are linked to the bar",
@@ -46,7 +46,7 @@ public class ProductController {
     }
 
     @GetMapping("/{productId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds product of bar",
             notes = "Provide id of bar and product to look up the specific from the bar",
@@ -61,7 +61,7 @@ public class ProductController {
     }
 
     @PostMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Creates new product for bar",
             notes = "Provide id of bar to add a new product with information from the request body to the bar",
@@ -76,7 +76,7 @@ public class ProductController {
     }
 
     @PutMapping("/{productId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Updates the product of bar",
             notes = "Provide id of bar and product to update the product with information from the request body",
@@ -92,7 +92,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{productId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Deletes the product of bar",
             notes = "Provide id of bar and product to delete the product from the bar",
@@ -107,7 +107,7 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Searches products",
             notes = "Provide id of bar and search value to search for products with",

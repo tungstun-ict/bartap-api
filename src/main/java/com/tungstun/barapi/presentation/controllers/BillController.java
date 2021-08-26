@@ -30,7 +30,7 @@ public class BillController {
     }
 
     @GetMapping("bills")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds all bills of bar",
             notes = "Provide id of bar to look up all bills that are linked to the bar",
@@ -45,7 +45,7 @@ public class BillController {
     }
 
     @GetMapping("/sessions/{sessionId}/bills")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds bills of session of bar",
             notes = "Provide id of bar and session to look up bills from the session from the bar",
@@ -61,7 +61,7 @@ public class BillController {
     }
 
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds bill of bar",
             notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
@@ -77,7 +77,7 @@ public class BillController {
     }
 
     @GetMapping("/sessions/active/people/{personId}/bill")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds bill of bar",
             notes = "Provide id of bar, session and bill to look up the specific bill from session from the bar",
@@ -92,7 +92,7 @@ public class BillController {
     }
 
     @GetMapping("/people/{personId}/bills")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds bills of customer of bar",
             notes = "Provide id of bar and customer to look up all bills from session from the bar",
@@ -107,7 +107,7 @@ public class BillController {
     }
 
     @GetMapping("/people/{personId}/bills/{billId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds bill of customer of bar",
             notes = "Provide id of bar and customer to look up the specific bill from session from the bar",
@@ -123,7 +123,7 @@ public class BillController {
     }
 
     @PostMapping("/sessions/{sessionId}/")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Creates new bill for session of bar",
             notes = "Provide id of bar and session to add a new bill with information from the request body to session of the bar",
@@ -138,7 +138,7 @@ public class BillController {
     }
 
     @PatchMapping("/sessions/{sessionId}/bills/{billId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
     @ApiOperation(
             value = "Updates the payment state of the bill of session of bar",
             notes = "Provide id of bar, session and bill to update isPayed to the requested isPayed state ",
@@ -155,7 +155,7 @@ public class BillController {
     }
 
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Deletes bill of session of bar",
             notes = "Provide id of bar, session and bill to delete bill of session of the bar"

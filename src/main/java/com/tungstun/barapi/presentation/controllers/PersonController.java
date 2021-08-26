@@ -28,7 +28,7 @@ public class PersonController {
     }
 
     @GetMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds all people of bar",
             notes = "Provide id of bar to look up all people that are linked to the bar",
@@ -43,7 +43,7 @@ public class PersonController {
     }
 
     @GetMapping(path = "/{personId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Finds person of bar",
             notes = "Provide id of bar and person to look up a specific person of the bar",
@@ -58,7 +58,7 @@ public class PersonController {
     }
 
     @PostMapping
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Creates person for bar",
             notes = "Provide id of bar to create a new person with the information from the request body for the bar",
@@ -73,7 +73,7 @@ public class PersonController {
     }
 
     @PutMapping("/{personId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Updates the person of bar",
             notes = "Provide id of bar and person to update the person with the information from the request body",
@@ -89,7 +89,7 @@ public class PersonController {
     }
 
     @DeleteMapping("/{personId}")
-    @PreAuthorize("hasPermission(#barId, 'ROLE_BAR_OWNER')")
+    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
     @ApiOperation(
             value = "Deletes the person from bar",
             notes = "Provide id of bar and person to delete the person from the bar"
