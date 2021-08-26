@@ -15,12 +15,12 @@ import java.util.List;
 @Transactional
 @Service
 public class PersonService {
-    private final SpringPersonRepository SPRING_PERSON_REPOSITORY;
-    private final BarService BAR_SERVICE;
+    private final SpringPersonRepository personRepository;
+    private final BarService barService;
 
-    public PersonService(SpringPersonRepository SPRING_PERSON_REPOSITORY, BarService BAR_SERVICE) {
-        this.SPRING_PERSON_REPOSITORY = SPRING_PERSON_REPOSITORY;
-        this.BAR_SERVICE = BAR_SERVICE;
+    public PersonService(SpringPersonRepository personRepository, BarService barService) {
+        this.personRepository = personRepository;
+        this.barService = barService;
     }
 
     public Person getPersonOfBar(Long barId, Long personId) throws NotFoundException {
@@ -32,12 +32,12 @@ public class PersonService {
     }
 
     public List<Person> getAllPeopleOfBar(Long barId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         return bar.getUsers();
     }
 
     public Person createNewPerson(Long barId, PersonRequest personRequest) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         if (checkIfPersonExists(bar.getUsers(), personRequest.name))
             throw new DuplicateRequestException(String.format("User with name '%s' already exists", personRequest.name));
         Person person = new PersonBuilder()
@@ -52,9 +52,9 @@ public class PersonService {
     }
 
     private Person savePersonToBar(Bar bar, Person person) {
-        person = this.SPRING_PERSON_REPOSITORY.save(person);
+        person = this.personRepository.save(person);
         bar.addUser(person);
-        this.BAR_SERVICE.saveBar(bar);
+        this.barService.saveBar(bar);
         return person;
     }
 
@@ -62,13 +62,13 @@ public class PersonService {
         Person person = getPersonOfBar(barId, personId);
         person.setName(personRequest.name);
         person.setPhoneNumber(personRequest.phoneNumber);
-        return this.SPRING_PERSON_REPOSITORY.save(person);
+        return this.personRepository.save(person);
     }
 
     public void deletePersonFromBar(Long barId, Long personId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         Person person = getPersonOfBar(barId, personId);
         bar.removeUser(person);
-        this.BAR_SERVICE.saveBar(bar);
+        this.barService.saveBar(bar);
     }
 }
