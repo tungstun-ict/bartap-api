@@ -11,7 +11,6 @@ import com.tungstun.security.data.model.User;
 import com.tungstun.security.data.model.UserBarAuthorization;
 import com.tungstun.security.data.model.UserRole;
 import com.tungstun.security.data.repository.SpringUserRepository;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,6 +19,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class BarServiceIntegrationTest {
 
     @Test
     @DisplayName("Get bar returns bar")
-    void getBar_ReturnsBar() throws NotFoundException {
+    void getBar_ReturnsBar() throws EntityNotFoundException {
         Bar bar = repository.save(new BarBuilder().build());
 
         Bar resBar = service.getBar(bar.getId());
@@ -86,7 +86,7 @@ public class BarServiceIntegrationTest {
     @DisplayName("Get not existing bar throws")
     void getNotExistingBar_ThrowsNotFound() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getBar(999L)
         );
     }
@@ -124,7 +124,7 @@ public class BarServiceIntegrationTest {
 
     @Test
     @DisplayName("Update bar returns updated bar")
-    void updateBar_ReturnsUpdatedBar() throws NotFoundException {
+    void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
         User user = userRepository.save(new User("user", "", "", "", "", new ArrayList<>()));
         Person person = personRepository.save(new Person(
                 "name",
@@ -148,7 +148,7 @@ public class BarServiceIntegrationTest {
         BarRequest request = new BarRequest();
 
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.updateBar(999L, request)
         );
     }

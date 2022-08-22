@@ -8,9 +8,9 @@ import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.search.engine.product.ProductSearchEngine;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -44,14 +44,14 @@ public class ProductService {
     private final BiPredicate<Product, Long> hasCategoryId = (product, categoryId) -> product.getCategory() != null && product.getCategory().getId().equals(categoryId);
     private final BiPredicate<Product, Boolean> isFavorite = (product, onlyFavorites) -> product.isFavorite() == onlyFavorites;
 
-    private Product findProductInProducts(List<Product> products, Long productId) throws NotFoundException {
+    private Product findProductInProducts(List<Product> products, Long productId) throws EntityNotFoundException {
         return products.stream()
                 .filter(product -> product.getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("No product found with id %s", productId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("No product found with id %s", productId)));
     }
 
-    public List<Product> searchProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws NotFoundException {
+    public List<Product> searchProductsOfBar(Long barId, String type, Long categoryId, Boolean onlyFavorites) throws EntityNotFoundException {
         Stream<Product> products = getAllProductsOfBar(barId).stream();
         if (type != null) {
             ProductType productType = convertStringToProductType(type);
@@ -62,7 +62,7 @@ public class ProductService {
         return products.collect(Collectors.toList());
     }
 
-    private List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
+    private List<Product> getAllProductsOfBar(Long barId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         return bar.getProducts();
     }
@@ -72,18 +72,18 @@ public class ProductService {
         return ProductType.valueOf(type.toUpperCase());
     }
 
-    public Product getProductOfBar(Long barId, Long productId) throws NotFoundException {
+    public Product getProductOfBar(Long barId, Long productId) throws EntityNotFoundException {
         List<Product> allProducts = getAllProductsOfBar(barId);
         return findProductInProducts(allProducts, productId);
     }
 
-    public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException {
+    public Product addProductToBar(Long barId, ProductRequest productRequest) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
-    private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException {
+    private Product buildProduct(Long barId, ProductRequest productRequest) throws EntityNotFoundException {
         Category category = this.categoryService.getCategoryOfBar(barId, productRequest.categoryId);
         return new ProductBuilder()
                 .setName(productRequest.name)
@@ -95,7 +95,7 @@ public class ProductService {
                 .build();
     }
 
-    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
+    public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws EntityNotFoundException {
         Product product = getProductOfBar(barId, productId);
         Category category = this.categoryService.getCategoryOfBar(barId, productRequest.categoryId);
         product.setName(productRequest.name);
@@ -107,12 +107,12 @@ public class ProductService {
         return this.productRepository.save(product);
     }
 
-    public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
+    public void deleteProductOfBar(Long barId, Long productId) throws EntityNotFoundException {
         Product product = getProductOfBar(barId, productId);
         this.productRepository.delete(product);
     }
 
-    public List<Product> searchProduct(Long barId, String searchString) throws NotFoundException {
+    public List<Product> searchProduct(Long barId, String searchString) throws EntityNotFoundException {
         List<Product> allProducts = getAllProductsOfBar(barId);
         return searchEngine.search(allProducts, searchString);
     }

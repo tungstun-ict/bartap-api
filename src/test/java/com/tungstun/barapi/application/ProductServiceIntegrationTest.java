@@ -9,7 +9,6 @@ import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -75,7 +75,7 @@ class ProductServiceIntegrationTest {
 
     @Test
     @DisplayName("Get product of bar")
-    void getProductOfBar() throws NotFoundException {
+    void getProductOfBar() throws EntityNotFoundException {
         Product resProduct = service.getProductOfBar(bar.getId(), product.getId());
 
         assertEquals(product, resProduct);
@@ -85,14 +85,14 @@ class ProductServiceIntegrationTest {
     @DisplayName("Get not existing product of bar")
     void getNotExistingProductOfBar() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getProductOfBar(bar.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("create product")
-    void createProduct() throws NotFoundException, InvalidAttributesException {
+    void createProduct() throws EntityNotFoundException, InvalidAttributesException {
         ProductRequest request = new ProductRequest();
         request.name = "testName";
         request.brand = "testBrand";
@@ -113,7 +113,7 @@ class ProductServiceIntegrationTest {
 
     @Test
     @DisplayName("update product")
-    void updateProduct() throws NotFoundException, InvalidAttributesException {
+    void updateProduct() throws EntityNotFoundException, InvalidAttributesException {
         ProductRequest request = new ProductRequest();
         request.name = "testNameNew";
         request.brand = "testBrandNew";
@@ -139,7 +139,7 @@ class ProductServiceIntegrationTest {
 
     @Test
     @DisplayName("search all product of bar")
-    void getAllProductsOfBar() throws NotFoundException {
+    void getAllProductsOfBar() throws EntityNotFoundException {
         List<Product> resProducts = service.searchProductsOfBar(bar.getId(), null, null, null);
 
         assertEquals(3, resProducts.size());
@@ -167,7 +167,7 @@ class ProductServiceIntegrationTest {
     }
     @Test
     @DisplayName("search all product of bar")
-    void searchProductsOfBar() throws NotFoundException {
+    void searchProductsOfBar() throws EntityNotFoundException {
         List<Object[]> argList = searchArgs();
         for (Object[] arguments : argList) {
             List<Product> resProducts = service.searchProductsOfBar(

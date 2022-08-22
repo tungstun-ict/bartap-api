@@ -1,7 +1,6 @@
 package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.domain.stock.Stock;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -36,18 +35,14 @@ public class Product {
     @ManyToOne
     private Category category;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private Stock stock;
-
     public Product() { }
-    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category, Stock stock) {
+    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category) {
         this.name = name;
         this.brand = brand;
         this.size = size;
         this.price = price;
         this.isFavorite = isFavorite;
         this.category = category;
-        this.stock = stock;
     }
 
     public Long getId() {
@@ -76,10 +71,6 @@ public class Product {
 
     public Category getCategory() {
         return category;
-    }
-
-    public Stock getStock() {
-        return stock;
     }
 
     public void setName(String name) { this.name = name; }

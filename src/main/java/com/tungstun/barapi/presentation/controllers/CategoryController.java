@@ -7,13 +7,13 @@ import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import com.tungstun.barapi.presentation.dto.response.CategoryResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class CategoryController {
     public ResponseEntity<List<CategoryResponse>> getCategoriesOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve categories from") @PathVariable("barId") Long barId,
             @ApiParam(value = "(Optional) Product type of categories you want to retrieve") @RequestParam(value = "productType", required = false) String productType
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Category> categories = this.categoryService.getCategoriesOfBar(barId, productType);
         return new ResponseEntity<>(converter.convertAll(categories), HttpStatus.OK);
     }
@@ -53,7 +53,7 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> getCategoryOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve the category from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the category you want to retrieve") @PathVariable("categoryId") Long categoryId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Category category = this.categoryService.getCategoryOfBar(barId, categoryId);
         return new ResponseEntity<>(converter.convert(category), HttpStatus.OK);
     }
@@ -68,7 +68,7 @@ public class CategoryController {
     public ResponseEntity<CategoryResponse> addCategoryToBar(
             @ApiParam(value = "ID value for the bar you want to create a new category for") @PathVariable("barId") Long barId,
             @Valid @RequestBody CategoryRequest categoryRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Category category = this.categoryService.addCategoryToBar(barId, categoryRequest);
         return new ResponseEntity<>(converter.convert(category), HttpStatus.CREATED);
     }
@@ -84,7 +84,7 @@ public class CategoryController {
             @ApiParam(value = "ID value for the bar you want to update the category from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the category you want to update") @PathVariable("categoryId") Long categoryId,
             @Valid @RequestBody CategoryRequest categoryRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Category category = this.categoryService.updateCategoryOfBar(barId, categoryId, categoryRequest);
         return new ResponseEntity<>(converter.convert(category), HttpStatus.OK);
     }
@@ -99,7 +99,7 @@ public class CategoryController {
     public ResponseEntity<Void> deleteCategoryOfBar(
             @ApiParam(value = "ID value for the bar you want to delete the category from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the category you want to delete") @PathVariable("categoryId") Long categoryId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         this.categoryService.deleteCategoryFromBar(barId, categoryId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

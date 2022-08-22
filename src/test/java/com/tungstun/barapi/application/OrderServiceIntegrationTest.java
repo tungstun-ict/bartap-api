@@ -18,13 +18,13 @@ import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.security.data.model.User;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,7 +98,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get all orders of bar")
-    void getAllOrdersOfBar() throws NotFoundException {
+    void getAllOrdersOfBar() throws EntityNotFoundException {
         List<Order> resOrders = service.getAllOrdersOfBar(bar.getId());
 
         assertEquals(2, resOrders.size());
@@ -108,7 +108,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get none orders of bar")
-    void getNoneOrdersOfBar() throws NotFoundException {
+    void getNoneOrdersOfBar() throws EntityNotFoundException {
         Bar bar2 = barRepository.save(new BarBuilder().build());
 
         List<Order> resOrders = service.getAllOrdersOfBar(bar2.getId());
@@ -118,7 +118,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get all orders of session")
-    void getAllOrdersOfSession() throws NotFoundException {
+    void getAllOrdersOfSession() throws EntityNotFoundException {
         List<Order> resOrders = service.getAllOrdersOfSession(bar.getId(), session.getId());
 
         assertEquals(1, resOrders.size());
@@ -127,7 +127,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get none orders of session")
-    void getNoneOrdersOfSession() throws NotFoundException {
+    void getNoneOrdersOfSession() throws EntityNotFoundException {
         Bar bar2 = new BarBuilder().build();
         bar2.addSession(Session.create("test"));
         bar2 = barRepository.save(bar2);
@@ -140,7 +140,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get order of session")
-    void getOrderOfSession() throws NotFoundException {
+    void getOrderOfSession() throws EntityNotFoundException {
         Order resOrder = service.getOrderOfSession(bar.getId(), session.getId(), order.getId());
 
         assertEquals(order, resOrder);
@@ -150,14 +150,14 @@ class OrderServiceIntegrationTest {
     @DisplayName("Get not existing order of session")
     void getNotExistingOrderOfSession() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getOrderOfSession(bar.getId(), session.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("Get all orders of bill")
-    void getAllOrdersOfBill() throws NotFoundException {
+    void getAllOrdersOfBill() throws EntityNotFoundException {
         List<Order> resOrders = service.getAllOrdersOfBill(bar.getId(), session.getId(), bill.getId());
 
         assertEquals(1, resOrders.size());
@@ -166,7 +166,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get none orders of bill")
-    void getNoneOrdersOfBill() throws NotFoundException {
+    void getNoneOrdersOfBill() throws EntityNotFoundException {
         Bar bar2 = new BarBuilder().build();
         Session session2 = Session.create("test");
         session2.addBill(new BillFactory(session2, customer).create());
@@ -182,7 +182,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Get order of bill")
-    void getOrderOfBill() throws NotFoundException {
+    void getOrderOfBill() throws EntityNotFoundException {
         Order resOrder = service.getOrderOfBill(bar.getId(), session.getId(), bill.getId(), order.getId());
 
         assertEquals(order, resOrder);
@@ -192,14 +192,14 @@ class OrderServiceIntegrationTest {
     @DisplayName("Get not existing order of bill")
     void getNotExistingOrderOfBill() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getOrderOfBill(bar.getId(), session.getId(), bill.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("Delete order from bill")
-    void deleteOrderFromBill() throws NotFoundException {
+    void deleteOrderFromBill() throws EntityNotFoundException {
         service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), order.getId());
 
         bill = billRepository.findById(bill.getId()).get();
@@ -211,7 +211,7 @@ class OrderServiceIntegrationTest {
     @DisplayName("Delete not existing order from bill")
     void deleteNotExistingOrderFromBill() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), 999L)
         );
     }
@@ -231,7 +231,7 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Add product(order) to bill")
-    void addOrderToBill() throws NotFoundException {
+    void addOrderToBill() throws EntityNotFoundException {
         User user = new User("testUser", "", "", "", "", new ArrayList<>());
         Person person = new PersonBuilder().setUser(user).build();
         OrderRequest request = new OrderRequest();
@@ -247,13 +247,13 @@ class OrderServiceIntegrationTest {
 
     @Test
     @DisplayName("Add product(order) to bill with not coupled user/person to bar")
-    void addOrderToBillNotCoupledPerson() throws NotFoundException {
+    void addOrderToBillNotCoupledPerson() throws EntityNotFoundException {
         OrderRequest request = new OrderRequest();
         request.amount = 2;
         request.productId = product.getId();
 
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.addProductToBill(bar.getId(), session.getId(), bill.getId(), request, "notExisting")
         );
     }

@@ -7,12 +7,12 @@ import com.tungstun.barapi.presentation.dto.request.StockRequest;
 import com.tungstun.barapi.presentation.dto.response.StockResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 
 @RestController
@@ -36,7 +36,7 @@ public class StockController {
     public ResponseEntity<StockResponse> getProductsStock(
             @ApiParam(value = "ID value for the bar you want to retrieve the stock from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the product you want to retrieve the stock of") @PathVariable("productId") Long productId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Stock stock = this.stockService.getStock(barId, productId);
         return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class StockController {
             @ApiParam(value = "ID value for the bar you want to increase the stock from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the product you want to increase the stock of") @PathVariable("productId") Long productId,
             @Valid @RequestBody StockRequest stockRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Stock stock = this.stockService.increaseStock(barId, productId, stockRequest);
         return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
@@ -68,7 +68,7 @@ public class StockController {
             @ApiParam(value = "ID value for the bar you want to decrease the stock from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the product you want to decrease the stock of") @PathVariable("productId") Long productId,
             @Valid @RequestBody StockRequest stockRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Stock stock = this.stockService.decreaseStock(barId, productId, stockRequest);
         return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }
@@ -84,7 +84,7 @@ public class StockController {
             @ApiParam(value = "ID value for the bar you want to update the stock from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the product you want to update the stock of") @PathVariable("productId") Long productId,
             @Valid @RequestBody StockRequest stockRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Stock stock = this.stockService.updateStockAmount(barId, productId, stockRequest);
         return new ResponseEntity<>(converter.convert(stock), HttpStatus.OK);
     }

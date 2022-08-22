@@ -15,13 +15,13 @@ import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -63,7 +63,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Get All Bills")
-    void getAllBills() throws NotFoundException {
+    void getAllBills() throws EntityNotFoundException {
         List<Bill> resBills = service.getAllBills(bar.getId());
 
         assertEquals(1, resBills.size());
@@ -72,7 +72,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Get All Bills when none")
-    void getAllBillsWhenNone() throws NotFoundException {
+    void getAllBillsWhenNone() throws EntityNotFoundException {
         session.removeBill(bill);
         sessionRepository.save(session);
 
@@ -83,7 +83,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Get Bill of bar")
-    void getBillOfBar() throws NotFoundException {
+    void getBillOfBar() throws EntityNotFoundException {
         Bill resBill = service.getBillOfBar(bar.getId(), session.getId(), bill.getId());
 
         assertEquals(bill, resBill);
@@ -93,7 +93,7 @@ class BillServiceIntegrationTest {
     @DisplayName("Get not existing Bill of bar")
     void getNotExistingBillOfBar() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getBillOfBar(bar.getId(), session.getId(), 999L)
         );
     }
@@ -102,14 +102,14 @@ class BillServiceIntegrationTest {
     @DisplayName("Get not existing Bill of bar")
     void getBillOfNotExistingSessionOfBar() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getBillOfBar(bar.getId(), 999L, bill.getId())
         );
     }
 
     @Test
     @DisplayName("Get Bills of bar")
-    void getBillsOfBar() throws NotFoundException {
+    void getBillsOfBar() throws EntityNotFoundException {
         List<Bill> bills = service.getAllBillsOfSession(bar.getId(), session.getId());
 
         assertEquals(1, bills.size());
@@ -118,7 +118,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Get Bill of customer from active session")
-    void getBillOfCustomerFromActiveSession() throws NotFoundException {
+    void getBillOfCustomerFromActiveSession() throws EntityNotFoundException {
         Bill bill = service.getBillOfCustomerFromActiveSession(bar.getId(), person.getId());
 
         assertEquals(bill.getId(), bill.getId());
@@ -131,7 +131,7 @@ class BillServiceIntegrationTest {
         session = sessionRepository.save(session);
 
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () ->service.getBillOfCustomerFromActiveSession(bar.getId(), person.getId())
         );
     }
@@ -140,14 +140,14 @@ class BillServiceIntegrationTest {
     @DisplayName("Get Bill of customer from active session when person does not have bill in session")
     void getBillOfCustomerFromActiveSessionWhenNoBillExists() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () ->service.getBillOfCustomerFromActiveSession(bar.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("Get Bills of person")
-    void getBillsOfPerson() throws NotFoundException {
+    void getBillsOfPerson() throws EntityNotFoundException {
         List<Bill> bills = service.getBillsOfPerson(bar.getId(), person.getId());
 
         assertEquals(1, bills.size());
@@ -156,7 +156,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Get Bill of person")
-    void getBillOfPerson() throws NotFoundException {
+    void getBillOfPerson() throws EntityNotFoundException {
         Bill resBill = service.getBillOfPerson(bar.getId(), person.getId(), bill.getId());
 
         assertEquals(bill, resBill);
@@ -166,14 +166,14 @@ class BillServiceIntegrationTest {
     @DisplayName("Get Bill of person")
     void getNotExistingBillOfPerson() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getBillOfPerson(bar.getId(), person.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("create Bill")
-    void createBill() throws NotFoundException {
+    void createBill() throws EntityNotFoundException {
         Person person2 = personRepository.save(new PersonBuilder().build());
         bar.addUser(person2);
         barRepository.save(bar);
@@ -199,7 +199,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Set is payed of bill")
-    void setIsPayedOfBill() throws NotFoundException {
+    void setIsPayedOfBill() throws EntityNotFoundException {
         Bill resBill = service.setIsPayedOfBillOfSession(bar.getId(), session.getId(), bill.getId(), true);
 
         assertTrue(resBill.isPayed());
@@ -207,7 +207,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Set is payed of bill")
-    void setIsPayedFalseOfBill() throws NotFoundException {
+    void setIsPayedFalseOfBill() throws EntityNotFoundException {
         Bill resBill = service.setIsPayedOfBillOfSession(bar.getId(), session.getId(), bill.getId(), false);
 
         assertFalse(resBill.isPayed());
@@ -224,7 +224,7 @@ class BillServiceIntegrationTest {
 
     @Test
     @DisplayName("Delete bill")
-    void deleteBill() throws NotFoundException {
+    void deleteBill() throws EntityNotFoundException {
         service.deleteBillFromSessionOfBar(bar.getId(), session.getId(), bill.getId());
 
         assertTrue(repository.findById(bill.getId()).isEmpty());

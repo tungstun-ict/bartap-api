@@ -9,9 +9,9 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -42,7 +42,7 @@ public class OrderService {
         this.barService = barService;
     }
 
-    public List<Order> getAllOrdersOfBar(Long barId) throws NotFoundException {
+    public List<Order> getAllOrdersOfBar(Long barId) throws EntityNotFoundException {
         List<Session> sessions = this.sessionService.getAllSessionsOfBar(barId);
         return sessions.stream()
                 .flatMap(session -> extractOrdersFromSession(session).stream())
@@ -55,37 +55,37 @@ public class OrderService {
                 .collect(Collectors.toList());
     }
 
-    public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws NotFoundException {
+    public List<Order> getAllOrdersOfSession(Long barId, Long sessionId) throws EntityNotFoundException {
         Session session = this.sessionService.getSessionOfBar(barId, sessionId);
         return extractOrdersFromSession(session);
     }
 
-    public Order getOrderOfSession(Long barId, Long sessionId, Long orderId) throws NotFoundException {
+    public Order getOrderOfSession(Long barId, Long sessionId, Long orderId) throws EntityNotFoundException {
         Session session = this.sessionService.getSessionOfBar(barId, sessionId);
         return extractOrdersFromSession(session).stream()
                 .filter(order -> order.getId().equals(orderId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("No order found with id: %s", orderId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("No order found with id: %s", orderId)));
     }
 
-    public List<Order> getAllOrdersOfBill(Long barId, Long sessionId, Long billId) throws NotFoundException {
+    public List<Order> getAllOrdersOfBill(Long barId, Long sessionId, Long billId) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         return bill.getOrders();
     }
 
-    public Order getOrderOfBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
+    public Order getOrderOfBill(Long barId, Long sessionId, Long billId, Long orderId) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         return findOrderInBill(bill, orderId);
     }
 
-    private Order findOrderInBill(Bill bill, Long orderId) throws NotFoundException {
+    private Order findOrderInBill(Bill bill, Long orderId) throws EntityNotFoundException {
         return bill.getOrders().stream()
                 .filter(order -> order.getId().equals(orderId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("No Order with id %s found in bill", orderId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("No Order with id %s found in bill", orderId)));
     }
 
-    public void deleteOrderFromBill(Long barId, Long sessionId, Long billId, Long orderId) throws NotFoundException {
+    public void deleteOrderFromBill(Long barId, Long sessionId, Long billId, Long orderId) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         if (bill.getSession().isLocked())
             throw new IllegalStateException("Cannot delete order from bill when session of bill is not active");
@@ -94,7 +94,7 @@ public class OrderService {
         this.springOrderRepository.delete(order);
     }
 
-    public Bill addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws NotFoundException {
+    public Bill addProductToBill(Long barId, Long sessionId, Long billId, OrderRequest orderRequest, String username) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         this.sessionService.checkEditable(bill.getSession());
         Person bartender = findPersonOfUser(barId, username);
@@ -103,11 +103,11 @@ public class OrderService {
         return billRepository.save(bill);
     }
 
-    private Person findPersonOfUser(Long barId, String username) throws NotFoundException {
+    private Person findPersonOfUser(Long barId, String username) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         return bar.getUsers().stream()
                 .filter(person -> person.getUser() != null && person.getUser().getUsername().equals(username))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("No person found connected to you user account"));
+                .orElseThrow(() -> new EntityNotFoundException("No person found connected to you user account"));
     }
 }

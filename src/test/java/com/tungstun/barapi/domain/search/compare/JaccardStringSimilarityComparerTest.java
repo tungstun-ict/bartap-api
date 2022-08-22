@@ -20,7 +20,7 @@ class JaccardStringSimilarityComparerTest {
                 Arguments.of("word", "ape", 0d),
                 Arguments.of("word", "wordword", 1d),
                 Arguments.of("word", "wore", 0.6d),
-                Arguments.of("word", "wope", 0.33d),
+                Arguments.of("word", "wope", 0.3333333333333333d),
                 Arguments.of("word", "wor", 0.75d),
                 Arguments.of("word", "wop", 0.4d),
                 Arguments.of("word", "wod", 0.75d)

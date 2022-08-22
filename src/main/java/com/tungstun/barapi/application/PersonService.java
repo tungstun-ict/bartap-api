@@ -6,9 +6,9 @@ import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -23,20 +23,20 @@ public class PersonService {
         this.barService = barService;
     }
 
-    public Person getPersonOfBar(Long barId, Long personId) throws NotFoundException {
+    public Person getPersonOfBar(Long barId, Long personId) throws EntityNotFoundException {
         List<Person> people = getAllPeopleOfBar(barId);
         return people.stream()
                 .filter(person -> person.getId().equals(personId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException("Bar does not have a person with id: " + personId));
+                .orElseThrow(() -> new EntityNotFoundException("Bar does not have a person with id: " + personId));
     }
 
-    public List<Person> getAllPeopleOfBar(Long barId) throws NotFoundException {
+    public List<Person> getAllPeopleOfBar(Long barId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         return bar.getUsers();
     }
 
-    public Person createNewPerson(Long barId, PersonRequest personRequest) throws NotFoundException {
+    public Person createNewPerson(Long barId, PersonRequest personRequest) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         if (checkIfPersonExists(bar.getUsers(), personRequest.name))
             throw new DuplicateRequestException(String.format("User with name '%s' already exists", personRequest.name));
@@ -58,14 +58,14 @@ public class PersonService {
         return person;
     }
 
-    public Person updatePerson(Long barId, Long personId, PersonRequest personRequest) throws NotFoundException {
+    public Person updatePerson(Long barId, Long personId, PersonRequest personRequest) throws EntityNotFoundException {
         Person person = getPersonOfBar(barId, personId);
         person.setName(personRequest.name);
         person.setPhoneNumber(personRequest.phoneNumber);
         return this.personRepository.save(person);
     }
 
-    public void deletePersonFromBar(Long barId, Long personId) throws NotFoundException {
+    public void deletePersonFromBar(Long barId, Long personId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         Person person = getPersonOfBar(barId, personId);
         bar.removeUser(person);

@@ -3,7 +3,6 @@ package com.tungstun.security.util.account;
 import com.tungstun.security.data.repository.SpringUserRepository;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
 import com.tungstun.security.util.validation.NonSpaceValidator;
-import org.hibernate.validator.internal.constraintvalidators.AbstractEmailValidator;
 import org.springframework.stereotype.Component;
 
 import javax.security.auth.login.AccountException;
@@ -33,8 +32,9 @@ public class RegistrationValidator {
     }
 
     private void validateMail(String mail) {
-        boolean isValid = new AbstractEmailValidator<>().isValid(mail, null);
-        if (!isValid) throw new IllegalArgumentException("Invalid Email address");
+//        boolean isValid = new EmailValidator().isValid(mail, null);
+        //todo fix
+//        if (!isValid) throw new IllegalArgumentException("Invalid Email address");
     }
 
     private void validatePassword(String password) {

@@ -8,12 +8,12 @@ import com.tungstun.barapi.presentation.dto.response.ProductResponse;
 import com.tungstun.barapi.presentation.dto.response.SessionResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -38,7 +38,7 @@ public class SessionController {
     )
     public ResponseEntity<List<SessionResponse>> getAllBarSessions(
             @ApiParam(value = "ID value for the bar you want to retrieve sessions from") @PathVariable("barId") Long barId)
-            throws NotFoundException {
+            throws EntityNotFoundException {
         List<Session> allSessions = this.sessionService.getAllSessionsOfBar(barId);
         return new ResponseEntity<>(converter.convertAll(allSessions),  HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class SessionController {
     )
     public ResponseEntity<SessionResponse> getActiveBarSessions(
             @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Session session = this.sessionService.getActiveSessionOfBar(barId);
         return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
@@ -66,7 +66,7 @@ public class SessionController {
     )
     public ResponseEntity<SessionResponse> getBarSessionsById(
             @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to retrieve") @PathVariable("sessionId") Long sessionId) throws NotFoundException {
+            @ApiParam(value = "ID value for the session you want to retrieve") @PathVariable("sessionId") Long sessionId) throws EntityNotFoundException {
         Session session = this.sessionService.getSessionOfBar(barId, sessionId);
         return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
@@ -81,7 +81,7 @@ public class SessionController {
     public ResponseEntity<SessionResponse> createNewSession(
             @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId,
             @Valid @RequestBody SessionRequest sessionRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Session session = this.sessionService.createNewSession(barId, sessionRequest);
         return new ResponseEntity<>(converter.convert(session),  HttpStatus.CREATED);
     }
@@ -97,7 +97,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to update the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") Long sessionId,
             @Valid @RequestBody SessionRequest sessionRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Session session = this.sessionService.updateSession(barId, sessionId, sessionRequest);
         return new ResponseEntity<>(converter.convert(session),  HttpStatus.CREATED);
     }
@@ -112,7 +112,7 @@ public class SessionController {
     public ResponseEntity<SessionResponse> endSession(
             @ApiParam(value = "ID value for the bar you want to end the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") Long sessionId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Session session = this.sessionService.endSession(barId, sessionId);
         return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
@@ -127,7 +127,7 @@ public class SessionController {
     public ResponseEntity<SessionResponse> lockSession(
             @ApiParam(value = "ID value for the bar you want to lock the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to lock") @PathVariable("sessionId") Long sessionId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Session session = this.sessionService.lockSession(barId, sessionId);
         return new ResponseEntity<>(converter.convert(session),  HttpStatus.OK);
     }
@@ -142,7 +142,7 @@ public class SessionController {
     public ResponseEntity<Void> deleteSession(
             @ApiParam(value = "ID value for the bar you want to delete the session from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") Long sessionId)
-            throws NotFoundException {
+            throws EntityNotFoundException {
         this.sessionService.deleteSession(barId, sessionId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

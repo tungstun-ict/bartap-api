@@ -10,7 +10,6 @@ import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.OrderResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class OrderController {
     )
     public ResponseEntity<List<OrderResponse>> getAllBarOrders(
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Order> orders = this.orderService.getAllOrdersOfBar(barId);
         return new ResponseEntity<>(orderConverter.convertAll(orders), HttpStatus.OK);
     }
@@ -62,7 +62,7 @@ public class OrderController {
     public ResponseEntity<List<OrderResponse>> getAllSessionOrders(
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Order> orders = this.orderService.getAllOrdersOfSession(barId, sessionId);
         return new ResponseEntity<>(orderConverter.convertAll(orders), HttpStatus.OK);
     }
@@ -78,7 +78,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") Long orderId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Order order = this.orderService.getOrderOfSession(barId, sessionId, orderId);
         return new ResponseEntity<>(orderConverter.convert(order), HttpStatus.OK);
     }
@@ -94,7 +94,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") Long billId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Order> orders = this.orderService.getAllOrdersOfBill(barId, sessionId, billId);
         return new ResponseEntity<>(orderConverter.convertAll(orders), HttpStatus.OK);
     }
@@ -111,7 +111,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve the order from") @PathVariable("billId") Long billId,
             @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") Long orderId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Order order = this.orderService.getOrderOfBill(barId, sessionId, billId, orderId);
         return new ResponseEntity<>(orderConverter.convert(order), HttpStatus.OK);
     }
@@ -127,7 +127,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the session you want to delete the order from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to delete the order from") @PathVariable("billId") Long billId,
             @ApiParam(value = "ID value for the order you want to delete") @PathVariable("orderId") Long orderId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         this.orderService.deleteOrderFromBill(barId, sessionId, billId, orderId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -145,7 +145,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") Long billId,
             @Valid @RequestBody OrderRequest orderLineRequest,
             @ApiIgnore Authentication authentication
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Bill bill = this.orderService.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
         return new ResponseEntity<>(billConverter.convert(bill), HttpStatus.OK);

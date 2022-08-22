@@ -8,13 +8,13 @@ import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.BillSummaryResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class BillController {
     )
     public ResponseEntity<List<BillResponse>> getAllBills(
             @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") Long barId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Bill> allBills = this.billService.getAllBills(barId);
         return new ResponseEntity<>(converter.convertAll(allBills), HttpStatus.OK);
     }
@@ -55,7 +55,7 @@ public class BillController {
     public ResponseEntity<List<BillResponse>> getAllBillsOfSession(
             @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve bills from") @PathVariable("sessionId") Long sessionId
-    )throws NotFoundException {
+    )throws EntityNotFoundException {
         List<Bill> allBills = this.billService.getAllBillsOfSession(barId, sessionId);
         return new ResponseEntity<>(converter.convertAll(allBills), HttpStatus.OK);
     }
@@ -71,7 +71,7 @@ public class BillController {
             @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to retrieve the bill from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfBar(barId, sessionId, billId);
         return new ResponseEntity<>(converter.convert(bill), HttpStatus.OK);
     }
@@ -86,7 +86,7 @@ public class BillController {
     public ResponseEntity<BillResponse> getBillOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("personId") Long personId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfCustomerFromActiveSession(barId, personId);
         return new ResponseEntity<>(converter.convert(bill), HttpStatus.OK);
     }
@@ -101,7 +101,7 @@ public class BillController {
     public ResponseEntity<List<BillSummaryResponse>> getBillsOfCustomerOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve the bills from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the customer you want to retrieve the bill from") @PathVariable("personId") Long personId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Bill> bills = this.billService.getBillsOfPerson(barId, personId);
         return new ResponseEntity<>(converter.convertAllToSummary(bills), HttpStatus.OK);
     }
@@ -117,7 +117,7 @@ public class BillController {
             @ApiParam(value = "ID value for the bar you want to retrieve the bills from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the customer you want to retrieve the bill from") @PathVariable("personId") Long personId,
             @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") Long billId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Bill bill = this.billService.getBillOfPerson(barId, personId, billId);
         return new ResponseEntity<>(converter.convert(bill), HttpStatus.OK);
     }
@@ -132,7 +132,7 @@ public class BillController {
     public ResponseEntity<BillResponse> createBillForBar(
             @ApiParam(value = "ID value for the bar you want to create a new bill for") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the session you want to add a new bill to") @PathVariable("sessionId") Long sessionId,
-            @Valid @RequestBody BillRequest billRequest) throws NotFoundException {
+            @Valid @RequestBody BillRequest billRequest) throws EntityNotFoundException {
         Bill bill = this.billService.createNewBillForSession(barId, sessionId, billRequest);
         return new ResponseEntity<>(converter.convert(bill), HttpStatus.OK);
     }
@@ -149,7 +149,7 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") Long sessionId,
             @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") Long billId,
             @ApiParam(value = "Boolean value for the payment state you want to set the bill to") @RequestParam(value = "isPayed", required = false) Boolean isPayed
-            ) throws NotFoundException {
+            ) throws EntityNotFoundException {
         Bill bill = this.billService.setIsPayedOfBillOfSession(barId, sessionId, billId, isPayed);
         return new ResponseEntity<>(converter.convert(bill), HttpStatus.OK);
     }
@@ -164,7 +164,7 @@ public class BillController {
             @PathVariable("barId") Long barId,
             @PathVariable("sessionId") Long sessionId,
             @PathVariable("billId") Long billId
-            )throws NotFoundException{
+            )throws EntityNotFoundException {
         this.billService.deleteBillFromSessionOfBar(barId, sessionId, billId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

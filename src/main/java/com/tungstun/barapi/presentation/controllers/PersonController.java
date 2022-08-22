@@ -7,12 +7,12 @@ import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class PersonController {
     )
     public ResponseEntity<List<PersonResponse>> getAllPeopleOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve people from") @PathVariable Long barId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         List<Person> allPeople = this.personService.getAllPeopleOfBar(barId);
         return new ResponseEntity<>(converter.convertAll(allPeople), HttpStatus.OK);
     }
@@ -52,7 +52,7 @@ public class PersonController {
     public ResponseEntity<PersonResponse> getPersonOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve the person from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the person you want to retrieve") @PathVariable("personId") Long personId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Person person = this.personService.getPersonOfBar(barId, personId);
         return new ResponseEntity<>(converter.convert(person),  HttpStatus.OK);
     }
@@ -67,7 +67,7 @@ public class PersonController {
     public ResponseEntity<PersonResponse> createNewPersonForBar(
             @ApiParam(value = "ID value for the bar you want to create the new person for") @PathVariable("barId") Long barId,
             @Valid @RequestBody PersonRequest personRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Person person = this.personService.createNewPerson(barId, personRequest);
         return new ResponseEntity<>(converter.convert(person),  HttpStatus.CREATED);
     }
@@ -83,7 +83,7 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to update the person from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") Long personId,
             @Valid @RequestBody PersonRequest personRequest)
-            throws NotFoundException {
+            throws EntityNotFoundException {
         Person person = this.personService.updatePerson(barId, personId, personRequest);
         return new ResponseEntity<>(converter.convert(person), HttpStatus.OK);
     }
@@ -97,7 +97,7 @@ public class PersonController {
     public ResponseEntity<Void> deletePerson(
             @ApiParam(value = "ID value for the bar you want to delete the person from")  @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the bar you want to delete")  @PathVariable("personId") Long personId)
-            throws NotFoundException {
+            throws EntityNotFoundException {
         this.personService.deletePersonFromBar(barId, personId);
         return new ResponseEntity<>(HttpStatus.OK);
     }

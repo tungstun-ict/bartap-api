@@ -1,7 +1,6 @@
 package com.tungstun.barapi.presentation.controllers;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import javax.naming.directory.InvalidAttributesException;
+import javax.persistence.EntityNotFoundException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +20,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
      * Handles self specified exceptions*/
     @ExceptionHandler(
             value = {
-                    NotFoundException.class,
+                    EntityNotFoundException.class,
             }
     )
     public ResponseEntity<Map<String, String>> mainHandler(Exception e) {

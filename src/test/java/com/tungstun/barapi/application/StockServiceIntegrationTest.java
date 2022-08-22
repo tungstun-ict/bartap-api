@@ -9,13 +9,13 @@ import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.stock.Stock;
 import com.tungstun.barapi.presentation.dto.request.StockRequest;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -52,7 +52,7 @@ class StockServiceIntegrationTest{
 
     @Test
     @DisplayName("Increase stock")
-    void increaseStockValid() throws NotFoundException {
+    void increaseStockValid() throws EntityNotFoundException {
         StockRequest request = new StockRequest();
         request.amount = 1;
 
@@ -75,7 +75,7 @@ class StockServiceIntegrationTest{
 
     @Test
     @DisplayName("Decrease stock")
-    void decreaseStockValid() throws NotFoundException {
+    void decreaseStockValid() throws EntityNotFoundException {
         StockRequest request = new StockRequest();
         request.amount = 1;
 
@@ -98,7 +98,7 @@ class StockServiceIntegrationTest{
 
     @Test
     @DisplayName("Update stock")
-    void updateStockValid() throws NotFoundException {
+    void updateStockValid() throws EntityNotFoundException {
         StockRequest request = new StockRequest();
         request.amount = 1;
 

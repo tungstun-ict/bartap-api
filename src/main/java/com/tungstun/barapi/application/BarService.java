@@ -11,9 +11,9 @@ import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
 import com.tungstun.security.data.model.UserBarAuthorization;
 import com.tungstun.security.data.model.UserRole;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
@@ -43,9 +43,9 @@ public class BarService {
                 .collect(Collectors.toList());
     }
 
-    public Bar getBar(Long id) throws NotFoundException {
+    public Bar getBar(Long id) throws EntityNotFoundException {
         return this.barRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException(String.format("Bar with id %s doesn't exist", id)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Bar with id %s doesn't exist", id)));
     }
 
     public Bar addBar(BarRequest barRequest, String ownerUsername) {
@@ -75,7 +75,7 @@ public class BarService {
         });
     }
 
-    public Bar updateBar(Long id, BarRequest barRequest) throws NotFoundException {
+    public Bar updateBar(Long id, BarRequest barRequest) throws EntityNotFoundException {
         Bar bar = getBar(id);
         bar.getDetails().setAddress(barRequest.address);
         bar.getDetails().setMail(barRequest.mail);

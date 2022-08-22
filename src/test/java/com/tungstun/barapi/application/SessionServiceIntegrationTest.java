@@ -14,13 +14,13 @@ import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
@@ -63,7 +63,7 @@ class SessionServiceIntegrationTest {
 
     @Test
     @DisplayName("Get all sessions of bar")
-    void getSessionsOfbar() throws NotFoundException {
+    void getSessionsOfbar() throws EntityNotFoundException {
         List<Session> resSessions = service.getAllSessionsOfBar(bar.getId());
 
         assertEquals(1, resSessions.size());
@@ -72,7 +72,7 @@ class SessionServiceIntegrationTest {
 
     @Test
     @DisplayName("Get session of bar")
-    void getSession() throws NotFoundException {
+    void getSession() throws EntityNotFoundException {
         Session resSession = service.getSessionOfBar(bar.getId(), session.getId());
 
         assertEquals(session, resSession);
@@ -82,14 +82,14 @@ class SessionServiceIntegrationTest {
     @DisplayName("Get not existing session of bar")
     void getNotExistingSession() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getSessionOfBar(bar.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("Get active session of bar")
-    void getActiveSession() throws NotFoundException {
+    void getActiveSession() throws EntityNotFoundException {
         Session resSession = service.getActiveSessionOfBar(bar.getId());
         assertEquals(session, resSession);
     }
@@ -100,14 +100,14 @@ class SessionServiceIntegrationTest {
         session.lock();
         repository.save(session);
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getActiveSessionOfBar(bar.getId())
         );
     }
 
     @Test
     @DisplayName("Create new session")
-    void createSession() throws NotFoundException {
+    void createSession() throws EntityNotFoundException {
         session.lock();
         repository.save(session);
         SessionRequest request = new SessionRequest();
@@ -132,7 +132,7 @@ class SessionServiceIntegrationTest {
 
     @Test
     @DisplayName("Update session")
-    void updateSession() throws NotFoundException {
+    void updateSession() throws EntityNotFoundException {
         SessionRequest request = new SessionRequest();
         request.name = "newTest";
 
@@ -157,7 +157,7 @@ class SessionServiceIntegrationTest {
 
     @Test
     @DisplayName("Delete session")
-    void deleteSession() throws NotFoundException {
+    void deleteSession() throws EntityNotFoundException {
         SessionRequest request = new SessionRequest();
         request.name = "newTest";
 
@@ -169,7 +169,7 @@ class SessionServiceIntegrationTest {
 
     @Test
     @DisplayName("End session")
-    void endSession() throws NotFoundException {
+    void endSession() throws EntityNotFoundException {
         Session resSession = service.endSession(bar.getId(), session.getId());
 
         assertNotNull(resSession.getClosedDate());
@@ -189,7 +189,7 @@ class SessionServiceIntegrationTest {
 
     @Test
     @DisplayName("Lock session")
-    void lockSession() throws NotFoundException {
+    void lockSession() throws EntityNotFoundException {
         Session resSession = service.lockSession(bar.getId(), session.getId());
 
         assertNotNull(resSession.getClosedDate());

@@ -8,13 +8,13 @@ import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -48,7 +48,7 @@ class PersonServiceIntegrationTest {
 
     @Test
     @DisplayName("Get person of bar")
-    void getPersonOfBar() throws NotFoundException {
+    void getPersonOfBar() throws EntityNotFoundException {
         Person resPerson = service.getPersonOfBar(bar.getId(), person.getId());
 
         assertEquals(person, resPerson);
@@ -58,14 +58,14 @@ class PersonServiceIntegrationTest {
     @DisplayName("Get not existing person")
     void getNotExistingPersonOfBar() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getPersonOfBar(bar.getId(), 999L)
         );
     }
 
     @Test
     @DisplayName("Get all people of bar")
-    void getPeopleOfBar() throws NotFoundException {
+    void getPeopleOfBar() throws EntityNotFoundException {
         List<Person> resPeople = service.getAllPeopleOfBar(bar.getId());
 
         assertEquals(2, resPeople.size());
@@ -75,7 +75,7 @@ class PersonServiceIntegrationTest {
 
     @Test
     @DisplayName("Get all people of bar when none")
-    void getPeopleOfBarWhenNone() throws NotFoundException {
+    void getPeopleOfBarWhenNone() throws EntityNotFoundException {
         bar.removeUser(person);
         bar.removeUser(person2);
         barRepository.save(bar);
@@ -110,7 +110,7 @@ class PersonServiceIntegrationTest {
 
     @Test
     @DisplayName("update person")
-    void updatePerson() throws NotFoundException {
+    void updatePerson() throws EntityNotFoundException {
         PersonRequest request = new PersonRequest();
         request.name = "personUpdated";
         request.phoneNumber = "0601010101";
@@ -123,7 +123,7 @@ class PersonServiceIntegrationTest {
 
     @Test
     @DisplayName("delete person")
-    void deletePerson() throws NotFoundException {
+    void deletePerson() throws EntityNotFoundException {
         service.deletePersonFromBar(bar.getId(), person.getId());
 
         Bar resBar = barRepository.findById(bar.getId()).get();

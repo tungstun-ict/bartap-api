@@ -7,9 +7,9 @@ import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
-import javassist.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,13 +25,13 @@ public class CategoryService {
         this.barService = barService;
     }
 
-    public List<Category> getCategoriesOfBar(Long barId, String productType) throws NotFoundException {
+    public List<Category> getCategoriesOfBar(Long barId, String productType) throws EntityNotFoundException {
         return productType != null ?
                 getCategoriesOfProductTypeOfBar(barId, productType)
                 : getAllCategoriesOfBar(barId);
     }
 
-    private List<Category> getCategoriesOfProductTypeOfBar(Long barId, String type) throws NotFoundException {
+    private List<Category> getCategoriesOfProductTypeOfBar(Long barId, String type) throws EntityNotFoundException {
         ProductType productType = convertStringToProductType(type);
         List<Category> allCategories = getAllCategoriesOfBar(barId);
         return findCategoriesOfProductType(allCategories, productType);
@@ -42,31 +42,31 @@ public class CategoryService {
         return ProductType.valueOf(type.toUpperCase());
     }
 
-    private List<Category> getAllCategoriesOfBar(Long barId) throws NotFoundException {
+    private List<Category> getAllCategoriesOfBar(Long barId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         return bar.getCategories();
     }
 
-    private List<Category> findCategoriesOfProductType(List<Category> categories, ProductType productType) throws NotFoundException {
+    private List<Category> findCategoriesOfProductType(List<Category> categories, ProductType productType) throws EntityNotFoundException {
         return categories.stream()
                 .filter(category -> category.getProductType().equals(productType))
                 .collect(Collectors.toList());
 
     }
 
-    public Category getCategoryOfBar(Long barId, Long categoryId) throws NotFoundException {
+    public Category getCategoryOfBar(Long barId, Long categoryId) throws EntityNotFoundException {
         List<Category> allCategories = getAllCategoriesOfBar(barId);
         return findCategoryInCategories(allCategories, categoryId);
     }
 
-    private Category findCategoryInCategories(List<Category> categories, Long categoryId) throws NotFoundException {
+    private Category findCategoryInCategories(List<Category> categories, Long categoryId) throws EntityNotFoundException {
         return categories.stream()
                 .filter(category -> category.getId().equals(categoryId))
                 .findFirst()
-                .orElseThrow(() -> new NotFoundException(String.format("No category found with id %s", categoryId)));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("No category found with id %s", categoryId)));
     }
 
-    public Category addCategoryToBar(Long barId, CategoryRequest categoryRequest) throws NotFoundException {
+    public Category addCategoryToBar(Long barId, CategoryRequest categoryRequest) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         checkIfCategoryNameIsAvailable(bar, categoryRequest.name);
         ProductType productType = convertStringToProductType(categoryRequest.productType);
@@ -99,7 +99,7 @@ public class CategoryService {
         );
     }
 
-    public Category updateCategoryOfBar(Long barId, Long categoryId, CategoryRequest categoryRequest) throws NotFoundException {
+    public Category updateCategoryOfBar(Long barId, Long categoryId, CategoryRequest categoryRequest) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         Category category = getCategoryOfBar(barId, categoryId);
         checkIfCategoryNameIsOccupied(bar, category, categoryRequest.name);
@@ -114,7 +114,7 @@ public class CategoryService {
             throw new DuplicateRequestException(String.format("Bar already has category with name '%s'", categoryName));
     }
 
-    public void deleteCategoryFromBar(Long barId, Long categoryId) throws NotFoundException {
+    public void deleteCategoryFromBar(Long barId, Long categoryId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         Category category = findCategoryInCategories(bar.getCategories(), categoryId);
         removeCategoryFromProducts(bar.getProducts(), category);

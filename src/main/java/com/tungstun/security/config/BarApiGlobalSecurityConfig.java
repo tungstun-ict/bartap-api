@@ -5,6 +5,7 @@ import com.tungstun.security.config.evaluator.BarApiPermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
+@Primary
 public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
     private final UserService userService;
 

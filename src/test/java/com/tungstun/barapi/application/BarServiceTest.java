@@ -8,7 +8,6 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
 import com.tungstun.security.data.model.User;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -56,7 +56,7 @@ class BarServiceTest {
 
     @Test
     @DisplayName("Get bar returns bar")
-    void getBar_ReturnsBar() throws NotFoundException {
+    void getBar_ReturnsBar() throws EntityNotFoundException {
         Bar expectedBar = new BarBuilder().build();
         when(repository.findById(anyLong())).thenReturn(Optional.of(expectedBar));
 
@@ -125,7 +125,7 @@ class BarServiceTest {
 
     @Test
     @DisplayName("Update bar returns updated bar")
-    void updateBar_ReturnsUpdatedBar() throws NotFoundException {
+    void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
         Person person = new Person(
                 "name",
                 "0612345678",
@@ -168,7 +168,7 @@ class BarServiceTest {
         BarRequest request = new BarRequest();
 
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.updateBar(any(), request)
         );
 
@@ -210,7 +210,7 @@ class BarServiceTest {
         when(repository.findById(anyLong())).thenReturn(Optional.empty());
 
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getBar(123L)
         );
 

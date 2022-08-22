@@ -7,7 +7,6 @@ import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.barapi.presentation.dto.response.BarResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public class BarController {
     )
     public ResponseEntity<BarResponse> getBar(
             @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") Long barId
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         return new ResponseEntity<>(converter.convert(bar), HttpStatus.OK);
     }
@@ -80,7 +80,7 @@ public class BarController {
     public ResponseEntity<BarResponse> updateBar(
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") Long barId,
             @Valid @RequestBody BarRequest barRequest
-    ) throws NotFoundException {
+    ) throws EntityNotFoundException {
         Bar bar = this.barService.updateBar(barId, barRequest);
         return new ResponseEntity<>(converter.convert(bar), HttpStatus.OK);
     }

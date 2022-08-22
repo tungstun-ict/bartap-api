@@ -9,7 +9,6 @@ import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
-import javassist.NotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +17,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -35,7 +35,7 @@ class CategoryServiceTest {
     private static Category category;
 
     @BeforeEach
-    void setup() throws NotFoundException {
+    void setup() throws EntityNotFoundException {
         bar = new BarBuilder().build();
         category = new Category("category", ProductType.FOOD);
         ReflectionTestUtils.setField(category, "id", 123L);
@@ -83,7 +83,7 @@ class CategoryServiceTest {
     @ParameterizedTest
     @MethodSource("provideBarsWithCategories")
     @DisplayName("Get all categories of bar")
-    void getCategoriesOfBar_ReturnsCategories(Bar bar, List<Category> expectedCategories) throws NotFoundException {
+    void getCategoriesOfBar_ReturnsCategories(Bar bar, List<Category> expectedCategories) throws EntityNotFoundException {
         when(barService.getBar(any()))
                 .thenReturn(bar);
 
@@ -95,7 +95,7 @@ class CategoryServiceTest {
     @ParameterizedTest
     @MethodSource("provideBarsWithCategoriesAndType")
     @DisplayName("Get all categories of bar of type")
-    void getCategoriesOfBarOfType_ReturnsCategories(Bar bar, List<Category> expectedCategories, String type) throws NotFoundException {
+    void getCategoriesOfBarOfType_ReturnsCategories(Bar bar, List<Category> expectedCategories, String type) throws EntityNotFoundException {
         when(barService.getBar(any()))
                 .thenReturn(bar);
         List<Category> categories = service.getCategoriesOfBar(any(), type);
@@ -113,7 +113,7 @@ class CategoryServiceTest {
 
     @Test
     @DisplayName("Get existing category of bar")
-    void getCategoryOfBar() throws NotFoundException {
+    void getCategoryOfBar() throws EntityNotFoundException {
         Category c = service.getCategoryOfBar(123L, category.getId());
 
         assertNotNull(c);
@@ -123,7 +123,7 @@ class CategoryServiceTest {
     @DisplayName("Get not existing category of bar")
     void getNotExistingCategoryOfBar() {
         assertThrows(
-                NotFoundException.class,
+                EntityNotFoundException.class,
                 () -> service.getCategoryOfBar(123L, 999L)
         );
     }
@@ -152,7 +152,7 @@ class CategoryServiceTest {
 
     @Test
     @DisplayName("Update existing category name bar")
-    void updateExistingCategory() throws NotFoundException {
+    void updateExistingCategory() throws EntityNotFoundException {
         when(repository.save(any())).thenReturn(new Category("categoryNew", ProductType.FOOD));
         CategoryRequest request = new CategoryRequest();
         request.name = "categoryNew";
@@ -188,7 +188,7 @@ class CategoryServiceTest {
 
     @Test
     @DisplayName("Delete existing category in bar sets products of it to null category")
-    void deleteExistingCategory_SetsProductsCategoriesOfItToNull() throws NotFoundException {
+    void deleteExistingCategory_SetsProductsCategoriesOfItToNull() throws EntityNotFoundException {
         Product product = new ProductBuilder().setCategory(category).build();
         bar.addProduct(product);
 
