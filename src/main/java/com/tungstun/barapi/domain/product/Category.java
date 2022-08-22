@@ -1,15 +1,18 @@
 package com.tungstun.barapi.domain.product;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
-//
-//@JsonIdentityInfo(
-//        generator = ObjectIdGenerators.PropertyGenerator.class,
-//        property = "id"
-//)
-//@JsonIdentityReference(alwaysAsId = true)
+
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
+@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "category")
 @SQLDelete(sql = "UPDATE category SET deleted = true WHERE id=?")
@@ -22,6 +25,9 @@ public class Category {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "bar_id")
+    private Long barId;
+
     @Column(name = "name")
     private String name;
 
@@ -29,13 +35,18 @@ public class Category {
     private ProductType productType;
 
     public Category() { }
-    public Category(String name, ProductType productType) {
+    public Category(Long barId, String name, ProductType productType) {
+        this.barId = barId;
         this.name = name;
         this.productType = productType;
     }
 
     public Long getId() {
         return id;
+    }
+
+    public Long getBarId() {
+        return barId;
     }
 
     public String getName() {

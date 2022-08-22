@@ -10,11 +10,11 @@ VALUES  (1, false, 'Molenstraat 15', 'molenstraat@staat.nl', 'De Kerker Bar', '7
         (4, false, 'Schoolstraat 1a', 'schoolstraat@staat.nl', 'De School Pub', '1234567890'),
 
 insert into user_bar_authorization(id, bar_id, role, user_id)
-values (1, 1, 'ROLE_BAR_OWNER', 1),
-       (2, 2, 'ROLE_BAR_OWNER', 3),
-       (3, 3, 'ROLE_BAR_OWNER', 2),
-       (4, 4, 'ROLE_BAR_OWNER', 2),
-       (5, 5, 'ROLE_BAR_OWNER', 2);
+values (1, 1, 'OWNER', 1),
+       (2, 2, 'OWNER', 3),
+       (3, 3, 'OWNER', 2),
+       (4, 4, 'OWNER', 2),
+       (5, 5, 'OWNER', 2);
 
 insert into user_user_bar_authorizations (user_id, user_bar_authorizations_id)
 values (3, 2),

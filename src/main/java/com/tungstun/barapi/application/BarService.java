@@ -8,9 +8,7 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
-import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserBarAuthorization;
-import com.tungstun.security.data.model.UserRole;
+import com.tungstun.security.domain.user.User;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -36,7 +34,7 @@ public class BarService {
 
     public List<Bar> getAllBarOwnerBars(String username) {
         User user = (User) this.userService.loadUserByUsername(username);
-        Set<Long> ownedBarIds = user.getAuthoritiesMap().keySet();
+        Set<Long> ownedBarIds = user.getAuthorizations().keySet();
         return getAllBars()
                 .stream()
                 .filter(bar -> ownedBarIds.contains(bar.getId()))
@@ -58,7 +56,7 @@ public class BarService {
                 .setPhoneNumber(barRequest.phoneNumber)
                 .build();
         bar = this.barRepository.save(bar);
-        user.addUserBarAuthorizations(new UserBarAuthorization(bar, user, UserRole.ROLE_BAR_OWNER));
+        user.newBarAuthorization(bar.getId());
         Person owner = new PersonBuilder()
                 .setName(ownerUsername)
                 .setUser(user)

@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get people")
     void getPeople() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -24,13 +24,13 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").exists())
-                .andExpect(jsonPath("$[0].name").value("testPerson"))
-                .andExpect(jsonPath("$[0].phoneNumber").value("0600000000"))
+                .andExpect(jsonPath("$[0].name").value("ownerPerson"))
+                .andExpect(jsonPath("$[0].phoneNumber").value("+31612345678"))
                 .andExpect(jsonPath("$[0].user").exists());
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get people not allowed")
     void getPeopleNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -42,27 +42,27 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get person")
     void getPerson() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .get(String.format("/api/bars/%s/people/%s", bar.getId(), person.getId()))
+                .get(String.format("/api/bars/%s/people/%s", bar.getId(), ownerPerson.getId()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
-                .andExpect(jsonPath("$.name").value("testPerson"))
-                .andExpect(jsonPath("$.phoneNumber").value("0600000000"))
+                .andExpect(jsonPath("$.name").value("ownerPerson"))
+                .andExpect(jsonPath("$.phoneNumber").value("+31612345678"))
                 .andExpect(jsonPath("$.user").exists());
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get person not allowed")
     void getPersonNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .get(String.format("/api/bars/%s/people/%s", bar.getId(), person.getId()))
+                .get(String.format("/api/bars/%s/people/%s", bar.getId(), ownerPerson.getId()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
@@ -70,7 +70,7 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Add person")
     void addPerson() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -91,7 +91,7 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Add person not allowed")
     void addPersonNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -108,7 +108,7 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Update person")
     void updatePerson() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -116,7 +116,7 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
         jsonObject.put("phoneNumber", "0699999999");
 
         RequestBuilder request = MockMvcRequestBuilders
-                .put(String.format("/api/bars/%s/people/%s", bar.getId(), person.getId()))
+                .put(String.format("/api/bars/%s/people/%s", bar.getId(), ownerPerson.getId()))
                 .content(jsonObject.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -129,7 +129,7 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Update person not allowed")
     void updatePersonNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -137,7 +137,7 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
         jsonObject.put("phoneNumber", "0600000000");
 
         RequestBuilder request = MockMvcRequestBuilders
-                .put(String.format("/api/bars/%s/people/%s", bar.getId(), person.getId()))
+                .put(String.format("/api/bars/%s/people/%s", bar.getId(), ownerPerson.getId()))
                 .content(jsonObject.toString())
                 .contentType(MediaType.APPLICATION_JSON);
 
@@ -148,11 +148,11 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Delete person")
     void deletePerson() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .delete(String.format("/api/bars/%s/people/%s", bar.getId(), person.getId()))
+                .delete(String.format("/api/bars/%s/people/%s", bar.getId(), ownerPerson.getId()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)
@@ -160,11 +160,11 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Delete person not allowed")
     void deletePersonNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
-                .delete(String.format("/api/bars/%s/people/%s", bar.getId(), person.getId()))
+                .delete(String.format("/api/bars/%s/people/%s", bar.getId(), ownerPerson.getId()))
                 .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(request)

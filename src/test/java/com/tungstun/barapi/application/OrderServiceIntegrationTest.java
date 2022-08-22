@@ -13,7 +13,7 @@ import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.product.*;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
-import com.tungstun.security.data.model.User;
+import com.tungstun.security.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -57,7 +57,7 @@ class OrderServiceIntegrationTest {
     @BeforeEach
     void setup() {
         bar = new BarBuilder().build();
-        category = categoryRepository.save(new Category("Drinks", ProductType.DRINK));
+        category = categoryRepository.save(new Category(123L, "Drinks", ProductType.DRINK));
         bar.addCategory(category);
         product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)
@@ -226,7 +226,7 @@ class OrderServiceIntegrationTest {
     @Test
     @DisplayName("Add product(order) to bill")
     void addOrderToBill() throws EntityNotFoundException {
-        User user = new User("testUser", "", "", "", "", new ArrayList<>());
+        User user = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
         Person person = new PersonBuilder().setUser(user).build();
         OrderRequest request = new OrderRequest();
         request.amount = 2;

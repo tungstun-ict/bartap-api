@@ -1,7 +1,7 @@
 package com.tungstun.security.config.evaluator;
 
 import com.tungstun.security.application.UserService;
-import com.tungstun.security.data.model.User;
+import com.tungstun.security.domain.user.User;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,8 +24,8 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
         Long barId = (Long) targetDomainObject;
-        String username = ((UserDetails) auth.getPrincipal()).getUsername();
-        return hasPrivilege(username, barId, (List<String>) permissions);
+        UserDetails user = (UserDetails) auth.getPrincipal();
+        return hasPrivilege(user.getUsername(), barId, (List<String>) permissions);
     }
 
     @Override
@@ -33,13 +33,13 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
         if ((auth == null) || (targetType == null) || !(permissions instanceof List)) {
             return false;
         }
-        String username = ((UserDetails) auth.getPrincipal()).getUsername();
-        return hasPrivilege(username, Long.valueOf((String) targetId), (List<String>) permissions);
+        UserDetails user = (UserDetails) auth.getPrincipal();
+        return hasPrivilege(user.getUsername(), Long.valueOf((String) targetId), (List<String>) permissions);
     }
 
     private boolean hasPrivilege(String username, Long barId, List<String> permissions) {
         User user = (User) this.userService.loadUserByUsername(username);
-        String role = user.getAuthoritiesMap().get(barId);
+        String role = user.getAuthorizations().get(barId);
         for (String permission : permissions) {
             if (role != null && role.equals(permission)) return true;
         }

@@ -1,10 +1,9 @@
 package com.tungstun.security.config.filter;
 
-import com.tungstun.security.data.model.UserProfile;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.tungstun.exception.NotAuthenticatedException;
+import com.tungstun.security.domain.jwt.JwtValidator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,77 +17,66 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Tries to authorize a user, based on the Bearer token (JWT) from
  * the Authorization header of the incoming request.
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    private final String secret;
     private final String[] ignoredPaths;
+    private final JwtValidator validator;
 
-    public JwtAuthorizationFilter(String secret, AuthenticationManager authenticationManager) {
-        this(secret, authenticationManager, new String[]{});
+    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtValidator validator) {
+        this(authenticationManager, validator, new String[]{});
     }
+
     public JwtAuthorizationFilter(
-            String secret,
             AuthenticationManager authenticationManager,
+            JwtValidator validator,
             String[] ignoredPaths
     ) {
         super(authenticationManager);
-        this.secret = secret;
+        this.validator = validator;
         this.ignoredPaths = ignoredPaths;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-       return Arrays.stream(this.ignoredPaths)
-               .anyMatch(path -> path.equals(request.getRequestURI()));
+        return Arrays.stream(this.ignoredPaths)
+                .anyMatch(path -> path.equals(request.getRequestURI()));
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain
-    ) throws IOException, ServletException {
-        Authentication authentication = this.getAuthentication(request);
-        if (authentication != null) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        filterChain.doFilter(request, response);
-    }
-
-    private Authentication getAuthentication(HttpServletRequest request) {
-        String accessToken = request.getHeader("access_token");
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
         String tokenType = request.getHeader("token_type");
+        String accessToken = request.getHeader("access_token");
 
-        if (accessToken == null || accessToken.isEmpty()) {
-            return null;
+        if (accessToken == null || tokenType == null || accessToken.isEmpty() || !tokenType.equals("Bearer")) {
+            chain.doFilter(request, response);
         }
+        try {
+            DecodedJWT decodedJWT = validator.verifyAccessToken(accessToken);
 
-        if (!tokenType.equals("bearer")) {
-            return null;
+            Long userId = Optional.ofNullable(decodedJWT.getClaim("userId").asLong())
+                    .orElseThrow(() -> new JWTDecodeException("No user id in access token"));
+
+            String username = decodedJWT.getSubject();
+            List<Authorization> authorizations = decodedJWT.getClaim("authorizations")
+                    .asMap()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> new Authorization(entry.getKey(), (String) entry.getValue()))
+                    .toList();
+            UserProfile principal = new UserProfile(userId, username, authorizations);
+            Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+        } catch (JWTDecodeException | NotAuthenticatedException ignored) {
+            // Continue request without an Authentication bound to the session's request
         }
-
-        byte[] signingKey = this.secret.getBytes();
-
-        JwtParser jwtParser = Jwts.parserBuilder()
-                .setSigningKey(signingKey)
-                .build();
-
-        Jws<Claims> parsedToken = jwtParser
-                .parseClaimsJws(accessToken);
-
-        var username = parsedToken
-                .getBody()
-                .getSubject();
-
-        if (username.isEmpty()) {
-            return null;
-        }
-
-        UserProfile principal = new UserProfile(username);
-
-        return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
     }
 }

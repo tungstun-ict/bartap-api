@@ -1,7 +1,8 @@
 package com.tungstun.security.config;
 
 import com.tungstun.security.config.filter.JwtAuthorizationFilter;
-import org.springframework.beans.factory.annotation.Value;
+import com.tungstun.security.domain.jwt.JwtValidator;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -27,8 +28,8 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger"
     };
 
-    @Value("${security.jwt.secret}")
-    private String jwtSecret;
+    @Autowired
+    private JwtValidator validator;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -47,8 +48,8 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated()
                 .and()
                 .addFilter(new JwtAuthorizationFilter(
-                        this.jwtSecret,
-                        this.authenticationManager(),
+                        authenticationManager(),
+                        validator,
                         new String[]{
                                 LOGIN_PATH,
                                 REGISTER_PATH,

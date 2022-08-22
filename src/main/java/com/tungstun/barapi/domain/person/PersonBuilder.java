@@ -1,7 +1,7 @@
 package com.tungstun.barapi.domain.person;
 
 import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.security.data.model.User;
+import com.tungstun.security.domain.user.User;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -100,7 +100,7 @@ public class ProductService {
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
         product.setSize(productRequest.size);
-        product.setPrice(new Money(productRequest.price));
+        product.updatePrice(new Money(productRequest.price));
         product.setFavorite(productRequest.isFavorite);
         product.setCategory(category);
         return this.productRepository.save(product);

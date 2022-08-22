@@ -14,14 +14,14 @@ import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.security.config.BarApiGlobalSecurityConfig;
-import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserBarAuthorization;
-import com.tungstun.security.data.model.UserRole;
+import com.tungstun.security.domain.user.Role;
+import com.tungstun.security.domain.user.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
@@ -32,23 +32,28 @@ import java.util.ArrayList;
 public class BarIntegrationTestLifeCycle {
     @Autowired
     private SpringBarRepository barRepository;
-    public Person person2;
+    public Person ownerPerson;
     @Autowired
     public MockMvc mockMvc;
     public Bar bar;
-    public Person person;
+    public Person bartenderPerson;
+    public Person customerPerson;
+    public Person anonymous;
+    @Autowired
+    private JpaRepository<User, Long> userRepository;
     public Session session;
     public Bill bill;
     public Order order;
     public Product product;
     public Category category;
 
-
     @BeforeEach
     public void setUp() throws Exception {
         barRepository.deleteAll();
+        userRepository.deleteAll();
         createBar();
         addProductToBar();
+        bar = barRepository.save(bar);
         addUsersToBar();
         createSessionsWithBills();
         bar = barRepository.save(bar);
@@ -58,14 +63,14 @@ public class BarIntegrationTestLifeCycle {
     private void createBar() {
         bar = new BarBuilder()
                 .setName("bar")
-                .setPhoneNumber("0600000000")
+                .setPhoneNumber("+0612345666")
                 .setMail("mail@testmail.com")
                 .setAddress("adressBar 1")
                 .build();
     }
 
     private void addProductToBar() {
-        category = new Category("Drinks", ProductType.DRINK);
+        category = new Category(123L, "Drinks", ProductType.DRINK);
         bar.addCategory(category);
         product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)
@@ -75,40 +80,57 @@ public class BarIntegrationTestLifeCycle {
     }
 
     private void addUsersToBar() {
-        User user2 = new User("testUser", "", "", "", "", new ArrayList<>());
-        user2.addUserBarAuthorizations(new UserBarAuthorization(bar, user2, UserRole.ROLE_BAR_OWNER));
-        person = new PersonBuilder().setName("testPerson").setPhoneNumber("0600000000").setUser(user2).build();
-        bar.addUser(person);
+//        User user2 = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
+//        user2.newBarAuthorization(bar.getId());
+//        person = new PersonBuilder().setName("testPerson").setPhoneNumber("0600000000").setUser(user2).build();
+//        bar.addUser(person);
+        User owner = new User("owner", "", "", "", "", "+310612345678", new ArrayList<>());
+        owner.newBarAuthorization(bar.getId());
+        ownerPerson = new PersonBuilder().setName("ownerPerson").setPhoneNumber("+31612345678").setUser(owner).build();
+        bar.addUser(ownerPerson);
 
-        User user = new User("notConnectedUser", "ss", "mail@mail.com", "sam", "fisher", new ArrayList<>());
-        Person person2 = new PersonBuilder().setName("notConnectedPerson").setPhoneNumber("0600000000").setUser(user).build();
+        User bartender = new User("bartender", "", "", "", "", "+310612345678", new ArrayList<>());
+        owner.authorizeUser(bartender, bar.getId(), Role.BARTENDER);
+        bartenderPerson = new PersonBuilder().setName("bartenderPerson").setPhoneNumber("+31612345679").setUser(owner).build();
+        bar.addUser(bartenderPerson);
+
+        User customer = new User("customer", "", "", "", "", "+310612345678", new ArrayList<>());
+        owner.authorizeUser(customer, bar.getId(), Role.BARTENDER);
+        customerPerson = new PersonBuilder().setName("customerPerson").setPhoneNumber("+31612345670").setUser(owner).build();
+        bar.addUser(customerPerson);
+
+        //Isnt this a connected person (person -> user) , Only connection is missing authorization i gueass (which is normal customer, no?
+        User user = new User("anonymous", "ss", "mail@mail.com", "sam", "fisher", "+310612345678", new ArrayList<>());
+        Person person2 = new PersonBuilder().setName("anonymousPerson").setPhoneNumber("+31612345671").setUser(user).build();
         bar.addUser(person2);
     }
 
     private void createSessionsWithBills() {
         session = Session.create("test");
-        bill = new BillFactory(session, person).create();
-        bill.addOrder(product, 1, person);
+        bill = new BillFactory(session, ownerPerson).create();
+        bill.addOrder(product, 1, ownerPerson);
         session.addBill(bill);
         bar.addSession(session);
 
         Session session2 = Session.create("test2");
-        Bill bill2 = new BillFactory(session2, person).create();
-        bill2.addOrder(product, 1, person);
+        Bill bill2 = new BillFactory(session2, ownerPerson).create();
+        bill2.addOrder(product, 1, ownerPerson);
         session2.addBill(bill2);
         session2.lock();
         bar.addSession(session2);
 
         Session session3 = Session.create("test3");
-        Bill bill3 = new BillFactory(session3, person).create();
+        Bill bill3 = new BillFactory(session3, ownerPerson).create();
         session3.addBill(bill3);
         session3.lock();
         bar.addSession(session3);
     }
 
     private void setTestClassVariables() {
-        person = bar.getUsers().stream().filter(person -> person.getName().equals("testPerson")).findFirst().get();
-        person2 = bar.getUsers().stream().filter(person -> person.getName().equals("notConnectedPerson")).findFirst().get();
+        ownerPerson = bar.getUsers().stream().filter(person -> person.getName().equals("ownerPerson")).findFirst().orElseThrow();
+        bartenderPerson = bar.getUsers().stream().filter(person -> person.getName().equals("bartenderPerson")).findFirst().orElseThrow();
+        customerPerson = bar.getUsers().stream().filter(person -> person.getName().equals("customerPerson")).findFirst().orElseThrow();
+        anonymous = bar.getUsers().stream().filter(person -> person.getName().equals("anonymousPerson")).findFirst().orElseThrow();
         session = bar.getSessions().get(0);
         bill = session.getBills().get(0);
         order = bill.getOrders().get(0);

@@ -112,7 +112,7 @@ public class Product {
         return prices.currentPrice().getMoney();
     }
 
-    public void setPrice(Money price) {
+    public void updatePrice(Money price) {
         this.prices.updatePrice(price);
     }
 

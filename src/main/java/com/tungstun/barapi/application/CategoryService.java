@@ -17,11 +17,11 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class CategoryService {
-    private final CategoryRepository springCategoryRepository;
+    private final CategoryRepository categoryRepository;
     private final BarService barService;
 
-    public CategoryService(CategoryRepository springCategoryRepository, BarService barService) {
-        this.springCategoryRepository = springCategoryRepository;
+    public CategoryService(CategoryRepository categoryRepository, BarService barService) {
+        this.categoryRepository = categoryRepository;
         this.barService = barService;
     }
 
@@ -70,7 +70,7 @@ public class CategoryService {
         Bar bar = this.barService.getBar(barId);
         checkIfCategoryNameIsAvailable(bar, categoryRequest.name);
         ProductType productType = convertStringToProductType(categoryRequest.productType);
-        Category category = new Category(categoryRequest.name, productType);
+        Category category = new Category(barId, categoryRequest.name, productType);
         return saveCategoryToBar(bar, category);
     }
 
@@ -86,7 +86,7 @@ public class CategoryService {
     }
 
     private Category saveCategoryToBar(Bar bar, Category category) {
-        category = this.springCategoryRepository.save(category);
+        category = this.categoryRepository.save(category);
         bar.addCategory(category);
         this.barService.saveBar(bar);
         return category;
@@ -106,7 +106,7 @@ public class CategoryService {
         ProductType productType = convertStringToProductType(categoryRequest.productType);
         category.setName(categoryRequest.name);
         category.setProductType(productType);
-        return this.springCategoryRepository.save(category);
+        return this.categoryRepository.save(category);
     }
 
     private void checkIfCategoryNameIsOccupied(Bar bar, Category category, String categoryName) {

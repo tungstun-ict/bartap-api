@@ -2,7 +2,7 @@ package com.tungstun.barapi.domain.person;
 
 import com.fasterxml.jackson.annotation.*;
 import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.security.data.model.User;
+import com.tungstun.security.domain.user.User;
 
 import javax.persistence.*;
 import java.util.List;
@@ -25,10 +25,10 @@ public class Person {
     @Column(name = "phone_number")
     private String phoneNumber;
 
-    @OneToOne(cascade = CascadeType.ALL)
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REFRESH})
     @JsonIgnore
     private User user;
-
     @JsonBackReference
     @OneToMany(
             mappedBy = "customer",
@@ -74,5 +74,16 @@ public class Person {
 
     public boolean removeBill(Bill bill) {
         return this.bills.remove(bill);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", user=" + user +
+                ", bills=" + bills +
+                '}';
     }
 }

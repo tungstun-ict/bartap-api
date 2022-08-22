@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get orders")
     void getOrders() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -32,7 +32,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get orders not allowed")
     void getOrdersNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -44,7 +44,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get orders of session")
     void getOrdersOfSession() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -62,7 +62,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get orders of session not allowed")
     void getOrdersOfSessionsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -74,7 +74,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get order of session")
     void getOrderOfSession() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -92,7 +92,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get order of session not allowed")
     void getOrderOfSessionsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -104,7 +104,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get orders of bill")
     void getOrdersOfBill() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -122,7 +122,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get orders of bill not allowed")
     void getOrdersOfBillsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -134,7 +134,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get order of bill")
     void getOrderOfBill() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -152,7 +152,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get order of bill not allowed")
     void getOrderOfBillsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -164,7 +164,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Delete order of bill")
     void deleteOrderOfBill() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -176,7 +176,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Delete order of bill not allowed")
     void deleteOrderOfBillsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -188,7 +188,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Add order to bill")
     void addOrderToBill() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -211,7 +211,7 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Add order to bill not allowed")
     void addOrderToBillsNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();

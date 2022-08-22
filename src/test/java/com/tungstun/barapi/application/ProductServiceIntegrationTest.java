@@ -43,9 +43,9 @@ class ProductServiceIntegrationTest {
     @BeforeEach
     void setup() {
         bar = new BarBuilder().build();
-        category = categoryRepository.save(new Category("Drinks", ProductType.DRINK));
-        category2 = categoryRepository.save(new Category("Food", ProductType.FOOD));
-        category3 = categoryRepository.save(new Category("Other", ProductType.OTHER));
+        category = categoryRepository.save(new Category(123L, "Drinks", ProductType.DRINK));
+        category2 = categoryRepository.save(new Category(123L, "Food", ProductType.FOOD));
+        category3 = categoryRepository.save(new Category(123L, "Other", ProductType.OTHER));
         bar.addCategory(category);
         bar.addCategory(category2);
         bar.addCategory(category3);
@@ -95,14 +95,13 @@ class ProductServiceIntegrationTest {
         request.price = 2.5;
         request.size = 250d;
         request.categoryId = category.getId();
-        categoryRepository.findAll().forEach(c -> System.out.println(c.getId()));
 
         Product resProduct = service.addProductToBar(bar.getId(), request);
 
         assertEquals(request.name, resProduct.getName());
         assertEquals(request.brand, resProduct.getBrand());
         assertEquals(request.isFavorite, resProduct.isFavorite());
-        assertEquals(request.price, resProduct.getPrice());
+        assertEquals(request.price, resProduct.getPrice().amount().doubleValue());
         assertEquals(request.size, resProduct.getSize());
     }
 
@@ -122,7 +121,7 @@ class ProductServiceIntegrationTest {
         assertEquals(request.name, resProduct.getName());
         assertEquals(request.brand, resProduct.getBrand());
         assertEquals(request.isFavorite, resProduct.isFavorite());
-        assertEquals(request.price, resProduct.getPrice());
+        assertEquals(request.price, resProduct.getPrice().amount().doubleValue());
         assertEquals(request.size, resProduct.getSize());
     }
 

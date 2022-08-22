@@ -35,7 +35,7 @@ class StockServiceIntegrationTest{
     @BeforeEach
     void setUp() {
         Bar bar = new BarBuilder().build();
-        Category category = new Category("Drinks", ProductType.DRINK);
+        Category category = new Category(123L, "Drinks", ProductType.DRINK);
         bar.addCategory(category);
         Product product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)

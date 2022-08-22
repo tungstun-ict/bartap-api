@@ -9,7 +9,7 @@ import java.util.List;
 
 @Embeddable
 public class Prices {
-    @OneToMany(cascade = CascadeType.PERSIST)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "product_price",
             joinColumns = @JoinColumn(name = "product_id"),

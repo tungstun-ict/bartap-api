@@ -43,7 +43,7 @@ public class BarController {
     }
 
     @GetMapping("/{barId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
             value = "Finds bar by id",
             notes = "Provide id to look up a specific bar",
@@ -71,7 +71,7 @@ public class BarController {
     }
 
     @PutMapping("/{barId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
             value = "Updates bar",
             notes = "Provide id of bar to update the bar with bar information in the request body",
@@ -87,7 +87,7 @@ public class BarController {
 
 
     @DeleteMapping("/{barId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
             value = "Deletes a bar",
             notes = "Provide id to delete a specific bar"

@@ -30,28 +30,19 @@ class CategoryServiceTest {
     private static Bar bar;
     private static Category category;
 
-    @BeforeEach
-    void setup() throws EntityNotFoundException {
-        bar = new BarBuilder().build();
-        category = new Category("category", ProductType.FOOD);
-        ReflectionTestUtils.setField(category, "id", 123L);
-        bar.addCategory(category);
-        when(barService.getBar(123L)).thenReturn(bar);
-    }
-
     private static Stream<Arguments> provideBarsWithCategories() {
         Bar bar = new BarBuilder().build();
-        List<Category> bar2Categories = List.of(new Category("category", ProductType.DRINK));
+        List<Category> bar2Categories = List.of(new Category(123L, "category", ProductType.DRINK));
         Bar bar2 = new Bar(null, null, null, null, bar2Categories);
         List<Category> bar3Categories = List.of(
-                new Category("category", ProductType.DRINK),
-                new Category("category", ProductType.FOOD)
+                new Category(123L, "category", ProductType.DRINK),
+                new Category(123L, "category", ProductType.FOOD)
         );
         Bar bar3 = new Bar(null, null, null, null, bar3Categories);
         List<Category> bar4Categories = List.of(
-                new Category("category", ProductType.DRINK),
-                new Category("category", ProductType.FOOD),
-                new Category("category", ProductType.OTHER)
+                new Category(123L, "category", ProductType.DRINK),
+                new Category(123L, "category", ProductType.FOOD),
+                new Category(123L, "category", ProductType.OTHER)
         );
         Bar bar4 = new Bar(null, null, null, null, bar4Categories);
         return Stream.of(
@@ -63,9 +54,9 @@ class CategoryServiceTest {
     }
 
     private static Stream<Arguments> provideBarsWithCategoriesAndType() {
-        Category drink = new Category("category", ProductType.DRINK);
-        Category food = new Category("category", ProductType.FOOD);
-        Category other = new Category("category", ProductType.OTHER);
+        Category drink = new Category(123L, "category", ProductType.DRINK);
+        Category food = new Category(123L, "category", ProductType.FOOD);
+        Category other = new Category(123L, "category", ProductType.OTHER);
 
         List<Category> barCategories = List.of(drink, food, other);
         Bar bar = new Bar(null, null, null, null, barCategories);
@@ -74,6 +65,15 @@ class CategoryServiceTest {
                 Arguments.of(bar, List.of(drink), "DRINK"),
                 Arguments.of(bar, List.of(other), "OTHER")
         );
+    }
+
+    @BeforeEach
+    void setup() throws EntityNotFoundException {
+        bar = new BarBuilder().build();
+        category = new Category(123L, "category", ProductType.FOOD);
+        ReflectionTestUtils.setField(category, "id", 123L);
+        bar.addCategory(category);
+        when(barService.getBar(123L)).thenReturn(bar);
     }
 
     @ParameterizedTest
@@ -149,7 +149,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Update existing category name bar")
     void updateExistingCategory() throws EntityNotFoundException {
-        when(repository.save(any())).thenReturn(new Category("categoryNew", ProductType.FOOD));
+        when(repository.save(any())).thenReturn(new Category(123L, "categoryNew", ProductType.FOOD));
         CategoryRequest request = new CategoryRequest();
         request.name = "categoryNew";
         request.productType = ProductType.FOOD.toString();
@@ -162,10 +162,10 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Update existing category name with already existing category in bar")
     void updateExistingDuplicateCategory() {
-        Category category2 = new Category("categoryNew", ProductType.FOOD);
+        Category category2 = new Category(123L, "categoryNew", ProductType.FOOD);
         ReflectionTestUtils.setField(category2, "id", 321L);
         bar.addCategory(category2);
-        when(repository.save(any())).thenReturn(new Category("categoryNew", ProductType.FOOD));
+        when(repository.save(any())).thenReturn(new Category(123L, "categoryNew", ProductType.FOOD));
         CategoryRequest request = new CategoryRequest();
         request.name = "categoryNew";
         request.productType = ProductType.FOOD.toString();

@@ -25,4 +25,7 @@ public class UserRegistrationRequest {
     @ApiModelProperty(notes = "The user's mail address")
     @NotBlank
     public String mail;
+
+    @ApiModelProperty(notes = "The user's phone number")
+    public String phoneNumber;
 }

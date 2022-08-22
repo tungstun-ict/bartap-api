@@ -1,13 +1,12 @@
 package com.tungstun.security.presentation.dto.converter;
 
-import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserBarAuthorization;
+import com.tungstun.security.domain.user.User;
 import com.tungstun.security.presentation.dto.response.AccountResponse;
 import com.tungstun.security.presentation.dto.response.UserAccountSummaryResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
@@ -35,15 +34,12 @@ public class UserConverter {
         response.setEmail(user.getMail());
         response.setFirstName(user.getFirstName());
         response.setLastName(user.getLastName());
-        response.setConnectedBars(this.getBarIds(user));
+        response.setConnectedBars(getBarIds(user));
         return response;
     }
 
-    private List<Long> getBarIds(User user) {
-        return user.getUserBarAuthorizations().stream()
-                .map(UserBarAuthorization::getBar)
-                .map(Bar::getId)
-                .collect(Collectors.toList());
+    private Set<Long> getBarIds(User user) {
+        return user.getAuthorizations().keySet();
     }
 
     public List<AccountResponse> convertAll(List<User> users) {

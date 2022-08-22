@@ -1,6 +1,6 @@
 package com.tungstun.security.util.account;
 
-import com.tungstun.security.data.repository.SpringUserRepository;
+import com.tungstun.security.domain.user.UserRepository;
 import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
 import com.tungstun.security.util.validation.NonSpaceValidator;
 import org.springframework.stereotype.Component;
@@ -9,9 +9,9 @@ import javax.security.auth.login.AccountException;
 
 @Component
 public class RegistrationValidator {
-    private final SpringUserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public RegistrationValidator(SpringUserRepository userRepository) {
+    public RegistrationValidator(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
@@ -53,7 +53,7 @@ public class RegistrationValidator {
     }
 
     private void validateUniqueMail(String mail) throws AccountException {
-        boolean exists = this.userRepository.findByMail(mail).isPresent();;
+        boolean exists = this.userRepository.findByMail(mail).isPresent();
         if (exists) throw new AccountException("Account with mail already exists");
     }
 }

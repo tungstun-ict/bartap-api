@@ -14,7 +14,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get products")
     void getProducts() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -27,13 +27,13 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$[0].name").value(product.getName()))
                 .andExpect(jsonPath("$[0].brand").value(product.getBrand()))
                 .andExpect(jsonPath("$[0].size").value(product.getSize()))
-                .andExpect(jsonPath("$[0].price").value(product.getPrice()))
+                .andExpect(jsonPath("$[0].price").value(product.getPrice().amount().doubleValue()))
                 .andExpect(jsonPath("$[0].favorite").value(product.isFavorite()))
                 .andExpect(jsonPath("$[0].category").exists());
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get products not allowed")
     void getProductsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -45,7 +45,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get product")
     void getProduct() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -58,13 +58,13 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$.name").value(product.getName()))
                 .andExpect(jsonPath("$.brand").value(product.getBrand()))
                 .andExpect(jsonPath("$.size").value(product.getSize()))
-                .andExpect(jsonPath("$.price").value(product.getPrice()))
+                .andExpect(jsonPath("$.price").value(product.getPrice().amount().doubleValue()))
                 .andExpect(jsonPath("$.favorite").value(product.isFavorite()))
                 .andExpect(jsonPath("$.category").exists());
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get product not allowed")
     void getProductNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -76,7 +76,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Create product")
     void createProduct() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -105,7 +105,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Create product not allowed")
     void createProductNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -126,7 +126,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Update product")
     void updateProduct() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -155,7 +155,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Update product not allowed")
     void updateProductNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -176,7 +176,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Delete product")
     void deleteProduct() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -188,7 +188,7 @@ class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Delete product not allowed")
     void deleteProductNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders

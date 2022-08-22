@@ -19,7 +19,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     private SpringSessionRepository repository;
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get sessions")
     void getSessions() throws Exception {
         session.lock();
@@ -40,7 +40,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get sessions Not Allowed")
     void getSessionsNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -52,7 +52,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get session")
     void getSession() throws Exception {
         session.lock();
@@ -73,7 +73,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get session Not Allowed")
     void getSessionNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -85,7 +85,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get active session")
     void getActiveSession() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -102,12 +102,11 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Get active session when no session is active")
     void getActiveSessionWhenNoActiveSession() throws Exception {
         session.lock();
         repository.save(session);
-        System.out.println(repository.findById(session.getId()).get().isActive());
 
         RequestBuilder request = MockMvcRequestBuilders
                 .get(String.format("/api/bars/%s/sessions/active", bar.getId()))
@@ -118,7 +117,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Get active session Not Allowed")
     void getActiveSessionNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -130,7 +129,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Create session when no session is active")
     void createSession() throws Exception {
         session.lock();
@@ -150,7 +149,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Create session Not Allowed")
     void createActiveSessionNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -166,7 +165,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Update session")
     void updateSession() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -185,7 +184,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Update session not editable")
     void updateSessionNotEditable() throws Exception {
         session.lock();
@@ -203,7 +202,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Update session Not Allowed")
     void updateActiveSessionNotAllowed() throws Exception {
         JSONObject jsonObject = new JSONObject();
@@ -219,7 +218,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("End session")
     void endSession() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -231,7 +230,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("End session not editable")
     void endSessionNotEditable() throws Exception {
         session.lock();
@@ -245,7 +244,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("End session Not Allowed")
     void endSessionNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -257,7 +256,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Lock session")
     void lockSession() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -269,7 +268,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Lock session Not Allowed")
     void lockSessionNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -281,7 +280,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "testUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "owner")
     @DisplayName("Delete session")
     void deleteSession() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders
@@ -293,7 +292,7 @@ class SessionControllerIntegrationTest extends BarIntegrationTestLifeCycle {
     }
 
     @Test
-    @WithMockUser(username = "notConnectedUser", roles = "BAR_OWNER")
+    @WithMockUser(username = "anonymous")
     @DisplayName("Delete session Not Allowed")
     void deleteSessionNotAllowed() throws Exception {
         RequestBuilder request = MockMvcRequestBuilders

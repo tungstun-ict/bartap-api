@@ -7,7 +7,7 @@ import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.UserService;
-import com.tungstun.security.data.model.User;
+import com.tungstun.security.domain.user.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -83,7 +83,7 @@ class BarServiceTest {
         when(repository.save(any(Bar.class)))
                 .thenReturn(bar);
         when(userService.loadUserByUsername(ownerName))
-                .thenReturn(new User(ownerName, "", "", "", "", new ArrayList<>()));
+                .thenReturn(new User(ownerName, "", "", "", "", "+310612345678", new ArrayList<>()));
 
         Bar resBars = service.addBar(request, ownerName);
 
@@ -100,7 +100,7 @@ class BarServiceTest {
         Person person = new Person(
                 "name",
                 "0612345678",
-                new User("name", "", "", "", "",  new ArrayList<>()),
+                new User("name", "", "", "", "",  "+310612345678", new ArrayList<>()),
                 new ArrayList<>());
         Bar bar = new BarBuilder()
                 .setAddress(request.address)
@@ -129,7 +129,7 @@ class BarServiceTest {
         Person person = new Person(
                 "name",
                 "0612345678",
-                new User("name", "", "", "", "",  new ArrayList<>()),
+                new User("name", "", "", "", "",  "+310612345678", new ArrayList<>()),
                 new ArrayList<>());
         Bar bar = new BarBuilder()
                 .setAddress("address")

@@ -3,7 +3,7 @@ package com.tungstun.security.presentation.dto.response;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.List;
+import java.util.Set;
 
 @ApiModel(description = "Response details of customer")
 public class AccountResponse {
@@ -23,11 +23,11 @@ public class AccountResponse {
     private String lastName;
 
     @ApiModelProperty(notes = "Users connected bars")
-    private List<Long> connectedBars;
+    private Set<Long> connectedBars;
 
     public AccountResponse() {}
 
-    public AccountResponse(Long id, String email, String username, String firstName, String lastName, List<Long> connectedBars) {
+    public AccountResponse(Long id, String email, String username, String firstName, String lastName, Set<Long> connectedBars) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -76,11 +76,11 @@ public class AccountResponse {
         this.lastName = lastName;
     }
 
-    public List<Long> getConnectedBars() {
+    public Set<Long> getConnectedBars() {
         return connectedBars;
     }
 
-    public void setConnectedBars(List<Long> connectedBars) {
+    public void setConnectedBars(Set<Long> connectedBars) {
         this.connectedBars = connectedBars;
     }
 }

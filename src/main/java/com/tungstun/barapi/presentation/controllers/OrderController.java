@@ -37,7 +37,7 @@ public class OrderController {
     }
 
     @GetMapping("orders")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds all orders of bar",
             notes = "Provide id of bar to look up all orders that are linked to the bar",
@@ -52,7 +52,7 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/orders")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds all orders of session of bar",
             notes = "Provide id of bar and session to look up all orders that are linked session of the bar",
@@ -68,7 +68,7 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/orders/{orderId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds order of session of bar",
             notes = "Provide id of bar, session and order to look up specific order of session of the bar",
@@ -84,7 +84,7 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds orders of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to look up orders of bill of session of the bar",
@@ -100,7 +100,7 @@ public class OrderController {
     }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds order of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to look up specific order of bill of session of the bar",
@@ -117,7 +117,7 @@ public class OrderController {
     }
 
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Deletes order of bill of session of bar",
             notes = "Provide id of bar, session, bill and order to delete specific order of bill of session of the bar"
@@ -133,7 +133,7 @@ public class OrderController {
     }
 
     @PutMapping("sessions/{sessionId}/bills/{billId}")
-    @PreAuthorize("hasPermission(#barId, {'ROLE_BAR_OWNER','ROLE_BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Create new order for bill of session of bar",
             notes = "Provide id of bar, session and bill to create a new order with information from request body",

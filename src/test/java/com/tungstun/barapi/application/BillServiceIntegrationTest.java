@@ -239,7 +239,7 @@ class BillServiceIntegrationTest {
 
         service.removeOrderFromBill(bill, order);
 
-        assertFalse(repository.getOne(bill.getId()).getOrders().contains(order));
+        assertFalse(repository.getById(bill.getId()).getOrders().contains(order));
     }
 
 }

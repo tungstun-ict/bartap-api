@@ -28,7 +28,7 @@ public class RegistrationController {
     public ResponseEntity<Void> register(
             @Valid @RequestBody UserRegistrationRequest userRegistrationRequest
     ) throws AccountException {
-        this.userService.registerBarOwner(userRegistrationRequest);
+        this.userService.registerUser(userRegistrationRequest);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }

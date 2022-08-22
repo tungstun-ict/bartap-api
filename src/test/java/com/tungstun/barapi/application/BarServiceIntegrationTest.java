@@ -7,10 +7,8 @@ import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
-import com.tungstun.security.data.model.User;
-import com.tungstun.security.data.model.UserBarAuthorization;
-import com.tungstun.security.data.model.UserRole;
-import com.tungstun.security.data.repository.SpringUserRepository;
+import com.tungstun.security.domain.user.User;
+import com.tungstun.security.domain.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -31,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 public class BarServiceIntegrationTest {
     @Autowired
-    private SpringUserRepository userRepository;
+    private UserRepository userRepository;
     @Autowired
     private SpringPersonRepository personRepository;
     @Autowired
@@ -62,8 +60,8 @@ public class BarServiceIntegrationTest {
     void getAllBarsOfBarOwner_ReturnsBars()  {
         repository.save(new BarBuilder().build()); //Not owned bar
         Bar bar = repository.save(new BarBuilder().build());
-        User user = new User("user", "", "", "", "", new ArrayList<>());
-        user.addUserBarAuthorizations(new UserBarAuthorization(bar, user, UserRole.ROLE_BAR_OWNER));
+        User user = new User("user", "", "", "", "", "+310612345678", new ArrayList<>());
+        user.newBarAuthorization(bar.getId());
         user = userRepository.save(user);
 
         List<Bar> resBars = service.getAllBarOwnerBars(user.getUsername());
@@ -95,7 +93,7 @@ public class BarServiceIntegrationTest {
     @DisplayName("Create bar returns bar")
     void createBar_ReturnsBar(){
         BarRequest request = new BarRequest("address", "name", "mail", "0612345678");
-        User user = userRepository.save(new User("user", "", "", "", "", new ArrayList<>()));
+        User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
 
         assertDoesNotThrow(() -> service.addBar(request, user.getUsername()));
     }
@@ -103,7 +101,7 @@ public class BarServiceIntegrationTest {
     @Test
     @DisplayName("Create existing bar throws DuplicateRequestException")
     void createBarWithExistingName_ThrowDuplicateRequest() {
-        User user = userRepository.save(new User("user", "", "", "", "", new ArrayList<>()));
+        User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
         Person person = personRepository.save(new Person(
                 "name",
                 "0612345678",
@@ -125,7 +123,7 @@ public class BarServiceIntegrationTest {
     @Test
     @DisplayName("Update bar returns updated bar")
     void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
-        User user = userRepository.save(new User("user", "", "", "", "", new ArrayList<>()));
+        User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
         Person person = personRepository.save(new Person(
                 "name",
                 "0612345678",
