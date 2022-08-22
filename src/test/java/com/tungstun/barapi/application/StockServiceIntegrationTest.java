@@ -37,11 +37,9 @@ class StockServiceIntegrationTest{
         Bar bar = new BarBuilder().build();
         Category category = new Category("Drinks", ProductType.DRINK);
         bar.addCategory(category);
-        Product product = new ProductBuilder()
-                .setName("product")
+        Product product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)
                 .setSize(100)
-                .setCategory(category)
                 .build();
         bar.addProduct(product);
         bar = barRepository.save(bar);

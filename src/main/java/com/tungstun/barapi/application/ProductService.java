@@ -1,12 +1,13 @@
 package com.tungstun.barapi.application;
 
-import com.tungstun.barapi.data.SpringProductRepository;
 import com.tungstun.barapi.domain.bar.Bar;
+import com.tungstun.barapi.domain.common.money.Money;
 import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.search.engine.product.ProductSearchEngine;
+import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import org.springframework.stereotype.Service;
 
@@ -85,13 +86,11 @@ public class ProductService {
 
     private Product buildProduct(Long barId, ProductRequest productRequest) throws EntityNotFoundException {
         Category category = this.categoryService.getCategoryOfBar(barId, productRequest.categoryId);
-        return new ProductBuilder()
-                .setName(productRequest.name)
+        return new ProductBuilder(123L, productRequest.name, category)
                 .setBrand(productRequest.brand)
                 .setSize(productRequest.size)
                 .setPrice(productRequest.price)
                 .setFavorite(productRequest.isFavorite)
-                .setCategory(category)
                 .build();
     }
 
@@ -101,7 +100,7 @@ public class ProductService {
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
         product.setSize(productRequest.size);
-        product.setPrice(productRequest.price);
+        product.setPrice(new Money(productRequest.price));
         product.setFavorite(productRequest.isFavorite);
         product.setCategory(category);
         return this.productRepository.save(product);

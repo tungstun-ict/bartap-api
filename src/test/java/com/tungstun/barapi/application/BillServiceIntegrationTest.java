@@ -233,7 +233,7 @@ class BillServiceIntegrationTest {
     @Test
     @DisplayName("Remove order from bill")
     void removeOrderFromBill() {
-        bill.addOrder(new ProductBuilder().build(), 1, person);
+        bill.addOrder(new ProductBuilder(123L, "", null).build(), 1, person);
         bill = repository.save(bill);
         Order order = bill.getOrders().get(0);
 

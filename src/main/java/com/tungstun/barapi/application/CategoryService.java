@@ -1,9 +1,9 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.product.Category;
+import com.tungstun.barapi.domain.product.CategoryRepository;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @Transactional
 @Service
 public class CategoryService {
-    private final SpringCategoryRepository springCategoryRepository;
+    private final CategoryRepository springCategoryRepository;
     private final BarService barService;
 
-    public CategoryService(SpringCategoryRepository springCategoryRepository, BarService barService) {
+    public CategoryService(CategoryRepository springCategoryRepository, BarService barService) {
         this.springCategoryRepository = springCategoryRepository;
         this.barService = barService;
     }

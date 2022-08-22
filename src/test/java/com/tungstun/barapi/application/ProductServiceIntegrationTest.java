@@ -1,7 +1,6 @@
 package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.product.Category;
@@ -14,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.persistence.EntityNotFoundException;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class ProductServiceIntegrationTest {
     @Autowired
-    private SpringCategoryRepository categoryRepository;
+    private JpaRepository<Category, Long> categoryRepository;
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
@@ -49,23 +49,18 @@ class ProductServiceIntegrationTest {
         bar.addCategory(category);
         bar.addCategory(category2);
         bar.addCategory(category3);
-        product = new ProductBuilder()
-                .setName("product")
+
+        product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)
                 .setSize(100)
-                .setCategory(category)
                 .build();
-        product2 = new ProductBuilder()
-                .setName("product2")
+        product2 = new ProductBuilder(123L, "product2", category2)
                 .setPrice(2.0)
                 .setSize(200)
-                .setCategory(category2)
                 .build();
-        product3 = new ProductBuilder()
-                .setName("product3")
+        product3 = new ProductBuilder(123L, "product3", category3)
                 .setPrice(3.0)
                 .setSize(300)
-                .setCategory(category3)
                 .build();
         bar.addProduct(product);
         bar.addProduct(product2);

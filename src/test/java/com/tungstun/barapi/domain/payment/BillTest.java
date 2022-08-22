@@ -2,6 +2,7 @@ package com.tungstun.barapi.domain.payment;
 
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.domain.product.ProductBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -20,7 +21,7 @@ class BillTest {
                 Arguments.of(new Bill(null, null, List.of(), false), 0),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 1,
                                 null, null
                         )
@@ -29,7 +30,7 @@ class BillTest {
                 ),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 2,
                                 null, null
                         )
@@ -38,12 +39,12 @@ class BillTest {
                 ),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 1,
                                 null, null
                         ),
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 1,
                                 null, null
                         )
@@ -51,12 +52,12 @@ class BillTest {
                         2),
                 Arguments.of(new Bill(null, null, List.of(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 2,
                                 null, null
                         ),
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 1,
                                 null, null
                         )
@@ -70,7 +71,7 @@ class BillTest {
                 Arguments.of(new Bill(null, null, new ArrayList<>(), false)),
                 Arguments.of(new Bill(null, null, new ArrayList<>(Collections.singletonList(
                         new Order(
-                                new Product(null, null, 0, 1.0, false, null),
+                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
                                 1,
                                 null, null
                         )
@@ -81,9 +82,9 @@ class BillTest {
 
     static Stream<Arguments> provideIllegalProductArgs() {
         return Stream.of(
-                Arguments.of(new Product(null, null, 0, 1.0, false, null), 1, null),
-                Arguments.of(new Product(null, null, 0, 1.0, false, null), 0, new Person()),
-                Arguments.of(new Product(null, null, 0, 1.0, false, null), -1, new Person()),
+                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), 1, null),
+                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), 0, new Person()),
+                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), -1, new Person()),
                 Arguments.of(null, 1, new Person())
         );
     }
@@ -101,7 +102,7 @@ class BillTest {
     @MethodSource("provideAddBills")
     @DisplayName("Add order to bill")
     void addOrderToBill(Bill bill) {
-        Product product = new Product(null, null, 0, 1.0, false, null);
+        Product product = new ProductBuilder(123L, "", null).setPrice(1.0).build();
         Person person = new Person();
 
         boolean isSuccessful = bill.addOrder(product, 1, person);
@@ -114,7 +115,7 @@ class BillTest {
     @DisplayName("Add product to bill with illegal arguments")
     void addWithIllegalArguments() {
         Bill bill = new Bill(null, null, new ArrayList<>(), false);
-        Product product = new Product(null, null, 0, 1.0, false, null);
+        Product product = new ProductBuilder(123L, "", null).setPrice(1.0).build();
 
         boolean isSuccessful = bill.addOrder(product, 1, null);
 

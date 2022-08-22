@@ -1,6 +1,7 @@
 package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.tungstun.barapi.domain.common.money.Money;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
@@ -10,12 +11,15 @@ import javax.persistence.*;
 @Table(name = "product")
 @Where(clause = "deleted = false")
 public class Product {
+    @Column(name = "deleted")
+    private final boolean deleted = Boolean.FALSE;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
-    @Column(name = "deleted")
-    private final boolean deleted = Boolean.FALSE;
+    @Column(name = "bar_id")
+    private Long barId;
 
     @Column(name = "name")
     private String name;
@@ -26,22 +30,29 @@ public class Product {
     @Column(name = "size")
     private double size;
 
-    @Column(name = "price")
-    private double price;
-
     @Column(name = "is_favorite")
     private boolean isFavorite;
+
+    @Column(name = "type")
+    @Enumerated(EnumType.STRING)
+    private ProductType type;
+
+    @Embedded
+    private Prices prices;
 
     @ManyToOne
     private Category category;
 
     public Product() { }
-    public Product(String name, String brand, double size, double price, boolean isFavorite, Category category) {
+
+    public Product(Long barId, String name, String brand, double size, boolean isFavorite, ProductType type, Money price, Category category) {
+        this.barId = barId;
         this.name = name;
         this.brand = brand;
         this.size = size;
-        this.price = price;
         this.isFavorite = isFavorite;
+        this.type = type;
+        this.prices = new Prices(price);
         this.category = category;
     }
 
@@ -49,39 +60,67 @@ public class Product {
         return id;
     }
 
+    public Long getBarId() {
+        return barId;
+    }
+
+    public void setBarId(Long barId) {
+        this.barId = barId;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getBrand() {
         return brand;
     }
 
+    public void setBrand(String brand) {
+        this.brand = brand;
+    }
+
     public double getSize() {
         return size;
     }
 
-    public double getPrice() {
-        return price;
+    public void setSize(double size) {
+        this.size = size;
     }
 
     public boolean isFavorite() {
         return isFavorite;
     }
 
+    public void setFavorite(boolean favorite) {
+        isFavorite = favorite;
+    }
+
+    public ProductType getType() {
+        return type;
+    }
+
+    public void setType(ProductType type) {
+        this.type = type;
+    }
+
+    public Money getPrice() {
+        return prices.currentPrice().getMoney();
+    }
+
+    public void setPrice(Money price) {
+        this.prices.updatePrice(price);
+    }
+
     public Category getCategory() {
         return category;
     }
 
-    public void setName(String name) { this.name = name; }
-
-    public void setBrand(String brand) { this.brand = brand; }
-
-    public void setSize(double size) { this.size = size; }
-
-    public void setPrice(double price) { this.price = price; }
-
-    public void setFavorite(boolean favorite) { isFavorite = favorite; }
-
-    public void setCategory(Category category) { this.category = category; }
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }

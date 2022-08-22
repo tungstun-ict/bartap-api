@@ -73,7 +73,7 @@ public class Bill {
 
     public double calculateTotalPrice() {
         return this.orders.stream()
-                .mapToDouble(order -> order.getProduct().getPrice() * order.getAmount())
+                .mapToDouble(order -> order.getProduct().getPrice().amount().doubleValue() * order.getAmount())
                 .sum();
     }
 }

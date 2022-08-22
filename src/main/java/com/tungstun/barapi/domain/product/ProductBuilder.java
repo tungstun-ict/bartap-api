@@ -1,25 +1,21 @@
 package com.tungstun.barapi.domain.product;
 
+import com.tungstun.barapi.domain.common.money.Money;
+
 public class ProductBuilder {
-    private String name;
-    private String brand;
-    private double size;
-    private double price;
-    private boolean isFavorite;
-    private Category category;
+    private final Long barId;
+    private final String name;
+    private final Category category;
+    private String brand = "";
+    private double size = 0;
+    private boolean isFavorite = false;
+    private Money price = new Money(0.0);
+    private ProductType type = ProductType.OTHER;
 
-    public ProductBuilder() {
-        this.name = "Unknown";
-        this.brand = "Unknown";
-        this.size = 0;
-        this.price = 0.0;
-        this.isFavorite = false;
-        this.category = null;
-    }
-
-    public ProductBuilder setName(String name) {
+    public ProductBuilder(Long barId, String name, Category category) {
+        this.barId = barId;
         this.name = name;
-        return this;
+        this.category = category;
     }
 
     public ProductBuilder setBrand(String brand) {
@@ -32,28 +28,30 @@ public class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder setPrice(double price) {
-        this.price = price;
-        return this;
-    }
-
     public ProductBuilder setFavorite(boolean favorite) {
         isFavorite = favorite;
         return this;
     }
 
-    public ProductBuilder setCategory(Category category) {
-        this.category = category;
+    public ProductBuilder setPrice(Double price) {
+        this.price = new Money(price);
         return this;
     }
 
-    public Product build(){
+    public ProductBuilder setType(ProductType type) {
+        this.type = type;
+        return this;
+    }
+
+    public Product build() {
         return new Product(
+                this.barId,
                 this.name,
                 this.brand,
                 this.size,
-                this.price,
                 this.isFavorite,
+                this.type,
+                this.price,
                 this.category);
     }
 }

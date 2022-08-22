@@ -14,7 +14,7 @@ public class ProductConverter {
         response.setId(product.getId());
         response.setName(product.getName());
         response.setSize(product.getSize());
-        response.setPrice(product.getPrice());
+        response.setPrice(product.getPrice().amount().doubleValue());
         response.setFavorite(product.isFavorite());
         response.setBrand(product.getBrand());
         response.setCategory(product.getCategory());

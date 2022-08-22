@@ -2,7 +2,6 @@ package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringBarRepository;
 import com.tungstun.barapi.data.SpringBillRepository;
-import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.data.SpringSessionRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -11,10 +10,7 @@ import com.tungstun.barapi.domain.payment.BillFactory;
 import com.tungstun.barapi.domain.payment.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
-import com.tungstun.barapi.domain.product.Category;
-import com.tungstun.barapi.domain.product.Product;
-import com.tungstun.barapi.domain.product.ProductBuilder;
-import com.tungstun.barapi.domain.product.ProductType;
+import com.tungstun.barapi.domain.product.*;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.security.data.model.User;
@@ -35,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class OrderServiceIntegrationTest {
     @Autowired
-    private SpringCategoryRepository categoryRepository;
+    private CategoryRepository categoryRepository;
     @Autowired
     private SpringSessionRepository sessionRepository;
     @Autowired
@@ -63,11 +59,9 @@ class OrderServiceIntegrationTest {
         bar = new BarBuilder().build();
         category = categoryRepository.save(new Category("Drinks", ProductType.DRINK));
         bar.addCategory(category);
-        product = new ProductBuilder()
-                .setName("product")
+        product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)
                 .setSize(100)
-                .setCategory(category)
                 .build();
         bar.addProduct(product);
         customer = new PersonBuilder().setName("testPerson").build();

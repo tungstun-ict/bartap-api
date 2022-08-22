@@ -2,13 +2,13 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
+import com.tungstun.barapi.port.persistence.category.SpringCategoryRepository;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -197,8 +197,7 @@ public class CategoryServiceIntegrationTest {
     @Test
     @DisplayName("Delete existing category in bar sets products of it to null category")
     void deleteExistingCategory_SetsProductsCategoriesOfItToNull() throws EntityNotFoundException {
-        Product product = new ProductBuilder()
-                .setCategory(category)
+        Product product = new ProductBuilder(123L, "name", category)
                 .build();
         bar.addProduct(product);
 

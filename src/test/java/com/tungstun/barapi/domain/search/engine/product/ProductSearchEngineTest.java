@@ -21,20 +21,20 @@ class ProductSearchEngineTest {
     void setUp() {
         engine = new ProductSearchEngine(new JaccardStringSimilarityComparer());
         source = List.of(
-                new ProductBuilder().setName("Pils vaasje").setBrand("Heineken").build(),
-                new ProductBuilder().setName("Pils fluitje").setBrand("Heineken").build(),
-                new ProductBuilder().setName("Pils pitcher").setBrand("Heineken").build(),
-                new ProductBuilder().setName("Pils vaasje").setBrand("Amstel").build(),
-                new ProductBuilder().setName("Pils fluitje").setBrand("Amstel").build(),
-                new ProductBuilder().setName("Pils pitcher").setBrand("Amstel").build(),
-                new ProductBuilder().setName("BBQ borrelnootjes").setBrand("Duyvis").build(),
-                new ProductBuilder().setName("Tijger borrelnootjes").setBrand("Duyvis").build(),
-                new ProductBuilder().setName("Chardonnay").setBrand("Stoney Creek").build(),
-                new ProductBuilder().setName("Sauvignon blanc").setBrand("Stoney Creek").build(),
-                new ProductBuilder().setName("Juicy cider").setBrand("Apple bandit").build(),
-                new ProductBuilder().setName("Classic cider").setBrand("Apple bandit").build(),
-                new ProductBuilder().setName("Bessen Jenever").setBrand("Hooghoudt").build(),
-                new ProductBuilder().setName("Graan Jenever").setBrand("Hooghoudt").build()
+                new ProductBuilder(123L, "Pils vaasje", null).setBrand("Heineken").build(),
+                new ProductBuilder(123L, "Pils fluitje", null).setBrand("Heineken").build(),
+                new ProductBuilder(123L, "Pils pitcher", null).setBrand("Heineken").build(),
+                new ProductBuilder(123L, "Pils vaasje", null).setBrand("Amstel").build(),
+                new ProductBuilder(123L, "Pils fluitje", null).setBrand("Amstel").build(),
+                new ProductBuilder(123L, "Pils pitcher", null).setBrand("Amstel").build(),
+                new ProductBuilder(123L, "BBQ borrelnootjes", null).setBrand("Duyvis").build(),
+                new ProductBuilder(123L, "Tijger borrelnootjes", null).setBrand("Duyvis").build(),
+                new ProductBuilder(123L, "Chardonnay", null).setBrand("Stoney Creek").build(),
+                new ProductBuilder(123L, "Sauvignon blanc", null).setBrand("Stoney Creek").build(),
+                new ProductBuilder(123L, "Juicy cider", null).setBrand("Apple bandit").build(),
+                new ProductBuilder(123L, "Classic cider", null).setBrand("Apple bandit").build(),
+                new ProductBuilder(123L, "Bessen Jenever", null).setBrand("Hooghoudt").build(),
+                new ProductBuilder(123L, "Graan Jenever", null).setBrand("Hooghoudt").build()
         );
     }
 

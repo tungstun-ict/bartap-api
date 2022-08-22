@@ -67,11 +67,9 @@ public class BarIntegrationTestLifeCycle {
     private void addProductToBar() {
         category = new Category("Drinks", ProductType.DRINK);
         bar.addCategory(category);
-        product = new ProductBuilder()
-                .setName("product")
+        product = new ProductBuilder(123L, "product", category)
                 .setPrice(1.0)
                 .setSize(100)
-                .setCategory(category)
                 .build();
         bar.addProduct(product);
     }

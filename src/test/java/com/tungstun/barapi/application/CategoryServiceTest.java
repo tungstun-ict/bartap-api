@@ -1,13 +1,9 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
-import com.tungstun.barapi.domain.product.Category;
-import com.tungstun.barapi.domain.product.Product;
-import com.tungstun.barapi.domain.product.ProductBuilder;
-import com.tungstun.barapi.domain.product.ProductType;
+import com.tungstun.barapi.domain.product.*;
 import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +24,7 @@ import static org.mockito.Mockito.when;
 
 class CategoryServiceTest {
     private static final BarService barService = mock(BarService.class);
-    private static final SpringCategoryRepository repository = mock(SpringCategoryRepository.class);
+    private static final CategoryRepository repository = mock(CategoryRepository.class);
     private static final CategoryService service = new CategoryService(repository, barService);
 
     private static Bar bar;
@@ -189,7 +185,7 @@ class CategoryServiceTest {
     @Test
     @DisplayName("Delete existing category in bar sets products of it to null category")
     void deleteExistingCategory_SetsProductsCategoriesOfItToNull() throws EntityNotFoundException {
-        Product product = new ProductBuilder().setCategory(category).build();
+        Product product = new ProductBuilder(123L, "", category).setPrice(1.0).build();
         bar.addProduct(product);
 
         service.deleteCategoryFromBar(123L, 123L);
