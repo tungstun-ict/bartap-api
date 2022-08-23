@@ -1,7 +1,6 @@
 package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.domain.common.money.Money;
 import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
@@ -9,6 +8,7 @@ import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.search.engine.product.ProductSearchEngine;
 import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
+import com.tungstun.common.money.Money;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;

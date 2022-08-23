@@ -1,6 +1,6 @@
 package com.tungstun.barapi.domain.product;
 
-import com.tungstun.barapi.domain.common.money.Money;
+import com.tungstun.common.money.Money;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.util.FieldUtils;

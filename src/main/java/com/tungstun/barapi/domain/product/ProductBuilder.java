@@ -1,6 +1,6 @@
 package com.tungstun.barapi.domain.product;
 
-import com.tungstun.barapi.domain.common.money.Money;
+import com.tungstun.common.money.Money;
 
 public class ProductBuilder {
     private final Long barId;

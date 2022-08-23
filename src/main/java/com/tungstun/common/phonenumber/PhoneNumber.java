@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain.common.phonenumber;
+package com.tungstun.common.phonenumber;
 
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;

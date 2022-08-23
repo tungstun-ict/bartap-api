@@ -1,6 +1,6 @@
 package com.tungstun.barapi.security.domain.user;
 
-import com.tungstun.exception.NotAuthorizedException;
+import com.tungstun.barapi.exceptions.NotAuthorizedException;
 import com.tungstun.security.domain.user.Authorization;
 import com.tungstun.security.domain.user.Role;
 import com.tungstun.security.domain.user.User;

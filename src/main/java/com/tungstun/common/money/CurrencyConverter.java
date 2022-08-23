@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain.common.money;
+package com.tungstun.common.money;
 
 /**
  * Interface used to convert money to another currency.

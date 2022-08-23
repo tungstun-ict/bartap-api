@@ -1,6 +1,6 @@
 package com.tungstun.barapi.domain.product;
 
-import com.tungstun.barapi.domain.common.money.Money;
+import com.tungstun.common.money.Money;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

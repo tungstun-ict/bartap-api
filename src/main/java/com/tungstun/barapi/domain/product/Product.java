@@ -1,7 +1,7 @@
 package com.tungstun.barapi.domain.product;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.domain.common.money.Money;
+import com.tungstun.common.money.Money;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;

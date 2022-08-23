@@ -1,4 +1,4 @@
-package com.tungstun.exception;
+package com.tungstun.barapi.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;

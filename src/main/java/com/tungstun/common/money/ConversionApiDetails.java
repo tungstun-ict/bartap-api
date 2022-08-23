@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain.common.money;
+package com.tungstun.common.money;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

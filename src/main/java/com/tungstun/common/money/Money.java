@@ -1,4 +1,4 @@
-package com.tungstun.barapi.domain.common.money;
+package com.tungstun.common.money;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
