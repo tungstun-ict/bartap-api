@@ -2,11 +2,11 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
+import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class PersonServiceIntegrationTest {
     @Autowired
-    private SpringPersonRepository repository;
+    private PersonRepository repository;
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired

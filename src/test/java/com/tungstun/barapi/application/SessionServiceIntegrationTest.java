@@ -2,7 +2,6 @@ package com.tungstun.barapi.application;
 
 import com.tungstun.barapi.data.SpringBarRepository;
 import com.tungstun.barapi.data.SpringBillRepository;
-import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.data.SpringSessionRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -10,6 +9,7 @@ import com.tungstun.barapi.domain.payment.Bill;
 import com.tungstun.barapi.domain.payment.BillFactory;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
+import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
@@ -35,7 +35,7 @@ class SessionServiceIntegrationTest {
     @Autowired
     private SpringBillRepository billRepository;
     @Autowired
-    private SpringPersonRepository personRepository;
+    private PersonRepository personRepository;
     @Autowired
     private SpringSessionRepository repository;
     @Autowired

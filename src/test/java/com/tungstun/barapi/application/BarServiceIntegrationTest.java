@@ -2,11 +2,11 @@ package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
+import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -32,7 +32,7 @@ public class BarServiceIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private SpringPersonRepository personRepository;
+    private PersonRepository personRepository;
     @Autowired
     private SpringBarRepository repository;
     @Autowired

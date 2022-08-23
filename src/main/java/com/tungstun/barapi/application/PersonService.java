@@ -1,10 +1,10 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
+import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +15,10 @@ import java.util.List;
 @Transactional
 @Service
 public class PersonService {
-    private final SpringPersonRepository personRepository;
+    private final PersonRepository personRepository;
     private final BarService barService;
 
-    public PersonService(SpringPersonRepository personRepository, BarService barService) {
+    public PersonService(PersonRepository personRepository, BarService barService) {
         this.personRepository = personRepository;
         this.barService = barService;
     }
