@@ -14,9 +14,6 @@ public class PersonResponse {
     @ApiModelProperty(notes = "The person's name")
     private String name;
 
-    @ApiModelProperty(notes = "The person's phone number")
-    private String phoneNumber;
-
     @ApiModelProperty(notes = "The person's user account")
     private UserAccountSummaryResponse user;
 
@@ -29,10 +26,6 @@ public class PersonResponse {
     public String getName() { return name; }
 
     public void setName(String name) { this.name = name; }
-
-    public String getPhoneNumber() { return phoneNumber; }
-
-    public void setPhoneNumber(String phonenumber) { this.phoneNumber = phonenumber; }
 
     public UserAccountSummaryResponse getUser() { return user; }
 

@@ -7,25 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PersonBuilder {
+    private final Long barId;
     private String name;
-    private String phoneNumber;
     private User user;
     private List<Bill> bills;
 
-    public PersonBuilder() {
-        this.name = null;
-        this.phoneNumber = "";
+    public PersonBuilder(Long barId, String name) {
+        this.barId = barId;
+        this.name = name;
         this.user = null;
         this.bills = new ArrayList<>();
     }
 
     public PersonBuilder setName(String name) {
         this.name = name;
-        return this;
-    }
-
-    public PersonBuilder setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
         return this;
     }
 
@@ -41,10 +36,10 @@ public class PersonBuilder {
 
     public Person build() {
         return new Person(
-                this.name,
-                this.phoneNumber,
-                this.user,
-                this.bills
+                barId,
+                name,
+                user,
+                bills
         );
     }
 }

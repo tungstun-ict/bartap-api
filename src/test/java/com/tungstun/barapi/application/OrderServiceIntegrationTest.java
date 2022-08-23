@@ -14,6 +14,7 @@ import com.tungstun.barapi.domain.product.*;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import com.tungstun.security.domain.user.User;
+import com.tungstun.security.port.persistence.user.SpringUserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,6 +39,8 @@ class OrderServiceIntegrationTest {
     private SpringBarRepository barRepository;
     @Autowired
     private SpringBillRepository billRepository;
+    @Autowired
+    private SpringUserRepository userRepository;
     @Autowired
     private OrderService service;
 
@@ -64,7 +67,7 @@ class OrderServiceIntegrationTest {
                 .setSize(100)
                 .build();
         bar.addProduct(product);
-        customer = new PersonBuilder().setName("testPerson").build();
+        customer = new PersonBuilder(123L, "name").setName("testPerson").build();
         session = sessionRepository.save(Session.create("test"));
         bill = new BillFactory(session, customer).create();
         bill.addOrder(product, 1, customer);
@@ -227,11 +230,12 @@ class OrderServiceIntegrationTest {
     @DisplayName("Add product(order) to bill")
     void addOrderToBill() throws EntityNotFoundException {
         User user = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
-        Person person = new PersonBuilder().setUser(user).build();
+        userRepository.save(user);
+        Person person = new PersonBuilder(123L, "name").setUser(user).build();
         OrderRequest request = new OrderRequest();
         request.amount = 2;
         request.productId = product.getId();
-        bar.addUser(person);
+        bar.addPerson(person);
         barRepository.save(bar);
 
         Bill resBill = service.addProductToBill(bar.getId(), session.getId(), bill.getId(), request, "testUser");

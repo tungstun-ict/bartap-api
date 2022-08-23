@@ -105,8 +105,9 @@ public class OrderService {
 
     private Person findPersonOfUser(Long barId, String username) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
-        return bar.getUsers().stream()
-                .filter(person -> person.getUser() != null && person.getUser().getUsername().equals(username))
+        return bar.getPeople().stream()
+                .filter(person -> person.getUser() != null)
+                .filter(person -> person.getUser().getUsername().equals(username))
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("No person found connected to you user account"));
     }

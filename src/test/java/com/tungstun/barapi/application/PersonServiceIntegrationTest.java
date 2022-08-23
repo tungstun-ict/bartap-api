@@ -37,12 +37,12 @@ class PersonServiceIntegrationTest {
     @BeforeEach
     void setup() {
         bar = new BarBuilder().build();
-        person = new PersonBuilder().setName("person").setPhoneNumber("0612345678").build();
-        person2 = new PersonBuilder().setName("person2").setPhoneNumber("0687654321").build();
+        person = new PersonBuilder(123L, "person").build();
+        person2 = new PersonBuilder(123L, "person2").build();
         person = repository.save(person);
         person2 = repository.save(person2);
-        bar.addUser(person);
-        bar.addUser(person2);
+        bar.addPerson(person);
+        bar.addPerson(person2);
         bar = barRepository.save(bar);
     }
 
@@ -76,8 +76,8 @@ class PersonServiceIntegrationTest {
     @Test
     @DisplayName("Get all people of bar when none")
     void getPeopleOfBarWhenNone() throws EntityNotFoundException {
-        bar.removeUser(person);
-        bar.removeUser(person2);
+        bar.removePerson(person);
+        bar.removePerson(person2);
         barRepository.save(bar);
 
         List<Person> resPeople = service.getAllPeopleOfBar(bar.getId());
@@ -118,7 +118,6 @@ class PersonServiceIntegrationTest {
         Person resPerson = service.updatePerson(bar.getId(), person.getId(), request);
 
         assertEquals(request.name, resPerson.getName());
-        assertEquals(request.phoneNumber, resPerson.getPhoneNumber());
     }
 
     @Test
@@ -127,6 +126,6 @@ class PersonServiceIntegrationTest {
         service.deletePersonFromBar(bar.getId(), person.getId());
 
         Bar resBar = barRepository.findById(bar.getId()).get();
-        assertFalse(resBar.getUsers().contains(person));
+        assertFalse(resBar.getPeople().contains(person));
     }
 }

@@ -51,13 +51,13 @@ class SessionServiceIntegrationTest {
         bar = new BarBuilder().build();
         session = Session.create("test");
         session = repository.save(session);
-        person = personRepository.save(new PersonBuilder().build());
+        person = personRepository.save(new PersonBuilder(123L, "name").build());
         bill = billRepository.save(new BillFactory(session, person).create());
         person.addBill(bill);
         session.addBill(bill);
         session = repository.save(session);
         bar.addSession(session);
-        bar.addUser(person);
+        bar.addPerson(person);
         bar = barRepository.save(bar);
     }
 

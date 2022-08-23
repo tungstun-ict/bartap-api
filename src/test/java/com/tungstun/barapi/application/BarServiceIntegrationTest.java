@@ -6,6 +6,7 @@ import com.tungstun.barapi.data.SpringPersonRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -103,14 +104,14 @@ public class BarServiceIntegrationTest {
     void createBarWithExistingName_ThrowDuplicateRequest() {
         User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
         Person person = personRepository.save(new Person(
+                123L,
                 "name",
-                "0612345678",
                 user,
                 new ArrayList<>()
         ));
         BarRequest request = new BarRequest("address", "name", "mail", "0612345678");
         Bar bar = new BarBuilder().setName(request.name).build();
-        bar.addUser(person);
+        bar.addPerson(person);
         repository.save(bar);
         String username = person.getUser().getUsername();
 
@@ -124,14 +125,12 @@ public class BarServiceIntegrationTest {
     @DisplayName("Update bar returns updated bar")
     void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
         User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
-        Person person = personRepository.save(new Person(
-                "name",
-                "0612345678",
-                user,
-                new ArrayList<>()
-        ));
+        Person person = personRepository.save(new PersonBuilder(123L, "name")
+                .setUser(user)
+                .build()
+        );
         Bar bar = new BarBuilder().setName("name").build();
-        bar.addUser(person);
+        bar.addPerson(person);
         repository.save(bar);
         BarRequest request = new BarRequest("newAddress", "newName", "newMail", "0698765432");
 

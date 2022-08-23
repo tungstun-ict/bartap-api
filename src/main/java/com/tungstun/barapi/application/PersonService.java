@@ -33,16 +33,14 @@ public class PersonService {
 
     public List<Person> getAllPeopleOfBar(Long barId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
-        return bar.getUsers();
+        return bar.getPeople();
     }
 
     public Person createNewPerson(Long barId, PersonRequest personRequest) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
-        if (checkIfPersonExists(bar.getUsers(), personRequest.name))
+        if (checkIfPersonExists(bar.getPeople(), personRequest.name))
             throw new DuplicateRequestException(String.format("User with name '%s' already exists", personRequest.name));
-        Person person = new PersonBuilder()
-                .setName(personRequest.name)
-                .setPhoneNumber(personRequest.phoneNumber)
+        Person person = new PersonBuilder(bar.getId(), personRequest.name)
                 .build();
         return savePersonToBar(bar, person);
     }
@@ -53,7 +51,7 @@ public class PersonService {
 
     private Person savePersonToBar(Bar bar, Person person) {
         person = this.personRepository.save(person);
-        bar.addUser(person);
+        bar.addPerson(person);
         this.barService.saveBar(bar);
         return person;
     }
@@ -61,14 +59,13 @@ public class PersonService {
     public Person updatePerson(Long barId, Long personId, PersonRequest personRequest) throws EntityNotFoundException {
         Person person = getPersonOfBar(barId, personId);
         person.setName(personRequest.name);
-        person.setPhoneNumber(personRequest.phoneNumber);
         return this.personRepository.save(person);
     }
 
     public void deletePersonFromBar(Long barId, Long personId) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
         Person person = getPersonOfBar(barId, personId);
-        bar.removeUser(person);
+        bar.removePerson(person);
         this.barService.saveBar(bar);
     }
 }

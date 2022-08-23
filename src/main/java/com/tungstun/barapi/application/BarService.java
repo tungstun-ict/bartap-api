@@ -57,17 +57,16 @@ public class BarService {
                 .build();
         bar = this.barRepository.save(bar);
         user.newBarAuthorization(bar.getId());
-        Person owner = new PersonBuilder()
-                .setName(ownerUsername)
+        Person owner = new PersonBuilder(bar.getId(), ownerUsername)
                 .setUser(user)
                 .build();
-        bar.addUser(owner);
+        bar.addPerson(owner);
         return this.barRepository.save(bar);
     }
 
     private void checkIfBarExistsForPerson(String name, User user) {
         barRepository.findBarByDetails_Name(name).ifPresent(bar -> {
-           if ( bar.getUsers().stream().anyMatch(barUser -> barUser.getUser().equals(user))) {
+           if ( bar.getPeople().stream().anyMatch(barUser -> barUser.getUser().equals(user))) {
                throw new DuplicateRequestException(String.format("Bar with name %s already exists", name));
            }
         });
@@ -75,6 +74,10 @@ public class BarService {
 
     public Bar updateBar(Long id, BarRequest barRequest) throws EntityNotFoundException {
         Bar bar = getBar(id);
+        bar.getPeople().stream()
+                .forEach(p -> {
+                    System.out.println(p.getUser().getAuthorizations());
+                });
         bar.getDetails().setAddress(barRequest.address);
         bar.getDetails().setMail(barRequest.mail);
         bar.getDetails().setName(barRequest.name);

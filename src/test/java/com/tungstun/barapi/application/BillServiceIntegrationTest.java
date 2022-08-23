@@ -51,13 +51,13 @@ class BillServiceIntegrationTest {
         bar = new BarBuilder().build();
         session = Session.create("test");
         session = sessionRepository.save(session);
-        person = personRepository.save(new PersonBuilder().build());
+        person = personRepository.save(new PersonBuilder(123L, "name").build());
         bill = repository.save(new BillFactory(session, person).create());
         person.addBill(bill);
         session.addBill(bill);
         session = sessionRepository.save(session);
         bar.addSession(session);
-        bar.addUser(person);
+        bar.addPerson(person);
         bar = barRepository.save(bar);
     }
 
@@ -174,8 +174,8 @@ class BillServiceIntegrationTest {
     @Test
     @DisplayName("create Bill")
     void createBill() throws EntityNotFoundException {
-        Person person2 = personRepository.save(new PersonBuilder().build());
-        bar.addUser(person2);
+        Person person2 = personRepository.save(new PersonBuilder(123L, "name").build());
+        bar.addPerson(person2);
         barRepository.save(bar);
         BillRequest request = new BillRequest();
         request.customerId = person2.getId();

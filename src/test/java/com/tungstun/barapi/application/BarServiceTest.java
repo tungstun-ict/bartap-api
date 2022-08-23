@@ -98,8 +98,8 @@ class BarServiceTest {
     void createBarWithExistingName_ThrowDuplicateRequest() {
         BarRequest request = new BarRequest("address", "name", "mail", "0612345678");
         Person person = new Person(
+                123L,
                 "name",
-                "0612345678",
                 new User("name", "", "", "", "",  "+310612345678", new ArrayList<>()),
                 new ArrayList<>());
         Bar bar = new BarBuilder()
@@ -108,7 +108,7 @@ class BarServiceTest {
                 .setMail(request.mail)
                 .setPhoneNumber(request.phoneNumber)
                 .build();
-        bar.addUser(person);
+        bar.addPerson(person);
         when(repository.findBarByDetails_Name(request.name))
                 .thenReturn(Optional.of(bar));
         when(userService.loadUserByUsername(person.getUser().getUsername()))
@@ -127,8 +127,8 @@ class BarServiceTest {
     @DisplayName("Update bar returns updated bar")
     void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
         Person person = new Person(
+                123L,
                 "name",
-                "0612345678",
                 new User("name", "", "", "", "",  "+310612345678", new ArrayList<>()),
                 new ArrayList<>());
         Bar bar = new BarBuilder()
@@ -137,7 +137,7 @@ class BarServiceTest {
                 .setMail("mail")
                 .setPhoneNumber("phoneNumber")
                 .build();
-        bar.addUser(person);
+        bar.addPerson(person);
         when(repository.findById(any()))
                 .thenReturn(Optional.of(bar));
         Bar expectedBar = new BarBuilder()

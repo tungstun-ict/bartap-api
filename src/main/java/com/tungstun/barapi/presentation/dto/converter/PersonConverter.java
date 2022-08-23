@@ -20,7 +20,6 @@ public class PersonConverter {
         PersonResponse response =  new PersonResponse();
         response.setId(person.getId());
         response.setName(person.getName());
-        response.setPhoneNumber(person.getPhoneNumber());
         if (person.getUser() != null){
             response.setUser(userConverter.convertToSummary(person.getUser()));
         }

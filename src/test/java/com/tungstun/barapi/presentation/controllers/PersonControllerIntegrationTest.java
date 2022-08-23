@@ -25,7 +25,6 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").exists())
                 .andExpect(jsonPath("$[0].name").value("ownerPerson"))
-                .andExpect(jsonPath("$[0].phoneNumber").value("+31612345678"))
                 .andExpect(jsonPath("$[0].user").exists());
     }
 
@@ -53,7 +52,6 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value("ownerPerson"))
-                .andExpect(jsonPath("$.phoneNumber").value("+31612345678"))
                 .andExpect(jsonPath("$.user").exists());
     }
 
@@ -86,7 +84,6 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
-                .andExpect(jsonPath("$.phoneNumber").value(jsonObject.get("phoneNumber")))
                 .andExpect(jsonPath("$.user").doesNotExist());
     }
 
@@ -124,7 +121,6 @@ class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
-                .andExpect(jsonPath("$.phoneNumber").value(jsonObject.get("phoneNumber")))
                 .andExpect(jsonPath("$.user").exists());
     }
 

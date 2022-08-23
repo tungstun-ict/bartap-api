@@ -91,16 +91,16 @@ public class Bar {
         return details;
     }
 
-    public List<Person> getUsers() {
+    public List<Person> getPeople() {
         return this.people;
     }
 
-    public boolean addUser(Person person) {
+    public boolean addPerson(Person person) {
         if (!this.people.contains(person)) return this.people.add(person);
         return false;
     }
 
-    public boolean removeUser(Person person) {
+    public boolean removePerson(Person person) {
         return this.people.remove(person);
     }
 
