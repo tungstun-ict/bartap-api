@@ -23,9 +23,9 @@ public class BillConverter {
         response.setTotalPrice(bill.calculateTotalPrice());
         response.setOrders(orderConverter.convertAll(bill.getOrders()));
         response.setCustomer(bill.getCustomer());
-        response.setSession(bill.getSession());
         return response;
     }
+
     public List<BillResponse> convertAll(List<Bill> bills) {
         return bills.stream()
                 .map(this::convert)
@@ -37,9 +37,9 @@ public class BillConverter {
         response.setId(bill.getId());
         response.setPayed(bill.isPayed());
         response.setTotalPrice(bill.calculateTotalPrice());
-        response.setSession(bill.getSession());
         return response;
     }
+
     public List<BillSummaryResponse> convertAllToSummary(List<Bill> bills) {
         return bills.stream()
                 .map(this::convertToSummary)

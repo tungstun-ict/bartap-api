@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.domain.product.Product;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIdentityInfo(
@@ -20,50 +19,49 @@ import java.time.ZonedDateTime;
 @Table(name = "\"order\"")
 public class Order {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "amount")
-    private int amount;
+    private UUID id;
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @ManyToOne
-    private Bill bill;
+    @Embedded
+    private OrderProduct product;
 
-    @OneToOne(
-            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH}
-    )
-    private Product product;
+    @Column(name = "amount")
+    private int amount;
 
-    @OneToOne(
-            cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH}
-    )
+    @OneToOne
     private Person bartender;
 
-    public Order() { }
-    public Order(Product product, int amount, Bill bill, Person bartender) {
-        this.product = product;
-        this.amount = amount;
-        this.bill = bill;
-        this.bartender = bartender;
-        this.creationDate = ZonedDateTime.of(LocalDateTime.now(), ZoneId.of("Europe/Amsterdam")).toLocalDateTime();
+
+    public Order() {
     }
 
-    public Long getId() { return id; }
+    public Order(UUID id, OrderProduct product, int amount, Person bartender) {
+        this.id = id;
+        this.creationDate = ZonedDateTime.now().toLocalDateTime();
+        this.product = product;
+        this.amount = amount;
+        this.bartender = bartender;
+    }
 
-    public Product getProduct() { return product; }
+    public UUID getId() {
+        return id;
+    }
 
-    public int getAmount() { return amount; }
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
-    public void setAmount(int amount) { this.amount = amount; }
+    public OrderProduct getProduct() {
+        return product;
+    }
 
-    public LocalDateTime getCreationDate() { return creationDate; }
+    public int getAmount() {
+        return amount;
+    }
 
-    public Person getBartender() { return bartender; }
-
-    public Bill getBill() {
-        return bill;
+    public Person getBartender() {
+        return bartender;
     }
 }

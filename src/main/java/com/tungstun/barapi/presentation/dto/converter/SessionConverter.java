@@ -21,7 +21,7 @@ public class SessionConverter {
         response.setName(session.getName());
         response.setLocked(session.isLocked());
         response.setCreationDate(session.getCreationDate());
-        response.setClosedDate(session.getClosedDate());
+        response.setClosedDate(session.getEndDate());
         response.setBills(billConverter.convertAll(session.getBills()));
         return response;
     }

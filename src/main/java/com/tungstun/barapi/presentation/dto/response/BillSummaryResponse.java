@@ -4,10 +4,12 @@ import com.tungstun.barapi.domain.session.Session;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.UUID;
+
 @ApiModel(description = "Response detail summary about the bill")
 public class BillSummaryResponse {
     @ApiModelProperty(notes = "The bill's id")
-    private Long id;
+    private UUID id;
 
     @ApiModelProperty(notes = "The bill's payment state")
     private boolean isPayed;
@@ -20,9 +22,9 @@ public class BillSummaryResponse {
 
     public BillSummaryResponse() { }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(UUID id) { this.id = id; }
 
     public boolean isPayed() { return isPayed; }
 

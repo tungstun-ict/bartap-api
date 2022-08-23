@@ -30,16 +30,27 @@ public class PersonService {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("Bar does not have a person with id: " + personId));
     }
+    public Person getPersonOfBar(Long barId, String username) throws EntityNotFoundException {
+        List<Person> people = getAllPeopleOfBar(barId);
+        System.out.println(people.get(0).getUser().getUsername());
+        return people.stream()
+                .filter(person -> person.getUser() != null)
+                .filter(person -> person.getUser().getUsername().equals(username))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("Bar does not have a person with username: " + username));
+    }
 
     public List<Person> getAllPeopleOfBar(Long barId) throws EntityNotFoundException {
-        Bar bar = this.barService.getBar(barId);
-        return bar.getPeople();
+        return personRepository.findAllByBarId(barId);
+//        Bar bar = this.barService.getBar(barId);
+//        return bar.getPeople();
     }
 
     public Person createNewPerson(Long barId, PersonRequest personRequest) throws EntityNotFoundException {
         Bar bar = this.barService.getBar(barId);
-        if (checkIfPersonExists(bar.getPeople(), personRequest.name))
+        if (checkIfPersonExists(bar.getPeople(), personRequest.name)) {
             throw new DuplicateRequestException(String.format("User with name '%s' already exists", personRequest.name));
+        }
         Person person = new PersonBuilder(bar.getId(), personRequest.name)
                 .build();
         return savePersonToBar(bar, person);

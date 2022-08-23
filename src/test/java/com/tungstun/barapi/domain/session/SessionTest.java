@@ -18,75 +18,61 @@ class SessionTest {
         return LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS);
     }
 
-    @Test
-    @DisplayName("End session ends session")
-    void endSession_EndsSession() {
-        Session session = Session.create("session");
-        LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
-
-        boolean ended = session.endSession();
-
-        assertTrue(ended);
-        LocalDateTime sessionEndDateTime = session.getClosedDate().truncatedTo(ChronoUnit.SECONDS);
-        assertEquals(currentDateTime, sessionEndDateTime);
-    }
-
-    @Test
-    @DisplayName("End ended session keeps session ended")
-    void endEndedSession_keepsSessionEnded() {
-        Session session = Session.create("session");
-        LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
-        session.endSession();
-
-        boolean ended = session.endSession();
-
-        assertFalse(ended);
-        LocalDateTime sessionEndDateTime = session.getClosedDate().truncatedTo(ChronoUnit.SECONDS);
-        assertEquals(currentDateTime, sessionEndDateTime);
-    }
-
-    static Stream<Arguments> provideSessionsToLock() {
-        Session session = Session.create("session");
-        Session session2 = Session.create("session");
-        session2.endSession();
-        return Stream.of(
-                Arguments.of(session),
-                Arguments.of(session2)
-        );
-    }
-    @ParameterizedTest
-    @MethodSource("provideSessionsToLock")
-    @DisplayName("Lock session")
-    void lockSession(Session session) {
-        session.lock();
-
-        assertTrue(session.isLocked());
-        assertNotNull(session.getClosedDate());
-    }
-
-    @Test
-    @DisplayName("End session when session is already ended")
-    void endSession_WhenSessionIsEndedAlready() {
-        Session session = Session.create("session");
-        session.endSession();
-
-        boolean ended = session.endSession();
-
-        assertFalse(ended);
-    }
-
-
     static Stream<Arguments> provideSessionsToCheckIsActive() {
-        Session session = Session.create("session");
-        Session session2 = Session.create("session");
-        session2.endSession();
-        Session session3 = Session.create("session");
-        session3.endSession();
+        Session session = Session.create(123L, "session");
+        Session session2 = Session.create(123L, "session");
+        session2.end();
+        Session session3 = Session.create(123L, "session");
+        session3.end();
         session3.lock();
         return Stream.of(
                 Arguments.of(session, true),
                 Arguments.of(session2, false),
                 Arguments.of(session3, false)
+        );
+    }
+
+//    static Stream<Arguments> provideSessionsToLock() {
+//        Session session = Session.create(123L, "session");
+//        Session session2 = Session.create(123L, "session");
+//        session2.end();
+//        return Stream.of(
+//                Arguments.of(session),
+//                Arguments.of(session2)
+//        );
+//    }
+//    @ParameterizedTest
+//    @MethodSource("provideSessionsToLock")
+//    @DisplayName("Lock session")
+//    void lockSession(Session session) {
+//        session.lock();
+//
+//        assertTrue(session.isLocked());
+//        assertNotNull(session.getEndDate());
+//    }
+
+    @Test
+    @DisplayName("End session ends session")
+    void endSession_EndsSession() {
+        Session session = Session.create(123L, "session");
+        LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
+
+        boolean ended = session.end();
+
+        assertTrue(ended);
+        LocalDateTime sessionEndDateTime = session.getEndDate().truncatedTo(ChronoUnit.SECONDS);
+        assertEquals(currentDateTime, sessionEndDateTime);
+    }
+
+    @Test
+    @DisplayName("End session when session is already ended")
+    void endSession_WhenSessionIsEndedAlready() {
+        Session session = Session.create(123L, "session");
+        session.end();
+
+        assertThrows(
+                IllegalStateException.class,
+                () -> session.end()
         );
     }
     @ParameterizedTest

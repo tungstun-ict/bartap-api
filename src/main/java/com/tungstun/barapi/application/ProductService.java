@@ -64,8 +64,7 @@ public class ProductService {
     }
 
     private List<Product> getAllProductsOfBar(Long barId) throws EntityNotFoundException {
-        Bar bar = this.barService.getBar(barId);
-        return bar.getProducts();
+        return productRepository.findAllByBarId(barId);
     }
 
     private ProductType convertStringToProductType(String type) {

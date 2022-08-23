@@ -14,7 +14,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "bar")
-@SQLDelete(sql = "UPDATE category SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE bar SET deleted = true WHERE id=?")
 @Where(clause = "deleted = false")
 public class Bar {
     @Id
@@ -48,6 +48,7 @@ public class Bar {
 
     @OneToMany(
             cascade = CascadeType.ALL,
+            fetch = FetchType.EAGER,
             orphanRemoval = true
     )
     private List<Category> categories;
@@ -78,7 +79,7 @@ public class Bar {
     public Session newSession(String name) {
         if (this.activeSession() != null)
             throw new DuplicateActiveSessionException("Bar already has an active session");
-        Session session = Session.create(name);
+        Session session = Session.create(id, name);
         this.sessions.add(session);
         return session;
     }

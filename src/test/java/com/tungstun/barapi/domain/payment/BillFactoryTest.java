@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class BillFactoryTest {
-
     @Test
     @DisplayName("Create new Bill with Session and Customer")
     void createNewBill() {
@@ -17,10 +16,8 @@ class BillFactoryTest {
 
         Bill bill = new BillFactory(session, customer).create();
 
-        assertEquals(session, bill.getSession());
         assertEquals(customer, bill.getCustomer());
         assertTrue(bill.getOrders().isEmpty());
         assertFalse(bill.isPayed());
     }
-
 }

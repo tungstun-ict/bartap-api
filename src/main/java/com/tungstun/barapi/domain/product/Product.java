@@ -5,6 +5,7 @@ import com.tungstun.common.money.Money;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
@@ -110,6 +111,10 @@ public class Product {
 
     public Money getPrice() {
         return prices.currentPrice().getMoney();
+    }
+
+    public Money getPriceAtDate(LocalDateTime date) {
+        return prices.atDate(date).getMoney();
     }
 
     public void updatePrice(Money price) {

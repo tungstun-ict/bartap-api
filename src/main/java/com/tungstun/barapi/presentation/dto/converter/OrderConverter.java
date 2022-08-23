@@ -20,7 +20,6 @@ public class OrderConverter {
         response.setId(order.getId());
         response.setAmount(order.getAmount());
         response.setCreationDate(order.getCreationDate());
-        response.setCustomer(personConverter.convert(order.getBill().getCustomer()));
         response.setBartender(personConverter.convert(order.getBartender()));
         response.setProduct(order.getProduct());
         return response;

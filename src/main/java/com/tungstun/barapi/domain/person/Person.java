@@ -6,6 +6,7 @@ import com.tungstun.security.domain.user.User;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Objects;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -36,7 +37,8 @@ public class Person {
     )
     private List<Bill> bills;
 
-    public Person() { }
+    public Person() {
+    }
 
     public Person(Long barId, String name, User user, List<Bill> bills) {
         this.barId = barId;
@@ -57,11 +59,17 @@ public class Person {
         return name;
     }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public User getUser() { return user; }
+    public User getUser() {
+        return user;
+    }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
     public List<Bill> getBills() {
         return bills;
@@ -74,5 +82,29 @@ public class Person {
 
     public boolean removeBill(Bill bill) {
         return this.bills.remove(bill);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(id, person.id) && Objects.equals(barId, person.barId) && Objects.equals(name, person.name) && Objects.equals(user, person.user) && Objects.equals(bills, person.bills);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, barId, name, user, bills);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", barId=" + barId +
+                ", name='" + name + '\'' +
+                ", user=" + user +
+                ", bills=" + bills +
+                '}';
     }
 }

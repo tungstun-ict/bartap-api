@@ -3,6 +3,7 @@ package com.tungstun.barapi.domain.payment;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
+import com.tungstun.barapi.domain.session.Session;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -18,74 +20,65 @@ import static org.junit.jupiter.api.Assertions.*;
 class BillTest {
     static Stream<Arguments> provideBills() {
         return Stream.of(
-                Arguments.of(new Bill(null, null, List.of(), false), 0),
-                Arguments.of(new Bill(null, null, List.of(
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                1,
-                                null, null
-                        )
-                        ), false),
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, List.of()), 0),
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, List.of(
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        1,
+                                        null
+                                ).create()
+                        )),
                         1
                 ),
-                Arguments.of(new Bill(null, null, List.of(
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                2,
-                                null, null
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, List.of(
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        2,
+                                        null
+                                ).create()
                         )
-                        ), false),
+                        ),
                         2
                 ),
-                Arguments.of(new Bill(null, null, List.of(
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                1,
-                                null, null
-                        ),
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                1,
-                                null, null
-                        )
-                        ), false),
-                        2),
-                Arguments.of(new Bill(null, null, List.of(
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                2,
-                                null, null
-                        ),
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                1,
-                                null, null
-                        )
-                        ), false),
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, List.of(
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        1,
+                                        null
+                                ).create(),
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        2,
+                                        null
+                                ).create()
+                        )),
+                        3),
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, List.of(
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        2,
+                                        null
+                                ).create(),
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        1,
+                                        null
+                                ).create())),
                         3)
         );
     }
 
     static Stream<Arguments> provideAddBills() {
         return Stream.of(
-                Arguments.of(new Bill(null, null, new ArrayList<>(), false)),
-                Arguments.of(new Bill(null, null, new ArrayList<>(Collections.singletonList(
-                        new Order(
-                                new ProductBuilder(123L, "", null).setPrice(1.0).build(),
-                                1,
-                                null, null
-                        )
-                        )), false)
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, new ArrayList<>()), 0),
+                Arguments.of(new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, new ArrayList<>(Collections.singletonList(
+                                new OrderFactory(
+                                        new ProductBuilder(123L, "", null).setPrice(1.0).build(),
+                                        1,
+                                        null
+                                ).create())
+                        ))
                 )
-        );
-    }
-
-    static Stream<Arguments> provideIllegalProductArgs() {
-        return Stream.of(
-                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), 1, null),
-                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), 0, new Person()),
-                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), -1, new Person()),
-                Arguments.of(null, 1, new Person())
         );
     }
 
@@ -98,6 +91,15 @@ class BillTest {
         assertEquals(expectedPrice, calculatedPrice);
     }
 
+    static Stream<Arguments> provideIllegalProductArgs() {
+        return Stream.of(
+                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), 1, null),
+                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), 0, new Person()),
+                Arguments.of(new ProductBuilder(123L, "", null).setPrice(1.0).build(), -1, new Person()),
+                Arguments.of(null, 1, new Person())
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("provideAddBills")
     @DisplayName("Add order to bill")
@@ -105,20 +107,18 @@ class BillTest {
         Product product = new ProductBuilder(123L, "", null).setPrice(1.0).build();
         Person person = new Person();
 
-        boolean isSuccessful = bill.addOrder(product, 1, person);
-
-        assertTrue(isSuccessful);
+        assertDoesNotThrow(() -> bill.addOrder(product, 1, person));
     }
 
     @ParameterizedTest
     @MethodSource("provideIllegalProductArgs")
     @DisplayName("Add product to bill with illegal arguments")
-    void addWithIllegalArguments() {
-        Bill bill = new Bill(null, null, new ArrayList<>(), false);
-        Product product = new ProductBuilder(123L, "", null).setPrice(1.0).build();
+    void addWithIllegalArguments(Product product, int amount, Person bartender) {
+        Bill bill = new Bill(UUID.randomUUID(), Session.create(123L, "name"), false, null, new ArrayList<>());
 
-        boolean isSuccessful = bill.addOrder(product, 1, null);
-
-        assertFalse(isSuccessful);
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> bill.addOrder(product, amount, bartender)
+        );
     }
 }

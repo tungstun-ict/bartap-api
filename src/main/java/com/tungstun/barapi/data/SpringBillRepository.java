@@ -6,9 +6,10 @@ import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.UUID;
 
 @Transactional
 @Repository
-public interface SpringBillRepository extends JpaRepository<Bill, Long>{
+public interface SpringBillRepository extends JpaRepository<Bill, UUID>{
     Optional<Bill> findById(Long id);
 }

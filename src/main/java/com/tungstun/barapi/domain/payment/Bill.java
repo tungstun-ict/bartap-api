@@ -9,6 +9,7 @@ import com.tungstun.barapi.domain.session.Session;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.UUID;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -18,8 +19,7 @@ import java.util.List;
 @Table(name = "bill")
 public class Bill {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     @Column(name = "is_payed")
     private boolean isPayed;
@@ -39,41 +39,60 @@ public class Bill {
     )
     private List<Order> orders;
 
-    public Bill() { }
-    public Bill(Session session, Person customer, List<Order> orders, boolean isPayed) {
+    public Bill() {
+    }
+
+    public Bill(UUID id, Session session, boolean isPayed, Person customer, List<Order> orders) {
+        this.id = id;
         this.session = session;
+        this.isPayed = isPayed;
         this.customer = customer;
         this.orders = orders;
-        this.isPayed = isPayed;
     }
-
-    public Long getId() { return id; }
-
-    public Session getSession() { return session; }
-
-    public void setSession(Session session) { this.session = session; }
-
-    public Person getCustomer() { return customer; }
-
-    public List<Order> getOrders() { return this.orders; }
-
-    public boolean addOrder(Product product, int amount, Person bartender){
-        if (product == null || amount < 1 || bartender == null) return false;
-        Order order = new Order(product, amount, this, bartender);
-        return this.orders.add(order);
-    }
-
-    public boolean removeOrder(Order order){
-        return this.orders.remove(order);
-    }
-
-    public boolean isPayed() { return isPayed; }
-
-    public void setPayed(boolean payed) { isPayed = payed; }
 
     public double calculateTotalPrice() {
         return this.orders.stream()
                 .mapToDouble(order -> order.getProduct().getPrice().amount().doubleValue() * order.getAmount())
                 .sum();
+    }
+
+    public Order addOrder(Product product, int amount, Person bartender) {
+        session.checkEditable();
+        System.out.println(product);
+        System.out.println(amount);
+        System.out.println(bartender);
+        System.out.println(product == null || amount < 1 || bartender == null);
+        if (product == null || amount < 1 || bartender == null) {
+            throw new IllegalArgumentException("Amount must be a positive number and product and bartender must not be empty");
+        }
+
+        Order order = new OrderFactory(product, amount, bartender).create();
+        orders.add(order);
+        return order;
+    }
+
+    public boolean removeOrder(UUID orderId) {
+        session.checkEditable();
+        return orders.removeIf(order -> order.getId().equals(orderId));
+    }
+
+    public List<Order> getOrders() {
+        return this.orders;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public Person getCustomer() {
+        return customer;
+    }
+
+    public boolean isPayed() {
+        return isPayed;
+    }
+
+    public void pay() {
+        isPayed = true;
     }
 }

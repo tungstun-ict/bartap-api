@@ -6,11 +6,12 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.List;
+import java.util.UUID;
 
 @ApiModel(description = "Response details about the bill")
 public class BillResponse {
     @ApiModelProperty(notes = "The bill's id")
-    private Long id;
+    private UUID id;
 
     @ApiModelProperty(notes = "The bill's payment state")
     private boolean isPayed;
@@ -29,9 +30,9 @@ public class BillResponse {
 
     public BillResponse() { }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(UUID id) { this.id = id; }
 
     public boolean isPayed() { return isPayed; }
 
