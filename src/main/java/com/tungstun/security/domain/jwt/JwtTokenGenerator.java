@@ -38,6 +38,7 @@ public class JwtTokenGenerator {
 
     public String createRefreshToken() {
         try {
+            System.out.println(credentials);
             return JWT.create()
                     .withIssuer(credentials.getJwtIssuer())
                     .withAudience(credentials.getJwtAudience())

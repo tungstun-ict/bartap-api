@@ -6,7 +6,7 @@ import java.util.UUID;
 import static javax.persistence.EnumType.STRING;
 
 @Entity
-@Table(name = "authorization")
+@Table(name = "\"authorization\"")
 public class Authorization {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

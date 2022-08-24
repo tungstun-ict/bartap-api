@@ -4,6 +4,8 @@ import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
+
 @Configuration
 @ConfigurationProperties(prefix = "com.tungstun.bartap.security.jwt")
 public class JwtCredentials {
@@ -55,5 +57,16 @@ public class JwtCredentials {
 
     public void setJwtIssuer(String jwtIssuer) {
         this.jwtIssuer = jwtIssuer;
+    }
+
+    @Override
+    public String toString() {
+        return "JwtCredentials{" +
+                "jwtSecret='" + jwtSecret + '\'' +
+                ", jwtExpirationInMs=" + jwtExpirationInMs +
+                ", jwtRefreshExpirationInMs=" + jwtRefreshExpirationInMs +
+                ", jwtAudience=" + Arrays.toString(jwtAudience) +
+                ", jwtIssuer='" + jwtIssuer + '\'' +
+                '}';
     }
 }
