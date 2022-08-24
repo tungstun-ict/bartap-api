@@ -162,14 +162,14 @@
 <!--				<version>0.8.6</version>-->
 <!--				<executions>-->
 <!--					<execution>-->
-<!--						<id>pre-unit-test</id>-->
+<!--						<categoryId>pre-unit-test</categoryId>-->
 <!--						<goals>-->
 <!--							<goal>prepare-agent</goal>-->
 <!--						</goals>-->
 <!--					</execution>-->
 
 <!--					<execution>-->
-<!--						<id>post-unit-test</id>-->
+<!--						<categoryId>post-unit-test</categoryId>-->
 <!--						<phase>test</phase>-->
 <!--						<goals>-->
 <!--							<goal>report</goal>-->
@@ -182,7 +182,7 @@
 <!--					</execution>-->
 
 <!--					<execution>-->
-<!--						<id>jacoco-check</id>-->
+<!--						<categoryId>jacoco-check</categoryId>-->
 <!--						<goals>-->
 <!--							<goal>check</goal>-->
 <!--						</goals>-->

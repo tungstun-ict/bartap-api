@@ -6,12 +6,13 @@ import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Response details about the session")
 public class SessionResponse {
-    @ApiModelProperty(notes = "The session's id")
-    private Long id;
+    @ApiModelProperty(notes = "The session's categoryId")
+    private UUID id;
 
     @ApiModelProperty(notes = "The session's name")
     private String name;
@@ -30,11 +31,11 @@ public class SessionResponse {
 
     public SessionResponse() { }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 

@@ -23,7 +23,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].name").value("Drinks"))
 //                .andExpect(jsonPath("$[0].productType").value("DRINK"));
 //    }
@@ -50,7 +50,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value("Drinks"))
 //                .andExpect(jsonPath("$.productType").value("DRINK"));
 //    }
@@ -82,7 +82,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value("Bitterbal"))
 //                .andExpect(jsonPath("$.productType").value("FOOD"));
 //    }
@@ -119,7 +119,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value("BitterbalNew"))
 //                .andExpect(jsonPath("$.productType").value("DRINK"));
 //    }

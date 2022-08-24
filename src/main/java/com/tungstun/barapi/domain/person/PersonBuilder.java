@@ -1,22 +1,18 @@
 package com.tungstun.barapi.domain.person;
 
-import com.tungstun.barapi.domain.payment.Bill;
 import com.tungstun.security.domain.user.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 public class PersonBuilder {
-    private final Long barId;
     private String name;
     private User user;
-    private List<Bill> bills;
+//    private List<Bill> bills;
 
-    public PersonBuilder(Long barId, String name) {
-        this.barId = barId;
+    public PersonBuilder(String name) {
         this.name = name;
         this.user = null;
-        this.bills = new ArrayList<>();
+//        this.bills = new ArrayList<>();
     }
 
     public PersonBuilder setName(String name) {
@@ -29,17 +25,16 @@ public class PersonBuilder {
         return this;
     }
 
-    public PersonBuilder setBills(List<Bill> bills) {
-        this.bills = bills;
-        return this;
-    }
+//    public PersonBuilder setBills(List<Bill> bills) {
+//        this.bills = bills;
+//        return this;
+//    }
 
     public Person build() {
         return new Person(
-                barId,
+                UUID.randomUUID(),
                 name,
-                user,
-                bills
+                user
         );
     }
 }

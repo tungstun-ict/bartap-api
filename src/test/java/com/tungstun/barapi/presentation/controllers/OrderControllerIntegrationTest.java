@@ -23,7 +23,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].amount").value(1d))
 //                .andExpect(jsonPath("$[0].creationDate").exists())
 //                .andExpect(jsonPath("$[0].product").exists())
@@ -53,7 +53,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].amount").value(1d))
 //                .andExpect(jsonPath("$[0].creationDate").exists())
 //                .andExpect(jsonPath("$[0].product").exists())
@@ -83,7 +83,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.amount").value(1d))
 //                .andExpect(jsonPath("$.creationDate").exists())
 //                .andExpect(jsonPath("$.product").exists())
@@ -113,7 +113,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].amount").value(1d))
 //                .andExpect(jsonPath("$[0].creationDate").exists())
 //                .andExpect(jsonPath("$[0].product").exists())
@@ -143,7 +143,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.amount").value(1d))
 //                .andExpect(jsonPath("$.creationDate").exists())
 //                .andExpect(jsonPath("$.product").exists())
@@ -202,7 +202,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.payed").value(false))
 //                .andExpect(jsonPath("$.totalPrice").value(2d))
 //                .andExpect(jsonPath("$.customer").exists())

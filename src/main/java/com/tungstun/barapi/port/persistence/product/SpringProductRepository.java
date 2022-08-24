@@ -3,15 +3,14 @@ package com.tungstun.barapi.port.persistence.product;
 import com.tungstun.barapi.domain.product.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
-public interface SpringProductRepository extends JpaRepository<Product, Long> {
-    Optional<Product> findByIdAndBarId(Long id, Long barId);
-
-    List<Product> findAllByBarId(Long barId);
-
-    List<Product> findAllByCategoryIdAndBarId(Long categoryId, Long barId);
-
-    void deleteByIdAndBarId(Long id, Long barId);
+public interface SpringProductRepository extends JpaRepository<Product, UUID> {
+//    Optional<Product> findByIdAndBarId(UUID id, UUID barId);
+//
+//    List<Product> findAllByBarId(UUID barId);
+//
+//    List<Product> findAllByCategoryIdAndBarId(UUID categoryId, UUID barId);
+//
+//    void deleteByIdAndBarId(UUID id, UUID barId);
 }

@@ -23,7 +23,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists());
+//                .andExpect(jsonPath("$[0].categoryId").exists());
 //    }
 //
 //    @Test
@@ -49,7 +49,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").value(bar.getId()))
+//                .andExpect(jsonPath("$.categoryId").value(bar.getId()))
 //                .andExpect(jsonPath("$.address").value(bar.getDetails().getAddress()))
 //                .andExpect(jsonPath("$.name").value(bar.getDetails().getName()))
 //                .andExpect(jsonPath("$.mail").value(bar.getDetails().getMail()))
@@ -85,7 +85,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.address").value(jsonObject.get("address")))
 //                .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
 //                .andExpect(jsonPath("$.mail").value(jsonObject.get("mail")))
@@ -109,7 +109,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.address").value(jsonObject.get("address")))
 //                .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
 //                .andExpect(jsonPath("$.mail").value(jsonObject.get("mail")))

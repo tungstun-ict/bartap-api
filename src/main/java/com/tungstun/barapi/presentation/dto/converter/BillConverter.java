@@ -1,6 +1,6 @@
 package com.tungstun.barapi.presentation.dto.converter;
 
-import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.presentation.dto.response.BillResponse;
 import com.tungstun.barapi.presentation.dto.response.BillSummaryResponse;
 import org.springframework.stereotype.Component;

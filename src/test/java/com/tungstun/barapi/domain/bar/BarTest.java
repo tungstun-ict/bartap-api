@@ -6,20 +6,34 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import javax.persistence.EntityNotFoundException;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class BarTest {
     private Bar bar;
 
     @BeforeEach
-    void setup() {
-        bar = new BarBuilder()
-                .setName("bar")
-                .setPhoneNumber("0600000000")
+    void setUp() {
+        bar = new BarBuilder("bar")
+                .setPhoneNumber("+31612345678")
                 .setMail("mail@testmail.com")
                 .setAddress("adressBar 1")
                 .build();
     }
+
+    @Test
+    @DisplayName("new session")
+    void createBar_Successfully() {
+        assertDoesNotThrow(
+                () -> new BarBuilder("bar")
+                        .setPhoneNumber("+31612345678")
+                        .setMail("mail@testmail.com")
+                        .setAddress("adressBar 1")
+                        .build()
+        );
+    }
+
 
     @Test
     @DisplayName("new session")
@@ -48,9 +62,10 @@ class BarTest {
     @Test
     @DisplayName("bar active session")
     void noActiveSession() {
-        Session session = bar.activeSession();
-
-        assertNull(session);
+        assertThrows(
+                EntityNotFoundException.class,
+                bar::getActiveSession
+        );
     }
 
     @Test
@@ -58,7 +73,7 @@ class BarTest {
     void activeSession() {
         Session session = bar.newSession("test");
 
-        Session resSession = bar.activeSession();
+        Session resSession = bar.getActiveSession();
 
         assertEquals(session, resSession);
     }

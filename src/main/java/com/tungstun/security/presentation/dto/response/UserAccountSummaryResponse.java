@@ -5,7 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 
 @ApiModel(description = "Response detail summary about the user account")
 public class UserAccountSummaryResponse {
-    @ApiModelProperty(notes = "The user's id")
+    @ApiModelProperty(notes = "The user's categoryId")
     private Long id;
 
     @ApiModelProperty(notes = "The user's username")

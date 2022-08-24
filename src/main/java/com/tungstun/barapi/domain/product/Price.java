@@ -52,4 +52,14 @@ public class Price {
     public LocalDateTime getToDate() {
         return toDate;
     }
+
+    @Override
+    public String toString() {
+        return "Price{" +
+                "id=" + id +
+                ", money=" + money +
+                ", fromDate=" + fromDate +
+                ", toDate=" + toDate +
+                '}';
+    }
 }

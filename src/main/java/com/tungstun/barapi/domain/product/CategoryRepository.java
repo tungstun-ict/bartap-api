@@ -1,19 +1,19 @@
 
 package com.tungstun.barapi.domain.product;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface CategoryRepository {
     Category save(Category category);
 
     Category update(Category category);
 
-    void delete(Long id);
+    void delete(UUID id);
 
-    Optional<Category> findById(Long id);
+    Optional<Category> findById(UUID id);
 
-    Optional<Category> findByIdAndBarId(Long id, Long barId);
-
-    List<Category> findAllOfBar(Long barId);
+//    Optional<Category> findByIdAndBarId(UUID id, UUID barId);
+//
+//    List<Category> findAllOfBar(UUID barId);
 }

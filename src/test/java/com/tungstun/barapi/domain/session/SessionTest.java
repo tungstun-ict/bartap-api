@@ -10,7 +10,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class SessionTest {
 
@@ -19,12 +20,11 @@ class SessionTest {
     }
 
     static Stream<Arguments> provideSessionsToCheckIsActive() {
-        Session session = Session.create(123L, "session");
-        Session session2 = Session.create(123L, "session");
+        Session session = new SessionFactory("session").create();
+        Session session2 = new SessionFactory("session").create();
         session2.end();
-        Session session3 = Session.create(123L, "session");
+        Session session3 = new SessionFactory("session").create();
         session3.end();
-        session3.lock();
         return Stream.of(
                 Arguments.of(session, true),
                 Arguments.of(session2, false),
@@ -54,12 +54,11 @@ class SessionTest {
     @Test
     @DisplayName("End session ends session")
     void endSession_EndsSession() {
-        Session session = Session.create(123L, "session");
+        Session session = new SessionFactory("session").create();
         LocalDateTime currentDateTime = getTruncatedCurrentDateTime();
 
-        boolean ended = session.end();
+        session.end();
 
-        assertTrue(ended);
         LocalDateTime sessionEndDateTime = session.getEndDate().truncatedTo(ChronoUnit.SECONDS);
         assertEquals(currentDateTime, sessionEndDateTime);
     }
@@ -67,12 +66,12 @@ class SessionTest {
     @Test
     @DisplayName("End session when session is already ended")
     void endSession_WhenSessionIsEndedAlready() {
-        Session session = Session.create(123L, "session");
+        Session session = new SessionFactory("session").create();
         session.end();
 
         assertThrows(
                 IllegalStateException.class,
-                () -> session.end()
+                session::end
         );
     }
     @ParameterizedTest

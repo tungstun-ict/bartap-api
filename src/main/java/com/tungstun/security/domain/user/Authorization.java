@@ -1,6 +1,7 @@
 package com.tungstun.security.domain.user;
 
 import javax.persistence.*;
+import java.util.UUID;
 
 import static javax.persistence.EnumType.STRING;
 
@@ -12,7 +13,7 @@ public class Authorization {
     private Long id;
 
     @Column(name = "bar_id")
-    private Long barId;
+    private UUID barId;
 
     @Column(name = "role")
     @Enumerated(STRING)
@@ -20,7 +21,7 @@ public class Authorization {
 
     public Authorization() {
     }
-    public Authorization(Long barId, Role role) {
+    public Authorization(UUID barId, Role role) {
         this.barId = barId;
         this.role = role;
     }
@@ -29,7 +30,7 @@ public class Authorization {
         return id;
     }
 
-    public Long getBarId() {
+    public UUID getBarId() {
         return barId;
     }
 

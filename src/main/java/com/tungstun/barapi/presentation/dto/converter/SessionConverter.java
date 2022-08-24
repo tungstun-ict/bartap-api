@@ -19,7 +19,7 @@ public class SessionConverter {
         SessionResponse response =  new SessionResponse();
         response.setId(session.getId());
         response.setName(session.getName());
-        response.setLocked(session.isLocked());
+        response.setLocked(session.isEnded());
         response.setCreationDate(session.getCreationDate());
         response.setClosedDate(session.getEndDate());
         response.setBills(billConverter.convertAll(session.getBills()));

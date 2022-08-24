@@ -23,7 +23,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].name").value(product.getName()))
 //                .andExpect(jsonPath("$[0].brand").value(product.getBrand()))
 //                .andExpect(jsonPath("$[0].size").value(product.getSize()))
@@ -54,7 +54,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(product.getName()))
 //                .andExpect(jsonPath("$.brand").value(product.getBrand()))
 //                .andExpect(jsonPath("$.size").value(product.getSize()))
@@ -95,7 +95,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
 //                .andExpect(jsonPath("$.brand").value(jsonObject.get("brand")))
 //                .andExpect(jsonPath("$.size").value(jsonObject.get("size")))
@@ -145,7 +145,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
 //                .andExpect(jsonPath("$.brand").value(jsonObject.get("brand")))
 //                .andExpect(jsonPath("$.size").value(jsonObject.get("size")))

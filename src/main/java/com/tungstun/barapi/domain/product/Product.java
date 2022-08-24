@@ -6,6 +6,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Objects;
+import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
@@ -16,11 +18,7 @@ public class Product {
     private final boolean deleted = Boolean.FALSE;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "bar_id")
-    private Long barId;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
@@ -46,8 +44,8 @@ public class Product {
 
     public Product() { }
 
-    public Product(Long barId, String name, String brand, double size, boolean isFavorite, ProductType type, Money price, Category category) {
-        this.barId = barId;
+    public Product(UUID id, String name, String brand, double size, boolean isFavorite, ProductType type, Money price, Category category) {
+        this.id = id;
         this.name = name;
         this.brand = brand;
         this.size = size;
@@ -57,16 +55,8 @@ public class Product {
         this.category = category;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
-    }
-
-    public Long getBarId() {
-        return barId;
-    }
-
-    public void setBarId(Long barId) {
-        this.barId = barId;
     }
 
     public String getName() {
@@ -127,5 +117,33 @@ public class Product {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Product product = (Product) o;
+        return deleted == product.deleted && Double.compare(product.size, size) == 0 && isFavorite == product.isFavorite && Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && type == product.type && Objects.equals(prices, product.prices) && Objects.equals(category, product.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(deleted, id, name, brand, size, isFavorite, type, prices, category);
+    }
+
+    @Override
+    public String toString() {
+        return "Product{" +
+                "deleted=" + deleted +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", brand='" + brand + '\'' +
+                ", size=" + size +
+                ", isFavorite=" + isFavorite +
+                ", type=" + type +
+                ", prices=" + prices +
+                ", category=" + category +
+                '}';
     }
 }

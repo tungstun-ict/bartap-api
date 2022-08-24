@@ -31,7 +31,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].name").value(session.getName()))
 //                .andExpect(jsonPath("$[0].creationDate").exists())
 //                .andExpect(jsonPath("$[0].closedDate").exists())
@@ -64,7 +64,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(session.getName()))
 //                .andExpect(jsonPath("$.creationDate").exists())
 //                .andExpect(jsonPath("$.closedDate").exists())
@@ -94,7 +94,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(session.getName()))
 //                .andExpect(jsonPath("$.creationDate").exists())
 //                .andExpect(jsonPath("$.locked").value(false))

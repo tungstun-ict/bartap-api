@@ -1,10 +1,11 @@
 package com.tungstun.barapi.application.session;
 
+import com.tungstun.barapi.application.bar.BarQueryHandler;
+import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.application.session.query.ListSessionsOfBar;
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.domain.session.SessionRepository;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -12,25 +13,29 @@ import java.util.List;
 
 @Service
 public class SessionQueryHandler {
-    private final SessionRepository sessionRepository;
+    private final BarQueryHandler barQueryHandler;
 
-    public SessionQueryHandler(SessionRepository sessionRepository) {
-        this.sessionRepository = sessionRepository;
+    public SessionQueryHandler(BarQueryHandler barQueryHandler) {
+        this.barQueryHandler = barQueryHandler;
     }
 
     public Session handle(GetSession query) {
-        return sessionRepository.findByIdAndBarId(query.sessionId(), query.barId())
-                .orElseThrow(() -> new EntityNotFoundException("No Session found with id " + query.sessionId()));
+        return barQueryHandler.handle(new GetBar(query.barId()))
+                .getSessions()
+                .stream()
+                .filter(session -> session.getId().equals(query.sessionId()))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("No Session found with categoryId " + query.sessionId()));
+
     }
+
     public List<Session> handle(ListSessionsOfBar query) {
-        return sessionRepository.findAllByBarId(query.barId());
+        return barQueryHandler.handle(new GetBar(query.barId()))
+                .getSessions();
     }
 
     public Session handle(GetActiveSession query) {
-        return sessionRepository.findAllByBarId(query.barId())
-                .stream()
-                .filter(Session::isActive)
-                .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("No active session found"));
+        return barQueryHandler.handle(new GetBar(query.barId()))
+                .getActiveSession();
     }
 }

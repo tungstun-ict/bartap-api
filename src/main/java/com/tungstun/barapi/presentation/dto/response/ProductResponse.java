@@ -4,11 +4,13 @@ import com.tungstun.barapi.domain.product.Category;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.UUID;
+
 @ApiModel(description = "Response details about the product")
 public class ProductResponse {
 
-    @ApiModelProperty(notes = "The product's id")
-    private Long id;
+    @ApiModelProperty(notes = "The product's categoryId")
+    private UUID id;
 
     @ApiModelProperty(notes = "The product's name")
     private String name;
@@ -30,9 +32,9 @@ public class ProductResponse {
 
     public ProductResponse() { }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getName() { return name; }
 

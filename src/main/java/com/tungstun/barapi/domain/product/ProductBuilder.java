@@ -2,8 +2,9 @@ package com.tungstun.barapi.domain.product;
 
 import com.tungstun.common.money.Money;
 
+import java.util.UUID;
+
 public class ProductBuilder {
-    private final Long barId;
     private final String name;
     private final Category category;
     private String brand = "";
@@ -12,8 +13,7 @@ public class ProductBuilder {
     private Money price = new Money(0.0);
     private ProductType type = ProductType.OTHER;
 
-    public ProductBuilder(Long barId, String name, Category category) {
-        this.barId = barId;
+    public ProductBuilder(String name, Category category) {
         this.name = name;
         this.category = category;
     }
@@ -45,7 +45,7 @@ public class ProductBuilder {
 
     public Product build() {
         return new Product(
-                this.barId,
+                UUID.randomUUID(),
                 this.name,
                 this.brand,
                 this.size,

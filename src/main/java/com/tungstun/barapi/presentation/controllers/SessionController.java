@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/bars/{barId}/sessions")
@@ -38,12 +39,12 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds all sessions of bar",
-            notes = "Provide id of bar to look up all sessions that are linked to the bar",
+            notes = "Provide categoryId of bar to look up all sessions that are linked to the bar",
             response = SessionResponse.class,
             responseContainer = "List"
     )
     public List<SessionResponse> getAllBarSessions(
-            @ApiParam(value = "ID value for the bar you want to retrieve sessions from") @PathVariable("barId") Long barId
+            @ApiParam(value = "ID value for the bar you want to retrieve sessions from") @PathVariable("barId") UUID barId
     ) throws EntityNotFoundException {
         List<Session> allSessions = sessionQueryHandler.handle(new ListSessionsOfBar(barId));
         return converter.convertAll(allSessions);
@@ -54,11 +55,11 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds active session of bar",
-            notes = "Provide id of bar and session to look up the currectly active session of the bar",
+            notes = "Provide categoryId of bar and session to look up the currectly active session of the bar",
             response = SessionResponse.class
     )
     public SessionResponse getActiveBarSessions(
-            @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId
+            @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") UUID barId
     ) throws EntityNotFoundException {
         Session session = sessionQueryHandler.handle(new GetActiveSession(barId));
         return converter.convert(session);
@@ -69,12 +70,12 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Finds session of bar",
-            notes = "Provide id of bar and session to look up the specific session of the bar",
+            notes = "Provide categoryId of bar and session to look up the specific session of the bar",
             response = SessionResponse.class
     )
     public SessionResponse getBarSessionsById(
-            @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to retrieve") @PathVariable("sessionId") Long sessionId
+            @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") UUID barId,
+            @ApiParam(value = "ID value for the session you want to retrieve") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
         return converter.convert(session);
@@ -85,11 +86,11 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Creates new session for bar",
-            notes = "Provide id of bar to add a new session with information from the request body to the bar",
+            notes = "Provide categoryId of bar to add a new session with information from the request body to the bar",
             response = SessionResponse.class
     )
-    public Long createNewSession(
-            @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") Long barId,
+    public UUID createNewSession(
+            @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") UUID barId,
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
         return this.sessionService.createNewSession(barId, sessionRequest);
@@ -100,12 +101,12 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Creates new session for bar",
-            notes = "Provide id of bar to update the session with information from the request body",
+            notes = "Provide categoryId of bar to update the session with information from the request body",
             response = SessionResponse.class
     )
-    public Long updateSession(
-            @ApiParam(value = "ID value for the bar you want to update the session from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") Long sessionId,
+    public UUID updateSession(
+            @ApiParam(value = "ID value for the bar you want to update the session from") @PathVariable("barId") UUID barId,
+            @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") UUID sessionId,
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
         return sessionService.updateSession(barId, sessionId, sessionRequest);
@@ -116,41 +117,41 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
             value = "Ends the session of bar",
-            notes = "Provide id of bar and session to end the session of the bar",
+            notes = "Provide categoryId of bar and session to end the session of the bar",
             response = SessionResponse.class
     )
     public void endSession(
-            @ApiParam(value = "ID value for the bar you want to end the session from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") Long sessionId
+            @ApiParam(value = "ID value for the bar you want to end the session from") @PathVariable("barId") UUID barId,
+            @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         this.sessionService.endSession(barId, sessionId);
     }
 
-    @PatchMapping("/{sessionId}/lock")
-    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
-    @ApiOperation(
-            value = "Locks the session of bar",
-            notes = "Provide id of bar and session to lock the session of the bar",
-            response = SessionResponse.class
-    )
-    public void lockSession(
-            @ApiParam(value = "ID value for the bar you want to lock the session from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to lock") @PathVariable("sessionId") Long sessionId
-    ) throws EntityNotFoundException {
-        sessionService.lockSession(barId, sessionId);
-    }
+//    @PatchMapping("/{sessionId}/lock")
+//    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
+//    @ApiOperation(
+//            value = "Locks the session of bar",
+//            notes = "Provide categoryId of bar and session to lock the session of the bar",
+//            response = SessionResponse.class
+//    )
+//    public void lockSession(
+//            @ApiParam(value = "ID value for the bar you want to lock the session from") @PathVariable("barId") UUID barId,
+//            @ApiParam(value = "ID value for the session you want to lock") @PathVariable("sessionId") UUID sessionId
+//    ) throws EntityNotFoundException {
+//        sessionService.lockSession(barId, sessionId);
+//    }
 
     @DeleteMapping("/{sessionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Deletes the session of bar",
-            notes = "Provide id of bar and session to delete the session from the bar",
+            notes = "Provide categoryId of bar and session to delete the session from the bar",
             response = ProductResponse.class
     )
     public void deleteSession(
-            @ApiParam(value = "ID value for the bar you want to delete the session from") @PathVariable("barId") Long barId,
-            @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") Long sessionId
+            @ApiParam(value = "ID value for the bar you want to delete the session from") @PathVariable("barId") UUID barId,
+            @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         this.sessionService.deleteSession(sessionId);
     }

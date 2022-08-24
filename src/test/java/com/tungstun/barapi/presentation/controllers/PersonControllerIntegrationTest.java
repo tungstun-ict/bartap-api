@@ -23,7 +23,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].name").value("ownerPerson"))
 //                .andExpect(jsonPath("$[0].user").exists());
 //    }
@@ -50,7 +50,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value("ownerPerson"))
 //                .andExpect(jsonPath("$.user").exists());
 //    }
@@ -82,7 +82,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isCreated())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
 //                .andExpect(jsonPath("$.user").doesNotExist());
 //    }
@@ -119,7 +119,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.name").value(jsonObject.get("name")))
 //                .andExpect(jsonPath("$.user").exists());
 //    }

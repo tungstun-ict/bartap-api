@@ -1,4 +1,6 @@
 package com.tungstun.barapi.application.session.query;
 
-public record GetActiveSession(Long barId) {
+import java.util.UUID;
+
+public record GetActiveSession(UUID barId) {
 }

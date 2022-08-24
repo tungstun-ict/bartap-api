@@ -1,19 +1,24 @@
 package com.tungstun.barapi.application;
 
-import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringBillRepository;
+import com.tungstun.barapi.application.order.OrderQueryHandler;
+import com.tungstun.barapi.application.order.OrderService;
+import com.tungstun.barapi.application.order.query.GetOrder;
+import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
+import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
-import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.domain.bill.Bill;
+import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.product.Category;
+import com.tungstun.barapi.domain.product.CategoryFactory;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
-import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
+import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
+import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.category.SpringCategoryRepository;
 import com.tungstun.barapi.port.persistence.person.SpringPersonRepository;
 import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
@@ -53,99 +58,137 @@ class OrderServiceIntegrationTest {
     @Autowired
     private SpringUserRepository userRepository;
     @Autowired
+    private OrderQueryHandler orderQueryHandler;
+    @Autowired
     private OrderService service;
 
     private Bar bar;
-    private Category category;
     private Product product;
     private Session session;
-    private Session session2;
     private Session session3;
     private Person customer;
     private Bill bill;
-    private Bill bill2;
     private Bill bill3;
     private Order order;
     private Order order2;
 
     @BeforeEach
     void setup() {
-        bar = barRepository.save(new BarBuilder().build());
-//        bar = barRepository.findById(bar.getId()).orElseThrow();
+        Category category = new CategoryFactory("Drinks").create();
 
-        category = categoryRepository.save(new Category(bar.getId(), "Drinks", ProductType.DRINK));
-        category = categoryRepository.getById(category.getId());
-        bar.addCategory(category);
-
-        product = new ProductBuilder(bar.getId(), "product", category)
+        product = new ProductBuilder("product", category)
                 .setPrice(1.0)
                 .setSize(100)
                 .build();
-        product = productRepository.save(product);
-        bar.addProduct(product);
 
         User user = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
         userRepository.save(user);
-        customer = personRepository.save(new PersonBuilder(bar.getId(), "name")
+        customer = personRepository.save(new PersonBuilder("name")
                 .setName("testPerson")
                 .setUser(user)
                 .build());
 
-        session = Session.create(bar.getId(), "test");
+        session = new Session(UUID.randomUUID(), "test", new ArrayList<>());
         bill = session.addCustomer(customer);
 //        bill = new BillFactory(session, customer).create();
         order = bill.addOrder(product, 1, customer);
 //        bill = billRepository.save(bill);
 //        session.addBill(bill);
-        session = sessionRepository.save(session);
+//        session = sessionRepository.save(session);
 
-        session2 = Session.create(bar.getId(), "test2");
-        bill2 = session2.addCustomer(customer);
+        Session session2 = new Session(UUID.randomUUID(), "test2", new ArrayList<>());
+        Bill bill2 = session2.addCustomer(customer);
 //        bill2 = new BillFactory(session2, customer).create();
         order2 = bill2.addOrder(product, 1, customer);
 //        bill2 = billRepository.save(bill2);
 //        session2.addBill(bill2);
-        session2 = sessionRepository.save(session2);
+//        session2 = sessionRepository.save(session2);
 
-        session3 = Session.create(bar.getId(), "test3");
+        session3 = new Session(UUID.randomUUID(), "test3", new ArrayList<>());
         bill3 = session3.addCustomer(customer);
-//        bill3 = billRepository.save(new BillFactory(session3, customer).create());
-//        session3.addBill(bill3);
-        session3 = sessionRepository.save(session3);
-//        bill3 = session3.getBills().stream().findFirst().get();
 
-        bar.addSession(session);
-        bar.addSession(session2);
-        bar.addSession(session3);
+
+        bar = barRepository.save(new BarBuilder("bar")
+                .setCategories(new ArrayList<>(List.of(category)))
+                .setProducts(new ArrayList<>(List.of(product)))
+                .setPeople(new ArrayList<>(List.of(customer)))
+                .setSessions(new ArrayList<>(List.of(session, session2, session3)))
+                .build());
+//        bar = barRepository.findById(bar.getId()).orElseThrow();
+
+//        category = categoryRepository.save(new CategoryFactory("Drinks").create();
+//        category = categoryRepository.getById(category.getId());
+//        bar.addCategory(category);
+
+//        product = new ProductBuilder("product", category)
+//                .setPrice(1.0)
+//                .setSize(100)
+//                .build();
+//        product = productRepository.save(product);
+//        bar.addProduct(product);
+
+//        User user = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
+//        userRepository.save(user);
+//        customer = personRepository.save(new PersonBuilder(bar.getId(), "name")
+//                .setName("testPerson")
+//                .setUser(user)
+//                .build());
+
+//        session = Session.create(bar.getId(), "test");
+//        bill = session.addCustomer(customer);
+////        bill = new BillFactory(session, customer).create();
+//        order = bill.addOrder(product, 1, customer);
+////        bill = billRepository.save(bill);
+////        session.addBill(bill);
+//        session = sessionRepository.save(session);
+//
+//        session2 = Session.create(bar.getId(), "test2");
+//        bill2 = session2.addCustomer(customer);
+////        bill2 = new BillFactory(session2, customer).create();
+//        order2 = bill2.addOrder(product, 1, customer);
+////        bill2 = billRepository.save(bill2);
+////        session2.addBill(bill2);
+//        session2 = sessionRepository.save(session2);
+//
+//        session3 = Session.create(bar.getId(), "test3");
+//        bill3 = session3.addCustomer(customer);
+////        bill3 = billRepository.save(new BillFactory(session3, customer).create());
+////        session3.addBill(bill3);
+//        session3 = sessionRepository.save(session3);
+////        bill3 = session3.getBills().stream().findFirst().get();
+
+//        bar.addSession(session);
+//        bar.addSession(session2);
+//        bar.addSession(session3);
 //        order = bill.getOrders().stream().findFirst().get();
 //        order2 = bill2.getOrders().stream().findFirst().get();
         bar = barRepository.save(bar);
     }
 
-    @Test
-    @DisplayName("Get all orders of bar")
-    void getAllOrdersOfBar() throws EntityNotFoundException {
-        List<Order> resOrders = service.getAllOrdersOfBar(bar.getId());
+//    @Test
+//    @DisplayName("Get all orders of bar")
+//    void getAllOrdersOfBar() throws EntityNotFoundException {
+//        List<Order> resOrders = service.getAllOrdersOfBar(bar.getId());
+//
+//        assertEquals(2, resOrders.size());
+//        assertTrue(resOrders.contains(order));
+//        assertTrue(resOrders.contains(order2));
+//    }
 
-        assertEquals(2, resOrders.size());
-        assertTrue(resOrders.contains(order));
-        assertTrue(resOrders.contains(order2));
-    }
-
-    @Test
-    @DisplayName("Get none orders of bar")
-    void getNoneOrdersOfBar() throws EntityNotFoundException {
-        Bar bar2 = barRepository.save(new BarBuilder().build());
-
-        List<Order> resOrders = service.getAllOrdersOfBar(bar2.getId());
-
-        assertEquals(0, resOrders.size());
-    }
+//    @Test
+//    @DisplayName("Get none orders of bar")
+//    void getNoneOrdersOfBar() throws EntityNotFoundException {
+//        Bar bar2 = barRepository.save(new BarBuilder("name").build());
+//
+//        List<Order> resOrders = service.getAllOrdersOfBar(bar2.getId());
+//
+//        assertEquals(0, resOrders.size());
+//    }
 
     @Test
     @DisplayName("Get all orders of session")
     void getAllOrdersOfSession() throws EntityNotFoundException {
-        List<Order> resOrders = service.getAllOrdersOfSession(bar.getId(), session.getId());
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(session.getId(), bar.getId()));
 
         assertEquals(1, resOrders.size());
         assertTrue(resOrders.contains(order));
@@ -159,7 +202,7 @@ class OrderServiceIntegrationTest {
 //        bar2 = barRepository.save(bar2);
 //        Session session2 = bar2.getSessions().stream().findFirst().get();
 
-        List<Order> resOrders = service.getAllOrdersOfSession(bar.getId(), session3.getId());
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(session3.getId(), bar.getId()));
 
         assertEquals(0, resOrders.size());
     }
@@ -184,7 +227,7 @@ class OrderServiceIntegrationTest {
     @Test
     @DisplayName("Get all orders of bill")
     void getAllOrdersOfBill() throws EntityNotFoundException {
-        List<Order> resOrders = service.getAllOrdersOfBill(bar.getId(), session.getId(), bill.getId());
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bill.getId(), session.getId(), bar.getId()));
 
         assertEquals(1, resOrders.size());
         assertTrue(resOrders.contains(order));
@@ -201,7 +244,7 @@ class OrderServiceIntegrationTest {
 //        session2 = bar2.getSessions().stream().findFirst().get();
 //        Bill bill2 = session2.getBills().stream().findFirst().get();
 
-        List<Order> resOrders = service.getAllOrdersOfBill(bar.getId(), session3.getId(), bill3.getId());
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bill3.getId(), session3.getId(), bar.getId()));
 
         assertEquals(0, resOrders.size());
     }
@@ -209,7 +252,7 @@ class OrderServiceIntegrationTest {
     @Test
     @DisplayName("Get order of bill")
     void getOrderOfBill() throws EntityNotFoundException {
-        Order resOrder = service.getOrderOfBill(bar.getId(), session.getId(), bill.getId(), order.getId());
+        Order resOrder = orderQueryHandler.handle(new GetOrder(order.getId(), bill.getId(), session.getId(), bar.getId()));
 
         assertEquals(order, resOrder);
     }
@@ -219,7 +262,7 @@ class OrderServiceIntegrationTest {
     void getNotExistingOrderOfBill() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.getOrderOfBill(bar.getId(), session.getId(), bill.getId(), UUID.randomUUID())
+                () -> orderQueryHandler.handle(new GetOrder(UUID.randomUUID(), bill.getId(), session.getId(), bar.getId()))
         );
     }
 
@@ -228,7 +271,7 @@ class OrderServiceIntegrationTest {
     void deleteOrderFromBill() throws EntityNotFoundException {
         service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), order.getId());
 
-        bill = billRepository.findById(bill.getId()).get();
+        bill = billRepository.findById(bill.getId()).orElseThrow();
 
         assertTrue(bill.getOrders().isEmpty());
     }
@@ -243,23 +286,6 @@ class OrderServiceIntegrationTest {
 //    }
 
     @Test
-    @DisplayName("Delete order from of inactive session")
-    void deleteOrderFromBillOfInactiveSession() {
-        Session testSession = sessionRepository.getById(session.getId());
-        testSession.lock();
-        testSession = sessionRepository.save(testSession);
-
-//        bill = billRepository.findById(bill.getId()).get();
-//        bill.getSession().lock();
-//        billRepository.save(bill);
-
-        assertThrows(
-                InvalidSessionStateException.class,
-                () -> service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), order.getId())
-        );
-    }
-
-    @Test
     @DisplayName("Add product(order) to bill")
     void addOrderToBill() throws EntityNotFoundException {
 //        User user = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
@@ -272,10 +298,8 @@ class OrderServiceIntegrationTest {
         OrderRequest request = new OrderRequest();
         request.amount = 2;
         request.productId = product.getId();
-        bar.addPerson(customer);
-        barRepository.save(bar);
-
-        sessionRepository.findAll().forEach(s -> System.out.println(s.getId()));
+//        bar.addPerson(customer);
+//        barRepository.save(bar);
 
         UUID orderId = service.addProductToBill(bar.getId(), session.getId(), bill.getId(), request, "testUser");
 
@@ -297,6 +321,24 @@ class OrderServiceIntegrationTest {
         assertThrows(
                 EntityNotFoundException.class,
                 () -> service.addProductToBill(bar.getId(), session.getId(), bill.getId(), request, "notExisting")
+        );
+    }
+
+
+    @Test
+    @DisplayName("Delete order from of inactive session")
+    void deleteOrderFromBillOfInactiveSession() {
+        Session testSession = sessionRepository.getById(session.getId());
+        testSession.end();
+        testSession = sessionRepository.save(testSession);
+
+//        bill = billRepository.findById(bill.getId()).get();
+//        bill.getSession().lock();
+//        billRepository.save(bill);
+
+        assertThrows(
+                InvalidSessionStateException.class,
+                () -> service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), order.getId())
         );
     }
 }

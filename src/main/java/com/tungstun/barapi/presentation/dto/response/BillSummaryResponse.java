@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @ApiModel(description = "Response detail summary about the bill")
 public class BillSummaryResponse {
-    @ApiModelProperty(notes = "The bill's id")
+    @ApiModelProperty(notes = "The bill's categoryId")
     private UUID id;
 
     @ApiModelProperty(notes = "The bill's payment state")

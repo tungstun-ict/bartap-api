@@ -5,16 +5,15 @@ import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.barapi.domain.payment.BillFactory;
-import com.tungstun.barapi.domain.payment.Order;
+import com.tungstun.barapi.domain.bill.Bill;
+import com.tungstun.barapi.domain.bill.BillFactory;
+import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -29,10 +28,7 @@ import java.util.stream.Collectors;
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "bar_id")
-    private Long barId;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
@@ -44,14 +40,13 @@ public class Session {
     private LocalDateTime endDate;
 
     @Column(name = "locked", nullable = false)
-    private boolean isLocked;
+    private boolean ended;
 
     @JsonIdentityReference(alwaysAsId = true)
     @JsonIgnore
     @OneToMany(
             mappedBy = "session",
             orphanRemoval = true,
-            fetch = FetchType.EAGER,
             cascade = CascadeType.ALL
     )
     private List<Bill> bills;
@@ -59,38 +54,25 @@ public class Session {
     public Session() {
     }
 
-    public Session(Long barId, String name, List<Bill> bills) {
+    public Session(UUID id, String name, List<Bill> bills) {
+        this.id = id;
         this.creationDate = ZonedDateTime.now().toLocalDateTime();
-        this.isLocked = false;
-        this.barId = barId;
+        this.ended = false;
         this.name = name;
         this.bills = bills;
     }
 
-    public static Session create(Long barId, String name) {
-        return new Session(barId, name, new ArrayList<>());
-    }
-
-    public boolean end() {
+    public void end() {
         if (this.endDate != null) throw new IllegalStateException("Session already ended");
         this.endDate = ZonedDateTime.now().toLocalDateTime();
-        return true;
-    }
-
-    public void lock() {
-//        if (session.isLocked()) throw new InvalidSessionStateException("Cannot lock an already locked session");
-        if (
-//                endDate == null ||
-                isLocked)
-            throw new InvalidSessionStateException("Cannot lock session that is still ongoing or is already locked");
-        isLocked = true;
+        ended = true;
     }
 
     public boolean isActive() {
-        return this.endDate == null && !this.isLocked;
+        return this.endDate == null && !this.ended;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -114,12 +96,12 @@ public class Session {
         return endDate;
     }
 
-    public boolean isLocked() {
-        return isLocked;
+    public boolean isEnded() {
+        return ended;
     }
 
     public void checkEditable() {
-        if (endDate != null || isLocked) {
+        if (endDate != null || ended) {
             throw new InvalidSessionStateException("Cannot make changes to session if session is not active");
         }
     }
@@ -129,7 +111,7 @@ public class Session {
         boolean alreadyHasBill = bills.stream()
                 .anyMatch(bill -> bill.getCustomer().equals(customer));
         if (alreadyHasBill) {
-            throw new DuplicateRequestException(String.format("Session already contains a bill for customer with id %s", customer.getId()));
+            throw new DuplicateRequestException(String.format("Session already contains a bill for customer with categoryId %s", customer.getId()));
         }
         Bill bill = new BillFactory(this, customer).create();
         bills.add(bill);
@@ -145,7 +127,7 @@ public class Session {
         return bills.stream()
                 .filter(bill -> bill.getId().equals(billId))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("No Bill found with id " + billId));
+                .orElseThrow(() -> new EntityNotFoundException("No Bill found with id: " + billId));
     }
 
     public List<Order> getAllOrders() {

@@ -1,6 +1,8 @@
 package com.tungstun.barapi.application.session.query;
 
+import java.util.UUID;
+
 public record GetSession(
-        Long sessionId,
-        Long barId) {
+        UUID sessionId,
+        UUID barId) {
 }

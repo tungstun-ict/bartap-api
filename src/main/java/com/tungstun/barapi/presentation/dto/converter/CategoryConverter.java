@@ -12,8 +12,7 @@ public class CategoryConverter {
     public CategoryResponse convert(Category category) {
         return new CategoryResponse(
                 category.getId(),
-                category.getName(),
-                category.getProductType().toString()
+                category.getName()
         );
     }
 

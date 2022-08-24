@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -38,7 +39,7 @@ public class UserConverter {
         return response;
     }
 
-    private Set<Long> getBarIds(User user) {
+    private Set<UUID> getBarIds(User user) {
         return user.getAuthorizations().keySet();
     }
 

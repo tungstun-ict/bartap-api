@@ -1,18 +1,17 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.application.session.bill.BillQueryHandler;
-import com.tungstun.barapi.application.session.bill.BillService;
-import com.tungstun.barapi.application.session.bill.query.GetBill;
-import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringBillRepository;
+import com.tungstun.barapi.application.bill.BillQueryHandler;
+import com.tungstun.barapi.application.bill.BillService;
+import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
-import com.tungstun.barapi.domain.payment.Bill;
+import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
+import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.session.SpringSessionRepository;
 import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import org.junit.jupiter.api.AfterEach;
@@ -49,20 +48,21 @@ class BillServiceIntegrationTest {
 
     @BeforeEach
     void setup() {
-        bar = new BarBuilder().build();
-        bar = barRepository.save(bar);
+        bar = new BarBuilder("bar").build();
+//        bar = barRepository.save(bar);
 //        bar = barRepository.getById(bar.getId());
-        person = personRepository.save(new PersonBuilder(bar.getId(), "name").build());
-        session = Session.create(bar.getId(), "test");
+        person = bar.createPerson("name");
+//        person = personRepository.save(new PersonBuilder("name").build());
+        session = bar.newSession("test");
         bill = session.addCustomer(person);
-        session = sessionRepository.save(session);
+//        session = sessionRepository.save(session);
 
 //        bill = repository.save(new BillFactory(session, person).create());
 //        person.addBill(bill);
 //        session.addBill(bill);
 //        session = sessionRepository.save(session);
 //        bar.addSession(session);
-        bar.addPerson(person);
+//        bar.addPerson(person);
         bar = barRepository.save(bar);
     }
 
@@ -114,7 +114,7 @@ class BillServiceIntegrationTest {
     void getBillOfNotExistingSessionOfBar() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> billQueryHandler.handle(new GetBill(bill.getId(), 999L, bar.getId()))
+                () -> billQueryHandler.handle(new GetBill(bill.getId(), UUID.randomUUID(), bar.getId()))
         );
     }
 
@@ -185,8 +185,9 @@ class BillServiceIntegrationTest {
     @Test
     @DisplayName("create Bill")
     void createBill() throws EntityNotFoundException {
-        Person person2 = personRepository.save(new PersonBuilder(123L, "name").build());
-        bar.addPerson(person2);
+//        Person person2 = personRepository.save(new PersonBuilder(123L, "name").build());
+//        bar.addPerson(person2);
+        Person person2 = bar.createPerson("name");
         barRepository.save(bar);
         BillRequest request = new BillRequest();
         request.customerId = person2.getId();

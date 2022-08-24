@@ -14,12 +14,13 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserTest {
-    private Long barId;
+    private UUID barId;
     private User userWithAuthorization;
     private User user;
 
@@ -32,7 +33,7 @@ class UserTest {
 
     @BeforeEach
     void setUp() {
-        barId = 123L;
+        barId = UUID.randomUUID();
         userWithAuthorization = new User(
                 "username",
                 "password",
@@ -60,7 +61,7 @@ class UserTest {
 
     @Test
     void userWithoutAuthorization_HasNoAuthorizations() {
-        Map<Long, String> auths = user.getAuthorizations();
+        Map<UUID, String> auths = user.getAuthorizations();
 
         assertTrue(auths.isEmpty());
     }
@@ -80,7 +81,7 @@ class UserTest {
 
     @Test
     void addNewBarAuthorization_Successfully() {
-        Long newBarId = 987L;
+        UUID newBarId = UUID.randomUUID();
 
         user.newBarAuthorization(newBarId);
 
@@ -132,7 +133,7 @@ class UserTest {
 
     @Test
     void authorizeUserForNotOwnedBar_Throws() {
-        Long notOwnedBarId = 987L;
+        UUID notOwnedBarId = UUID.randomUUID();
 
         assertThrows(
                 NotAuthorizedException.class,

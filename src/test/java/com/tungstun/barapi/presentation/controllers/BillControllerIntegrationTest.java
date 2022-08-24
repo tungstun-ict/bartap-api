@@ -23,7 +23,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].payed").value(false))
 //                .andExpect(jsonPath("$[0].totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$[0].customer").exists())
@@ -53,7 +53,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].payed").value(false))
 //                .andExpect(jsonPath("$[0].totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$[0].customer").exists())
@@ -83,7 +83,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.payed").value(false))
 //                .andExpect(jsonPath("$.totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$.customer").exists())
@@ -101,7 +101,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.payed").value(false))
 //                .andExpect(jsonPath("$.totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$.customer").exists())
@@ -143,7 +143,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$[0].id").exists())
+//                .andExpect(jsonPath("$[0].categoryId").exists())
 //                .andExpect(jsonPath("$[0].payed").value(false))
 //                .andExpect(jsonPath("$[0].totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$[0].session").exists());
@@ -171,7 +171,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.payed").value(false))
 //                .andExpect(jsonPath("$.totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$.customer").exists())
@@ -205,7 +205,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.payed").value(false))
 //                .andExpect(jsonPath("$.totalPrice").value(0d))
 //                .andExpect(jsonPath("$.customer").exists())
@@ -244,7 +244,7 @@
 //
 //        mockMvc.perform(request)
 //                .andExpect(status().isOk())
-//                .andExpect(jsonPath("$.id").exists())
+//                .andExpect(jsonPath("$.categoryId").exists())
 //                .andExpect(jsonPath("$.payed").value(true))
 //                .andExpect(jsonPath("$.totalPrice").value(bill.calculateTotalPrice()))
 //                .andExpect(jsonPath("$.customer").exists())

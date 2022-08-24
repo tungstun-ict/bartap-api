@@ -4,8 +4,8 @@ import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.domain.session.SessionRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class DefaultSessionRepository implements SessionRepository {
@@ -26,22 +26,22 @@ public class DefaultSessionRepository implements SessionRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 
     @Override
-    public Optional<Session> findById(Long id) {
+    public Optional<Session> findById(UUID id) {
         return repository.findById(id);
     }
 
-    @Override
-    public Optional<Session> findByIdAndBarId(Long id, Long barId) {
-        return repository.findByIdAndBarId(id, barId);
-    }
-
-    @Override
-    public List<Session> findAllByBarId(Long id) {
-        return repository.findAllByBarId(id);
-    }
+//    @Override
+//    public Optional<Session> findByIdAndBarId(UUID id, UUID barId) {
+//        return repository.findByIdAndBarId(id, barId);
+//    }
+//
+//    @Override
+//    public List<Session> findAllByBarId(UUID id) {
+//        return repository.findAllByBarId(id);
+//    }
 }

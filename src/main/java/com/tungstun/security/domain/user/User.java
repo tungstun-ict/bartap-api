@@ -115,25 +115,25 @@ public class User implements UserDetails {
             throw new CannotAuthenticateException("Account disabled. A disabled account cannot be authenticated.");
     }
 
-    public boolean newBarAuthorization(Long barId) {
+    public boolean newBarAuthorization(UUID barId) {
         addAuthorization(barId, Role.OWNER);
         return true;
     }
 
-    public boolean authorizeUser(User user, Long barId, Role role) {
+    public boolean authorizeUser(User user, UUID barId, Role role) {
         if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner of bar to authorize other users");
         if (this.equals(user)) throw new IllegalArgumentException("Cannot change your own bar role");
         if (role == Role.OWNER) throw new IllegalArgumentException("Cannot make an other person than yourself owner");
         return user.addAuthorization(barId, role);
     }
 
-    private boolean isOwner(Long barId) {
+    private boolean isOwner(UUID barId) {
         return authorizations.stream()
                 .filter(authorization -> authorization.getBarId().equals(barId))
                 .anyMatch(authorization -> authorization.getRole() == Role.OWNER);
     }
 
-    private boolean addAuthorization(Long barId, Role role) {
+    private boolean addAuthorization(UUID barId, Role role) {
         authorizations.stream()
                 .filter(authorization -> authorization.getBarId().equals(barId))
                 .filter(authorization -> authorization.getRole() != (Role.OWNER)) // Cannot unmake yourself Owner
@@ -144,23 +144,23 @@ public class User implements UserDetails {
         return true;
     }
 
-    public boolean revokeUserAuthorization(User user, Long barId) {
+    public boolean revokeUserAuthorization(User user, UUID barId) {
         if (!isOwner(barId))
             throw new NotAuthorizedException("User has to be Owner of bar to revoke authorize other users");
         if (this.equals(user)) throw new IllegalArgumentException("Cannot revoke your own bar ownership authorization");
         return user.revokeAuthorization(barId);
     }
 
-    public boolean revokeOwnership(Long barId) {
+    public boolean revokeOwnership(UUID barId) {
         if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner to revoke ownership");
         return revokeAuthorization(barId);
     }
 
-    private boolean revokeAuthorization(Long barId) {
+    private boolean revokeAuthorization(UUID barId) {
         return authorizations.removeIf(authorization -> authorization.getBarId().equals(barId));
     }
 
-    public Map<Long, String> getAuthorizations() {
+    public Map<UUID, String> getAuthorizations() {
         return authorizations.stream()
                 .collect(Collectors.toMap(
                         Authorization::getBarId,

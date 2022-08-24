@@ -1,12 +1,17 @@
 package com.tungstun.barapi.domain.person;
 
-import com.fasterxml.jackson.annotation.*;
-import com.tungstun.barapi.domain.payment.Bill;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.security.domain.user.User;
 
-import javax.persistence.*;
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import java.util.Objects;
+import java.util.UUID;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -16,11 +21,7 @@ import java.util.Objects;
 @Entity
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "bar_id")
-    private Long barId;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
@@ -29,30 +30,28 @@ public class Person {
     @JsonIgnore
     private User user;
 
-    @JsonBackReference
-    @OneToMany(
-            mappedBy = "customer",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Bill> bills;
+//    @JsonBackReference
+//    @OneToMany(
+//            mappedBy = "customer",
+//            cascade = CascadeType.ALL,
+//            orphanRemoval = true
+//    )
+//    private List<Bill> bills;
 
     public Person() {
     }
 
-    public Person(Long barId, String name, User user, List<Bill> bills) {
-        this.barId = barId;
+    public Person(UUID id, String name, User user
+//                  , List<Bill> bills
+    ) {
+        this.id = id;
         this.name = name;
         this.user = user;
-        this.bills = bills;
+//        this.bills = bills;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
-    }
-
-    public Long getBarId() {
-        return barId;
     }
 
     public String getName() {
@@ -71,40 +70,30 @@ public class Person {
         this.user = user;
     }
 
-    public List<Bill> getBills() {
-        return bills;
-    }
+//    public List<Bill> getBills() {
+//        return bills;
+//    }
+//
+//    public boolean addBill(Bill bill) {
+//        if (!this.bills.contains(bill)) return this.bills.add(bill);
+//        return false;
+//    }
+//
+//    public boolean removeBill(Bill bill) {
+//        return this.bills.remove(bill);
+//    }
 
-    public boolean addBill(Bill bill) {
-        if (!this.bills.contains(bill)) return this.bills.add(bill);
-        return false;
-    }
-
-    public boolean removeBill(Bill bill) {
-        return this.bills.remove(bill);
-    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Person person = (Person) o;
-        return Objects.equals(id, person.id) && Objects.equals(barId, person.barId) && Objects.equals(name, person.name) && Objects.equals(user, person.user) && Objects.equals(bills, person.bills);
+        return Objects.equals(id, person.id) && Objects.equals(name, person.name) && Objects.equals(user, person.user);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, barId, name, user, bills);
-    }
-
-    @Override
-    public String toString() {
-        return "Person{" +
-                "id=" + id +
-                ", barId=" + barId +
-                ", name='" + name + '\'' +
-                ", user=" + user +
-                ", bills=" + bills +
-                '}';
+        return Objects.hash(id, name, user);
     }
 }

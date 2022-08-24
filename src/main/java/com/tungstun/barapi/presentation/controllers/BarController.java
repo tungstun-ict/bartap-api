@@ -1,6 +1,9 @@
 package com.tungstun.barapi.presentation.controllers;
 
-import com.tungstun.barapi.application.BarService;
+import com.tungstun.barapi.application.bar.BarQueryHandler;
+import com.tungstun.barapi.application.bar.BarService;
+import com.tungstun.barapi.application.bar.query.GetBar;
+import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.presentation.dto.converter.BarConverter;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
@@ -8,7 +11,6 @@ import com.tungstun.barapi.presentation.dto.response.BarResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,84 +20,89 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/bars")
 public class BarController {
+    private final BarQueryHandler barQueryHandler;
     private final BarService barService;
     private final BarConverter converter;
 
-    public BarController(BarService barService, BarConverter converter) {
+    public BarController(BarQueryHandler barQueryHandler, BarService barService, BarConverter converter) {
+        this.barQueryHandler = barQueryHandler;
         this.barService = barService;
         this.converter = converter;
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
             value = "Finds all bars owned by user",
             notes = "Look up a all owned bars",
             response = BarResponse.class
     )
-    public ResponseEntity<List<BarResponse>> getAllBarOwnerBars(@ApiIgnore Authentication authentication) {
+    public List<BarResponse> getAllBarOwnerBars(@ApiIgnore Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        List<Bar> allBars = this.barService.getAllBarOwnerBars(userDetails.getUsername());
-        return new ResponseEntity<>(converter.convertAll(allBars), HttpStatus.OK);
+        List<Bar> allBars = barQueryHandler.handle(new ListOwnedBars(userDetails.getUsername()));
+        return converter.convertAll(allBars);
     }
 
     @GetMapping("/{barId}")
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
-            value = "Finds bar by id",
-            notes = "Provide id to look up a specific bar",
+            value = "Finds bar by categoryId",
+            notes = "Provide categoryId to look up a specific bar",
             response = BarResponse.class
     )
-    public ResponseEntity<BarResponse> getBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") Long barId
+    public BarResponse getBar(
+            @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") UUID barId
     ) throws EntityNotFoundException {
-        Bar bar = this.barService.getBar(barId);
-        return new ResponseEntity<>(converter.convert(bar), HttpStatus.OK);
+        Bar bar = barQueryHandler.handle(new GetBar(barId));
+        return converter.convert(bar);
     }
 
     @PostMapping()
+    @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(
             value = "Creates a new bar",
             notes = "Provide bar information in the request body to create a new bar",
             response = BarResponse.class
     )
-    public ResponseEntity<BarResponse> addBar(
+    public UUID addBar(
             @Valid @RequestBody BarRequest barRequest,
             @ApiIgnore Authentication authentication
     ) {
-        Bar bar = this.barService.addBar(barRequest, ((UserDetails) authentication.getPrincipal()).getUsername());
-        return new ResponseEntity<>(converter.convert(bar), HttpStatus.CREATED);
+        return barService.addBar(barRequest, ((UserDetails) authentication.getPrincipal()).getUsername());
     }
 
     @PutMapping("/{barId}")
+    @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
             value = "Updates bar",
-            notes = "Provide id of bar to update the bar with bar information in the request body",
+            notes = "Provide categoryId of bar to update the bar with bar information in the request body",
             response = BarResponse.class
     )
-    public ResponseEntity<BarResponse> updateBar(
-            @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") Long barId,
+    public UUID updateBar(
+            @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") UUID barId,
             @Valid @RequestBody BarRequest barRequest
     ) throws EntityNotFoundException {
-        Bar bar = this.barService.updateBar(barId, barRequest);
-        return new ResponseEntity<>(converter.convert(bar), HttpStatus.OK);
+        return barService.updateBar(barId, barRequest);
     }
 
 
     @DeleteMapping("/{barId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @ApiOperation(
             value = "Deletes a bar",
-            notes = "Provide id to delete a specific bar"
+            notes = "Provide categoryId to delete a specific bar"
     )
-    public ResponseEntity<BarResponse> deleteBar(
-            @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") Long barId
+    public void deleteBar(
+            @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") UUID barId
     ) {
-        this.barService.deleteBar(barId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        barService.deleteBar(barId);
     }
 }

@@ -4,8 +4,8 @@ import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class DefaultProductRepository implements ProductRepository {
@@ -26,32 +26,32 @@ public class DefaultProductRepository implements ProductRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 
     @Override
-    public Optional<Product> findById(Long id) {
+    public Optional<Product> findById(UUID id) {
         return repository.findById(id);
     }
 
-    @Override
-    public Optional<Product> findByIdAndBarId(Long id, Long barId) {
-        return repository.findByIdAndBarId(id, barId);
-    }
-
-    @Override
-    public List<Product> findAllOfBar(Long barId) {
-        return repository.findAllByBarId(barId);
-    }
-
-    @Override
-    public List<Product> findAllOfCategory(Long categoryId, Long barId) {
-        return repository.findAllByCategoryIdAndBarId(categoryId, barId);
-    }
-
-    @Override
-    public void delete(Long id, Long barId) {
-        repository.deleteByIdAndBarId(id, barId);
-    }
+//    @Override
+//    public Optional<Product> findByIdAndBarId(UUID id, UUID barId) {
+//        return repository.findByIdAndBarId(id, barId);
+//    }
+//
+//    @Override
+//    public List<Product> findAllOfBar(UUID barId) {
+//        return repository.findAllByBarId(barId);
+//    }
+//
+//    @Override
+//    public List<Product> findAllOfCategory(UUID categoryId, UUID barId) {
+//        return repository.findAllByCategoryIdAndBarId(categoryId, barId);
+//    }
+//
+//    @Override
+//    public void delete(UUID id, UUID barId) {
+//        repository.deleteByIdAndBarId(id, barId);
+//    }
 }

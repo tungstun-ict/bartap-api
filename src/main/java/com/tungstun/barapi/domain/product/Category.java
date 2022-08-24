@@ -6,7 +6,11 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
 
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.PropertyGenerator.class,
@@ -22,31 +26,19 @@ public class Category {
     private final boolean deleted = Boolean.FALSE;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
-    @Column(name = "bar_id")
-    private Long barId;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private ProductType productType;
-
     public Category() { }
-    public Category(Long barId, String name, ProductType productType) {
-        this.barId = barId;
+    public Category(UUID id, String name) {
+        this.id = id;
         this.name = name;
-        this.productType = productType;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
-    }
-
-    public Long getBarId() {
-        return barId;
     }
 
     public String getName() {
@@ -54,8 +46,4 @@ public class Category {
     }
 
     public void setName(String name) { this.name = name; }
-
-    public ProductType getProductType() { return productType; }
-
-    public void setProductType(ProductType productType) { this.productType = productType; }
 }

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.UUID;
 
 @ApiModel(description = "Request details about the product")
 public class ProductRequest {
@@ -29,7 +30,11 @@ public class ProductRequest {
     @NotNull
     public Boolean isFavorite;
 
+    @ApiModelProperty(notes = "The product's type")
+    @NotNull
+    public String productType;
+
     @ApiModelProperty(notes = "The ID of the product's category")
     @NotNull
-    public Long categoryId;
+    public UUID categoryId;
 }

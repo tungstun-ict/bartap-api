@@ -9,11 +9,12 @@ import java.util.List;
 
 @Embeddable
 public class Prices {
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(
             name = "product_price",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "price_id")
+
     )
     private List<Price> allPrices;
 
@@ -42,5 +43,12 @@ public class Prices {
         if (newPrice == null) throw new IllegalArgumentException("Monetary value cannot be null");
         currentPrice().endPricing();
         allPrices.add(new Price(newPrice));
+    }
+
+    @Override
+    public String toString() {
+        return "Prices{" +
+                "allPrices=" + allPrices +
+                '}';
     }
 }

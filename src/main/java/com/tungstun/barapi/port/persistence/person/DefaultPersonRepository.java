@@ -4,8 +4,8 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class DefaultPersonRepository implements PersonRepository {
@@ -26,17 +26,17 @@ public class DefaultPersonRepository implements PersonRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         repository.deleteById(id);
     }
 
     @Override
-    public Optional<Person> findById(Long id) {
+    public Optional<Person> findById(UUID id) {
         return repository.findById(id);
     }
 
-    @Override
-    public List<Person> findAllByBarId(Long barId) {
-        return repository.findAllByBarId(barId);
-    }
+//    @Override
+//    public List<Person> findAllByBarId(UUID barId) {
+//        return repository.findAllByBarId(barId);
+//    }
 }

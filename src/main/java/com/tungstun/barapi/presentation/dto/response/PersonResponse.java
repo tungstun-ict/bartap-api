@@ -5,11 +5,13 @@ import com.tungstun.security.presentation.dto.response.UserAccountSummaryRespons
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.UUID;
+
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Response details about the person")
 public class PersonResponse {
-    @ApiModelProperty(notes = "The person's id")
-    private Long id;
+    @ApiModelProperty(notes = "The person's categoryId")
+    private UUID id;
 
     @ApiModelProperty(notes = "The person's name")
     private String name;
@@ -19,9 +21,9 @@ public class PersonResponse {
 
     public PersonResponse() { }
 
-    public Long getId() { return id; }
+    public UUID getId() { return id; }
 
-    public void setId(Long id) { this.id = id; }
+    public void setId(UUID id) { this.id = id; }
 
     public String getName() { return name; }
 

@@ -1,7 +1,7 @@
 package com.tungstun.barapi.presentation.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.domain.payment.OrderProduct;
+import com.tungstun.barapi.domain.bill.OrderProduct;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Response details about the order")
 public class OrderResponse {
-    @ApiModelProperty(notes = "The order's id")
+    @ApiModelProperty(notes = "The order's categoryId")
     private UUID id;
 
     @ApiModelProperty(notes = "The order's amount of products")

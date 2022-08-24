@@ -4,10 +4,11 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.util.Set;
+import java.util.UUID;
 
 @ApiModel(description = "Response details of customer")
 public class AccountResponse {
-    @ApiModelProperty(notes = "Users id")
+    @ApiModelProperty(notes = "Users categoryId")
     private Long id;
 
     @ApiModelProperty(notes = "Users email adress")
@@ -23,11 +24,11 @@ public class AccountResponse {
     private String lastName;
 
     @ApiModelProperty(notes = "Users connected bars")
-    private Set<Long> connectedBars;
+    private Set<UUID> connectedBars;
 
     public AccountResponse() {}
 
-    public AccountResponse(Long id, String email, String username, String firstName, String lastName, Set<Long> connectedBars) {
+    public AccountResponse(Long id, String email, String username, String firstName, String lastName, Set<UUID> connectedBars) {
         this.id = id;
         this.email = email;
         this.username = username;
@@ -76,11 +77,11 @@ public class AccountResponse {
         this.lastName = lastName;
     }
 
-    public Set<Long> getConnectedBars() {
+    public Set<UUID> getConnectedBars() {
         return connectedBars;
     }
 
-    public void setConnectedBars(Set<Long> connectedBars) {
+    public void setConnectedBars(Set<UUID> connectedBars) {
         this.connectedBars = connectedBars;
     }
 }

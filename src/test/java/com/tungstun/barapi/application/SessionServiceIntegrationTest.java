@@ -5,17 +5,15 @@ import com.tungstun.barapi.application.session.SessionService;
 import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.application.session.query.ListSessionsOfBar;
-import com.tungstun.barapi.data.SpringBarRepository;
-import com.tungstun.barapi.data.SpringBillRepository;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
-import com.tungstun.barapi.domain.payment.Bill;
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
+import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
+import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.session.SpringSessionRepository;
 import com.tungstun.barapi.presentation.dto.request.SessionRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,23 +46,22 @@ class SessionServiceIntegrationTest {
     private SessionQueryHandler serviceQueryHandler;
 
     private Bar bar;
-    private Bill bill;
     private Session session;
-    private Person person;
 
     @BeforeEach
     void setup() {
-        bar = new BarBuilder().build();
+        bar = new BarBuilder("bar").build();
         bar = barRepository.save(bar);
         bar = barRepository.getById(bar.getId());
-        session = Session.create(bar.getId(), "test");
-        session = repository.save(session);
-        person = personRepository.save(new PersonBuilder(bar.getId(), "name").build());
-        bill = session.addCustomer(person);
-        person.addBill(bill);
+        session = bar.newSession("test");
+//        session = new SessionFactory("test").create();
+//        session = repository.save(session);
+        Person person = bar.createPerson("name");
+        session.addCustomer(person);
+//        person.addBill(bill);
         session = repository.save(session);
 //        bar.addSession(session);
-        bar.addPerson(person);
+//        bar.addPerson(person);
         bar = barRepository.save(bar);
     }
 
@@ -89,7 +87,7 @@ class SessionServiceIntegrationTest {
     void getNotExistingSession() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> serviceQueryHandler.handle(new GetSession(999L, bar.getId()))
+                () -> serviceQueryHandler.handle(new GetSession(UUID.randomUUID(), bar.getId()))
         );
     }
 
@@ -103,7 +101,7 @@ class SessionServiceIntegrationTest {
     @Test
     @DisplayName("Get not existing active session of bar")
     void getNotExistingActiveSession() {
-        session.lock();
+        session.end();
         repository.save(session);
         assertThrows(
                 EntityNotFoundException.class,
@@ -119,7 +117,7 @@ class SessionServiceIntegrationTest {
     @Test
     @DisplayName("Create new session")
     void createSession() throws EntityNotFoundException {
-        session.lock();
+        session.end();
         repository.save(session);
         SessionRequest request = new SessionRequest();
         request.name = "new";
@@ -210,12 +208,12 @@ class SessionServiceIntegrationTest {
     @Test
     @DisplayName("Lock locked session throws")
     void lockLockedSessionThrows() {
-        session.lock();
+        session.end();
         repository.save(session);
 
         assertThrows(
                 InvalidSessionStateException.class,
-                () -> service.lockSession(bar.getId(), session.getId())
+                () -> service.endSession(bar.getId(), session.getId())
         );
     }
 }

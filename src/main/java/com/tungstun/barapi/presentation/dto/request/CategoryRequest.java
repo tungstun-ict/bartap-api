@@ -7,7 +7,4 @@ import io.swagger.annotations.ApiModelProperty;
 public class CategoryRequest {
     @ApiModelProperty(notes = "The category's name")
     public String name;
-
-    @ApiModelProperty(notes = "The category's product type")
-    public String productType;
 }
