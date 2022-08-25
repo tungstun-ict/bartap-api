@@ -3,7 +3,7 @@ package com.tungstun.barapi.domain.product;
 import java.util.UUID;
 
 public class CategoryFactory {
-    private String name;
+    private final String name;
 
     public CategoryFactory(String name) {
         this.name = name;
