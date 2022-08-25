@@ -4,7 +4,7 @@ import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarRepository;
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +16,11 @@ import java.util.UUID;
 @Service
 public class BarQueryHandler {
     private final BarRepository barRepository;
-    private final UserService userService;
+    private final UserQueryHandler userQueryHandler;
 
-    public BarQueryHandler(BarRepository barRepository, UserService userService) {
+    public BarQueryHandler(BarRepository barRepository, UserQueryHandler userQueryHandler) {
         this.barRepository = barRepository;
-        this.userService = userService;
+        this.userQueryHandler = userQueryHandler;
     }
 
     public Bar handle(GetBar query) {
@@ -29,7 +29,7 @@ public class BarQueryHandler {
     }
 
     public List<Bar> handle(ListOwnedBars query) {
-        Set<UUID> ownedBarIds = ((User) userService.loadUserByUsername(query.username()))
+        Set<UUID> ownedBarIds = ((User) userQueryHandler.loadUserByUsername(query.username()))
                 .getAuthorizations()
                 .keySet();
         return barRepository.findAllById(ownedBarIds);

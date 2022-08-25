@@ -1,6 +1,6 @@
 package com.tungstun.security.presentation.controller;
 
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserService;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.RefreshTokenRequest;
 import io.swagger.annotations.ApiOperation;

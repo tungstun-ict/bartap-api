@@ -9,7 +9,7 @@ import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -28,13 +28,13 @@ import static org.mockito.Mockito.*;
 class BarServiceTest {
     private static final BarRepository repository = mock(BarRepository.class);
     private static final UserRepository userRepository = mock(UserRepository.class);
-    private static final UserService userService = mock(UserService.class);
-    private static final BarQueryHandler barQueryHandler = new BarQueryHandler(repository, userService);
-    private static final BarService service = new BarService(barQueryHandler, repository, userRepository, userService);
+    private static final UserQueryHandler userQueryHandler = mock(UserQueryHandler.class);
+    private static final BarQueryHandler barQueryHandler = new BarQueryHandler(repository, userQueryHandler);
+    private static final BarService service = new BarService(barQueryHandler, repository, userRepository, userQueryHandler);
 
     @AfterEach
     void teardown() {
-        clearInvocations(repository, userService);
+        clearInvocations(repository, userQueryHandler);
     }
 
     @Test
@@ -76,7 +76,7 @@ class BarServiceTest {
                 .build();
         when(repository.save(any(Bar.class)))
                 .thenReturn(bar);
-        when(userService.loadUserByUsername(ownerName))
+        when(userQueryHandler.loadUserByUsername(ownerName))
                 .thenReturn(new User(ownerName, "", "", "", "", "+310612345678", new ArrayList<>()));
 
         UUID id = service.addBar(request, ownerName);
@@ -85,7 +85,7 @@ class BarServiceTest {
 //        verify(repository, times(1)).findBarByDetails_Name(request.name);
 
         verify(repository, times(2)).save(any(Bar.class));
-        verify(userService, times(1)).loadUserByUsername(ownerName);
+        verify(userQueryHandler, times(1)).loadUserByUsername(ownerName);
     }
 
     @Test
@@ -106,7 +106,7 @@ class BarServiceTest {
                 .build();
 //        when(repository.findBarByDetails_Name(request.name))
 //                .thenReturn(Optional.of(bar));
-        when(userService.loadUserByUsername(person.getUser().getUsername()))
+        when(userQueryHandler.loadUserByUsername(person.getUser().getUsername()))
                 .thenReturn(person.getUser());
         String username = person.getUser().getUsername();
 
@@ -115,7 +115,7 @@ class BarServiceTest {
                 () -> service.addBar(request, username)
         );
 //        verify(repository, times(1)).findBarByDetails_Name(request.name);
-        verify(userService, times(1)).loadUserByUsername(person.getUser().getUsername());
+        verify(userQueryHandler, times(1)).loadUserByUsername(person.getUser().getUsername());
     }
 
     @Test

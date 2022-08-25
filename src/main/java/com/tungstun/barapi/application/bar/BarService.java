@@ -6,7 +6,7 @@ import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
 import org.springframework.stereotype.Service;
@@ -22,17 +22,17 @@ public class BarService {
     private final BarQueryHandler barQueryHandler;
     private final BarRepository barRepository;
     private final UserRepository userRepository;
-    private final UserService userService;
+    private final UserQueryHandler userQueryHandler;
 
-    public BarService(BarQueryHandler barQueryHandler, BarRepository springBarRepository, UserRepository userRepository, UserService userService) {
+    public BarService(BarQueryHandler barQueryHandler, BarRepository springBarRepository, UserRepository userRepository, UserQueryHandler userQueryHandler) {
         this.barQueryHandler = barQueryHandler;
         this.barRepository = springBarRepository;
         this.userRepository = userRepository;
-        this.userService = userService;
+        this.userQueryHandler = userQueryHandler;
     }
 
     public UUID addBar(BarRequest barRequest, String ownerUsername) {
-        User user = (User) this.userService.loadUserByUsername(ownerUsername);
+        User user = (User) userQueryHandler.loadUserByUsername(ownerUsername);
 //        checkIfBarExistsForPerson(barRequest.name, user);
 
         Bar bar = new BarBuilder(barRequest.name)
@@ -74,11 +74,7 @@ public class BarService {
         return barRepository.save(bar).getId();
     }
 
-//    public Bar saveBar(Bar bar) {
-//        return this.barRepository.save(bar);
-//    }
-
     public void deleteBar(UUID id) {
-        this.barRepository.delete(id);
+        barRepository.delete(id);
     }
 }

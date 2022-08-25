@@ -1,6 +1,6 @@
 package com.tungstun.security.config;
 
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.config.evaluator.BarApiPermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,17 +22,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         jsr250Enabled = true)
 @Primary
 public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
-    private final UserService userService;
+    private final UserQueryHandler userQueryHandler;
 
-    public BarApiGlobalSecurityConfig(@Lazy UserService userService) {
-        this.userService = userService;
+    public BarApiGlobalSecurityConfig(@Lazy UserQueryHandler userQueryHandler) {
+        this.userQueryHandler = userQueryHandler;
     }
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler =
                 new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(this.userService));
+        expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(userQueryHandler));
         return expressionHandler;
     }
 

@@ -1,6 +1,6 @@
 package com.tungstun.security.presentation.controller;
 
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.presentation.dto.converter.UserConverter;
 import com.tungstun.security.presentation.dto.response.AccountResponse;
@@ -17,11 +17,11 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {
-    private final UserService userService;
+    private final UserQueryHandler userQueryHandler;
     private final UserConverter converter;
 
-    public AccountController(UserService userService, UserConverter converter) {
-        this.userService = userService;
+    public AccountController(UserQueryHandler userQueryHandler, UserConverter converter) {
+        this.userQueryHandler = userQueryHandler;
         this.converter = converter;
     }
 
@@ -31,7 +31,7 @@ public class AccountController {
     )
     public ResponseEntity<AccountResponse> getAccountInformation(@ApiIgnore Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = (User) userService.loadUserByUsername(userDetails.getUsername());
+        User user = (User) userQueryHandler.loadUserByUsername(userDetails.getUsername());
 
         return new ResponseEntity<>(converter.convert(user), HttpStatus.OK);
     }
