@@ -4,13 +4,14 @@ import com.tungstun.common.money.Money;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "price")
 public class Price {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     @Column(name = "money")
     private Money money;
@@ -21,12 +22,17 @@ public class Price {
     @Column(name = "to_date")
     private LocalDateTime toDate;
 
+    protected Price(UUID id, Money money) {
+        this.id = id;
+        this.money = money;
+        this.fromDate = LocalDateTime.now();
+    }
+
     public Price() {
     }
 
-    public Price(Money money) {
-        this.money = money;
-        this.fromDate = LocalDateTime.now();
+    public static Price create(Money money) {
+        return new Price(UUID.randomUUID(), money);
     }
 
     public boolean isActive() {
@@ -37,7 +43,7 @@ public class Price {
         this.toDate = LocalDateTime.now();
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -51,15 +57,5 @@ public class Price {
 
     public LocalDateTime getToDate() {
         return toDate;
-    }
-
-    @Override
-    public String toString() {
-        return "Price{" +
-                "id=" + id +
-                ", money=" + money +
-                ", fromDate=" + fromDate +
-                ", toDate=" + toDate +
-                '}';
     }
 }

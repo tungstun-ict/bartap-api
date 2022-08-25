@@ -66,7 +66,6 @@ class ProductServiceIntegrationTest {
         bar.addProduct(product2);
         bar.addProduct(product3);
         bar = barRepository.save(bar);
-        System.out.println(barRepository.findById(bar.getId()).orElseThrow().getProducts().get(0).getPrice());
     }
 
     @Test

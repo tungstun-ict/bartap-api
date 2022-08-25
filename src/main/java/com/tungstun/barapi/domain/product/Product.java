@@ -6,6 +6,8 @@ import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -36,13 +38,19 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductType type;
 
-    @Embedded
-    private Prices prices;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "product_price",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "price_id")
+    )
+    private List<Price> prices;
 
     @ManyToOne
     private Category category;
 
-    public Product() { }
+    public Product() {
+    }
 
     public Product(UUID id, String name, String brand, double size, boolean isFavorite, ProductType type, Money price, Category category) {
         this.id = id;
@@ -51,8 +59,35 @@ public class Product {
         this.size = size;
         this.isFavorite = isFavorite;
         this.type = type;
-        this.prices = new Prices(price);
+        this.prices = new ArrayList<>(List.of(Price.create(price)));
         this.category = category;
+    }
+
+
+    public Money getPriceAtDate(LocalDateTime localDateTime) {
+        return prices.stream()
+                .filter(price -> localDateTime.isAfter(price.getFromDate()))
+                .filter(price -> price.getToDate() == null || localDateTime.isBefore(price.getToDate()))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException(String.format("Product didn't exist before %s", localDateTime)))
+                .getMoney();
+    }
+
+    public Money getPrice() {
+        return getCurrentPrice().getMoney();
+    }
+
+    private Price getCurrentPrice() {
+        return prices.stream()
+                .filter(Price::isActive)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Product doesn't have a current price"));
+    }
+
+    public void updatePrice(Money newPrice) {
+        if (newPrice == null) throw new IllegalArgumentException("Monetary value cannot be null");
+        getCurrentPrice().endPricing();
+        prices.add(Price.create(newPrice));
     }
 
     public UUID getId() {
@@ -99,18 +134,6 @@ public class Product {
         this.type = type;
     }
 
-    public Money getPrice() {
-        return prices.currentPrice().getMoney();
-    }
-
-    public Money getPriceAtDate(LocalDateTime date) {
-        return prices.atDate(date).getMoney();
-    }
-
-    public void updatePrice(Money price) {
-        this.prices.updatePrice(price);
-    }
-
     public Category getCategory() {
         return category;
     }
@@ -124,26 +147,19 @@ public class Product {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Product product = (Product) o;
-        return deleted == product.deleted && Double.compare(product.size, size) == 0 && isFavorite == product.isFavorite && Objects.equals(id, product.id) && Objects.equals(name, product.name) && Objects.equals(brand, product.brand) && type == product.type && Objects.equals(prices, product.prices) && Objects.equals(category, product.category);
+        return deleted == product.deleted
+                && Double.compare(product.size, size) == 0
+                && isFavorite == product.isFavorite
+                && Objects.equals(id, product.id)
+                && Objects.equals(name, product.name)
+                && Objects.equals(brand, product.brand)
+                && type == product.type
+                && Objects.equals(prices, product.prices)
+                && Objects.equals(category, product.category);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(deleted, id, name, brand, size, isFavorite, type, prices, category);
-    }
-
-    @Override
-    public String toString() {
-        return "Product{" +
-                "deleted=" + deleted +
-                ", id=" + id +
-                ", name='" + name + '\'' +
-                ", brand='" + brand + '\'' +
-                ", size=" + size +
-                ", isFavorite=" + isFavorite +
-                ", type=" + type +
-                ", prices=" + prices +
-                ", category=" + category +
-                '}';
     }
 }

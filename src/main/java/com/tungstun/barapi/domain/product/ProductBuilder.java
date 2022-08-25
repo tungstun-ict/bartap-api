@@ -33,7 +33,7 @@ public class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder setPrice(Double price) {
+    public ProductBuilder setPrice(double price) {
         this.price = new Money(price);
         return this;
     }
