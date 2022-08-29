@@ -36,7 +36,8 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implem
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedHeaders("*")
-                .allowedMethods("*");
+                .allowedMethods("*")
+                .exposedHeaders("*");
         WebMvcConfigurer.super.addCorsMappings(registry);
     }
 
