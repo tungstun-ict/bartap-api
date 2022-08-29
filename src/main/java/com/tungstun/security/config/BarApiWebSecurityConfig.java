@@ -1,17 +1,19 @@
 package com.tungstun.security.config;
 
-import com.tungstun.security.config.filter.JwtAuthorizationFilter;
+import com.tungstun.security.presentation.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private static final String LOGIN_PATH = "/api/authenticate";
-    private static final String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
-    private static final String REGISTER_PATH = "/api/register";
-    private static final String[] SWAGGER_PATHS = {
+public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
+    public final static String LOGIN_PATH = "/api/authenticate";
+    public final static String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
+    public final static String REGISTER_PATH = "/api/register";
+    private final static String[] SWAGGER_PATHS = {
             // -- Swagger UI v2
             "/v2/api-docs",
             "/swagger-resources",
@@ -26,8 +28,17 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
             // -- Simple swagger redirect URI
             "/swagger"
     };
+
     @Value("${security.jwt.secret}")
     private String jwtSecret;
+
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedMethods("*")
+                .allowedHeaders("*");
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
