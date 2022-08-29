@@ -22,37 +22,37 @@ import java.util.Map;
 
 @Service
 public class UserService implements UserDetailsService {
-    private final SpringUserRepository SPRING_USER_REPOSITORY;
-    private final PasswordEncoder PASSWORD_ENCODER;
-    private final JwtGenerator JWT_GENERATOR;
-    private final JwtValidator JWT_VALIDATOR;
-    private final RegistrationValidator REGISTRATION_VALIDATOR;
+    private final SpringUserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtGenerator jwtGenerator;
+    private final JwtValidator jwtValidator;
+    private final RegistrationValidator registrationValidator;
 
-    public UserService(SpringUserRepository springUserRepository,
+    public UserService(SpringUserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtGenerator jwtGenerator,
                        JwtValidator jwtValidator,
                        RegistrationValidator registrationValidator
     ) {
-        this.SPRING_USER_REPOSITORY = springUserRepository;
-        this.PASSWORD_ENCODER = passwordEncoder;
-        this.JWT_GENERATOR = jwtGenerator;
-        this.JWT_VALIDATOR = jwtValidator;
-        this.REGISTRATION_VALIDATOR = registrationValidator;
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtGenerator = jwtGenerator;
+        this.jwtValidator = jwtValidator;
+        this.registrationValidator = registrationValidator;
     }
 
     public void registerBarOwner(UserRegistrationRequest userRegistrationRequest) throws AccountException {
-        this.REGISTRATION_VALIDATOR.validateRegistrationDetails(userRegistrationRequest);
-        String encodedPassword = this.PASSWORD_ENCODER.encode(userRegistrationRequest.password);
+        this.registrationValidator.validateRegistrationDetails(userRegistrationRequest);
+        String encodedPassword = this.passwordEncoder.encode(userRegistrationRequest.password);
         User user = new User(
                 userRegistrationRequest.username,
                 encodedPassword,
-                userRegistrationRequest.mail,
+                userRegistrationRequest.mail.strip(),
                 userRegistrationRequest.firstName,
                 userRegistrationRequest.lastName,
                 new ArrayList<>()
         );
-        this.SPRING_USER_REPOSITORY.save(user);
+        this.userRepository.save(user);
     }
 
 
@@ -61,8 +61,8 @@ public class UserService implements UserDetailsService {
         User user = (User) loadUserByMailOrUsername(loginRequest.userIdentification);
         attemptLogin(loginRequest.password, user.getPassword());
         authTokenMap.put("token_type", "bearer");
-        authTokenMap.put("access_token", this.JWT_GENERATOR.generateAccessToken(user));
-        authTokenMap.put("refresh_token", this.JWT_GENERATOR.generateRefreshToken());
+        authTokenMap.put("access_token", this.jwtGenerator.generateAccessToken(user));
+        authTokenMap.put("refresh_token", this.jwtGenerator.generateRefreshToken());
         return authTokenMap;
     }
 
@@ -71,27 +71,26 @@ public class UserService implements UserDetailsService {
     }
 
     private boolean isMatchingPassword(String providedPassword, String hashedPassword) {
-        return this.PASSWORD_ENCODER.matches(providedPassword, hashedPassword);
+        return this.passwordEncoder.matches(providedPassword, hashedPassword);
     }
 
     public Map<String, String> refreshUserToken(RefreshTokenRequest refreshTokenRequest) {
-        this.JWT_VALIDATOR.validateAccessJwt(refreshTokenRequest.accessToken);
-        this.JWT_VALIDATOR.validateRefreshJwt(refreshTokenRequest.refreshToken);
-        String accessToken = this.JWT_GENERATOR.refreshAccessTokenFromAccessToken(refreshTokenRequest.accessToken);
+        this.jwtValidator.validateAccessJwt(refreshTokenRequest.accessToken);
+        this.jwtValidator.validateRefreshJwt(refreshTokenRequest.refreshToken);
+        String accessToken = this.jwtGenerator.refreshAccessTokenFromAccessToken(refreshTokenRequest.accessToken);
         Map<String, String> authTokenMap = new HashMap<>();
         authTokenMap.put("access_token", accessToken);
         return authTokenMap;
     }
 
     public UserDetails loadUserByMailOrUsername(String username) {
-        return this.SPRING_USER_REPOSITORY.findByMailOrUsername(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the usename '%s'", username)));
+        return this.userRepository.findByMailOrUsername(username, username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the username '%s'", username)));
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return this.SPRING_USER_REPOSITORY.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the usename '%s'", username)));
+        return this.userRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the username '%s'", username)));
     }
-
 }

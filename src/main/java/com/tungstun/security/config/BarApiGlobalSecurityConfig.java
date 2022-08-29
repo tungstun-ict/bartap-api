@@ -20,17 +20,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         securedEnabled = true,
         jsr250Enabled = true)
 public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
-    private final UserService USER_SERVICE;
+    private final UserService userService;
 
-    public BarApiGlobalSecurityConfig(@Lazy UserService USER_SERVICE) {
-        this.USER_SERVICE = USER_SERVICE;
+    public BarApiGlobalSecurityConfig(@Lazy UserService userService) {
+        this.userService = userService;
     }
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler =
                 new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(this.USER_SERVICE));
+        expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(this.userService));
         return expressionHandler;
     }
 

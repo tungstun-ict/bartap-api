@@ -2,7 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.BarService;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.domain.bar.BarDetails;
+import com.tungstun.barapi.presentation.dto.converter.BarConverter;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.barapi.presentation.dto.response.BarResponse;
 import io.swagger.annotations.ApiOperation;
@@ -17,59 +17,29 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/bars")
 public class BarController {
-    private final BarService BAR_SERVICE;
+    private final BarService barService;
+    private final BarConverter converter;
 
-    public BarController(BarService barService) {
-        this.BAR_SERVICE = barService;
+    public BarController(BarService barService, BarConverter converter) {
+        this.barService = barService;
+        this.converter = converter;
     }
-
-    private BarResponse convertToBarResult(Bar bar) {
-        BarDetails details = bar.getDetails();
-        BarResponse response = new BarResponse();
-        response.setAddress(details.getAddress());
-        response.setMail(details.getMail());
-        response.setName(details.getName());
-        response.setPhoneNumber(details.getPhoneNumber());
-        response.setId(bar.getId());
-        return response;
-    }
-
-//    Commented out because it is of no use if cross user's bar security is to be held
-//
-//    @GetMapping("/all")
-//    @PreAuthorize("hasPermission(-1L, 'NO_ONE_ALLOWED')")
-//    @ApiOperation(
-//            value = "Finds all bars",
-//            notes = "Look up a all existing bars",
-//            response = BarResponse.class,
-//            responseContainer = "List"
-//    )
-//    public ResponseEntity<List<BarResponse>> getAllBars() throws NotFoundException {
-//        List<Bar> allBars = this.BAR_SERVICE.getAllBars();
-//        List<BarResponse> barResponses = new ArrayList<>();
-//        for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
-//        return new ResponseEntity<>(barResponses, HttpStatus.OK);
-//    }
 
     @GetMapping
     @ApiOperation(
             value = "Finds all bars owned by user",
             notes = "Look up a all owned bars",
-            response = BarResponse.class,
-            responseContainer = "List"
+            response = BarResponse.class
     )
     public ResponseEntity<List<BarResponse>> getAllBarOwnerBars(@ApiIgnore Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        List<Bar> allBars = this.BAR_SERVICE.getAllBarOwnerBars(userDetails.getUsername());
-        List<BarResponse> barResponses = new ArrayList<>();
-        for (Bar bar : allBars) barResponses.add(convertToBarResult(bar));
-        return new ResponseEntity<>(barResponses, HttpStatus.OK);
+        List<Bar> allBars = this.barService.getAllBarOwnerBars(userDetails.getUsername());
+        return new ResponseEntity<>(converter.convertAll(allBars), HttpStatus.OK);
     }
 
     @GetMapping("/{barId}")
@@ -82,8 +52,8 @@ public class BarController {
     public ResponseEntity<BarResponse> getBar(
             @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") Long barId
     ) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
-        return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.OK);
+        Bar bar = this.barService.getBar(barId);
+        return new ResponseEntity<>(converter.convert(bar), HttpStatus.OK);
     }
 
     @PostMapping()
@@ -94,13 +64,10 @@ public class BarController {
     )
     public ResponseEntity<BarResponse> addBar(
             @Valid @RequestBody BarRequest barRequest,
-            Authentication authentication
+            @ApiIgnore Authentication authentication
     ) {
-        Bar bar = this.BAR_SERVICE.addBar(
-                barRequest,
-                ((UserDetails) authentication.getPrincipal()).getUsername()
-        );
-        return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.CREATED);
+        Bar bar = this.barService.addBar(barRequest, ((UserDetails) authentication.getPrincipal()).getUsername());
+        return new ResponseEntity<>(converter.convert(bar), HttpStatus.CREATED);
     }
 
     @PutMapping("/{barId}")
@@ -112,9 +79,10 @@ public class BarController {
     )
     public ResponseEntity<BarResponse> updateBar(
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") Long barId,
-            @Valid @RequestBody BarRequest barRequest) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.updateBar(barId, barRequest);
-        return new ResponseEntity<>(convertToBarResult(bar), HttpStatus.OK);
+            @Valid @RequestBody BarRequest barRequest
+    ) throws NotFoundException {
+        Bar bar = this.barService.updateBar(barId, barRequest);
+        return new ResponseEntity<>(converter.convert(bar), HttpStatus.OK);
     }
 
 
@@ -127,7 +95,7 @@ public class BarController {
     public ResponseEntity<BarResponse> deleteBar(
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") Long barId
     ) {
-        this.BAR_SERVICE.deleteBar(barId);
+        this.barService.deleteBar(barId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

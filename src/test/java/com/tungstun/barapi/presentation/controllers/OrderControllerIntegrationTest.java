@@ -27,7 +27,8 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$[0].amount").value(1d))
                 .andExpect(jsonPath("$[0].creationDate").exists())
                 .andExpect(jsonPath("$[0].product").exists())
-                .andExpect(jsonPath("$[0].bartender").exists());
+                .andExpect(jsonPath("$[0].bartender").exists())
+                .andExpect(jsonPath("$[0].customer").exists());
     }
 
     @Test
@@ -56,7 +57,8 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$[0].amount").value(1d))
                 .andExpect(jsonPath("$[0].creationDate").exists())
                 .andExpect(jsonPath("$[0].product").exists())
-                .andExpect(jsonPath("$[0].bartender").exists());
+                .andExpect(jsonPath("$[0].bartender").exists())
+                .andExpect(jsonPath("$[0].customer").exists());
     }
 
     @Test
@@ -85,7 +87,8 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$.amount").value(1d))
                 .andExpect(jsonPath("$.creationDate").exists())
                 .andExpect(jsonPath("$.product").exists())
-                .andExpect(jsonPath("$.bartender").exists());
+                .andExpect(jsonPath("$.bartender").exists())
+                .andExpect(jsonPath("$.customer").exists());
     }
 
     @Test
@@ -114,7 +117,8 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$[0].amount").value(1d))
                 .andExpect(jsonPath("$[0].creationDate").exists())
                 .andExpect(jsonPath("$[0].product").exists())
-                .andExpect(jsonPath("$[0].bartender").exists());
+                .andExpect(jsonPath("$[0].bartender").exists())
+                .andExpect(jsonPath("$[0].customer").exists());
     }
 
     @Test
@@ -143,7 +147,8 @@ class OrderControllerIntegrationTest extends BarIntegrationTestLifeCycle {
                 .andExpect(jsonPath("$.amount").value(1d))
                 .andExpect(jsonPath("$.creationDate").exists())
                 .andExpect(jsonPath("$.product").exists())
-                .andExpect(jsonPath("$.bartender").exists());
+                .andExpect(jsonPath("$.bartender").exists())
+                .andExpect(jsonPath("$.customer").exists());
     }
 
     @Test

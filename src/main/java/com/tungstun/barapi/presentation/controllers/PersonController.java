@@ -2,9 +2,9 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.PersonService;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.presentation.dto.converter.PersonConverter;
 import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import com.tungstun.barapi.presentation.dto.response.PersonResponse;
-import com.tungstun.barapi.presentation.mapper.ResponseMapper;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import javassist.NotFoundException;
@@ -19,20 +19,12 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/bars/{barId}/people")
 public class PersonController {
-    private final ResponseMapper RESPONSE_MAPPER;
-    private final PersonService PERSON_SERVICE;
+    private final PersonService personService;
+    private final PersonConverter converter;
 
-    public PersonController(PersonService personService, ResponseMapper responseMapper) {
-        this.PERSON_SERVICE = personService;
-        this.RESPONSE_MAPPER = responseMapper;
-    }
-
-    private PersonResponse convertToPersonResponse(Person person){
-        return this.RESPONSE_MAPPER.convert(person, PersonResponse.class);
-    }
-
-    private List<PersonResponse> convertToPersonResponsesList(List<Person> people){
-        return this.RESPONSE_MAPPER.convertList(people, PersonResponse.class);
+    public PersonController(PersonService personService, PersonConverter converter) {
+        this.personService = personService;
+        this.converter = converter;
     }
 
     @GetMapping
@@ -46,8 +38,8 @@ public class PersonController {
     public ResponseEntity<List<PersonResponse>> getAllPeopleOfBar(
             @ApiParam(value = "ID value for the bar you want to retrieve people from") @PathVariable Long barId
     ) throws NotFoundException {
-        List<Person> allPeople = this.PERSON_SERVICE.getAllPeopleOfBar(barId);
-        return new ResponseEntity<>(convertToPersonResponsesList(allPeople), HttpStatus.OK);
+        List<Person> allPeople = this.personService.getAllPeopleOfBar(barId);
+        return new ResponseEntity<>(converter.convertAll(allPeople), HttpStatus.OK);
     }
 
     @GetMapping(path = "/{personId}")
@@ -61,8 +53,8 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to retrieve the person from") @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the person you want to retrieve") @PathVariable("personId") Long personId
     ) throws NotFoundException {
-        Person person = this.PERSON_SERVICE.getPersonOfBar(barId, personId);
-        return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.OK);
+        Person person = this.personService.getPersonOfBar(barId, personId);
+        return new ResponseEntity<>(converter.convert(person),  HttpStatus.OK);
     }
 
     @PostMapping
@@ -76,8 +68,8 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to create the new person for") @PathVariable("barId") Long barId,
             @Valid @RequestBody PersonRequest personRequest
     ) throws NotFoundException {
-        Person person = this.PERSON_SERVICE.createNewPerson(barId, personRequest);
-        return new ResponseEntity<>(convertToPersonResponse(person),  HttpStatus.CREATED);
+        Person person = this.personService.createNewPerson(barId, personRequest);
+        return new ResponseEntity<>(converter.convert(person),  HttpStatus.CREATED);
     }
 
     @PutMapping("/{personId}")
@@ -92,8 +84,8 @@ public class PersonController {
             @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") Long personId,
             @Valid @RequestBody PersonRequest personRequest)
             throws NotFoundException {
-        Person person = this.PERSON_SERVICE.updatePerson(barId, personId, personRequest);
-        return new ResponseEntity<>(convertToPersonResponse(person), HttpStatus.OK);
+        Person person = this.personService.updatePerson(barId, personId, personRequest);
+        return new ResponseEntity<>(converter.convert(person), HttpStatus.OK);
     }
 
     @DeleteMapping("/{personId}")
@@ -106,7 +98,7 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to delete the person from")  @PathVariable("barId") Long barId,
             @ApiParam(value = "ID value for the bar you want to delete")  @PathVariable("personId") Long personId)
             throws NotFoundException {
-        this.PERSON_SERVICE.deletePersonFromBar(barId, personId);
+        this.personService.deletePersonFromBar(barId, personId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

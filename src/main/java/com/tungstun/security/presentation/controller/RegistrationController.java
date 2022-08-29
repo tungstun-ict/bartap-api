@@ -14,13 +14,13 @@ import javax.security.auth.login.AccountException;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/register")
 public class RegistrationController {
-    private final UserService USER_SERVICE;
+    private final UserService userService;
 
-    public RegistrationController(UserService userService) { this.USER_SERVICE = userService; }
+    public RegistrationController(UserService userService) { this.userService = userService; }
 
-    @PostMapping("/register")
+    @PostMapping
     @ApiOperation(
             value = "Registers new user",
             notes = "Provide account information in the request body to create a new user account"
@@ -28,7 +28,8 @@ public class RegistrationController {
     public ResponseEntity<Void> register(
             @Valid @RequestBody UserRegistrationRequest userRegistrationRequest
     ) throws AccountException {
-        this.USER_SERVICE.registerBarOwner(userRegistrationRequest);
+        this.userService.registerBarOwner(userRegistrationRequest);
+
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 

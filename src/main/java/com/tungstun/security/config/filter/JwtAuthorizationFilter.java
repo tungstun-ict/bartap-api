@@ -1,4 +1,4 @@
-package com.tungstun.security.presentation.filter;
+package com.tungstun.security.config.filter;
 
 import com.tungstun.security.data.model.UserProfile;
 import io.jsonwebtoken.Claims;

@@ -1,12 +1,13 @@
 package com.tungstun.barapi.presentation.dto.response;
 
-import com.tungstun.barapi.domain.person.Person;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tungstun.barapi.domain.product.Product;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import java.time.LocalDateTime;
 
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(description = "Response details about the order")
 public class OrderResponse {
 
@@ -23,17 +24,12 @@ public class OrderResponse {
     private Product product;
 
     @ApiModelProperty(notes = "The order's bartender")
-    private Person bartender;
+    private PersonResponse bartender;
 
+    @ApiModelProperty(notes = "The order's customer")
+    private PersonResponse customer;
 
     public OrderResponse() { }
-    public OrderResponse(Long id, int amount, LocalDateTime creationDate, Product product, Person bartender) {
-        this.id = id;
-        this.amount = amount;
-        this.creationDate = creationDate;
-        this.product = product;
-        this.bartender = bartender;
-    }
 
     public Long getId() { return id; }
 
@@ -51,7 +47,15 @@ public class OrderResponse {
 
     public void setProduct(Product product) { this.product = product; }
 
-    public Person getBartender() { return bartender; }
+    public PersonResponse getBartender() { return bartender; }
 
-    public void setBartender(Person bartender) { this.bartender = bartender; }
+    public void setBartender(PersonResponse bartender) { this.bartender = bartender; }
+
+    public PersonResponse getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(PersonResponse customer) {
+        this.customer = customer;
+    }
 }

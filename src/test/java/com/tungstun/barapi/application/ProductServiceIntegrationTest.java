@@ -1,6 +1,5 @@
 package com.tungstun.barapi.application;
 
-import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.data.SpringBarRepository;
 import com.tungstun.barapi.data.SpringCategoryRepository;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -130,23 +129,6 @@ class ProductServiceIntegrationTest {
         assertEquals(request.isFavorite, resProduct.isFavorite());
         assertEquals(request.price, resProduct.getPrice());
         assertEquals(request.size, resProduct.getSize());
-    }
-
-    @Test
-    @DisplayName("update product duplicate name")
-    void updateProductDupe() {
-        ProductRequest request = new ProductRequest();
-        request.name = "product2";
-        request.brand = "testBrandNew";
-        request.isFavorite = true;
-        request.price = 5d;
-        request.size = 500d;
-        request.categoryId = category.getId();
-
-        assertThrows(
-                DuplicateRequestException.class,
-                () -> service.updateProductOfBar(bar.getId(), product.getId(), request)
-        );
     }
 
     @Test
