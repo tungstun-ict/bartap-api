@@ -14,16 +14,16 @@ import java.util.List;
 @Transactional
 @Service
 public class SessionService {
-    private final SpringSessionRepository SPRING_SESSION_REPOSITORY;
-    private final BarService BAR_SERVICE;
+    private final SpringSessionRepository springSessionRepository;
+    private final BarService barService;
 
     public SessionService(SpringSessionRepository springSessionRepository, BarService barService) {
-        this.SPRING_SESSION_REPOSITORY = springSessionRepository;
-        this.BAR_SERVICE = barService;
+        this.springSessionRepository = springSessionRepository;
+        this.barService = barService;
     }
 
     public List<Session> getAllSessionsOfBar(Long barId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         return bar.getSessions();
     }
 
@@ -36,28 +36,28 @@ public class SessionService {
     }
 
     public Session getActiveSessionOfBar(Long barId) throws NotFoundException {
-        Session session = this.BAR_SERVICE.getBar(barId).activeSession();
+        Session session = this.barService.getBar(barId).activeSession();
         if (session == null) throw new NotFoundException("No active session found");
         return session;
     }
 
     public Session createNewSession(Long barId, SessionRequest sessionRequest) throws NotFoundException {
-        Bar bar = BAR_SERVICE.getBar(barId);
+        Bar bar = barService.getBar(barId);
         bar.newSession(sessionRequest.name);
-        bar = this.BAR_SERVICE.saveBar(bar);
+        bar = this.barService.saveBar(bar);
         return bar.activeSession();
     }
 
     public Session updateSession(Long barId, Long sessionId, SessionRequest sessionRequest) throws NotFoundException {
         Session session = getSessionIfEditable(barId, sessionId);
         session.setName(sessionRequest.name);
-        return this.SPRING_SESSION_REPOSITORY.save(session);
+        return this.springSessionRepository.save(session);
     }
 
     public Session endSession(Long barId, Long sessionId) throws NotFoundException {
         Session session = getSessionIfEditable(barId, sessionId);
         session.endSession();
-        return this.SPRING_SESSION_REPOSITORY.save(session);
+        return this.springSessionRepository.save(session);
     }
 
     private Session getSessionIfEditable(Long barId, Long sessionId) throws NotFoundException {
@@ -75,18 +75,18 @@ public class SessionService {
         Session session = getSessionOfBar(barId, sessionId);
         if (session.isLocked()) throw new InvalidSessionStateException("Cannot lock an already locked session");
         session.lock();
-        return this.SPRING_SESSION_REPOSITORY.save(session);
+        return this.springSessionRepository.save(session);
     }
 
     public void deleteSession(Long barId, Long sessionId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         Session session = getSessionOfBar(barId, sessionId);
         bar.removeSession(session);
-        this.BAR_SERVICE.saveBar(bar);
-        this.SPRING_SESSION_REPOSITORY.delete(session);
+        this.barService.saveBar(bar);
+        this.springSessionRepository.delete(session);
     }
 
     public void saveSession(Session session){
-        this.SPRING_SESSION_REPOSITORY.save(session);
+        this.springSessionRepository.save(session);
     }
 }

@@ -20,24 +20,24 @@ import java.util.stream.Stream;
 @Transactional
 @Service
 public class ProductService {
-    private final SpringProductRepository SPRING_PRODUCT_REPOSITORY;
-    private final BarService BAR_SERVICE;
-    private final CategoryService CATEGORY_SERVICE;
+    private final SpringProductRepository productRepository;
+    private final BarService barService;
+    private final CategoryService categoryService;
     private final ProductSearchEngine searchEngine;
 
     public ProductService(SpringProductRepository springProductRepository, BarService barService, CategoryService categoryService, ProductSearchEngine searchEngine) {
-        this.SPRING_PRODUCT_REPOSITORY = springProductRepository;
-        this.BAR_SERVICE = barService;
-        this.CATEGORY_SERVICE = categoryService;
+        this.productRepository = springProductRepository;
+        this.barService = barService;
+        this.categoryService = categoryService;
         this.searchEngine = searchEngine;
     }
 
     private final BiPredicate<Product, ProductType> isProductType = (product, productType) -> product.getCategory().getProductType().equals(productType);
 
     private Product saveProductForBar(Bar bar, Product product) {
-        product = this.SPRING_PRODUCT_REPOSITORY.save(product);
+        product = this.productRepository.save(product);
         bar.addProduct(product);
-        this.BAR_SERVICE.saveBar(bar);
+        this.barService.saveBar(bar);
         return product;
     }
 
@@ -63,7 +63,7 @@ public class ProductService {
     }
 
     private List<Product> getAllProductsOfBar(Long barId) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         return bar.getProducts();
     }
 
@@ -78,13 +78,13 @@ public class ProductService {
     }
 
     public Product addProductToBar(Long barId, ProductRequest productRequest) throws NotFoundException {
-        Bar bar = this.BAR_SERVICE.getBar(barId);
+        Bar bar = this.barService.getBar(barId);
         Product product = buildProduct(barId, productRequest);
         return saveProductForBar(bar, product);
     }
 
     private Product buildProduct(Long barId, ProductRequest productRequest) throws NotFoundException {
-        Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
+        Category category = this.categoryService.getCategoryOfBar(barId, productRequest.categoryId);
         return new ProductBuilder()
                 .setName(productRequest.name)
                 .setBrand(productRequest.brand)
@@ -97,19 +97,19 @@ public class ProductService {
 
     public Product updateProductOfBar(Long barId, Long productId, ProductRequest productRequest) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
-        Category category = this.CATEGORY_SERVICE.getCategoryOfBar(barId, productRequest.categoryId);
+        Category category = this.categoryService.getCategoryOfBar(barId, productRequest.categoryId);
         product.setName(productRequest.name);
         product.setBrand(productRequest.brand);
         product.setSize(productRequest.size);
         product.setPrice(productRequest.price);
         product.setFavorite(productRequest.isFavorite);
         product.setCategory(category);
-        return this.SPRING_PRODUCT_REPOSITORY.save(product);
+        return this.productRepository.save(product);
     }
 
     public void deleteProductOfBar(Long barId, Long productId) throws NotFoundException {
         Product product = getProductOfBar(barId, productId);
-        this.SPRING_PRODUCT_REPOSITORY.delete(product);
+        this.productRepository.delete(product);
     }
 
     public List<Product> searchProduct(Long barId, String searchString) throws NotFoundException {
