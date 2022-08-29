@@ -1,6 +1,6 @@
 package com.tungstun.security.config;
 
-import com.tungstun.security.presentation.filter.JwtAuthorizationFilter;
+import com.tungstun.security.config.filter.JwtAuthorizationFilter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -43,11 +43,11 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implem
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .cors()
+                .cors()
                 .and()
-            .csrf()
+                .csrf()
                 .disable()
-            .authorizeRequests()
+                .authorizeRequests()
                 .antMatchers(HttpMethod.POST, new String[]{
                         REGISTER_PATH,
                         LOGIN_PATH,
@@ -56,16 +56,16 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implem
                 .antMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
-            .addFilter(new JwtAuthorizationFilter(
-                    this.jwtSecret,
-                    this.authenticationManager(),
-                    new String[]{
-                            LOGIN_PATH,
-                            REGISTER_PATH,
-                            LOGIN_REFRESH_PATH
-                    }
-            ))
-            .sessionManagement()
+                .addFilter(new JwtAuthorizationFilter(
+                        this.jwtSecret,
+                        this.authenticationManager(),
+                        new String[]{
+                                LOGIN_PATH,
+                                REGISTER_PATH,
+                                LOGIN_REFRESH_PATH
+                        }
+                ))
+                .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
     }
 }
