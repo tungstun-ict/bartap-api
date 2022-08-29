@@ -33,7 +33,8 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implem
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**");
+        registry.addMapping("/**")
+                .allowedOrigins("*");
         WebMvcConfigurer.super.addCorsMappings(registry);
     }
 
