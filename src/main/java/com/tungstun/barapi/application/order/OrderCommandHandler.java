@@ -36,7 +36,7 @@ public class OrderCommandHandler {
 
     public UUID handle(AddOrder command) throws EntityNotFoundException {
         Person bartender = personQueryHandler.handle(new GetPersonByUserUsername(command.barId(), command.bartenderUsername()));
-        Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()));
+        Product product = productQueryHandler.handle(new GetProduct(command.barId(), command.productId()));
         Bill bill = billQueryHandler.handle(new GetBill(command.barId(), command.sessionId(), command.billId()));
         Order order = bill.addOrder(product, command.amount(), bartender);
         billRepository.save(bill);

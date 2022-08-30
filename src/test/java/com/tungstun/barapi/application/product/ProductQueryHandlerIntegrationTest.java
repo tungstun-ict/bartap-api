@@ -135,7 +135,7 @@ class ProductQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get product of bar")
     void getProductOfBar() throws EntityNotFoundException {
-        Product resProduct = productQueryHandler.handle(new GetProduct(product.getId(), bar.getId()));
+        Product resProduct = productQueryHandler.handle(new GetProduct(bar.getId(), product.getId()));
 
         assertEquals(product.getId(), resProduct.getId());
     }
@@ -145,7 +145,7 @@ class ProductQueryHandlerIntegrationTest {
     void getNotExistingProductOfBar() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> productQueryHandler.handle(new GetProduct(UUID.randomUUID(), bar.getId()))
+                () -> productQueryHandler.handle(new GetProduct(bar.getId(), UUID.randomUUID()))
         );
     }
 }

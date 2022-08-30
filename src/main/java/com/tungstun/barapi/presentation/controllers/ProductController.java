@@ -73,7 +73,7 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to retrieve the product from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the product you want to retrieve") @PathVariable("productId") UUID productId
     ) throws EntityNotFoundException {
-        Product product = productQueryHandler.handle(new GetProduct(productId, barId));
+        Product product = productQueryHandler.handle(new GetProduct(barId, productId));
         return converter.convert(product);
     }
 

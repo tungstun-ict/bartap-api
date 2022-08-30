@@ -55,7 +55,7 @@ public class ProductCommandHandler {
     }
 
     public UUID handle(UpdateProduct command) throws EntityNotFoundException {
-        Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()))  ;
+        Product product = productQueryHandler.handle(new GetProduct(command.barId(), command.productId()))  ;
         Category category = categoryQueryHandler.handle(new GetCategory(command.barId(), command.categoryId()));
         product.setCategory(category);
         product.setName(command.name());
