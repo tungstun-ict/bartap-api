@@ -36,7 +36,7 @@ public class Bar {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Person> people;
 
-    @Where(clause = "deleted = false")
+//    @Where(clause = "deleted = false")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
@@ -155,10 +155,11 @@ public class Bar {
     }
 
     public Category createCategory(String name) {
-        categories.stream()
-                .filter(category -> category.getName().equalsIgnoreCase(name))
-                .findAny()
-                .orElseThrow(() -> new DuplicateRequestException("Bar already has category with name " + name));
+        boolean exists = categories.stream()
+                .anyMatch(category -> category.getName().equalsIgnoreCase(name));
+        if (exists) {
+            throw new DuplicateRequestException("Bar already has category with name " + name);
+        }
         Category category = new CategoryFactory(name).create();
         categories.add(category);
         return category;
@@ -169,10 +170,11 @@ public class Bar {
     }
 
     public Person createPerson(String name, User user) {
-        people.stream()
-                .filter(person -> person.getName().equals(name))
-                .findAny()
-                .orElseThrow(() -> new DuplicateRequestException("Bar already has person with name " + name));
+        boolean exists = people.stream()
+                .anyMatch(person -> person.getName().equals(name));
+        if (exists) {
+            throw new DuplicateRequestException("Bar already has person with name " + name);
+        }
         Person person = new PersonBuilder(name)
                 .setUser(user)
                 .build();

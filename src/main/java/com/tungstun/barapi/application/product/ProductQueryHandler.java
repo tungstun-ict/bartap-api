@@ -11,7 +11,6 @@ import com.tungstun.barapi.domain.search.ProductSearchEngine;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -33,7 +32,7 @@ public class ProductQueryHandler {
                 .orElseThrow(() -> new EntityNotFoundException("No product found with id: " + query.productId()));
     }
 
-    public Collection<Product> handle(ListProductsOfBar query) {
+    public List<Product> handle(ListProductsOfBar query) {
         List<Product> products = barQueryHandler.handle(new GetBar(query.barId()))
                 .getProducts();
 

@@ -4,12 +4,15 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.BillService;
 import com.tungstun.barapi.application.bill.query.GetBill;
+import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.barapi.domain.session.SessionFactory;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.session.SpringSessionRepository;
@@ -22,10 +25,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityNotFoundException;
+import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+@Transactional
 @SpringBootTest
 class BillServiceIntegrationTest {
     @Autowired
@@ -48,12 +54,17 @@ class BillServiceIntegrationTest {
 
     @BeforeEach
     void setup() {
-        bar = new BarBuilder("bar").build();
+        session = new SessionFactory("session").create();
+        person = new PersonBuilder("person").build();
+        bar = new BarBuilder("bar")
+                .setSessions(List.of(session))
+                .setPeople(List.of(person))
+                .build();
 //        bar = barRepository.save(bar);
 //        bar = barRepository.getById(bar.getId());
-        person = bar.createPerson("name");
-//        person = personRepository.save(new PersonBuilder("name").build());
-        session = bar.newSession("test");
+//        person = bar.createPerson("name");
+////        person = personRepository.save(new PersonBuilder("name").build());
+//        session = bar.newSession("test");
         bill = session.addCustomer(person);
 //        session = sessionRepository.save(session);
 
@@ -91,6 +102,20 @@ class BillServiceIntegrationTest {
 //
 //        assertEquals(0, resBills.size());
 //    }
+
+    @Test
+    @DisplayName("Get Bills of customer")
+    void getBillsOfCustomer() throws EntityNotFoundException {
+        bar = barRepository.findById(bar.getId()).orElseThrow();
+        bar.getActiveSession().end();
+        session = bar.newSession("test2");
+        session.addCustomer(person);
+        bar = barRepository.save(bar);
+
+        List<Bill> resBill = billQueryHandler.handle(new ListBillsOfCustomer(bar.getId(), person.getId()));
+
+        assertEquals(2, resBill.size());
+    }
 
     @Test
     @DisplayName("Get Bill of bar")
@@ -187,7 +212,7 @@ class BillServiceIntegrationTest {
     void createBill() throws EntityNotFoundException {
 //        Person person2 = personRepository.save(new PersonBuilder(123L, "name").build());
 //        bar.addPerson(person2);
-        Person person2 = bar.createPerson("name");
+        Person person2 = bar.createPerson("name2");
         barRepository.save(bar);
         BillRequest request = new BillRequest();
         request.customerId = person2.getId();

@@ -56,14 +56,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         String tokenType = request.getHeader("token_type");
         String accessToken = request.getHeader("access_token");
 
-        if (accessToken == null || tokenType == null || accessToken.isEmpty() || !tokenType.equals("Bearer")) {
+        if (accessToken == null || tokenType == null || accessToken.isEmpty() || !tokenType.equalsIgnoreCase("bearer")) {
             chain.doFilter(request, response);
         }
+
         try {
             DecodedJWT decodedJWT = validator.verifyAccessToken(accessToken);
 
-            Long userId = Optional.ofNullable(decodedJWT.getClaim("userId").asLong())
-                    .orElseThrow(() -> new JWTDecodeException("No user categoryId in access token"));
+            Long userId = Optional.ofNullable(decodedJWT.getClaim("client_id").asLong())
+                    .orElseThrow(() -> new JWTDecodeException("No client_id in access token"));
 
             String username = decodedJWT.getSubject();
             List<Authorization> authorizations = decodedJWT.getClaim("authorizations")
@@ -78,5 +79,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         } catch (JWTDecodeException | NotAuthenticatedException ignored) {
             // Continue request without an Authentication bound to the session's request
         }
+        chain.doFilter(request, response);
     }
 }

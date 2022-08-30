@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class CategoryFactoryTest {
     @Test
-    @DisplayName("")
+    @DisplayName("Create category from CategoryFactory")
     void createCategory() {
         String name = "category";
 

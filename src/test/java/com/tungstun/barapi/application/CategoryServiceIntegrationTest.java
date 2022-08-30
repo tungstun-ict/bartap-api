@@ -40,6 +40,8 @@ public class CategoryServiceIntegrationTest {
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
+    private SpringCategoryRepository categoryRepository;
+    @Autowired
     private CategoryService service;
     @Autowired
     private CategoryQueryHandler categoryQueryHandler;
@@ -203,8 +205,6 @@ public class CategoryServiceIntegrationTest {
 
         service.deleteCategoryFromBar(bar.getId(), category.getId());
 
-        Bar loadedBar = barRepository.findById(bar.getId())
-                .orElseThrow();
-        assertNull(loadedBar.getProducts().get(0).getCategory());
+        assertTrue(categoryRepository.findById(category.getId()).isEmpty());
     }
 }

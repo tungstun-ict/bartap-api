@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.session.Session;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
@@ -17,15 +19,21 @@ import java.util.UUID;
 )
 @Entity
 @Table(name = "bill")
+@SQLDelete(sql = "UPDATE bill SET deleted = true WHERE id=?")
+@Where(clause = "deleted = false")
 public class Bill {
+    @Column(name = "deleted", columnDefinition = "BOOLEAN default false")
+    private final boolean deleted = Boolean.FALSE;
+
     @Id
     private UUID id;
 
     @Column(name = "is_payed")
     private boolean isPayed;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "session_id")
+//    @Where(clause = "deleted = false")
     private Session session;
 
     @JsonManagedReference

@@ -10,6 +10,8 @@ import com.tungstun.barapi.domain.bill.BillFactory;
 import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.exceptions.InvalidSessionStateException;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,9 +27,13 @@ import java.util.stream.Collectors;
 //@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "session")
+@SQLDelete(sql = "UPDATE session SET deleted = true WHERE id=?")
+@Where(clause = "deleted = false")
 public class Session {
+    @Column(name = "deleted", columnDefinition = "BOOLEAN default false")
+    private final boolean deleted = Boolean.FALSE;
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     @Column(name = "name")
@@ -36,7 +42,7 @@ public class Session {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @Column(name = "end")
+    @Column(name = "end_date")
     private LocalDateTime endDate;
 
     @Column(name = "locked", nullable = false)
@@ -63,7 +69,7 @@ public class Session {
     }
 
     public void end() {
-        if (this.endDate != null) throw new IllegalStateException("Session already ended");
+        if (this.endDate != null) throw new InvalidSessionStateException("Session already ended");
         this.endDate = ZonedDateTime.now().toLocalDateTime();
         ended = true;
     }

@@ -65,27 +65,25 @@ class BarServiceTest {
     @Test
     @DisplayName("Create bar returns bar")
     void createBar_ReturnsBar() {
-        BarRequest request = new BarRequest("address", "name", "mail", "+31698765432");
+        BarRequest request = new BarRequest("address 0", "name", "mail@bar.com", "+31698765432");
         String ownerName = "hans";
-//        when(repository.findBarByDetails_Name(request.name))
-//                .thenReturn(Optional.empty());
-        Bar bar = new BarBuilder(request.name)
-                .setAddress(request.address)
-                .setMail(request.mail)
-                .setPhoneNumber(request.phoneNumber)
+        Bar bar = new BarBuilder("bar")
+                .setAddress("address 1")
+                .setMail("new@mail.com")
+                .setPhoneNumber("+31612345678")
                 .build();
-        when(repository.save(any(Bar.class)))
-                .thenReturn(bar);
         when(userQueryHandler.loadUserByUsername(ownerName))
                 .thenReturn(new User(ownerName, "", "", "", "", "+310612345678", new ArrayList<>()));
+        when(repository.findAllById(any()))
+                .thenReturn(new ArrayList<>(List.of(bar)));
+        when(repository.save(any(Bar.class)))
+                .thenReturn(bar);
 
-        UUID id = service.addBar(request, ownerName);
+        assertDoesNotThrow(() -> service.addBar(request, ownerName));
 
-//        assertEquals(bar, resBars);
-//        verify(repository, times(1)).findBarByDetails_Name(request.name);
-
-        verify(repository, times(2)).save(any(Bar.class));
         verify(userQueryHandler, times(1)).loadUserByUsername(ownerName);
+        verify(repository, times(1)).findAllById(any());
+        verify(repository, times(1)).save(any(Bar.class));
     }
 
     @Test
@@ -96,7 +94,6 @@ class BarServiceTest {
                 UUID.randomUUID(),
                 "name",
                 new User("name", "", "", "", "", "+310612345678", new ArrayList<>())
-//                new ArrayList<>()
         );
         Bar bar = new BarBuilder(request.name)
                 .setAddress(request.address)
@@ -104,17 +101,18 @@ class BarServiceTest {
                 .setPhoneNumber(request.phoneNumber)
                 .setPeople(new ArrayList<>(List.of(person)))
                 .build();
-//        when(repository.findBarByDetails_Name(request.name))
-//                .thenReturn(Optional.of(bar));
-        when(userQueryHandler.loadUserByUsername(person.getUser().getUsername()))
-                .thenReturn(person.getUser());
+        person.getUser().newBarAuthorization(bar.getId());
         String username = person.getUser().getUsername();
+        when(userQueryHandler.loadUserByUsername(username))
+                .thenReturn(person.getUser());
+        when(repository.findAllById(any()))
+                .thenReturn(new ArrayList<>(List.of(bar)));
 
         assertThrows(
                 DuplicateRequestException.class,
                 () -> service.addBar(request, username)
         );
-//        verify(repository, times(1)).findBarByDetails_Name(request.name);
+        verify(repository, times(1)).findAllById(any());
         verify(userQueryHandler, times(1)).loadUserByUsername(person.getUser().getUsername());
     }
 
@@ -146,10 +144,6 @@ class BarServiceTest {
         BarRequest request = new BarRequest("newAddress", "newName", "newMail", "+31698765432");
         UUID id = service.updateBar(any(), request);
 
-//        assertEquals(expectedBar.getDetails().getName(), bar.getDetails().getName());
-//        assertEquals(expectedBar.getDetails().getMail(), bar.getDetails().getMail());
-//        assertEquals(expectedBar.getDetails().getAddress(), bar.getDetails().getAddress());
-//        assertEquals(expectedBar.getDetails().getPhoneNumber(), bar.getDetails().getPhoneNumber());
         verify(repository, times(1)).findById(any());
         verify(repository, times(1)).save(any(Bar.class));
     }

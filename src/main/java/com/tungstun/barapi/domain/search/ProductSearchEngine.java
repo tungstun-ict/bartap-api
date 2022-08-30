@@ -5,7 +5,6 @@ import com.tungstun.barapi.domain.product.ProductType;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Predicate;
@@ -54,7 +53,7 @@ public class ProductSearchEngine {
         return this;
     }
 
-    public Collection<Product> search(Collection<Product> products) {
+    public List<Product> search(List<Product> products) {
         Stream<Product> stream = products.parallelStream();
         for (Predicate<Product> predicate : filters) {
             stream = stream.filter(predicate);

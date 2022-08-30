@@ -5,6 +5,7 @@ import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.domain.bill.Bill;
+import com.tungstun.barapi.domain.bill.BillRepository;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.domain.session.SessionRepository;
@@ -18,11 +19,13 @@ import java.util.UUID;
 @Service
 @Transactional
 public class BillService {
+    private final BillRepository billRepository;
     private final SessionRepository sessionRepository;
     private final SessionQueryHandler sessionQueryHandler;
     private final PersonQueryHandler personQueryHandler;
 
-    public BillService(SessionRepository sessionRepository, SessionQueryHandler sessionQueryHandler, PersonQueryHandler personQueryHandler) {
+    public BillService(BillRepository billRepository, SessionRepository sessionRepository, SessionQueryHandler sessionQueryHandler, PersonQueryHandler personQueryHandler) {
+        this.billRepository = billRepository;
         this.sessionRepository = sessionRepository;
         this.sessionQueryHandler = sessionQueryHandler;
         this.personQueryHandler = personQueryHandler;
@@ -44,8 +47,9 @@ public class BillService {
     }
 
     public void deleteBill(UUID barId, UUID sessionId, UUID billId) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
-        session.removeBill(billId);
-        sessionRepository.save(session);
+        billRepository.delete(billId);
+//        Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
+//        session.removeBill(billId);
+//        sessionRepository.save(session);
     }
 }

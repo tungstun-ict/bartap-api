@@ -127,7 +127,8 @@ class PersonServiceIntegrationTest {
     void deletePerson() throws EntityNotFoundException {
         service.deletePersonFromBar(bar.getId(), person.getId());
 
-        Bar resBar = barRepository.findById(bar.getId()).orElseThrow();
-        assertFalse(resBar.getPeople().contains(person));
+//        Bar resBar = barRepository.findById(bar.getId()).orElseThrow();
+//        assertFalse(resBar.getPeople().contains(person));
+        assertTrue(repository.findById(person.getId()).isEmpty());
     }
 }

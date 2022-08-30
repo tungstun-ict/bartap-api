@@ -65,4 +65,12 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
         map.put("Unknown Error", e.getMessage());
         return new ResponseEntity<>(map, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(value = RuntimeException.class)
+    public ResponseEntity<Map<String, String>> e(RuntimeException e) {
+        HashMap<String, String> map = new HashMap<>();
+        e.printStackTrace();
+        map.put("Unknown Error", e.getMessage());
+        return new ResponseEntity<>(map, HttpStatus.CONFLICT);
+    }
 }

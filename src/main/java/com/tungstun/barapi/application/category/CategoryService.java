@@ -38,13 +38,13 @@ public class CategoryService {
     }
 
     public UUID updateCategoryOfBar(UUID barId, UUID categoryId, CategoryRequest categoryRequest) throws EntityNotFoundException {
-        //domain service?
-        barQueryHandler.handle(new GetBar(barId))
+        boolean exists = barQueryHandler.handle(new GetBar(barId))
                 .getCategories()
                 .stream()
-                .filter(categoryIteration -> categoryIteration.getName().equalsIgnoreCase(categoryRequest.name))
-                .findAny()
-                .orElseThrow(() -> new DuplicateRequestException("Bar already has category with name '%s'" + categoryRequest.name));
+                .anyMatch(categoryIteration -> categoryIteration.getName().equalsIgnoreCase(categoryRequest.name));
+        if (exists) {
+            throw new DuplicateRequestException("Bar already has category with name '%s'" + categoryRequest.name);
+        }
         Category category = categoryQueryHandler.handle(new GetCategory(categoryId, barId));
         category.setName(categoryRequest.name);
         categoryRepository.save(category);

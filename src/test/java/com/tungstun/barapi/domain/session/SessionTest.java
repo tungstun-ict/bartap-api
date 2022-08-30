@@ -51,7 +51,7 @@ class SessionTest {
         session.end();
 
         assertThrows(
-                IllegalStateException.class,
+                InvalidSessionStateException.class,
                 session::end
         );
     }

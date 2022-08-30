@@ -10,8 +10,8 @@ import java.util.Arrays;
 @ConfigurationProperties(prefix = "com.tungstun.bartap.security.jwt")
 public class JwtCredentials {
     private String jwtSecret;
-    private Integer jwtExpirationInMs;
-    private Integer jwtRefreshExpirationInMs;
+    private Long jwtExpirationInMs;
+    private Long jwtRefreshExpirationInMs;
     private String[] jwtAudience;
     private String jwtIssuer;
 
@@ -27,19 +27,19 @@ public class JwtCredentials {
         this.jwtSecret = jwtSecret;
     }
 
-    public Integer getJwtExpirationInMs() {
+    public Long getJwtExpirationInMs() {
         return jwtExpirationInMs;
     }
 
-    public void setJwtExpirationInMs(Integer jwtExpirationInMs) {
+    public void setJwtExpirationInMs(Long jwtExpirationInMs) {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
-    public Integer getJwtRefreshExpirationInMs() {
+    public Long getJwtRefreshExpirationInMs() {
         return jwtRefreshExpirationInMs;
     }
 
-    public void setJwtRefreshExpirationInMs(Integer jwtRefreshExpirationInMs) {
+    public void setJwtRefreshExpirationInMs(Long jwtRefreshExpirationInMs) {
         this.jwtRefreshExpirationInMs = jwtRefreshExpirationInMs;
     }
 

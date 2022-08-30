@@ -25,7 +25,7 @@ public class SessionQueryHandler {
                 .stream()
                 .filter(session -> session.getId().equals(query.sessionId()))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("No Session found with categoryId " + query.sessionId()));
+                .orElseThrow(() -> new EntityNotFoundException("No Session found with id " + query.sessionId()));
 
     }
 

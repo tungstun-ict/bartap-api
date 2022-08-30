@@ -63,7 +63,7 @@ public class BarController {
         return converter.convert(bar);
     }
 
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(
             value = "Creates a new bar",

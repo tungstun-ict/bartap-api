@@ -24,7 +24,7 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
         if ((auth == null) || (targetDomainObject == null) || !(permissions instanceof List)){
             return false;
         }
-        UUID barId = UUID.fromString((String) targetDomainObject);
+        UUID barId = (UUID) targetDomainObject;
         UserDetails user = (UserDetails) auth.getPrincipal();
         return hasPrivilege(user.getUsername(), barId, (List<String>) permissions);
     }
@@ -35,7 +35,7 @@ public class BarApiPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
         UserDetails user = (UserDetails) auth.getPrincipal();
-        return hasPrivilege(user.getUsername(), UUID.fromString((String) targetId), (List<String>) permissions);
+        return hasPrivilege(user.getUsername(), (UUID) targetId, (List<String>) permissions);
     }
 
     private boolean hasPrivilege(String username, UUID barId, List<String> permissions) {

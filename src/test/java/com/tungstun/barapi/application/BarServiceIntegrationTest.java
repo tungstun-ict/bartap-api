@@ -63,7 +63,7 @@ public class BarServiceIntegrationTest {
     void getAllBarsOfBarOwner_ReturnsBars()  {
         repository.save(new BarBuilder("bar").build()); //Not owned bar
         Bar bar = repository.save(new BarBuilder("bar2").build());
-        User user = new User("user", "", "", "", "", "+3606123452", new ArrayList<>());
+        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
         user.newBarAuthorization(bar.getId());
         user = userRepository.save(user);
 
@@ -104,9 +104,11 @@ public class BarServiceIntegrationTest {
     @Test
     @DisplayName("Create existing bar throws DuplicateRequestException")
     void createBarWithExistingName_ThrowDuplicateRequest() {
-        BarRequest request = new BarRequest("address", "name", "mail", "+366123456");
+        BarRequest request = new BarRequest("address", "name", "mail", "+31661234567");
         Bar bar = new BarBuilder("bar").setName(request.name).build();
-        User user = userRepository.save(new User("user", "", "", "", "", "+3606123456", new ArrayList<>()));
+        User user = new User("user", "", "", "", "", "+31612345679", new ArrayList<>());
+        user.newBarAuthorization(bar.getId());
+        user = userRepository.save(user);
         Person person = bar.createPerson("name", user);
 
         repository.save(bar);
@@ -121,9 +123,9 @@ public class BarServiceIntegrationTest {
     @Test
     @DisplayName("Update bar returns updated bar")
     void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
-        BarRequest request = new BarRequest("newAddress", "newName", "newMail", "+369876542");
+        BarRequest request = new BarRequest("newAddress", "newName", "newMail", "+31612345678");
         Bar bar = new BarBuilder("bar").setName("name").build();
-        User user = userRepository.save(new User("user", "", "", "", "", "+3606123456", new ArrayList<>()));
+        User user = userRepository.save(new User("user", "", "", "", "", "+31612345679", new ArrayList<>()));
         bar.createPerson("name", user);
         repository.save(bar);
 

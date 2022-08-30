@@ -18,14 +18,14 @@ public class BarQueryHandler {
     private final BarRepository barRepository;
     private final UserQueryHandler userQueryHandler;
 
-    public BarQueryHandler(BarRepository barRepository, UserQueryHandler userQueryHandler) {
+    public BarQueryHandler(BarRepository barRepository,UserQueryHandler userQueryHandler) {
         this.barRepository = barRepository;
         this.userQueryHandler = userQueryHandler;
     }
 
     public Bar handle(GetBar query) {
         return barRepository.findById(query.barId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Bar with categoryId %s doesn't exist", query.barId())));
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Bar with id %s doesn't exist", query.barId())));
     }
 
     public List<Bar> handle(ListOwnedBars query) {

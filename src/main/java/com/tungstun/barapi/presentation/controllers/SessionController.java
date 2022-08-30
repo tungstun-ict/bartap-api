@@ -83,7 +83,7 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
+//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Creates new session for bar",
             notes = "Provide categoryId of bar to add a new session with information from the request body to the bar",

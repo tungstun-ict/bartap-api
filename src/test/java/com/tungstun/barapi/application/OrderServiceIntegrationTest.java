@@ -191,7 +191,7 @@ class OrderServiceIntegrationTest {
         List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(session.getId(), bar.getId()));
 
         assertEquals(1, resOrders.size());
-        assertTrue(resOrders.contains(order));
+        assertTrue(resOrders.stream().anyMatch(o -> o.getId().equals(order.getId())));
     }
 
     @Test
@@ -230,7 +230,7 @@ class OrderServiceIntegrationTest {
         List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bill.getId(), session.getId(), bar.getId()));
 
         assertEquals(1, resOrders.size());
-        assertTrue(resOrders.contains(order));
+        assertTrue(resOrders.stream().anyMatch(o -> o.getId().equals(order.getId())));
     }
 
     @Test
@@ -254,7 +254,7 @@ class OrderServiceIntegrationTest {
     void getOrderOfBill() throws EntityNotFoundException {
         Order resOrder = orderQueryHandler.handle(new GetOrder(order.getId(), bill.getId(), session.getId(), bar.getId()));
 
-        assertEquals(order, resOrder);
+        assertEquals(order.getId(), resOrder.getId());
     }
 
     @Test

@@ -1,5 +1,6 @@
 package com.tungstun.barapi.application.bar;
 
+import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -33,7 +34,12 @@ public class BarService {
 
     public UUID addBar(BarRequest barRequest, String ownerUsername) {
         User user = (User) userQueryHandler.loadUserByUsername(ownerUsername);
-//        checkIfBarExistsForPerson(barRequest.name, user);
+        boolean exists = barRepository.findAllById(user.getAuthorizations().keySet())
+                .stream()
+                .anyMatch(bar -> bar.getDetails().getName().equals(barRequest.name));
+        if (exists) {
+            throw new DuplicateRequestException("User already owns bar with name: " + barRequest.name);
+        }
 
         Bar bar = new BarBuilder(barRequest.name)
                 .setAddress(barRequest.address)
@@ -45,11 +51,9 @@ public class BarService {
                                 .build())
                 )
                 .build();
-        bar = barRepository.save(bar);
 
         user.newBarAuthorization(bar.getId());
         userRepository.update(user);
-
         return barRepository.save(bar).getId();
     }
 // Querys one when can be multiple
