@@ -15,6 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -138,9 +139,7 @@ class BillTest {
         Product product = new ProductBuilder("prod", category).build();
         Order order = bill.addOrder(product, 1, person);
 
-        boolean hasRemoved = bill.removeOrder(order.getId());
-
-        assertTrue(hasRemoved);
+        assertDoesNotThrow(() -> bill.removeOrder(order.getId()));
     }
     
     @Test
@@ -150,9 +149,10 @@ class BillTest {
         Person person = new PersonBuilder("name").build();
         Bill bill = session.addCustomer(person);
 
-        boolean hasRemoved = bill.removeOrder(UUID.randomUUID());
-
-        assertFalse(hasRemoved);
+        assertThrows(
+                EntityNotFoundException.class,
+                () -> bill.removeOrder(UUID.randomUUID())
+        );
     }
 
     @Test

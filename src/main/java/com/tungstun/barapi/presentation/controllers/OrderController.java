@@ -1,8 +1,9 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.order.OrderCommandHandler;
 import com.tungstun.barapi.application.order.OrderQueryHandler;
-import com.tungstun.barapi.application.order.OrderService;
 import com.tungstun.barapi.application.order.command.AddOrder;
+import com.tungstun.barapi.application.order.command.RemoveOrder;
 import com.tungstun.barapi.application.order.query.GetOrder;
 import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
 import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
@@ -29,12 +30,12 @@ import java.util.UUID;
 @RequestMapping("/api/bars/{barId}/")
 public class OrderController {
     private final OrderQueryHandler orderQueryHandler;
-    private final OrderService orderService;
+    private final OrderCommandHandler orderCommandHandler;
     private final OrderConverter orderConverter;
 
-    public OrderController(OrderQueryHandler orderQueryHandler, OrderService orderService, OrderConverter orderConverter) {
+    public OrderController(OrderQueryHandler orderQueryHandler, OrderCommandHandler orderCommandHandler, OrderConverter orderConverter) {
         this.orderQueryHandler = orderQueryHandler;
-        this.orderService = orderService;
+        this.orderCommandHandler = orderCommandHandler;
         this.orderConverter = orderConverter;
     }
 
@@ -136,7 +137,8 @@ public class OrderController {
             @ApiParam(value = "ID value for the bill you want to delete the order from") @PathVariable("billId") UUID billId,
             @ApiParam(value = "ID value for the order you want to delete") @PathVariable("orderId") UUID orderId
     ) throws EntityNotFoundException {
-        orderService.deleteOrderFromBill(barId, sessionId, billId, orderId);
+        RemoveOrder command = new RemoveOrder(barId, sessionId, billId, orderId);
+        orderCommandHandler.deleteOrderFromBill(command);
     }
 
     @PutMapping("sessions/{sessionId}/bills/{billId}")
@@ -163,6 +165,6 @@ public class OrderController {
                 orderLineRequest.amount,
                 userDetails.getUsername()
         );
-        return orderService.addProductToBill(command);
+        return orderCommandHandler.addProductToBill(command);
     }
 }

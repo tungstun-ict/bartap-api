@@ -75,9 +75,12 @@ public class Bill {
         return order;
     }
 
-    public boolean removeOrder(UUID orderId) {
+    public void removeOrder(UUID orderId) {
         session.checkEditable();
-        return orders.removeIf(order -> order.getId().equals(orderId));
+        boolean removed = orders.removeIf(order -> order.getId().equals(orderId));
+        if (!removed) {
+            throw new EntityNotFoundException("No order found with id: " + orderId);
+        }
     }
 
     public List<Order> getOrders() {

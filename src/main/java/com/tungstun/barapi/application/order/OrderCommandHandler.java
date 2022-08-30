@@ -3,6 +3,7 @@ package com.tungstun.barapi.application.order;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.order.command.AddOrder;
+import com.tungstun.barapi.application.order.command.RemoveOrder;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPersonByUserUsername;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
@@ -20,13 +21,13 @@ import java.util.UUID;
 
 @Transactional
 @Service
-public class OrderService {
+public class OrderCommandHandler {
     private final BillQueryHandler billQueryHandler;
     private final ProductQueryHandler productQueryHandler;
     private final PersonQueryHandler personQueryHandler;
     private final BillRepository billRepository;
 
-    public OrderService(BillQueryHandler billQueryHandler, ProductQueryHandler productQueryHandler, PersonQueryHandler personQueryHandler, BillRepository billRepository) {
+    public OrderCommandHandler(BillQueryHandler billQueryHandler, ProductQueryHandler productQueryHandler, PersonQueryHandler personQueryHandler, BillRepository billRepository) {
         this.billQueryHandler = billQueryHandler;
         this.productQueryHandler = productQueryHandler;
         this.personQueryHandler = personQueryHandler;
@@ -42,9 +43,9 @@ public class OrderService {
         return order.getId();
     }
 
-    public void deleteOrderFromBill(UUID barId, UUID sessionId, UUID billId, UUID orderId) throws EntityNotFoundException {
-        Bill bill = billQueryHandler.handle(new GetBill(billId, sessionId, barId));
-        bill.removeOrder(orderId);
+    public void deleteOrderFromBill(RemoveOrder command) throws EntityNotFoundException {
+        Bill bill = billQueryHandler.handle(new GetBill(command.billId(), command.sessionId(), command.barId()));
+        bill.removeOrder(command.orderId());
         billRepository.save(bill);
     }
 }

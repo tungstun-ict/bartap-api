@@ -1,8 +1,9 @@
 package com.tungstun.barapi.application;
 
+import com.tungstun.barapi.application.order.OrderCommandHandler;
 import com.tungstun.barapi.application.order.OrderQueryHandler;
-import com.tungstun.barapi.application.order.OrderService;
 import com.tungstun.barapi.application.order.command.AddOrder;
+import com.tungstun.barapi.application.order.command.RemoveOrder;
 import com.tungstun.barapi.application.order.query.GetOrder;
 import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
 import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
@@ -17,11 +18,9 @@ import com.tungstun.barapi.domain.product.CategoryFactory;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.exceptions.InvalidSessionStateException;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.person.SpringPersonRepository;
-import com.tungstun.barapi.port.persistence.session.SpringSessionRepository;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.port.persistence.user.SpringUserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,9 +39,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
-class OrderServiceIntegrationTest {
-    @Autowired
-    private SpringSessionRepository sessionRepository;
+class OrderCommandHandlerIntegrationTest {
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
@@ -54,7 +51,7 @@ class OrderServiceIntegrationTest {
     @Autowired
     private OrderQueryHandler orderQueryHandler;
     @Autowired
-    private OrderService service;
+    private OrderCommandHandler service;
 
     private Bar bar;
     private Product product;
@@ -202,25 +199,6 @@ class OrderServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Delete order from bill")
-    void deleteOrderFromBill() throws EntityNotFoundException {
-        service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), order.getId());
-
-        bill = billRepository.findById(bill.getId()).orElseThrow();
-
-        assertTrue(bill.getOrders().isEmpty());
-    }
-
-//    @Test
-//    @DisplayName("Delete not existing order from bill")
-//    void deleteNotExistingOrderFromBill() {
-//        assertThrows(
-//                EntityNotFoundException.class,
-//                () -> service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), UUID.randomUUID())
-//        );
-//    }
-
-    @Test
     @DisplayName("Add product(order) to bill")
     void addOrderToBill() throws EntityNotFoundException {
         AddOrder command = new AddOrder(
@@ -260,19 +238,24 @@ class OrderServiceIntegrationTest {
     }
 
     @Test
-    @DisplayName("Delete order from of inactive session")
-    void deleteOrderFromBillOfInactiveSession() {
-        Session testSession = sessionRepository.getById(session.getId());
-        testSession.end();
-        testSession = sessionRepository.save(testSession);
+    @DisplayName("Delete order from bill")
+    void deleteOrderFromBill() throws EntityNotFoundException {
+        RemoveOrder command = new RemoveOrder(bar.getId(), session.getId(), bill.getId(), order.getId());
 
-//        bill = billRepository.findById(bill.getId()).get();
-//        bill.getSession().lock();
-//        billRepository.save(bill);
+        service.deleteOrderFromBill(command);
+
+        bill = billRepository.findById(bill.getId()).orElseThrow();
+        assertTrue(bill.getOrders().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Delete not existing order from bill")
+    void deleteNotExistingOrderFromBill() {
+        RemoveOrder command = new RemoveOrder(bar.getId(), session.getId(), bill.getId(), UUID.randomUUID());
 
         assertThrows(
-                InvalidSessionStateException.class,
-                () -> service.deleteOrderFromBill(bar.getId(), session.getId(), bill.getId(), order.getId())
+                EntityNotFoundException.class,
+                () -> service.deleteOrderFromBill(command)
         );
     }
 }
