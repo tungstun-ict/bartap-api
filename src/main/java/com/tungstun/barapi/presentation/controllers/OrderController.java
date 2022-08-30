@@ -2,6 +2,7 @@ package com.tungstun.barapi.presentation.controllers;
 
 import com.tungstun.barapi.application.order.OrderQueryHandler;
 import com.tungstun.barapi.application.order.OrderService;
+import com.tungstun.barapi.application.order.command.AddOrder;
 import com.tungstun.barapi.application.order.query.GetOrder;
 import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
 import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
@@ -154,6 +155,14 @@ public class OrderController {
             @ApiIgnore Authentication authentication
     ) throws EntityNotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        return orderService.addProductToBill(barId, sessionId, billId, orderLineRequest, userDetails.getUsername());
+        AddOrder command = new AddOrder(
+                barId,
+                sessionId,
+                billId,
+                orderLineRequest.productId,
+                orderLineRequest.amount,
+                userDetails.getUsername()
+        );
+        return orderService.addProductToBill(command);
     }
 }

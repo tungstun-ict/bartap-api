@@ -2,6 +2,7 @@ package com.tungstun.barapi.application.order;
 
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.GetBill;
+import com.tungstun.barapi.application.order.command.AddOrder;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPersonByUserUsername;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
@@ -11,7 +12,6 @@ import com.tungstun.barapi.domain.bill.BillRepository;
 import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
-import com.tungstun.barapi.presentation.dto.request.OrderRequest;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -33,11 +33,11 @@ public class OrderService {
         this.billRepository = billRepository;
     }
 
-    public UUID addProductToBill(UUID barId, UUID sessionId, UUID billId, OrderRequest orderRequest, String username) throws EntityNotFoundException {
-        Person bartender = personQueryHandler.handle(new GetPersonByUserUsername(username, barId));
-        Product product = productQueryHandler.handle(new GetProduct(orderRequest.productId, barId));
-        Bill bill = billQueryHandler.handle(new GetBill(billId, sessionId, barId));
-        Order order = bill.addOrder(product, orderRequest.amount, bartender);
+    public UUID addProductToBill(AddOrder command) throws EntityNotFoundException {
+        Person bartender = personQueryHandler.handle(new GetPersonByUserUsername(command.bartenderUsername(), command.barId()));
+        Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()));
+        Bill bill = billQueryHandler.handle(new GetBill(command.billId(), command.sessionId(), command.barId()));
+        Order order = bill.addOrder(product, command.amount(), bartender);
         billRepository.save(bill);
         return order.getId();
     }
