@@ -4,12 +4,13 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.domain.bar.BarDetails;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -35,7 +36,7 @@ class BarCommandHandlerTest {
 
     @AfterEach
     void teardown() {
-        clearInvocations(repository, userQueryHandler);
+        clearInvocations(repository, userQueryHandler, userRepository);
     }
 
     @Test
@@ -124,7 +125,6 @@ class BarCommandHandlerTest {
                 UUID.randomUUID(),
                 "name",
                 new User("name", "", "", "", "", "+310612345678", new ArrayList<>())
-//                new ArrayList<>()
         );
         Bar bar = new BarBuilder("name")
                 .setAddress("address")
@@ -132,18 +132,14 @@ class BarCommandHandlerTest {
                 .setPhoneNumber("+31698765432")
                 .setPeople(new ArrayList<>(List.of(person)))
                 .build();
-        when(repository.findById(any()))
+        when(repository.findById(bar.getId()))
                 .thenReturn(Optional.of(bar));
-        Bar expectedBar = new BarBuilder("newName")
-                .setAddress("newAddress")
-                .setMail("newMail")
-                .setPhoneNumber("+31698765432")
-                .build();
+        Bar expectedBar = new Bar(bar.getId(), new BarDetails("newAddress", "newName", "newMail@Mmail.com", "+31698765432"), List.of(), List.of(), List.of(), List.of());
         when(repository.save(any(Bar.class)))
                 .thenReturn(expectedBar);
+        UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");
 
-        BarRequest request = new BarRequest("newAddress", "newName", "newMail", "+31698765432");
-        UUID id = service.updateBar(any(), request);
+        service.updateBar(command);
 
         verify(repository, times(1)).findById(any());
         verify(repository, times(1)).save(any(Bar.class));
@@ -154,34 +150,16 @@ class BarCommandHandlerTest {
     void updateNotExistingBar_ThrowsNotFound() {
         when(repository.findById(any()))
                 .thenReturn(Optional.empty());
-        BarRequest request = new BarRequest();
+        UpdateBar command = new UpdateBar(UUID.randomUUID(), "newAddress", "newName", "newMail@mail.com", "+31612345678");
+
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.updateBar(any(), request)
+                () -> service.updateBar(command)
         );
 
         verify(repository, times(1)).findById(any());
     }
-
-//    @Test
-//    @DisplayName("Save bar with categoryId saves bar")
-//    void saveBarWithId_SavesBar(){
-//        Bar bar = new BarBuilder()
-//                .setAddress("address")
-//                .setName("name")
-//                .setMail("mail")
-//                .setPhoneNumber("phoneNumber")
-//                .build();
-//        when(repository.save(any()))
-//                .thenReturn(bar);
-//
-//        assertDoesNotThrow(
-//                () -> assertEquals(bar, service.saveBar(bar))
-//        );
-//
-//        verify(repository, times(1)).save(any());
-//    }
 
     @Test
     @DisplayName("Delete bar with categoryId")

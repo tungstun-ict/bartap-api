@@ -4,13 +4,12 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
-import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
-import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -32,35 +31,15 @@ public class BarCommandHandlerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
-    private PersonRepository personRepository;
-    @Autowired
     private SpringBarRepository repository;
     @Autowired
     private BarCommandHandler service;
     @Autowired
     private BarQueryHandler barQueryHandler;
 
-//    private static Stream<Arguments> provideAllBars() {
-//        return Stream.of(
-//                Arguments.of(List.of()),
-//                Arguments.of(List.of(new BarBuilder("bar").build())),
-//                Arguments.of(List.of(new BarBuilder("bar").build(), new BarBuilder("bar2").build()))
-//        );
-//    }
-//    @ParameterizedTest
-//    @MethodSource("provideAllBars")
-//    @DisplayName("Get all bars returns bars")
-//    void getAllBars_ReturnsBars(List<Bar> expectedBars) {
-//        expectedBars = repository.saveAll(expectedBars);
-//
-//        List<Bar> resBars = barQueryHandler.handle(new ListOwnedBars(u));
-//
-//        assertEquals(expectedBars, resBars);
-//    }
-
     @Test
     @DisplayName("Get all bars of bar owner returns bars")
-    void getAllBarsOfBarOwner_ReturnsBars()  {
+    void getAllBarsOfBarOwner_ReturnsBars() {
         repository.save(new BarBuilder("bar").build()); //Not owned bar
         Bar bar = repository.save(new BarBuilder("bar2").build());
         User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
@@ -94,7 +73,7 @@ public class BarCommandHandlerIntegrationTest {
 
     @Test
     @DisplayName("Create bar returns bar")
-    void createBar_ReturnsBar(){
+    void createBar_ReturnsBar() {
         User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
         CreateBar command = new CreateBar("address", "name", "mail@mail.com", "+31612345678", user.getUsername());
 
@@ -123,41 +102,35 @@ public class BarCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Update bar returns updated bar")
     void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
-        BarRequest request = new BarRequest("newAddress", "newName", "newMail", "+31612345678");
-        Bar bar = new BarBuilder("bar").setName("name").build();
+        Bar bar = new BarBuilder("bar").build();
         User user = userRepository.save(new User("user", "", "", "", "", "+31612345679", new ArrayList<>()));
         bar.createPerson("name", user);
         repository.save(bar);
+        UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");
 
-        UUID id = service.updateBar(bar.getId(), request);
+        UUID id = service.updateBar(command);
 
-//        assertEquals(request.name, resBar.getDetails().getName());
+        Bar actualBar = repository.findById(id).orElseThrow();
+        assertEquals(command.address(), actualBar.getDetails().getAddress());
+        assertEquals(command.name(), actualBar.getDetails().getName());
+        assertEquals(command.mail(), actualBar.getDetails().getMail());
+        assertEquals(command.phoneNumber(), actualBar.getDetails().getPhoneNumber());
     }
 
     @Test
     @DisplayName("Update not existing bar throws")
-    void updateNotExistingBar_ThrowsNotFound(){
-        BarRequest request = new BarRequest();
+    void updateNotExistingBar_ThrowsNotFound() {
+        UpdateBar command = new UpdateBar(UUID.randomUUID(), "address", "newName", "newMail@mail.com", "+31612345678");
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.updateBar(UUID.randomUUID(), request)
+                () -> service.updateBar(command)
         );
     }
-//
-//    @Test
-//    @DisplayName("Save bar with categoryId saves bar")
-//    void saveBarWithId_SavesBar(){
-//        Bar bar = new BarBuilder("bar").build();
-//
-//        assertDoesNotThrow(
-//                () -> assertEquals(bar, service.saveBar(bar))
-//        );
-//    }
 
     @Test
     @DisplayName("Delete bar with id")
-    void deleteBar_DeletesBar(){
+    void deleteBar_DeletesBar() {
         Bar bar = repository.save(new BarBuilder("bar").build());
 
         assertDoesNotThrow(

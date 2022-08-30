@@ -2,12 +2,12 @@ package com.tungstun.barapi.application.bar;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.person.PersonBuilder;
-import com.tungstun.barapi.presentation.dto.request.BarRequest;
 import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -57,25 +57,13 @@ public class BarCommandHandler {
         userRepository.update(user);
         return barRepository.save(bar).getId();
     }
-// Querys one when can be multiple
-//    private void checkIfBarExistsForPerson(String name, User user) {
-//        barRepository.findBarByDetails_Name(name)
-//                .ifPresent(bar -> {
-//                    bar.getPeople()
-//                            .stream()
-//                            .anyMatch(barUser -> barUser.getUser().equals(user));
-//                    if () {
-//                        throw new DuplicateRequestException(String.format("Bar with name %s already exists", name));
-//                    }
-//                });
-//    }
 
-    public UUID updateBar(UUID barId, BarRequest barRequest) throws EntityNotFoundException {
-        Bar bar = barQueryHandler.handle(new GetBar(barId));
-        bar.getDetails().setAddress(barRequest.address);
-        bar.getDetails().setMail(barRequest.mail);
-        bar.getDetails().setName(barRequest.name);
-        bar.getDetails().setPhoneNumber(barRequest.phoneNumber);
+    public UUID updateBar(UpdateBar command) throws EntityNotFoundException {
+        Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
+        bar.getDetails().setAddress(command.address());
+        bar.getDetails().setName(command.name());
+        bar.getDetails().setMail(command.mail());
+        bar.getDetails().setPhoneNumber(command.phoneNumber());
         return barRepository.save(bar).getId();
     }
 

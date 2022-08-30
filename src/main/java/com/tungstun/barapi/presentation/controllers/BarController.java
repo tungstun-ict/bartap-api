@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -97,7 +98,14 @@ public class BarController {
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") UUID barId,
             @Valid @RequestBody BarRequest barRequest
     ) throws EntityNotFoundException {
-        return barCommandHandler.updateBar(barId, barRequest);
+        UpdateBar command = new UpdateBar(
+                barId,
+                barRequest.address,
+                barRequest.name,
+                barRequest.mail,
+                barRequest.phoneNumber
+        );
+        return barCommandHandler.updateBar(command);
     }
 
 
