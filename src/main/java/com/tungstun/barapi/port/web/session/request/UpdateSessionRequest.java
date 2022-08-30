@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 
 @ApiModel(description = "Request details to update a session")
-public class UpdateSessionRequest {
-    @ApiModelProperty(notes = "The session's name")
-    @NotNull
-    public String name;
+public record UpdateSessionRequest(
+        @ApiModelProperty(notes = "The session's name")
+        @NotNull
+        String name) {
 }

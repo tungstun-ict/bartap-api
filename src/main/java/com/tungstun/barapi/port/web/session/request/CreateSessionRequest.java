@@ -6,8 +6,8 @@ import io.swagger.annotations.ApiModelProperty;
 import javax.validation.constraints.NotNull;
 
 @ApiModel(description = "Request details to create a session")
-public class CreateSessionRequest {
-    @ApiModelProperty(notes = "The session's name")
-    @NotNull
-    public String name;
+public record CreateSessionRequest(
+        @ApiModelProperty(notes = "The session's name")
+        @NotNull
+        String name) {
 }
