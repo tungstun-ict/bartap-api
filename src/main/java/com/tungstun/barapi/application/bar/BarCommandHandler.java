@@ -2,6 +2,7 @@ package com.tungstun.barapi.application.bar;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -67,7 +68,7 @@ public class BarCommandHandler {
         return barRepository.save(bar).getId();
     }
 
-    public void deleteBar(UUID id) {
-        barRepository.delete(id);
+    public void deleteBar(DeleteBar command) {
+        barRepository.delete(command.barId());
     }
 }

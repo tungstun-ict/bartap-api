@@ -4,6 +4,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -162,10 +163,12 @@ class BarCommandHandlerTest {
     }
 
     @Test
-    @DisplayName("Delete bar with categoryId")
+    @DisplayName("Delete bar with id")
     void deleteBar_DeletesBar() {
+        DeleteBar command = new DeleteBar(UUID.randomUUID());
+
         assertDoesNotThrow(
-                () -> service.deleteBar(any())
+                () -> service.deleteBar(command)
         );
 
         verify(repository, times(1)).delete(any());

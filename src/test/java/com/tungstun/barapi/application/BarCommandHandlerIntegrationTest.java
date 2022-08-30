@@ -4,6 +4,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
@@ -132,9 +133,10 @@ public class BarCommandHandlerIntegrationTest {
     @DisplayName("Delete bar with id")
     void deleteBar_DeletesBar() {
         Bar bar = repository.save(new BarBuilder("bar").build());
+        DeleteBar command = new DeleteBar(bar.getId());
 
         assertDoesNotThrow(
-                () -> service.deleteBar(bar.getId())
+                () -> service.deleteBar(command)
         );
 
         assertTrue(repository.findById(bar.getId()).isEmpty());

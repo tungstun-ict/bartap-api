@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
+import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
@@ -119,6 +120,7 @@ public class BarController {
     public void deleteBar(
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") UUID barId
     ) {
-        barCommandHandler.deleteBar(barId);
+        DeleteBar command = new DeleteBar(barId);
+        barCommandHandler.deleteBar(command);
     }
 }
