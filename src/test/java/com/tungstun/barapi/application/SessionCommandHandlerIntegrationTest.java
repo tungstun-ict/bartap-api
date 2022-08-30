@@ -1,7 +1,9 @@
 package com.tungstun.barapi.application;
 
+import com.tungstun.barapi.application.session.SessionCommandHandler;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
-import com.tungstun.barapi.application.session.SessionService;
+import com.tungstun.barapi.application.session.command.CreateSession;
+import com.tungstun.barapi.application.session.command.UpdateSession;
 import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.application.session.query.ListSessionsOfBar;
@@ -34,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class SessionServiceIntegrationTest {
+class SessionCommandHandlerIntegrationTest {
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
@@ -44,7 +46,7 @@ class SessionServiceIntegrationTest {
     @Autowired
     private SpringSessionRepository repository;
     @Autowired
-    private SessionService service;
+    private SessionCommandHandler service;
     @Autowired
     private SessionQueryHandler serviceQueryHandler;
 
@@ -60,15 +62,6 @@ class SessionServiceIntegrationTest {
                 .setPeople(List.of(person))
                 .setSessions(List.of(session))
                 .build();
-//        bar = barRepository.save(bar);
-//        bar = barRepository.getById(bar.getId());
-//        session = bar.newSession("test");
-//        session = repository.save(session);
-//        session.addCustomer(person);
-//        person.addBill(bill);
-//        session = repository.save(session);
-//        bar.addSession(session);
-//        bar.addPerson(person);
         bar = barRepository.save(bar);
     }
 
@@ -131,47 +124,29 @@ class SessionServiceIntegrationTest {
     void createSession() throws EntityNotFoundException {
         session.end();
         repository.save(session);
-        SessionRequest request = new SessionRequest();
-        request.name = "new";
+        CreateSession command = new CreateSession(bar.getId(), "new");
 
-        assertDoesNotThrow(() -> service.createNewSession(bar.getId(), request));
+        assertDoesNotThrow(() -> service.createNewSession(command));
     }
 
     @Test
     @DisplayName("Create new session while active")
     void createSessionWhileActive() {
-        SessionRequest request = new SessionRequest();
-        request.name = "new";
+        CreateSession command = new CreateSession(bar.getId(), "new");
 
         assertThrows(
                 DuplicateActiveSessionException.class,
-                () -> service.createNewSession(bar.getId(), request)
+                () -> service.createNewSession(command)
         );
     }
 
     @Test
     @DisplayName("Update session")
     void updateSession() throws EntityNotFoundException {
-        SessionRequest request = new SessionRequest();
-        request.name = "newTest";
+        UpdateSession command = new UpdateSession(bar.getId(), session.getId(), "newTest");
 
-        assertDoesNotThrow(() -> service.updateSession(bar.getId(), session.getId(), request));
+        assertDoesNotThrow(() -> service.updateSession(command));
     }
-
-    //Commented because editing only name(now) isnt bad per se after end
-//    @Test
-//    @DisplayName("Update locked session throws")
-//    void updateLockedSessionThrows() {
-//        session.end();
-//        repository.save(session);
-//        SessionRequest request = new SessionRequest();
-//        request.name = "newTest";
-//
-//        assertThrows(
-//                InvalidSessionStateException.class,
-//                () -> service.updateSession(bar.getId(), session.getId(), request)
-//        );
-//    }
 
     @Test
     @DisplayName("Delete session")
@@ -191,31 +166,6 @@ class SessionServiceIntegrationTest {
 
         assertNotNull(repository.getById(session.getId()).getEndDate());
     }
-
-//    Commented because lock method ending session seems double in functionality
-//    @Test
-//    @DisplayName("End locked session throws")
-//    void endLockedSessionThrows() {
-//        session.lock();
-//        repository.save(session);
-//
-//        assertThrows(
-//                InvalidSessionStateException.class,
-//                () -> service.endSession(bar.getId(), session.getId())
-//        );
-//    }
-
-//    Commented because lock method ending session seems double in functionality
-//    @Test
-//    @DisplayName("Lock session")
-//    void lockSession() throws EntityNotFoundException {
-//        service.lockSession(bar.getId(), session.getId());
-//
-//        Session resSession = repository.getById(session.getId());
-//        assertNotNull(resSession.getEndDate());
-//        assertTrue(resSession.isLocked());
-//        assertFalse(resSession.isActive());
-//    }
 
     @Test
     @DisplayName("End ended session throws")

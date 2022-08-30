@@ -1,7 +1,9 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.session.SessionCommandHandler;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
-import com.tungstun.barapi.application.session.SessionService;
+import com.tungstun.barapi.application.session.command.CreateSession;
+import com.tungstun.barapi.application.session.command.UpdateSession;
 import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.application.session.query.ListSessionsOfBar;
@@ -24,12 +26,12 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/api/bars/{barId}/sessions")
 public class SessionController {
-    private final SessionService sessionService;
+    private final SessionCommandHandler sessionCommandHandler;
     private final SessionQueryHandler sessionQueryHandler;
     private final SessionConverter converter;
 
-    public SessionController(SessionService sessionService, SessionQueryHandler sessionQueryHandler, SessionConverter converter) {
-        this.sessionService = sessionService;
+    public SessionController(SessionCommandHandler sessionCommandHandler, SessionQueryHandler sessionQueryHandler, SessionConverter converter) {
+        this.sessionCommandHandler = sessionCommandHandler;
         this.sessionQueryHandler = sessionQueryHandler;
         this.converter = converter;
     }
@@ -93,7 +95,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") UUID barId,
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
-        return this.sessionService.createNewSession(barId, sessionRequest);
+        CreateSession command = new CreateSession(barId, sessionRequest.name);
+        return this.sessionCommandHandler.createNewSession(command);
     }
 
     @PutMapping("/{sessionId}")
@@ -109,7 +112,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") UUID sessionId,
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
-        return sessionService.updateSession(barId, sessionId, sessionRequest);
+        UpdateSession command = new UpdateSession(barId, sessionId, sessionRequest.name);
+        return sessionCommandHandler.updateSession(command);
     }
 
     @PatchMapping("/{sessionId}/end")
@@ -124,22 +128,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to end the session from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
-        this.sessionService.endSession(barId, sessionId);
+        this.sessionCommandHandler.endSession(barId, sessionId);
     }
-
-//    @PatchMapping("/{sessionId}/lock")
-//    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
-//    @ApiOperation(
-//            value = "Locks the session of bar",
-//            notes = "Provide categoryId of bar and session to lock the session of the bar",
-//            response = SessionResponse.class
-//    )
-//    public void lockSession(
-//            @ApiParam(value = "ID value for the bar you want to lock the session from") @PathVariable("barId") UUID barId,
-//            @ApiParam(value = "ID value for the session you want to lock") @PathVariable("sessionId") UUID sessionId
-//    ) throws EntityNotFoundException {
-//        sessionService.lockSession(barId, sessionId);
-//    }
 
     @DeleteMapping("/{sessionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -153,6 +143,6 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to delete the session from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
-        this.sessionService.deleteSession(sessionId);
+        this.sessionCommandHandler.deleteSession(sessionId);
     }
 }
