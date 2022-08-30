@@ -1,7 +1,8 @@
 package com.tungstun.barapi.application;
 
+import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
-import com.tungstun.barapi.application.product.ProductService;
+import com.tungstun.barapi.application.product.command.CreateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -12,6 +13,7 @@ import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.category.SpringCategoryRepository;
+import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
 import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +23,6 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import javax.naming.directory.InvalidAttributesException;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
@@ -31,13 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class ProductServiceIntegrationTest {
+class ProductCommandHandlerIntegrationTest {
     @Autowired
     private SpringCategoryRepository categoryRepository;
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
-    private ProductService service;
+    private SpringProductRepository productRepository;
+    @Autowired
+    private ProductCommandHandler service;
     @Autowired
     private ProductQueryHandler productQueryHandler;
 
@@ -157,28 +160,33 @@ class ProductServiceIntegrationTest {
 
     @Test
     @DisplayName("create product")
-    void createProduct() throws EntityNotFoundException, InvalidAttributesException {
-        ProductRequest request = new ProductRequest();
-        request.name = "testName";
-        request.brand = "testBrand";
-        request.isFavorite = true;
-        request.price = 2.5;
-        request.size = 250d;
-        request.categoryId = category.getId();
-        request.productType = "DRINK";
+    void createProduct() throws EntityNotFoundException {
+        CreateProduct command = new CreateProduct(
+                bar.getId(),
+                "testName",
+                "testBrand",
+                2.5,
+                250d,
+                true,
+                ProductType.DRINK.toString(),
+                category.getId()
+        );
 
-        UUID id = service.createProduct(bar.getId(), request);
+        UUID id = service.createProduct(command);
 
-//        assertEquals(request.name, resProduct.getName());
-//        assertEquals(request.brand, resProduct.getBrand());
-//        assertEquals(request.isFavorite, resProduct.isFavorite());
-//        assertEquals(request.price, resProduct.getPrice().amount().doubleValue());
-//        assertEquals(request.size, resProduct.getSize());
+        Product actualProduct = productRepository.findById(id).orElseThrow();
+        assertEquals(command.name(), actualProduct.getName());
+        assertEquals(command.brand(), actualProduct.getBrand());
+        assertEquals(command.size(), actualProduct.getSize());
+        assertEquals(command.price(), actualProduct.getPrice().amount().doubleValue());
+        assertTrue(actualProduct.isFavorite());
+        assertEquals(command.productType(), actualProduct.getType().toString());
+        assertEquals(command.categoryId(), actualProduct.getCategory().getId());
     }
 
     @Test
     @DisplayName("update product")
-    void updateProduct() throws EntityNotFoundException, InvalidAttributesException {
+    void updateProduct() throws EntityNotFoundException {
         ProductRequest request = new ProductRequest();
         request.name = "testNameNew";
         request.brand = "testBrandNew";

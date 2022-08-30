@@ -1,7 +1,8 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
-import com.tungstun.barapi.application.product.ProductService;
+import com.tungstun.barapi.application.product.command.CreateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
 import com.tungstun.barapi.domain.product.Product;
@@ -23,12 +24,12 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/api/bars/{barId}/products")
 public class ProductController {
-    private final ProductService productService;
+    private final ProductCommandHandler productCommandHandler;
     private final ProductQueryHandler productQueryHandler;
     private final ProductConverter converter;
 
-    public ProductController(ProductService productService, ProductQueryHandler productQueryHandler, ProductConverter converter) {
-        this.productService = productService;
+    public ProductController(ProductCommandHandler productCommandHandler, ProductQueryHandler productQueryHandler, ProductConverter converter) {
+        this.productCommandHandler = productCommandHandler;
         this.productQueryHandler = productQueryHandler;
         this.converter = converter;
     }
@@ -48,7 +49,7 @@ public class ProductController {
             @ApiParam(value = "(Optional) Boolean value to filter favorite products") @RequestParam(value = "onlyFavorites", required = false) Boolean onlyFavorites,
             @ApiParam(value = "(Optional) The name to filter your search with") @Valid @RequestParam(value = "searchText", required = false) String searchText
     ) throws EntityNotFoundException {
-        List<Product> products = (List<Product>) productQueryHandler.handle(new ListProductsOfBar(
+        List<Product> products = productQueryHandler.handle(new ListProductsOfBar(
                 barId,
                 categoryId,
                 onlyFavorites,
@@ -86,7 +87,17 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to create the product for") @PathVariable("barId") UUID barId,
             @Valid @RequestBody ProductRequest productRequest
     ) throws EntityNotFoundException {
-        return productService.createProduct(barId, productRequest);
+        CreateProduct command = new CreateProduct(
+                barId,
+                productRequest.name,
+                productRequest.brand,
+                productRequest.size,
+                productRequest.price,
+                productRequest.isFavorite,
+                productRequest.productType,
+                productRequest.categoryId
+        );
+        return productCommandHandler.createProduct(command);
     }
 
     @PutMapping("/{productId}")
@@ -102,7 +113,7 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("productId") UUID productId,
             @Valid @RequestBody ProductRequest productRequest
     ) throws EntityNotFoundException {
-        return productService.updateProductOfBar(barId, productId, productRequest);
+        return productCommandHandler.updateProductOfBar(barId, productId, productRequest);
     }
 
     @DeleteMapping("/{productId}")
@@ -117,7 +128,7 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to delete the product from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the product you want to delete") @PathVariable("productId") UUID productId
     ) throws EntityNotFoundException {
-        productService.deleteProductOfBar(barId, productId);
+        productCommandHandler.deleteProductOfBar(barId, productId);
     }
 
 //    @GetMapping("/search")
