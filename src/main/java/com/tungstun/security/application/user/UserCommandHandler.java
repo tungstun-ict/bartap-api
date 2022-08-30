@@ -1,15 +1,11 @@
 package com.tungstun.security.application.user;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tungstun.security.application.user.command.DeleteUser;
-import com.tungstun.security.application.user.command.UpdateUser;
+import com.tungstun.security.application.user.command.*;
 import com.tungstun.security.domain.jwt.JwtTokenGenerator;
 import com.tungstun.security.domain.jwt.JwtValidator;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
-import com.tungstun.security.presentation.dto.request.LoginRequest;
-import com.tungstun.security.presentation.dto.request.RefreshTokenRequest;
-import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
 import com.tungstun.security.util.account.RegistrationValidator;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,7 +19,7 @@ import java.util.Collections;
 import java.util.Map;
 
 @Service
-public class UserService {
+public class UserCommandHandler {
     private final UserQueryHandler userQueryHandler;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -31,11 +27,11 @@ public class UserService {
     private final JwtValidator jwtValidator;
     private final RegistrationValidator registrationValidator;
 
-    public UserService(UserQueryHandler userQueryHandler, UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       JwtTokenGenerator jwtTokenGenerator,
-                       JwtValidator jwtValidator,
-                       RegistrationValidator registrationValidator
+    public UserCommandHandler(UserQueryHandler userQueryHandler, UserRepository userRepository,
+                              PasswordEncoder passwordEncoder,
+                              JwtTokenGenerator jwtTokenGenerator,
+                              JwtValidator jwtValidator,
+                              RegistrationValidator registrationValidator
     ) {
         this.userQueryHandler = userQueryHandler;
         this.userRepository = userRepository;
@@ -45,16 +41,17 @@ public class UserService {
         this.registrationValidator = registrationValidator;
     }
 
-    public Long registerUser(UserRegistrationRequest userRegistrationRequest) throws AccountException {
-        this.registrationValidator.validateRegistrationDetails(userRegistrationRequest);
-        String encodedPassword = passwordEncoder.encode(userRegistrationRequest.password);
+    public Long registerUser(RegisterUser command) throws AccountException {
+        registrationValidator.validateRegistrationDetails(command);
+        String encodedPassword = passwordEncoder.encode(command.password());
         return userRepository.save(new User(
-                userRegistrationRequest.username,
+                command.username(),
                 encodedPassword,
-                userRegistrationRequest.mail.strip(),
-                userRegistrationRequest.firstName,
-                userRegistrationRequest.lastName,
-                userRegistrationRequest.phoneNumber, new ArrayList<>()
+                command.mail().strip(),
+                command.firstName(),
+                command.lastName(),
+                command.phoneNumber(),
+                new ArrayList<>()
         )).getId();
     }
 
@@ -70,10 +67,10 @@ public class UserService {
         userRepository.delete(command.id());
     }
 
-    public Map<String, String> loginUser(LoginRequest loginRequest) throws LoginException {
-        User user = (User) loadUserByMailOrUsername(loginRequest.userIdentification);
+    public Map<String, String> handle(LogIn command) throws LoginException {
+        User user = (User) loadUserByMailOrUsername(command.username());
         user.canAuthenticate();
-        if (!passwordEncoder.matches(loginRequest.password, user.getPassword())) {
+        if (!passwordEncoder.matches(command.password(), user.getPassword())) {
             throw new LoginException("Incorrect password");
         }
 
@@ -84,16 +81,16 @@ public class UserService {
         );
     }
 
-    public Map<String, String> refreshUserToken(RefreshTokenRequest refreshTokenRequest) {
-        jwtValidator.verifyRefreshToken(refreshTokenRequest.refreshToken);
-        DecodedJWT accessTokenInfo = jwtValidator.verifyAccessToken(refreshTokenRequest.accessToken);
+    public Map<String, String> handle(RefreshAccessToken command) {
+        jwtValidator.verifyRefreshToken(command.refreshToken());
+        DecodedJWT accessTokenInfo = jwtValidator.verifyAccessToken(command.accessToken());
         User userDetails = (User) userQueryHandler.loadUserByUsername(accessTokenInfo.getSubject());
         String newAccessToken = jwtTokenGenerator.createAccessToken(userDetails);
         return Collections.singletonMap("access_token", newAccessToken);
     }
 
     public UserDetails loadUserByMailOrUsername(String username) {
-        return this.userRepository.findByMailOrUsername(username, username)
+        return userRepository.findByMailOrUsername(username, username)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the username '%s'", username)));
     }
 }

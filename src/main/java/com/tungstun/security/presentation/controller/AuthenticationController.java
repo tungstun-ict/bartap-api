@@ -1,6 +1,8 @@
 package com.tungstun.security.presentation.controller;
 
-import com.tungstun.security.application.user.UserService;
+import com.tungstun.security.application.user.UserCommandHandler;
+import com.tungstun.security.application.user.command.LogIn;
+import com.tungstun.security.application.user.command.RefreshAccessToken;
 import com.tungstun.security.presentation.dto.request.LoginRequest;
 import com.tungstun.security.presentation.dto.request.RefreshTokenRequest;
 import io.swagger.annotations.ApiOperation;
@@ -18,10 +20,10 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/authenticate")
 public class AuthenticationController {
-    private final UserService userService;
+    private final UserCommandHandler userCommandHandler;
 
-    public AuthenticationController(UserService userService) {
-        this.userService = userService;
+    public AuthenticationController(UserCommandHandler userCommandHandler) {
+        this.userCommandHandler = userCommandHandler;
     }
 
     private ResponseEntity<Void> createResponseWithHeaders(Map<String, String> headers) {
@@ -36,7 +38,8 @@ public class AuthenticationController {
             notes = "Provide login credentials in the request body to receive an access and refresh token"
     )
     public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) throws LoginException {
-        Map<String, String> authorization = this.userService.loginUser(loginRequest);
+        LogIn command = new LogIn(loginRequest.userIdentification, loginRequest.password);
+        Map<String, String> authorization = userCommandHandler.handle(command);
         return createResponseWithHeaders(authorization);
     }
 
@@ -46,7 +49,8 @@ public class AuthenticationController {
             notes = "Provide refresh token, access token in the request body to receive a new access token"
     )
     public ResponseEntity<Void> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
-        Map<String, String> authorization = this.userService.refreshUserToken(refreshTokenRequest);
+        RefreshAccessToken command = new RefreshAccessToken(refreshTokenRequest.accessToken, refreshTokenRequest.refreshToken);
+        Map<String, String> authorization = userCommandHandler.handle(command);
         return createResponseWithHeaders(authorization);
     }
 }

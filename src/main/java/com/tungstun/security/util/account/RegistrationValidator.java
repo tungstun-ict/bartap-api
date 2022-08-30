@@ -1,7 +1,7 @@
 package com.tungstun.security.util.account;
 
+import com.tungstun.security.application.user.command.RegisterUser;
 import com.tungstun.security.domain.user.UserRepository;
-import com.tungstun.security.presentation.dto.request.UserRegistrationRequest;
 import com.tungstun.security.util.validation.NonSpaceValidator;
 import org.springframework.stereotype.Component;
 
@@ -15,15 +15,15 @@ public class RegistrationValidator {
         this.userRepository = userRepository;
     }
 
-    public void validateRegistrationDetails(UserRegistrationRequest userRegistrationRequest) throws AccountException {
+    public void validateRegistrationDetails(RegisterUser userRegistrationRequest) throws AccountException {
         validateInput(userRegistrationRequest);
         validateUniqueAccount(userRegistrationRequest);
     }
 
-    private void validateInput(UserRegistrationRequest userRegistrationRequest) {
-        validateUsername(userRegistrationRequest.username);
-        validateMail(userRegistrationRequest.mail);
-        validatePassword(userRegistrationRequest.password);
+    private void validateInput(RegisterUser userRegistrationRequest) {
+        validateUsername(userRegistrationRequest.username());
+        validateMail(userRegistrationRequest.mail());
+        validatePassword(userRegistrationRequest.password());
     }
 
     private void validateUsername(String username) {
@@ -42,9 +42,9 @@ public class RegistrationValidator {
         if (!isValid) throw new IllegalArgumentException("Password cannot contain spaces");
     }
 
-    private void validateUniqueAccount(UserRegistrationRequest userRegistrationRequest) throws AccountException {
-        validateUniqueUsername(userRegistrationRequest.username);
-        validateUniqueMail(userRegistrationRequest.mail);
+    private void validateUniqueAccount(RegisterUser userRegistrationRequest) throws AccountException {
+        validateUniqueUsername(userRegistrationRequest.username());
+        validateUniqueMail(userRegistrationRequest.mail());
     }
 
     private void validateUniqueUsername(String username) throws AccountException {
