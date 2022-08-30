@@ -1,7 +1,8 @@
-package com.tungstun.barapi.presentation.dto.converter;
+package com.tungstun.barapi.port.web.order.converter;
 
 import com.tungstun.barapi.domain.bill.Order;
-import com.tungstun.barapi.presentation.dto.response.OrderResponse;
+import com.tungstun.barapi.port.web.order.response.OrderResponse;
+import com.tungstun.barapi.port.web.person.converter.PersonConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,13 +17,13 @@ public class OrderConverter {
     }
 
     public OrderResponse convert(Order order) {
-        OrderResponse response = new OrderResponse();
-        response.setId(order.getId());
-        response.setAmount(order.getAmount());
-        response.setCreationDate(order.getCreationDate());
-        response.setBartender(personConverter.convert(order.getBartender()));
-        response.setProduct(order.getProduct());
-        return response;
+        return new OrderResponse(
+                order.getId(),
+                order.getAmount(),
+                order.getCreationDate(),
+                order.getProduct(),
+                personConverter.convert(order.getBartender())
+        );
     }
     public List<OrderResponse> convertAll(List<Order> orders) {
         return orders.stream()

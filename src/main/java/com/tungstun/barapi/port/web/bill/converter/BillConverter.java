@@ -3,8 +3,8 @@ package com.tungstun.barapi.port.web.bill.converter;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
+import com.tungstun.barapi.port.web.order.converter.OrderConverter;
 import com.tungstun.barapi.port.web.session.converter.SessionConverter;
-import com.tungstun.barapi.presentation.dto.converter.OrderConverter;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

@@ -8,9 +8,10 @@ import com.tungstun.barapi.application.order.query.GetOrder;
 import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
 import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
 import com.tungstun.barapi.domain.bill.Order;
-import com.tungstun.barapi.presentation.dto.converter.OrderConverter;
-import com.tungstun.barapi.presentation.dto.request.OrderRequest;
-import com.tungstun.barapi.presentation.dto.response.OrderResponse;
+import com.tungstun.barapi.port.web.order.converter.OrderConverter;
+import com.tungstun.barapi.port.web.order.request.CreateOrderRequest;
+import com.tungstun.barapi.port.web.order.response.OrderResponse;
+import com.tungstun.common.response.UuidResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -38,22 +39,6 @@ public class OrderController {
         this.orderCommandHandler = orderCommandHandler;
         this.orderConverter = orderConverter;
     }
-
-//    @GetMapping("orders")
-//    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Finds all orders of bar",
-//            notes = "Provide categoryId of bar to look up all orders that are linked to the bar",
-//            response = OrderResponse.class,
-//            responseContainer = "List"
-//    )
-//    public List<OrderResponse> getAllBarOrders(
-//            @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") Long barId
-//    ) throws EntityNotFoundException {
-//        List<Order> orders = this.orderService.getAllOrdersOfBar(barId);
-//        return orderConverter.convertAll(orders);
-//    }
 
     @GetMapping("sessions/{sessionId}/orders")
     @ResponseStatus(HttpStatus.OK)
@@ -107,6 +92,33 @@ public class OrderController {
         return orderConverter.convert(order);
     }
 
+    @PutMapping("sessions/{sessionId}/bills/{billId}")
+    @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
+    @ApiOperation(
+            value = "Create new order for bill of session of bar",
+            notes = "Provide categoryId of bar, session and bill to create a new order with information from request body",
+            response = OrderResponse.class
+    )
+    public UuidResponse createNewOrder(
+            @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") UUID barId,
+            @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") UUID sessionId,
+            @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") UUID billId,
+            @Valid @RequestBody CreateOrderRequest request,
+            @ApiIgnore Authentication authentication
+    ) throws EntityNotFoundException {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        AddOrder command = new AddOrder(
+                barId,
+                sessionId,
+                billId,
+                request.productId(),
+                request.amount(),
+                userDetails.getUsername()
+        );
+        return new UuidResponse(orderCommandHandler.handle(command));
+    }
+
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
@@ -122,32 +134,5 @@ public class OrderController {
     ) throws EntityNotFoundException {
         RemoveOrder command = new RemoveOrder(barId, sessionId, billId, orderId);
         orderCommandHandler.handle(command);
-    }
-
-    @PutMapping("sessions/{sessionId}/bills/{billId}")
-    @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Create new order for bill of session of bar",
-            notes = "Provide categoryId of bar, session and bill to create a new order with information from request body",
-            response = OrderResponse.class
-    )
-    public UUID createNewOrder(
-            @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") UUID billId,
-            @Valid @RequestBody OrderRequest orderLineRequest,
-            @ApiIgnore Authentication authentication
-    ) throws EntityNotFoundException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        AddOrder command = new AddOrder(
-                barId,
-                sessionId,
-                billId,
-                orderLineRequest.productId,
-                orderLineRequest.amount,
-                userDetails.getUsername()
-        );
-        return orderCommandHandler.handle(command);
     }
 }

@@ -1,7 +1,7 @@
 package com.tungstun.barapi.port.web.bill.response;
 
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.presentation.dto.response.OrderResponse;
+import com.tungstun.barapi.port.web.order.response.OrderResponse;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
