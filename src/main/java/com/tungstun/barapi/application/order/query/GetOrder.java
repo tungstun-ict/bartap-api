@@ -3,8 +3,8 @@ package com.tungstun.barapi.application.order.query;
 import java.util.UUID;
 
 public record GetOrder(
-        UUID orderId,
-        UUID billId,
+        UUID barId,
         UUID sessionId,
-        UUID barId){
+        UUID billId,
+        UUID orderId){
 }

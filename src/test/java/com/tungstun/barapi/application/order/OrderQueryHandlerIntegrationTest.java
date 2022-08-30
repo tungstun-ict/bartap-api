@@ -123,7 +123,7 @@ class OrderQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get order of bill")
     void getOrderOfBill() throws EntityNotFoundException {
-        Order resOrder = orderQueryHandler.handle(new GetOrder(order.getId(), bill.getId(), session.getId(), bar.getId()));
+        Order resOrder = orderQueryHandler.handle(new GetOrder(bar.getId(), session.getId(), bill.getId(), order.getId()));
 
         assertEquals(order.getId(), resOrder.getId());
     }
@@ -133,7 +133,7 @@ class OrderQueryHandlerIntegrationTest {
     void getNotExistingOrderOfBill() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> orderQueryHandler.handle(new GetOrder(UUID.randomUUID(), bill.getId(), session.getId(), bar.getId()))
+                () -> orderQueryHandler.handle(new GetOrder(bar.getId(), session.getId(), bill.getId(), UUID.randomUUID()))
         );
     }
 }
