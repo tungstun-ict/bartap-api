@@ -5,6 +5,7 @@ import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
 import com.tungstun.barapi.port.web.order.converter.OrderConverter;
 import com.tungstun.barapi.port.web.session.converter.SessionConverter;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,7 +16,7 @@ public class BillConverter {
     private final OrderConverter orderConverter;
     private final SessionConverter sessionConverter;
 
-    public BillConverter(OrderConverter orderConverter, SessionConverter sessionConverter) {
+    public BillConverter(OrderConverter orderConverter, @Lazy SessionConverter sessionConverter) {
         this.orderConverter = orderConverter;
         this.sessionConverter = sessionConverter;
     }

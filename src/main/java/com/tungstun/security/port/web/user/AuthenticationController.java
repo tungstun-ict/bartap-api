@@ -1,10 +1,10 @@
-package com.tungstun.security.presentation.controller;
+package com.tungstun.security.port.web.user;
 
 import com.tungstun.security.application.user.UserCommandHandler;
 import com.tungstun.security.application.user.command.LogIn;
 import com.tungstun.security.application.user.command.RefreshAccessToken;
-import com.tungstun.security.presentation.dto.request.LoginRequest;
-import com.tungstun.security.presentation.dto.request.RefreshTokenRequest;
+import com.tungstun.security.port.web.user.request.LoginRequest;
+import com.tungstun.security.port.web.user.request.RefreshTokenRequest;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class AuthenticationController {
             notes = "Provide login credentials in the request body to receive an access and refresh token"
     )
     public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) throws LoginException {
-        LogIn command = new LogIn(loginRequest.userIdentification, loginRequest.password);
+        LogIn command = new LogIn(loginRequest.userIdentification(), loginRequest.password());
         Map<String, String> authorization = userCommandHandler.handle(command);
         return createResponseWithHeaders(authorization);
     }
@@ -49,7 +49,7 @@ public class AuthenticationController {
             notes = "Provide refresh token, access token in the request body to receive a new access token"
     )
     public ResponseEntity<Void> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
-        RefreshAccessToken command = new RefreshAccessToken(refreshTokenRequest.accessToken, refreshTokenRequest.refreshToken);
+        RefreshAccessToken command = new RefreshAccessToken(refreshTokenRequest.accessToken(), refreshTokenRequest.refreshToken());
         Map<String, String> authorization = userCommandHandler.handle(command);
         return createResponseWithHeaders(authorization);
     }

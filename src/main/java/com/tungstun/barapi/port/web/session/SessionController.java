@@ -99,7 +99,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") UUID barId,
             @Valid @RequestBody CreateSessionRequest request
     ) throws EntityNotFoundException {
-        CreateSession command = new CreateSession(barId, request.name);
+        CreateSession command = new CreateSession(barId, request.name());
         return new UuidResponse(sessionCommandHandler.handle(command));
     }
 
@@ -116,7 +116,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") UUID sessionId,
             @Valid @RequestBody UpdateSessionRequest request
     ) throws EntityNotFoundException {
-        UpdateSession command = new UpdateSession(barId, sessionId, request.name);
+        UpdateSession command = new UpdateSession(barId, sessionId, request.name());
         return new UuidResponse(sessionCommandHandler.handle(command));
     }
 
