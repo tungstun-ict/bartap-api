@@ -1,6 +1,7 @@
 package com.tungstun.barapi.application.bar;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -19,34 +20,34 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class BarService {
+public class BarCommandHandler {
     private final BarQueryHandler barQueryHandler;
     private final BarRepository barRepository;
     private final UserRepository userRepository;
     private final UserQueryHandler userQueryHandler;
 
-    public BarService(BarQueryHandler barQueryHandler, BarRepository springBarRepository, UserRepository userRepository, UserQueryHandler userQueryHandler) {
+    public BarCommandHandler(BarQueryHandler barQueryHandler, BarRepository springBarRepository, UserRepository userRepository, UserQueryHandler userQueryHandler) {
         this.barQueryHandler = barQueryHandler;
         this.barRepository = springBarRepository;
         this.userRepository = userRepository;
         this.userQueryHandler = userQueryHandler;
     }
 
-    public UUID addBar(BarRequest barRequest, String ownerUsername) {
-        User user = (User) userQueryHandler.loadUserByUsername(ownerUsername);
+    public UUID addBar(CreateBar command) {
+        User user = (User) userQueryHandler.loadUserByUsername(command.ownerUsername());
         boolean exists = barRepository.findAllById(user.getAuthorizations().keySet())
                 .stream()
-                .anyMatch(bar -> bar.getDetails().getName().equals(barRequest.name));
+                .anyMatch(bar -> bar.getDetails().getName().equals(command.name()));
         if (exists) {
-            throw new DuplicateRequestException("User already owns bar with name: " + barRequest.name);
+            throw new DuplicateRequestException("User already owns bar with name: " + command.name());
         }
 
-        Bar bar = new BarBuilder(barRequest.name)
-                .setAddress(barRequest.address)
-                .setMail(barRequest.mail)
-                .setPhoneNumber(barRequest.phoneNumber)
+        Bar bar = new BarBuilder(command.name())
+                .setAddress(command.address())
+                .setMail(command.mail())
+                .setPhoneNumber(command.phoneNumber())
                 .setPeople(
-                        List.of(new PersonBuilder(ownerUsername)
+                        List.of(new PersonBuilder(command.ownerUsername())
                                 .setUser(user)
                                 .build())
                 )

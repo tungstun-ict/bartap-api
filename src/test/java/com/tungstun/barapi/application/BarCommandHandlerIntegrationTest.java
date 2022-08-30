@@ -1,13 +1,13 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
-import com.tungstun.barapi.application.bar.BarService;
+import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
-import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.presentation.dto.request.BarRequest;
@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-public class BarServiceIntegrationTest {
+public class BarCommandHandlerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -36,7 +36,7 @@ public class BarServiceIntegrationTest {
     @Autowired
     private SpringBarRepository repository;
     @Autowired
-    private BarService service;
+    private BarCommandHandler service;
     @Autowired
     private BarQueryHandler barQueryHandler;
 
@@ -95,28 +95,28 @@ public class BarServiceIntegrationTest {
     @Test
     @DisplayName("Create bar returns bar")
     void createBar_ReturnsBar(){
-        BarRequest request = new BarRequest("address", "name", "mail", "+31612345678");
         User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
+        CreateBar command = new CreateBar("address", "name", "mail@mail.com", "+31612345678", user.getUsername());
 
-        assertDoesNotThrow(() -> service.addBar(request, user.getUsername()));
+        assertDoesNotThrow(() -> service.addBar(command));
     }
 
     @Test
     @DisplayName("Create existing bar throws DuplicateRequestException")
     void createBarWithExistingName_ThrowDuplicateRequest() {
-        BarRequest request = new BarRequest("address", "name", "mail", "+31661234567");
-        Bar bar = new BarBuilder("bar").setName(request.name).build();
+        Bar bar = new BarBuilder("bar").build();
         User user = new User("user", "", "", "", "", "+31612345679", new ArrayList<>());
         user.newBarAuthorization(bar.getId());
         user = userRepository.save(user);
-        Person person = bar.createPerson("name", user);
-
+        bar.createPerson("name", user);
         repository.save(bar);
-        String username = person.getUser().getUsername();
+
+        CreateBar command = new CreateBar("address", "bar", "mail@mail.com", "+31612345678", user.getUsername());
+
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addBar(request, username)
+                () -> service.addBar(command)
         );
     }
 

@@ -1,7 +1,8 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
-import com.tungstun.barapi.application.bar.BarService;
+import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -26,12 +27,12 @@ import java.util.UUID;
 @RequestMapping("/api/bars")
 public class BarController {
     private final BarQueryHandler barQueryHandler;
-    private final BarService barService;
+    private final BarCommandHandler barCommandHandler;
     private final BarConverter converter;
 
-    public BarController(BarQueryHandler barQueryHandler, BarService barService, BarConverter converter) {
+    public BarController(BarQueryHandler barQueryHandler, BarCommandHandler barCommandHandler, BarConverter converter) {
         this.barQueryHandler = barQueryHandler;
-        this.barService = barService;
+        this.barCommandHandler = barCommandHandler;
         this.converter = converter;
     }
 
@@ -74,7 +75,14 @@ public class BarController {
             @Valid @RequestBody BarRequest barRequest,
             @ApiIgnore Authentication authentication
     ) {
-        return barService.addBar(barRequest, ((UserDetails) authentication.getPrincipal()).getUsername());
+        CreateBar command = new CreateBar(
+                barRequest.address,
+                barRequest.name,
+                barRequest.mail,
+                barRequest.phoneNumber,
+                ((UserDetails) authentication.getPrincipal()).getUsername()
+        );
+        return barCommandHandler.addBar(command);
     }
 
     @PutMapping("/{barId}")
@@ -89,7 +97,7 @@ public class BarController {
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") UUID barId,
             @Valid @RequestBody BarRequest barRequest
     ) throws EntityNotFoundException {
-        return barService.updateBar(barId, barRequest);
+        return barCommandHandler.updateBar(barId, barRequest);
     }
 
 
@@ -103,6 +111,6 @@ public class BarController {
     public void deleteBar(
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") UUID barId
     ) {
-        barService.deleteBar(barId);
+        barCommandHandler.deleteBar(barId);
     }
 }

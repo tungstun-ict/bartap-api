@@ -1,8 +1,9 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
-import com.tungstun.barapi.application.bar.BarService;
+import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
@@ -25,12 +26,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class BarServiceTest {
+class BarCommandHandlerTest {
     private static final BarRepository repository = mock(BarRepository.class);
     private static final UserRepository userRepository = mock(UserRepository.class);
     private static final UserQueryHandler userQueryHandler = mock(UserQueryHandler.class);
     private static final BarQueryHandler barQueryHandler = new BarQueryHandler(repository, userQueryHandler);
-    private static final BarService service = new BarService(barQueryHandler, repository, userRepository, userQueryHandler);
+    private static final BarCommandHandler service = new BarCommandHandler(barQueryHandler, repository, userRepository, userQueryHandler);
 
     @AfterEach
     void teardown() {
@@ -65,8 +66,8 @@ class BarServiceTest {
     @Test
     @DisplayName("Create bar returns bar")
     void createBar_ReturnsBar() {
-        BarRequest request = new BarRequest("address 0", "name", "mail@bar.com", "+31698765432");
         String ownerName = "hans";
+        CreateBar command = new CreateBar("address 0", "name", "mail@bar.com", "+31698765432", ownerName);
         Bar bar = new BarBuilder("bar")
                 .setAddress("address 1")
                 .setMail("new@mail.com")
@@ -79,7 +80,7 @@ class BarServiceTest {
         when(repository.save(any(Bar.class)))
                 .thenReturn(bar);
 
-        assertDoesNotThrow(() -> service.addBar(request, ownerName));
+        assertDoesNotThrow(() -> service.addBar(command));
 
         verify(userQueryHandler, times(1)).loadUserByUsername(ownerName);
         verify(repository, times(1)).findAllById(any());
@@ -89,16 +90,16 @@ class BarServiceTest {
     @Test
     @DisplayName("Create existing bar throws DuplicateRequestException")
     void createBarWithExistingName_ThrowDuplicateRequest() {
-        BarRequest request = new BarRequest("address", "name", "mail", "+31698765432");
         Person person = new Person(
                 UUID.randomUUID(),
                 "name",
                 new User("name", "", "", "", "", "+310612345678", new ArrayList<>())
         );
-        Bar bar = new BarBuilder(request.name)
-                .setAddress(request.address)
-                .setMail(request.mail)
-                .setPhoneNumber(request.phoneNumber)
+        CreateBar command = new CreateBar("address", "name", "mail", "+31698765432", person.getUser().getUsername());
+        Bar bar = new BarBuilder(command.name())
+                .setAddress(command.address())
+                .setMail(command.mail())
+                .setPhoneNumber(command.phoneNumber())
                 .setPeople(new ArrayList<>(List.of(person)))
                 .build();
         person.getUser().newBarAuthorization(bar.getId());
@@ -110,7 +111,7 @@ class BarServiceTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addBar(request, username)
+                () -> service.addBar(command)
         );
         verify(repository, times(1)).findAllById(any());
         verify(userQueryHandler, times(1)).loadUserByUsername(person.getUser().getUsername());

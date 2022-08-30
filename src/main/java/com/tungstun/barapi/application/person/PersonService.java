@@ -1,7 +1,7 @@
 package com.tungstun.barapi.application.person;
 
+import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
-import com.tungstun.barapi.application.bar.BarService;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -22,14 +22,14 @@ public class PersonService {
     private final PersonQueryHandler personQueryHandler;
     private final BarRepository barRepository;
     private final BarQueryHandler barQueryHandler;
-    private final BarService barService;
+    private final BarCommandHandler barCommandHandler;
 
-    public PersonService(PersonRepository personRepository, PersonQueryHandler personQueryHandler, BarRepository barRepository, BarQueryHandler barQueryHandler, BarService barService) {
+    public PersonService(PersonRepository personRepository, PersonQueryHandler personQueryHandler, BarRepository barRepository, BarQueryHandler barQueryHandler, BarCommandHandler barCommandHandler) {
         this.personRepository = personRepository;
         this.personQueryHandler = personQueryHandler;
         this.barRepository = barRepository;
         this.barQueryHandler = barQueryHandler;
-        this.barService = barService;
+        this.barCommandHandler = barCommandHandler;
     }
 
 //    public Person getPersonOfBar(Long barId, Long personId) throws EntityNotFoundException {

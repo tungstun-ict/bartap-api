@@ -1,7 +1,7 @@
 package com.tungstun.barapi.application;
 
+import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
-import com.tungstun.barapi.application.bar.BarService;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.category.CategoryQueryHandler;
 import com.tungstun.barapi.application.category.CategoryService;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 class CategoryServiceTest {
-    private static final BarService barService = mock(BarService.class);
+    private static final BarCommandHandler BAR_COMMAND_HANDLER = mock(BarCommandHandler.class);
     private static final BarRepository barRepository = mock(BarRepository.class);
     private static final BarQueryHandler barQueryHandler = mock(BarQueryHandler.class);
     private static final CategoryRepository repository = mock(CategoryRepository.class);
