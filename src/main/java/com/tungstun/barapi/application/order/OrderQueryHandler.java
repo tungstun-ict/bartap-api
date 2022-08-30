@@ -24,7 +24,7 @@ public class OrderQueryHandler {
     }
 
     public Order handle(GetOrder query) {
-        return billQueryHandler.handle(new GetBill(query.billId(), query.sessionId(), query.barId()))
+        return billQueryHandler.handle(new GetBill(query.barId(), query.sessionId(), query.billId()))
                 .getOrders()
                 .stream()
                 .filter(order -> order.getId().equals(query.orderId()))
@@ -33,7 +33,7 @@ public class OrderQueryHandler {
     }
 
     public List<Order> handle(ListOrdersOfBill query) {
-        return billQueryHandler.handle(new GetBill(query.billId(), query.sessionId(), query.barId()))
+        return billQueryHandler.handle(new GetBill(query.barId(), query.sessionId(), query.billId()))
                 .getOrders();
     }
 

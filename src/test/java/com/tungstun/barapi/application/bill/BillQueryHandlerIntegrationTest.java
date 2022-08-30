@@ -80,7 +80,7 @@ class BillQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get Bill of bar")
     void getBillOfBar() throws EntityNotFoundException {
-        Bill resBill = billQueryHandler.handle(new GetBill(bill.getId(), session.getId(), bar.getId()));
+        Bill resBill = billQueryHandler.handle(new GetBill(bar.getId(), session.getId(), bill.getId()));
 
         assertEquals(bill.getId(), resBill.getId());
     }
@@ -90,7 +90,7 @@ class BillQueryHandlerIntegrationTest {
     void getNotExistingBillOfBar() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> billQueryHandler.handle(new GetBill(UUID.randomUUID(), session.getId(), bar.getId()))
+                () -> billQueryHandler.handle(new GetBill(bar.getId(), session.getId(), UUID.randomUUID()))
         );
     }
 
@@ -99,7 +99,7 @@ class BillQueryHandlerIntegrationTest {
     void getBillOfNotExistingSessionOfBar() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> billQueryHandler.handle(new GetBill(bill.getId(), UUID.randomUUID(), bar.getId()))
+                () -> billQueryHandler.handle(new GetBill(bar.getId(), UUID.randomUUID(), bill.getId()))
         );
     }
 }

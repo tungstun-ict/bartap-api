@@ -83,25 +83,9 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to retrieve the bill from") @PathVariable("sessionId") UUID sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        Bill bill = billQueryHandler.handle(new GetBill(billId, sessionId, barId));
+        Bill bill = billQueryHandler.handle(new GetBill(barId, sessionId, billId));
         return converter.convert(bill);
     }
-
-//    @GetMapping("/sessions/active/people/{personId}/bill")
-//    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Finds bill of bar",
-//            notes = "Provide categoryId of bar, session and bill to look up the specific bill from session from the bar",
-//            response = BillResponse.class
-//    )
-//    public ResponseEntity<BillResponse> getBillOfBar(
-//            @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") UUID barId,
-//            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("personId") UUID personId
-//    ) throws EntityNotFoundException {
-//        Bill bill = this.billService.getBillOfCustomerFromActiveSession(barId, personId);
-//        return new ResponseEntity<>(converter.convert(bill), HttpStatus.OK);
-//    }
 
     @GetMapping("/people/{personId}/bills")
     @ResponseStatus(HttpStatus.OK)
@@ -118,23 +102,6 @@ public class BillController {
         List<Bill> bills = billQueryHandler.handle(new ListBillsOfCustomer(barId, personId));
         return converter.convertAllToSummary(bills);
     }
-
-//    @GetMapping("/people/{personId}/bills/{billId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Finds bill of customer of bar",
-//            notes = "Provide categoryId of bar and customer to look up the specific bill from session from the bar",
-//            response = BillResponse.class
-//    )
-//    public BillResponse getBillOfCustomerOfBar(
-//            @ApiParam(value = "ID value for the bar you want to retrieve the bills from") @PathVariable("barId") UUID barId,
-//            @ApiParam(value = "ID value for the customer you want to retrieve the bill from") @PathVariable("personId") UUID personId,
-//            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") UUID billId
-//    ) throws EntityNotFoundException {
-//        Bill bill = this.billService.getBillOfPerson(barId, personId, billId);
-//        return converter.convert(bill);
-//    }
 
     @PostMapping("/sessions/{sessionId}/")
     @ResponseStatus(HttpStatus.CREATED)

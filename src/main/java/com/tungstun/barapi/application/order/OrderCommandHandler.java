@@ -37,14 +37,14 @@ public class OrderCommandHandler {
     public UUID handle(AddOrder command) throws EntityNotFoundException {
         Person bartender = personQueryHandler.handle(new GetPersonByUserUsername(command.bartenderUsername(), command.barId()));
         Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()));
-        Bill bill = billQueryHandler.handle(new GetBill(command.billId(), command.sessionId(), command.barId()));
+        Bill bill = billQueryHandler.handle(new GetBill(command.barId(), command.sessionId(), command.billId()));
         Order order = bill.addOrder(product, command.amount(), bartender);
         billRepository.save(bill);
         return order.getId();
     }
 
     public void handle(RemoveOrder command) throws EntityNotFoundException {
-        Bill bill = billQueryHandler.handle(new GetBill(command.billId(), command.sessionId(), command.barId()));
+        Bill bill = billQueryHandler.handle(new GetBill(command.barId(), command.sessionId(), command.billId()));
         bill.removeOrder(command.orderId());
         billRepository.save(bill);
     }
