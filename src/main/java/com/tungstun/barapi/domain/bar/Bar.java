@@ -32,19 +32,15 @@ public class Bar {
     @Embedded
     private BarDetails details;
 
-//    @Where(clause = "deleted = false")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Person> people;
 
-//    @Where(clause = "deleted = false")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Product> products;
 
-//    @Where(clause = "deleted = false")
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Session> sessions;
 
-//    @Where(clause = "deleted = false")
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private List<Category> categories;
 
@@ -84,76 +80,6 @@ public class Bar {
         return session;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
-    public BarDetails getDetails() {
-        return details;
-    }
-
-    public List<Person> getPeople() {
-        return this.people;
-    }
-
-//    public boolean addPerson(Person person) {
-//        return this.people.add(person);
-//    }
-
-    public boolean removePerson(Person person) {
-        return this.people.remove(person);
-    }
-
-    public List<Product> getProducts() {
-        return this.products;
-    }
-
-    public boolean addProduct(Product product) {
-        return this.products.add(product);
-    }
-
-    public boolean removeProduct(Product product) {
-        return this.products.remove(product);
-    }
-
-    public List<Session> getSessions() {
-        return this.sessions;
-    }
-
-//    public boolean addSession(Session session) {
-//        return this.sessions.add(session);
-//    }
-
-    public boolean removeSession(Session session) {
-        return this.sessions.remove(session);
-    }
-
-    public List<Category> getCategories() {
-        return categories;
-    }
-
-    public boolean addCategory(Category category) {
-        return this.categories.add(category);
-    }
-
-    public boolean removeCategory(Category category) {
-        return this.categories.remove(category);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Bar bar = (Bar) o;
-        return id.equals(bar.id) &&
-                details.equals(bar.details);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, details);
-    }
-
     public Category createCategory(String name) {
         boolean exists = categories.stream()
                 .anyMatch(category -> category.getName().equalsIgnoreCase(name));
@@ -180,5 +106,59 @@ public class Bar {
                 .build();
         people.add(person);
         return person;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public BarDetails getDetails() {
+        return details;
+    }
+
+    public List<Person> getPeople() {
+        return this.people;
+    }
+
+    public boolean removePerson(Person person) {
+        return this.people.remove(person);
+    }
+
+    public List<Product> getProducts() {
+        return this.products;
+    }
+
+    public boolean removeProduct(Product product) {
+        return this.products.remove(product);
+    }
+
+    public List<Session> getSessions() {
+        return this.sessions;
+    }
+
+    public boolean removeSession(Session session) {
+        return this.sessions.remove(session);
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public boolean removeCategory(Category category) {
+        return this.categories.remove(category);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Bar bar = (Bar) o;
+        return id.equals(bar.id) &&
+                details.equals(bar.details);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, details);
     }
 }
