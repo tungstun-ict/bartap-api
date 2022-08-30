@@ -1,8 +1,9 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
-import com.tungstun.barapi.application.person.PersonService;
+import com.tungstun.barapi.application.person.command.CreatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -26,13 +27,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class PersonServiceIntegrationTest {
+class PersonCommandHandlerIntegrationTest {
     @Autowired
     private PersonRepository repository;
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
-    private PersonService service;
+    private PersonCommandHandler service;
     @Autowired
     private PersonQueryHandler personQueryHandler;
 
@@ -90,23 +91,19 @@ class PersonServiceIntegrationTest {
     @Test
     @DisplayName("create person")
     void createPerson() {
-        PersonRequest request = new PersonRequest();
-        request.name = "newPerson";
-        request.phoneNumber = "+310601010101";
+        CreatePerson command = new CreatePerson(bar.getId(), "newName");
 
-        assertDoesNotThrow(() -> service.createNewPerson(bar.getId(), request));
+        assertDoesNotThrow(() -> service.createNewPerson(command));
     }
 
     @Test
     @DisplayName("create existing person")
     void createExistingPerson() {
-        PersonRequest request = new PersonRequest();
-        request.name = "person";
-        request.phoneNumber = "+310612345678";
+        CreatePerson command = new CreatePerson(bar.getId(), person.getName());
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.createNewPerson(bar.getId(), request)
+                () -> service.createNewPerson(command)
         );
     }
 

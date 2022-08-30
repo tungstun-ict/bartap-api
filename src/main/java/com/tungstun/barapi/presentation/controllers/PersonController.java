@@ -1,7 +1,8 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
-import com.tungstun.barapi.application.person.PersonService;
+import com.tungstun.barapi.application.person.command.CreatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
 import com.tungstun.barapi.domain.person.Person;
@@ -23,12 +24,12 @@ import java.util.UUID;
 @RequestMapping("/api/bars/{barId}/people")
 public class PersonController {
     private final PersonQueryHandler personQueryHandler;
-    private final PersonService personService;
+    private final PersonCommandHandler personCommandHandler;
     private final PersonConverter converter;
 
-    public PersonController(PersonQueryHandler personQueryHandler, PersonService personService, PersonConverter converter) {
+    public PersonController(PersonQueryHandler personQueryHandler, PersonCommandHandler personCommandHandler, PersonConverter converter) {
         this.personQueryHandler = personQueryHandler;
-        this.personService = personService;
+        this.personCommandHandler = personCommandHandler;
         this.converter = converter;
     }
 
@@ -76,7 +77,8 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to create the new person for") @PathVariable("barId") UUID barId,
             @Valid @RequestBody PersonRequest personRequest
     ) throws EntityNotFoundException {
-        return personService.createNewPerson(barId, personRequest);
+        CreatePerson command = new CreatePerson(barId, personRequest.name);
+        return personCommandHandler.createNewPerson(command);
     }
 
     @PutMapping("/{personId}")
@@ -92,7 +94,7 @@ public class PersonController {
             @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") UUID personId,
             @Valid @RequestBody PersonRequest personRequest
     ) throws EntityNotFoundException {
-        return personService.updatePerson(barId, personId, personRequest);
+        return personCommandHandler.updatePerson(barId, personId, personRequest);
     }
 
     @DeleteMapping("/{personId}")
@@ -106,6 +108,6 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to delete the person from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("personId") UUID personId
     ) throws EntityNotFoundException {
-        personService.deletePersonFromBar(barId, personId);
+        personCommandHandler.deletePersonFromBar(barId, personId);
     }
 }

@@ -3,7 +3,6 @@ package com.tungstun.barapi.application.order;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
-import com.tungstun.barapi.application.person.PersonService;
 import com.tungstun.barapi.application.person.query.GetPersonByUserUsername;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
 import com.tungstun.barapi.application.product.query.GetProduct;
@@ -25,12 +24,10 @@ public class OrderService {
     private final BillQueryHandler billQueryHandler;
     private final ProductQueryHandler productQueryHandler;
     private final PersonQueryHandler personQueryHandler;
-    private final PersonService personService;
     private final BillRepository billRepository;
 
-    public OrderService(BillQueryHandler billQueryHandler, PersonService personService, ProductQueryHandler productQueryHandler, PersonQueryHandler personQueryHandler, BillRepository billRepository) {
+    public OrderService(BillQueryHandler billQueryHandler, ProductQueryHandler productQueryHandler, PersonQueryHandler personQueryHandler, BillRepository billRepository) {
         this.billQueryHandler = billQueryHandler;
-        this.personService = personService;
         this.productQueryHandler = productQueryHandler;
         this.personQueryHandler = personQueryHandler;
         this.billRepository = billRepository;
