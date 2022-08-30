@@ -68,26 +68,9 @@ public class OrderController {
             @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
-        List<Order> orders = orderQueryHandler.handle(new ListOrdersOfSession(sessionId, barId));
+        List<Order> orders = orderQueryHandler.handle(new ListOrdersOfSession(barId, sessionId));
         return orderConverter.convertAll(orders);
     }
-
-//    @GetMapping("sessions/{sessionId}/orders/{orderId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Finds order of session of bar",
-//            notes = "Provide categoryId of bar, session and order to look up specific order of session of the bar",
-//            response = OrderResponse.class
-//    )
-//    public OrderResponse getOrderFromSession(
-//            @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") Long barId,
-//            @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") Long sessionId,
-//            @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") UUID orderId
-//    ) throws EntityNotFoundException {
-//        Order order = this.orderService.getOrderOfSession(barId, sessionId, orderId);
-//        return orderConverter.convert(order);
-//    }
 
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
     @ResponseStatus(HttpStatus.OK)

@@ -89,7 +89,7 @@ class OrderQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get all orders of session")
     void getAllOrdersOfSession() throws EntityNotFoundException {
-        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(session.getId(), bar.getId()));
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(bar.getId(), session.getId()));
 
         assertEquals(1, resOrders.size());
         assertTrue(resOrders.stream().anyMatch(o -> o.getId().equals(order.getId())));
@@ -98,7 +98,7 @@ class OrderQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get none orders of session")
     void getNoneOrdersOfSession() throws EntityNotFoundException {
-        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(session3.getId(), bar.getId()));
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfSession(bar.getId(), session3.getId()));
 
         assertEquals(0, resOrders.size());
     }
