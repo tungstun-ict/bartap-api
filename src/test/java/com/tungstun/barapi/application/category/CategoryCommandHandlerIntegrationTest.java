@@ -2,6 +2,7 @@ package com.tungstun.barapi.application.category;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.category.command.CreateCategory;
+import com.tungstun.barapi.application.category.command.DeleteCategory;
 import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.category.query.ListCategoriesOfBar;
@@ -184,7 +185,9 @@ public class CategoryCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Delete existing category in bar")
     void deleteExistingCategory() {
-        assertDoesNotThrow(() -> service.deleteCategoryFromBar(bar.getId(), category.getId()));
+        DeleteCategory command = new DeleteCategory(category.getId());
+
+        assertDoesNotThrow(() -> service.deleteCategoryFromBar(command));
     }
 
     @Test
@@ -193,8 +196,9 @@ public class CategoryCommandHandlerIntegrationTest {
         Product product = new ProductBuilder("name", category)
                 .build();
         bar.addProduct(product);
+        DeleteCategory command = new DeleteCategory(category.getId());
 
-        service.deleteCategoryFromBar(bar.getId(), category.getId());
+        service.deleteCategoryFromBar(command);
 
         assertTrue(categoryRepository.findById(category.getId()).isEmpty());
     }

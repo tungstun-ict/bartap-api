@@ -4,6 +4,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.category.command.CreateCategory;
+import com.tungstun.barapi.application.category.command.DeleteCategory;
 import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -53,12 +54,7 @@ public class CategoryCommandHandler {
         return command.categoryId();
     }
 
-    public void deleteCategoryFromBar(UUID barId, UUID categoryId) throws EntityNotFoundException {
-        categoryRepository.delete(categoryId);
-//        Bar bar = this.barService.getBar(barId);
-//        Category category = findCategoryInCategories(bar.getCategories(), categoryId);
-//        removeCategoryFromProducts(bar.getProducts(), category);
-//        bar.removeCategory(category);
-//        this.barService.saveBar(bar);
+    public void deleteCategoryFromBar(DeleteCategory command) throws EntityNotFoundException {
+        categoryRepository.delete(command.categoryId());
     }
 }

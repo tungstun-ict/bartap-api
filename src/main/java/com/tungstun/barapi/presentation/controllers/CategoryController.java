@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.category.CategoryCommandHandler;
 import com.tungstun.barapi.application.category.CategoryQueryHandler;
 import com.tungstun.barapi.application.category.command.CreateCategory;
+import com.tungstun.barapi.application.category.command.DeleteCategory;
 import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.category.query.ListCategoriesOfBar;
@@ -110,6 +111,7 @@ public class CategoryController {
             @ApiParam(value = "ID value for the bar you want to delete the category from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the category you want to delete") @PathVariable("categoryId") UUID categoryId
     ) throws EntityNotFoundException {
-        categoryCommandHandler.deleteCategoryFromBar(barId, categoryId);
+        DeleteCategory command = new DeleteCategory(categoryId);
+        categoryCommandHandler.deleteCategoryFromBar(command);
     }
 }
