@@ -1,8 +1,9 @@
 package com.tungstun.barapi.application;
 
 import com.sun.jdi.request.DuplicateRequestException;
+import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
-import com.tungstun.barapi.application.bill.BillService;
+import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -10,13 +11,11 @@ import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
-import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.domain.session.SessionFactory;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.session.SpringSessionRepository;
-import com.tungstun.barapi.presentation.dto.request.BillRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -33,17 +32,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class BillServiceIntegrationTest {
+class BillCommandHandlerIntegrationTest {
     @Autowired
     private SpringBillRepository repository;
     @Autowired
     private SpringSessionRepository sessionRepository;
     @Autowired
-    private PersonRepository personRepository;
-    @Autowired
     private SpringBarRepository barRepository;
     @Autowired
-    private BillService service;
+    private BillCommandHandler service;
     @Autowired
     private BillQueryHandler billQueryHandler;
 
@@ -210,25 +207,22 @@ class BillServiceIntegrationTest {
     @Test
     @DisplayName("create Bill")
     void createBill() throws EntityNotFoundException {
-//        Person person2 = personRepository.save(new PersonBuilder(123L, "name").build());
-//        bar.addPerson(person2);
         Person person2 = bar.createPerson("name2");
         barRepository.save(bar);
-        BillRequest request = new BillRequest();
-        request.customerId = person2.getId();
 
-        assertDoesNotThrow(() -> service.addCustomerToSession(bar.getId(), session.getId(), request));
+        AddCustomerToSession command = new AddCustomerToSession(bar.getId(), session.getId(), person2.getId());
+
+        assertDoesNotThrow(() -> service.addCustomerToSession(command));
     }
 
     @Test
     @DisplayName("create Bill already existing")
     void createBillDuplicate() {
-        BillRequest request = new BillRequest();
-        request.customerId = person.getId();
+        AddCustomerToSession command = new AddCustomerToSession(bar.getId(), session.getId(), person.getId());
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addCustomerToSession(bar.getId(), session.getId(), request)
+                () -> service.addCustomerToSession(command)
         );
     }
 

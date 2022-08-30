@@ -1,7 +1,8 @@
 package com.tungstun.barapi.presentation.controllers;
 
+import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
-import com.tungstun.barapi.application.bill.BillService;
+import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.domain.bill.Bill;
@@ -24,12 +25,12 @@ import java.util.UUID;
 @Controller
 @RequestMapping("/api/bars/{barId}/")
 public class BillController {
-    private final BillService billService;
+    private final BillCommandHandler billCommandHandler;
     private final BillQueryHandler billQueryHandler;
     private final BillConverter converter;
 
-    public BillController(BillService billService, BillQueryHandler billQueryHandler, BillConverter converter) {
-        this.billService = billService;
+    public BillController(BillCommandHandler billCommandHandler, BillQueryHandler billQueryHandler, BillConverter converter) {
+        this.billCommandHandler = billCommandHandler;
         this.billQueryHandler = billQueryHandler;
         this.converter = converter;
     }
@@ -146,7 +147,8 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to add a new bill to") @PathVariable("sessionId") UUID sessionId,
             @Valid @RequestBody BillRequest billRequest
     ) throws EntityNotFoundException {
-        return billService.addCustomerToSession(barId, sessionId, billRequest);
+        AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, billRequest.customerId);
+        return billCommandHandler.addCustomerToSession(command);
     }
 
     @PatchMapping("/sessions/{sessionId}/bills/{billId}/pay")
@@ -162,7 +164,7 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") UUID sessionId,
             @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        billService.payBill(barId, sessionId, billId);
+        billCommandHandler.payBill(barId, sessionId, billId);
     }
 
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
@@ -177,6 +179,6 @@ public class BillController {
             @PathVariable("sessionId") UUID sessionId,
             @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        billService.deleteBill(barId, sessionId, billId);
+        billCommandHandler.deleteBill(barId, sessionId, billId);
     }
 }
