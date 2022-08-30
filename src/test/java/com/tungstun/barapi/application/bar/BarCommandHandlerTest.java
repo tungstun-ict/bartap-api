@@ -1,8 +1,6 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.bar;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.application.bar.BarCommandHandler;
-import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;

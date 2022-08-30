@@ -1,13 +1,9 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.bar;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.application.bar.BarCommandHandler;
-import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
-import com.tungstun.barapi.application.bar.query.GetBar;
-import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
@@ -21,7 +17,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,43 +29,7 @@ public class BarCommandHandlerIntegrationTest {
     @Autowired
     private SpringBarRepository repository;
     @Autowired
-    private BarCommandHandler service;
-    @Autowired
-    private BarQueryHandler barQueryHandler;
-
-    @Test
-    @DisplayName("Get all bars of bar owner returns bars")
-    void getAllBarsOfBarOwner_ReturnsBars() {
-        repository.save(new BarBuilder("bar").build()); //Not owned bar
-        Bar bar = repository.save(new BarBuilder("bar2").build());
-        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
-        user.newBarAuthorization(bar.getId());
-        user = userRepository.save(user);
-
-        List<Bar> resBars = barQueryHandler.handle(new ListOwnedBars(user.getUsername()));
-
-        assertEquals(1, resBars.size());
-        assertTrue(resBars.contains(bar));
-    }
-
-    @Test
-    @DisplayName("Get bar returns bar")
-    void getBar_ReturnsBar() throws EntityNotFoundException {
-        Bar bar = repository.save(new BarBuilder("bar").build());
-
-        Bar resBar = barQueryHandler.handle(new GetBar(bar.getId()));
-
-        assertEquals(bar, resBar);
-    }
-
-    @Test
-    @DisplayName("Get not existing bar throws")
-    void getNotExistingBar_ThrowsNotFound() {
-        assertThrows(
-                EntityNotFoundException.class,
-                () -> barQueryHandler.handle(new GetBar(UUID.randomUUID()))
-        );
-    }
+    private BarCommandHandler barCommandHandler;
 
     @Test
     @DisplayName("Create bar returns bar")
@@ -78,7 +37,7 @@ public class BarCommandHandlerIntegrationTest {
         User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
         CreateBar command = new CreateBar("address", "name", "mail@mail.com", "+31612345678", user.getUsername());
 
-        assertDoesNotThrow(() -> service.addBar(command));
+        assertDoesNotThrow(() -> barCommandHandler.addBar(command));
     }
 
     @Test
@@ -96,7 +55,7 @@ public class BarCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addBar(command)
+                () -> barCommandHandler.addBar(command)
         );
     }
 
@@ -109,7 +68,7 @@ public class BarCommandHandlerIntegrationTest {
         repository.save(bar);
         UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");
 
-        UUID id = service.updateBar(command);
+        UUID id = barCommandHandler.updateBar(command);
 
         Bar actualBar = repository.findById(id).orElseThrow();
         assertEquals(command.address(), actualBar.getDetails().getAddress());
@@ -125,7 +84,7 @@ public class BarCommandHandlerIntegrationTest {
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.updateBar(command)
+                () -> barCommandHandler.updateBar(command)
         );
     }
 
@@ -136,7 +95,7 @@ public class BarCommandHandlerIntegrationTest {
         DeleteBar command = new DeleteBar(bar.getId());
 
         assertDoesNotThrow(
-                () -> service.deleteBar(command)
+                () -> barCommandHandler.deleteBar(command)
         );
 
         assertTrue(repository.findById(bar.getId()).isEmpty());
