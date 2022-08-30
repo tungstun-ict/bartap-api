@@ -2,12 +2,11 @@ package com.tungstun.barapi.application.order;
 
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.GetBill;
-import com.tungstun.barapi.application.order.query.GetOrder;
-import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
-import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
+import com.tungstun.barapi.application.order.query.*;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.domain.bill.Order;
+import com.tungstun.barapi.domain.bill.OrderHistoryEntry;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -40,5 +39,16 @@ public class OrderQueryHandler {
     public List<Order> handle(ListOrdersOfSession query) {
         return sessionQueryHandler.handle(new GetSession(query.barId(), query.sessionId()))
                 .getAllOrders();
+    }
+
+    public List<OrderHistoryEntry> handle(ListOrderHistory query) {
+        return sessionQueryHandler.handle(new GetSession(query.barId(), query.sessionId()))
+                .getBill(query.billId())
+                .getHistory();
+    }
+
+    public List<OrderHistoryEntry> handle(ListOrderHistoryOfSession query) {
+        return sessionQueryHandler.handle(new GetSession(query.barId(), query.sessionId()))
+                .getOrderHistory();
     }
 }

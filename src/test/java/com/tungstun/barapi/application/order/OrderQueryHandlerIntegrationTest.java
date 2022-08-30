@@ -1,12 +1,11 @@
 package com.tungstun.barapi.application.order;
 
-import com.tungstun.barapi.application.order.query.GetOrder;
-import com.tungstun.barapi.application.order.query.ListOrdersOfBill;
-import com.tungstun.barapi.application.order.query.ListOrdersOfSession;
+import com.tungstun.barapi.application.order.query.*;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.Order;
+import com.tungstun.barapi.domain.bill.OrderHistoryEntry;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.domain.product.Category;
@@ -135,5 +134,34 @@ class OrderQueryHandlerIntegrationTest {
                 EntityNotFoundException.class,
                 () -> orderQueryHandler.handle(new GetOrder(bar.getId(), session.getId(), bill.getId(), UUID.randomUUID()))
         );
+    }
+
+    ////////////
+
+    @Test
+    void getBillOrderHistory_Successfully() {
+        ListOrderHistory query = new ListOrderHistory(bar.getId(), session.getId(), bill.getId());
+
+        List<OrderHistoryEntry> orders = orderQueryHandler.handle(query);
+
+        assertEquals(1, orders.size());
+    }
+
+    @Test
+    void getBillOrderHistoryWithNoOrders_isEmpty() {
+        ListOrderHistory query = new ListOrderHistory(bar.getId(), session3.getId(), bill3.getId());
+
+        List<OrderHistoryEntry> orders = orderQueryHandler.handle(query);
+
+        assertTrue(orders.isEmpty());
+    }
+
+    @Test
+    void getSessionOrderHistory_Successfully() {
+        ListOrderHistoryOfSession query = new ListOrderHistoryOfSession(bar.getId(), session.getId());
+
+        List<OrderHistoryEntry> orders = orderQueryHandler.handle(query);
+
+        assertEquals(1, orders.size());
     }
 }

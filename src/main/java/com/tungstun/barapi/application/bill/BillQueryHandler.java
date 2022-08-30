@@ -33,4 +33,5 @@ public class BillQueryHandler {
                 .filter(bill -> bill.getCustomer().getId().equals(query.customerId()))
                 .collect(Collectors.toList());
     }
+
 }

@@ -13,6 +13,10 @@ public class OrderHistoryEntry {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Column(name = "order_history_type")
+    @Enumerated(value = EnumType.STRING)
+    private OrderHistoryType type;
+
     @Column(name = "order_date")
     private LocalDateTime date;
 
@@ -34,7 +38,8 @@ public class OrderHistoryEntry {
     public OrderHistoryEntry() {
     }
 
-    public OrderHistoryEntry(LocalDateTime date, UUID productId, String productName, Integer amount, Person customer, Person bartender) {
+    public OrderHistoryEntry(OrderHistoryType type, LocalDateTime date, UUID productId, String productName, Integer amount, Person customer, Person bartender) {
+        this.type = type;
         this.date = date;
         this.productId = productId;
         this.productName = productName;
@@ -45,6 +50,10 @@ public class OrderHistoryEntry {
 
     public Long getId() {
         return id;
+    }
+
+    public OrderHistoryType getType() {
+        return type;
     }
 
     public LocalDateTime getDate() {

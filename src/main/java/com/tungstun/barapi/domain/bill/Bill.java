@@ -49,8 +49,8 @@ public class Bill {
     )
     private List<Order> orders;
 
-    @Embedded
-    private OrderHistory history;
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderHistoryEntry> history;
 
     public Bill() {
     }
@@ -61,13 +61,26 @@ public class Bill {
         this.isPayed = isPayed;
         this.customer = customer;
         this.orders = orders;
-        this.history = new OrderHistory(new ArrayList<>());
+        this.history = new ArrayList<>();
     }
 
     public double calculateTotalPrice() {
         return this.orders.stream()
                 .mapToDouble(Order::orderPrice)
                 .sum();
+    }
+
+    private boolean addHistoryEntry(OrderHistoryType type, Order order, Person customer) {
+        OrderProduct product = order.getProduct();
+        return history.add(new OrderHistoryEntry(
+                type,
+                order.getCreationDate(),
+                product.getId(),
+                String.format("%s %s", product.getBrand(), product.getName()),
+                order.getAmount(),
+                customer,
+                order.getBartender()
+        ));
     }
 
     public Order addOrder(Product product, int amount, Person bartender) {
@@ -78,15 +91,18 @@ public class Bill {
 
         Order order = new OrderFactory(product, amount, bartender).create();
         orders.add(order);
+        addHistoryEntry(OrderHistoryType.ADD, order, customer);
         return order;
     }
 
     public void removeOrder(UUID orderId) {
         session.checkEditable();
-        boolean removed = orders.removeIf(order -> order.getId().equals(orderId));
-        if (!removed) {
-            throw new EntityNotFoundException("No order found with id: " + orderId);
-        }
+        Order order = orders.stream()
+                .filter(o -> o.getId().equals(orderId))
+                .findAny()
+                .orElseThrow(() -> new EntityNotFoundException("No order found with id: " + orderId));
+        orders.remove(order);
+        addHistoryEntry(OrderHistoryType.REMOVE, order, customer);
     }
 
     public List<Order> getOrders() {
@@ -114,6 +130,6 @@ public class Bill {
     }
 
     public List<OrderHistoryEntry> getHistory() {
-        return Collections.unmodifiableList(history.getHistory());
+        return Collections.unmodifiableList(history);
     }
 }

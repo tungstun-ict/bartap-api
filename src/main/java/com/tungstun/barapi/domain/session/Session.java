@@ -8,6 +8,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.BillFactory;
 import com.tungstun.barapi.domain.bill.Order;
+import com.tungstun.barapi.domain.bill.OrderHistoryEntry;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.exception.InvalidSessionStateException;
 import org.hibernate.annotations.SQLDelete;
@@ -139,6 +140,13 @@ public class Session {
     public List<Order> getAllOrders() {
         return bills.stream()
                 .flatMap(bill -> bill.getOrders().stream())
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderHistoryEntry> getOrderHistory() {
+        return bills.stream()
+                .map(Bill::getHistory)
+                .flatMap(List::stream)
                 .collect(Collectors.toList());
     }
 }

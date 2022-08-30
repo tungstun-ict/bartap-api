@@ -16,6 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import javax.persistence.EntityNotFoundException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -167,5 +168,61 @@ class BillTest {
                 InvalidSessionStateException.class,
                 () -> bill.removeOrder(UUID.randomUUID())
         );
+    }
+
+    @Test
+    @DisplayName("Add order adds ADD history entry")
+    void additionHistoryEntry() {
+        Category category = new CategoryFactory("category").create();
+        Product product = new ProductBuilder("name", category).setBrand("brand").setPrice(2.0).build();
+        Session session = new SessionFactory("name").create();
+        Person customer = new PersonBuilder("customer").build();
+        Person bartender = new PersonBuilder("bartender").build();
+        Bill bill = session.addCustomer(customer);
+        int amount = 2;
+        LocalDateTime before = LocalDateTime.now().minusSeconds(1);
+
+        bill.addOrder(product, amount, bartender);
+
+        LocalDateTime after = LocalDateTime.now().plusSeconds(1);
+        assertEquals(1, bill.getHistory().size());
+        OrderHistoryEntry additionEntry = bill.getHistory().get(0);
+        assertEquals(OrderHistoryType.ADD, additionEntry.getType());
+        assertEquals(product.getId(), additionEntry.getProductId());
+        assertEquals(product.getId(), additionEntry.getProductId());
+        assertEquals(amount, additionEntry.getAmount());
+        assertEquals(customer, additionEntry.getCustomer());
+        assertEquals(bartender, additionEntry.getBartender());
+        assertTrue(additionEntry.getDate().isAfter(before)
+                && additionEntry.getDate().isBefore(after));
+    }
+
+
+    @Test
+    @DisplayName("Remove order adds REMOVE history entry")
+    void removeOrderHistoryEntry() {
+        Category category = new CategoryFactory("category").create();
+        Product product = new ProductBuilder("name", category).setBrand("brand").setPrice(2.0).build();
+        Session session = new SessionFactory("name").create();
+        Person customer = new PersonBuilder("customer").build();
+        Person bartender = new PersonBuilder("bartender").build();
+        Bill bill = session.addCustomer(customer);
+        int amount = 2;
+        Order order = bill.addOrder(product, amount, bartender);
+        LocalDateTime before = LocalDateTime.now().minusSeconds(1);
+
+        bill.removeOrder(order.getId());
+
+        LocalDateTime after = LocalDateTime.now().plusSeconds(1);
+        assertEquals(2, bill.getHistory().size());
+        OrderHistoryEntry removalEntry = bill.getHistory().get(1);
+        assertEquals(OrderHistoryType.REMOVE, removalEntry.getType());
+        assertEquals(product.getId(), removalEntry.getProductId());
+        assertEquals(product.getId(), removalEntry.getProductId());
+        assertEquals(amount, removalEntry.getAmount());
+        assertEquals(customer, removalEntry.getCustomer());
+        assertEquals(bartender, removalEntry.getBartender());
+        assertTrue(removalEntry.getDate().isAfter(before)
+                && removalEntry.getDate().isBefore(after));
     }
 }
