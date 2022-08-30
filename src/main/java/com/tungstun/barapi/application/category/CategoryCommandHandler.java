@@ -48,7 +48,7 @@ public class CategoryCommandHandler {
             throw new DuplicateRequestException("Bar already has category with name '%s'" + command.name());
         }
 
-        Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
+        Category category = categoryQueryHandler.handle(new GetCategory(command.barId(), command.categoryId()));
         category.setName(command.name());
         categoryRepository.save(category);
         return command.categoryId();

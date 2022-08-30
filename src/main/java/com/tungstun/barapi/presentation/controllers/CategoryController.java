@@ -63,7 +63,7 @@ public class CategoryController {
             @ApiParam(value = "ID value for the bar you want to retrieve the category from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the category you want to retrieve") @PathVariable("categoryId") UUID categoryId
     ) throws EntityNotFoundException {
-        Category category = categoryQueryHandler.handle(new GetCategory(categoryId, barId));
+        Category category = categoryQueryHandler.handle(new GetCategory(barId, categoryId));
         return converter.convert(category);
     }
 

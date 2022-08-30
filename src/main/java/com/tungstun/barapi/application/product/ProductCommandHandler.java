@@ -41,7 +41,7 @@ public class ProductCommandHandler {
 
     public UUID handle(CreateProduct command) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
-        Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
+        Category category = categoryQueryHandler.handle(new GetCategory(command.barId(), command.categoryId()));
         Product product = new ProductBuilder(command.name(), category)
                 .setBrand(command.brand())
                 .setSize(command.size())
@@ -56,7 +56,7 @@ public class ProductCommandHandler {
 
     public UUID handle(UpdateProduct command) throws EntityNotFoundException {
         Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()))  ;
-        Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
+        Category category = categoryQueryHandler.handle(new GetCategory(command.barId(), command.categoryId()));
         product.setCategory(category);
         product.setName(command.name());
         product.setBrand(command.brand());

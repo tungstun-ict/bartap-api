@@ -83,7 +83,7 @@ public class CategoryQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get existing category of bar")
     void getCategoryOfBar() throws EntityNotFoundException {
-        Category actualCategory = categoryQueryHandler.handle(new GetCategory(category.getId(), bar.getId()));
+        Category actualCategory = categoryQueryHandler.handle(new GetCategory(bar.getId(), category.getId()));
 
         assertNotNull(actualCategory);
         assertEquals(category.getName(), actualCategory.getName());
