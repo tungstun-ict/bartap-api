@@ -10,6 +10,8 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,6 +49,9 @@ public class Bill {
     )
     private List<Order> orders;
 
+    @Embedded
+    private OrderHistory history;
+
     public Bill() {
     }
 
@@ -56,11 +61,12 @@ public class Bill {
         this.isPayed = isPayed;
         this.customer = customer;
         this.orders = orders;
+        this.history = new OrderHistory(new ArrayList<>());
     }
 
     public double calculateTotalPrice() {
         return this.orders.stream()
-                .mapToDouble(order -> order.getProduct().getPrice().amount().doubleValue() * order.getAmount())
+                .mapToDouble(Order::orderPrice)
                 .sum();
     }
 
@@ -105,5 +111,9 @@ public class Bill {
 
     public Session getSession() {
         return session;
+    }
+
+    public List<OrderHistoryEntry> getHistory() {
+        return Collections.unmodifiableList(history.getHistory());
     }
 }

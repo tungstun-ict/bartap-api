@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.person.Person;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
@@ -43,6 +44,13 @@ public class Order {
         this.product = product;
         this.amount = amount;
         this.bartender = bartender;
+    }
+
+    public Double orderPrice() {
+        return product.getPrice()
+                .amount()
+                .multiply(BigDecimal.valueOf(amount))
+                .doubleValue();
     }
 
     public UUID getId() {
