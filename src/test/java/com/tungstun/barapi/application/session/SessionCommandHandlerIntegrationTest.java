@@ -1,14 +1,9 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.session;
 
-import com.tungstun.barapi.application.session.SessionCommandHandler;
-import com.tungstun.barapi.application.session.SessionQueryHandler;
 import com.tungstun.barapi.application.session.command.CreateSession;
 import com.tungstun.barapi.application.session.command.DeleteSession;
 import com.tungstun.barapi.application.session.command.EndSession;
 import com.tungstun.barapi.application.session.command.UpdateSession;
-import com.tungstun.barapi.application.session.query.GetActiveSession;
-import com.tungstun.barapi.application.session.query.GetSession;
-import com.tungstun.barapi.application.session.query.ListSessionsOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
@@ -31,7 +26,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -47,9 +41,7 @@ class SessionCommandHandlerIntegrationTest {
     @Autowired
     private SpringSessionRepository repository;
     @Autowired
-    private SessionCommandHandler service;
-    @Autowired
-    private SessionQueryHandler serviceQueryHandler;
+    private SessionCommandHandler serviceCommandHandler;
 
     private Bar bar;
     private Session session;
@@ -75,59 +67,13 @@ class SessionCommandHandlerIntegrationTest {
     }
 
     @Test
-    @DisplayName("Get all sessions of bar")
-    void getSessionsOfBar() throws EntityNotFoundException {
-        List<Session> resSessions = serviceQueryHandler.handle(new ListSessionsOfBar(bar.getId()));
-
-        assertEquals(1, resSessions.size());
-        boolean idMatches = resSessions.stream().anyMatch(session1 -> session1.getId().equals(session.getId()));
-        assertTrue(idMatches);
-    }
-
-    @Test
-    @DisplayName("Get session of bar")
-    void getSession() throws EntityNotFoundException {
-        Session resSession = serviceQueryHandler.handle(new GetSession(session.getId(), bar.getId()));
-
-        assertEquals(session.getId(), resSession.getId());
-    }
-
-    @Test
-    @DisplayName("Get not existing session of bar")
-    void getNotExistingSession() {
-        assertThrows(
-                EntityNotFoundException.class,
-                () -> serviceQueryHandler.handle(new GetSession(UUID.randomUUID(), bar.getId()))
-        );
-    }
-
-    @Test
-    @DisplayName("Get active session of bar")
-    void getActiveSession() throws EntityNotFoundException {
-        Session resSession = serviceQueryHandler.handle(new GetActiveSession(bar.getId()));
-        assertEquals(session.getId(), resSession.getId());
-    }
-
-    @Test
-    @DisplayName("Get not existing active session of bar")
-    void getNotExistingActiveSession() {
-        session.end();
-        repository.save(session);
-        assertThrows(
-                EntityNotFoundException.class,
-                () -> serviceQueryHandler.handle(new GetActiveSession(bar.getId()))
-        );
-    }
-
-
-    @Test
     @DisplayName("Create new session")
     void createSession() throws EntityNotFoundException {
         session.end();
         repository.save(session);
         CreateSession command = new CreateSession(bar.getId(), "new");
 
-        assertDoesNotThrow(() -> service.createNewSession(command));
+        assertDoesNotThrow(() -> serviceCommandHandler.createNewSession(command));
     }
 
     @Test
@@ -137,7 +83,7 @@ class SessionCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateActiveSessionException.class,
-                () -> service.createNewSession(command)
+                () -> serviceCommandHandler.createNewSession(command)
         );
     }
 
@@ -146,7 +92,7 @@ class SessionCommandHandlerIntegrationTest {
     void updateSession() throws EntityNotFoundException {
         UpdateSession command = new UpdateSession(bar.getId(), session.getId(), "newTest");
 
-        assertDoesNotThrow(() -> service.updateSession(command));
+        assertDoesNotThrow(() -> serviceCommandHandler.updateSession(command));
     }
 
     @Test
@@ -154,7 +100,7 @@ class SessionCommandHandlerIntegrationTest {
     void deleteSession() throws EntityNotFoundException {
         DeleteSession command = new DeleteSession(session.getId());
 
-        service.deleteSession(command);
+        serviceCommandHandler.deleteSession(command);
 
         assertTrue(repository.findById(session.getId()).isEmpty());
     }
@@ -164,7 +110,7 @@ class SessionCommandHandlerIntegrationTest {
     void endSession() throws EntityNotFoundException {
         EndSession command = new EndSession(bar.getId(), session.getId());
 
-        service.endSession(command);
+        serviceCommandHandler.endSession(command);
 
         assertNotNull(repository.getById(session.getId()).getEndDate());
     }
@@ -178,7 +124,7 @@ class SessionCommandHandlerIntegrationTest {
 
         assertThrows(
                 InvalidSessionStateException.class,
-                () -> service.endSession(command)
+                () -> serviceCommandHandler.endSession(command)
         );
     }
 }
