@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.port.web.product;
 
 import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;

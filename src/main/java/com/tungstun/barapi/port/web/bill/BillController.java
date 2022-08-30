@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.port.web.bill;
 
 import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;

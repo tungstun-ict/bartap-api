@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.port.web.order;
 
 import com.tungstun.barapi.application.order.OrderCommandHandler;
 import com.tungstun.barapi.application.order.OrderQueryHandler;

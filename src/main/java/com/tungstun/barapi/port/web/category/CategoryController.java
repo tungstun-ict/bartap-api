@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.port.web.category;
 
 import com.tungstun.barapi.application.category.CategoryCommandHandler;
 import com.tungstun.barapi.application.category.CategoryQueryHandler;

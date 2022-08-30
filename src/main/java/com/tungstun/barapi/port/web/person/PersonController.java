@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.port.web.person;
 
 import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;

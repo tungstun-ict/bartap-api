@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.exceptions;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import org.springframework.http.HttpStatus;

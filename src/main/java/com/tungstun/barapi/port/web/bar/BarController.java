@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.controllers;
+package com.tungstun.barapi.port.web.bar;
 
 import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
@@ -8,9 +8,11 @@ import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.barapi.presentation.dto.converter.BarConverter;
-import com.tungstun.barapi.presentation.dto.request.BarRequest;
-import com.tungstun.barapi.presentation.dto.response.BarResponse;
+import com.tungstun.barapi.port.web.bar.converter.BarConverter;
+import com.tungstun.barapi.port.web.bar.request.CreateBarRequest;
+import com.tungstun.barapi.port.web.bar.request.UpdateBarRequest;
+import com.tungstun.barapi.port.web.bar.response.BarResponse;
+import com.tungstun.common.response.UuidResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -73,18 +75,18 @@ public class BarController {
             notes = "Provide bar information in the request body to create a new bar",
             response = BarResponse.class
     )
-    public UUID addBar(
-            @Valid @RequestBody BarRequest barRequest,
+    public UuidResponse addBar(
+            @Valid @RequestBody CreateBarRequest request,
             @ApiIgnore Authentication authentication
     ) {
         CreateBar command = new CreateBar(
-                barRequest.address,
-                barRequest.name,
-                barRequest.mail,
-                barRequest.phoneNumber,
+                request.address(),
+                request.name(),
+                request.mail(),
+                request.phoneNumber(),
                 ((UserDetails) authentication.getPrincipal()).getUsername()
         );
-        return barCommandHandler.handle(command);
+        return new UuidResponse(barCommandHandler.handle(command));
     }
 
     @PutMapping("/{barId}")
@@ -95,18 +97,18 @@ public class BarController {
             notes = "Provide categoryId of bar to update the bar with bar information in the request body",
             response = BarResponse.class
     )
-    public UUID updateBar(
+    public UuidResponse updateBar(
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") UUID barId,
-            @Valid @RequestBody BarRequest barRequest
+            @Valid @RequestBody UpdateBarRequest request
     ) throws EntityNotFoundException {
         UpdateBar command = new UpdateBar(
                 barId,
-                barRequest.address,
-                barRequest.name,
-                barRequest.mail,
-                barRequest.phoneNumber
+                request.address(),
+                request.name(),
+                request.mail(),
+                request.phoneNumber()
         );
-        return barCommandHandler.handle(command);
+        return new UuidResponse(barCommandHandler.handle(command));
     }
 
 
