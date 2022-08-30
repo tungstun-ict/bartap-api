@@ -8,10 +8,10 @@ import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.domain.bill.Bill;
-import com.tungstun.barapi.presentation.dto.converter.BillConverter;
-import com.tungstun.barapi.presentation.dto.request.BillRequest;
-import com.tungstun.barapi.presentation.dto.response.BillResponse;
-import com.tungstun.barapi.presentation.dto.response.BillSummaryResponse;
+import com.tungstun.barapi.port.web.bill.converter.BillConverter;
+import com.tungstun.barapi.port.web.bill.request.CreateBillRequest;
+import com.tungstun.barapi.port.web.bill.response.BillResponse;
+import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -37,38 +37,6 @@ public class BillController {
         this.converter = converter;
     }
 
-//    @GetMapping("bills")
-//    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Finds all bills of bar",
-//            notes = "Provide categoryId of bar to look up all bills that are linked to the bar",
-//            response = BillResponse.class,
-//            responseContainer = "List"
-//    )
-//    public ResponseEntity<List<BillResponse>> getAllBills(
-//            @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") UUID barId
-//    ) throws EntityNotFoundException {
-//        List<Bill> allBills = this.billService.getAllBills(barId);
-//        return new ResponseEntity<>(converter.convertAll(allBills), HttpStatus.OK);
-//    }
-
-//    @GetMapping("/sessions/{sessionId}/bills")
-//    @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Finds bills of session of bar",
-//            notes = "Provide categoryId of bar and session to look up bills from the session from the bar",
-//            response = BillResponse.class,
-//            responseContainer = "List"
-//    )
-//    public ResponseEntity<List<BillResponse>> getAllBillsOfSession(
-//            @ApiParam(value = "ID value for the bar you want to retrieve bills from") @PathVariable("barId") UUID barId,
-//            @ApiParam(value = "ID value for the session you want to retrieve bills from") @PathVariable("sessionId") UUID sessionId
-//    ) throws EntityNotFoundException {
-//        List<Bill> allBills = this.billService.getAllBillsOfSession(barId, sessionId);
-//        return new ResponseEntity<>(converter.convertAll(allBills), HttpStatus.OK);
-//    }
 
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
     @ResponseStatus(HttpStatus.OK)
@@ -114,9 +82,9 @@ public class BillController {
     public UUID createBillForBar(
             @ApiParam(value = "ID value for the bar you want to create a new bill for") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to add a new bill to") @PathVariable("sessionId") UUID sessionId,
-            @Valid @RequestBody BillRequest billRequest
+            @Valid @RequestBody CreateBillRequest createBillRequest
     ) throws EntityNotFoundException {
-        AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, billRequest.customerId);
+        AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, createBillRequest.customerId());
         return billCommandHandler.handle(command);
     }
 

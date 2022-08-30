@@ -102,4 +102,8 @@ public class Bill {
     public void pay() {
         isPayed = true;
     }
+
+    public Session getSession() {
+        return session;
+    }
 }
