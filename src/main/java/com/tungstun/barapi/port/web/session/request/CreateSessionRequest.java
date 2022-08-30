@@ -1,12 +1,12 @@
-package com.tungstun.barapi.presentation.dto.request;
+package com.tungstun.barapi.port.web.session.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import javax.validation.constraints.NotNull;
 
-@ApiModel(description = "Request details about the session")
-public class SessionRequest {
+@ApiModel(description = "Request details to create a session")
+public class CreateSessionRequest {
     @ApiModelProperty(notes = "The session's name")
     @NotNull
     public String name;

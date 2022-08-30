@@ -10,10 +10,12 @@ import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.application.session.query.ListSessionsOfBar;
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.presentation.dto.converter.SessionConverter;
-import com.tungstun.barapi.presentation.dto.request.SessionRequest;
+import com.tungstun.barapi.port.web.session.converter.SessionConverter;
+import com.tungstun.barapi.port.web.session.request.CreateSessionRequest;
+import com.tungstun.barapi.port.web.session.request.UpdateSessionRequest;
+import com.tungstun.barapi.port.web.session.response.SessionResponse;
 import com.tungstun.barapi.presentation.dto.response.ProductResponse;
-import com.tungstun.barapi.presentation.dto.response.SessionResponse;
+import com.tungstun.common.response.UuidResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -87,18 +89,18 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @ApiOperation(
             value = "Creates new session for bar",
             notes = "Provide categoryId of bar to add a new session with information from the request body to the bar",
             response = SessionResponse.class
     )
-    public UUID createNewSession(
+    public UuidResponse createNewSession(
             @ApiParam(value = "ID value for the bar you want to create the session for") @PathVariable("barId") UUID barId,
-            @Valid @RequestBody SessionRequest sessionRequest
+            @Valid @RequestBody CreateSessionRequest request
     ) throws EntityNotFoundException {
-        CreateSession command = new CreateSession(barId, sessionRequest.name);
-        return sessionCommandHandler.handle(command);
+        CreateSession command = new CreateSession(barId, request.name);
+        return new UuidResponse(sessionCommandHandler.handle(command));
     }
 
     @PutMapping("/{sessionId}")
@@ -109,13 +111,13 @@ public class SessionController {
             notes = "Provide categoryId of bar to update the session with information from the request body",
             response = SessionResponse.class
     )
-    public UUID updateSession(
+    public UuidResponse updateSession(
             @ApiParam(value = "ID value for the bar you want to update the session from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to update") @PathVariable("sessionId") UUID sessionId,
-            @Valid @RequestBody SessionRequest sessionRequest
+            @Valid @RequestBody UpdateSessionRequest request
     ) throws EntityNotFoundException {
-        UpdateSession command = new UpdateSession(barId, sessionId, sessionRequest.name);
-        return sessionCommandHandler.handle(command);
+        UpdateSession command = new UpdateSession(barId, sessionId, request.name);
+        return new UuidResponse(sessionCommandHandler.handle(command));
     }
 
     @PatchMapping("/{sessionId}/end")

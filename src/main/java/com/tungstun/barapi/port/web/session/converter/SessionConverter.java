@@ -1,7 +1,8 @@
-package com.tungstun.barapi.presentation.dto.converter;
+package com.tungstun.barapi.port.web.session.converter;
 
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.presentation.dto.response.SessionResponse;
+import com.tungstun.barapi.port.web.bill.converter.BillConverter;
+import com.tungstun.barapi.port.web.session.response.SessionResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,14 +17,14 @@ public class SessionConverter {
     }
 
     public SessionResponse convert(Session session) {
-        SessionResponse response =  new SessionResponse();
-        response.setId(session.getId());
-        response.setName(session.getName());
-        response.setLocked(session.isEnded());
-        response.setCreationDate(session.getCreationDate());
-        response.setClosedDate(session.getEndDate());
-        response.setBills(billConverter.convertAll(session.getBills()));
-        return response;
+        return new SessionResponse(
+                session.getId(),
+                session.getName(),
+                session.getCreationDate(),
+                session.getEndDate(),
+                session.isActive(),
+                billConverter.convertAll(session.getBills())
+        );
     }
 
     public List<SessionResponse> convertAll(List<Session> sessions) {
