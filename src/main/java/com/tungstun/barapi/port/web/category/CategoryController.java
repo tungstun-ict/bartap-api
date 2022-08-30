@@ -8,9 +8,11 @@ import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.category.query.ListCategoriesOfBar;
 import com.tungstun.barapi.domain.product.Category;
-import com.tungstun.barapi.presentation.dto.converter.CategoryConverter;
-import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
-import com.tungstun.barapi.presentation.dto.response.CategoryResponse;
+import com.tungstun.barapi.port.web.category.converter.CategoryConverter;
+import com.tungstun.barapi.port.web.category.request.CreateCategoryRequest;
+import com.tungstun.barapi.port.web.category.request.UpdateCategoryRequest;
+import com.tungstun.barapi.port.web.category.response.CategoryResponse;
+import com.tungstun.common.response.UuidResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -75,12 +77,12 @@ public class CategoryController {
             notes = "Provide categoryId of bar to add new category with information from the request body to the bar",
             response = CategoryResponse.class
     )
-    public UUID addCategoryToBar(
+    public UuidResponse addCategoryToBar(
             @ApiParam(value = "ID value for the bar you want to create a new category for") @PathVariable("barId") UUID barId,
-            @Valid @RequestBody CategoryRequest categoryRequest
+            @Valid @RequestBody CreateCategoryRequest request
     ) throws EntityNotFoundException {
-        CreateCategory command = new CreateCategory(barId, categoryRequest.name);
-        return categoryCommandHandler.handle(command);
+        CreateCategory command = new CreateCategory(barId, request.name());
+        return new UuidResponse(categoryCommandHandler.handle(command));
     }
 
     @PutMapping("/{categoryId}")
@@ -91,13 +93,13 @@ public class CategoryController {
             notes = "Provide categoryId of bar to update the category with information from the request body",
             response = CategoryResponse.class
     )
-    public UUID updateCategoryOfBar(
+    public UuidResponse updateCategoryOfBar(
             @ApiParam(value = "ID value for the bar you want to update the category from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the category you want to update") @PathVariable("categoryId") UUID categoryId,
-            @Valid @RequestBody CategoryRequest categoryRequest
+            @Valid @RequestBody UpdateCategoryRequest request
     ) throws EntityNotFoundException {
-        UpdateCategory command = new UpdateCategory(barId, categoryId, categoryRequest.name);
-        return categoryCommandHandler.handle(command);
+        UpdateCategory command = new UpdateCategory(barId, categoryId, request.name());
+        return new UuidResponse(categoryCommandHandler.handle(command));
     }
 
     @DeleteMapping("/{categoryId}")

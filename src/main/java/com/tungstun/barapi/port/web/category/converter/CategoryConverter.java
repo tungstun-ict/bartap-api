@@ -1,7 +1,7 @@
-package com.tungstun.barapi.presentation.dto.converter;
+package com.tungstun.barapi.port.web.category.converter;
 
 import com.tungstun.barapi.domain.product.Category;
-import com.tungstun.barapi.presentation.dto.response.CategoryResponse;
+import com.tungstun.barapi.port.web.category.response.CategoryResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
