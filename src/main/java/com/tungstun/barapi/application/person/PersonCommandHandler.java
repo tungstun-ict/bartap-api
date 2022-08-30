@@ -3,12 +3,12 @@ package com.tungstun.barapi.application.person;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonRepository;
-import com.tungstun.barapi.presentation.dto.request.PersonRequest;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -37,9 +37,9 @@ public class PersonCommandHandler {
         return person.getId();
     }
 
-    public UUID updatePerson(UUID barId, UUID personId, PersonRequest personRequest) throws EntityNotFoundException {
-        Person person = personQueryHandler.handle(new GetPerson(personId, barId));
-        person.setName(personRequest.name);
+    public UUID updatePerson(UpdatePerson command) throws EntityNotFoundException {
+        Person person = personQueryHandler.handle(new GetPerson(command.personId(), command.barId()));
+        person.setName(command.name());
         personRepository.save(person);
         return person.getId();
     }

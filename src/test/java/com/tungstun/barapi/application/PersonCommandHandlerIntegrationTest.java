@@ -4,14 +4,14 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.domain.person.PersonRepository;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
-import com.tungstun.barapi.presentation.dto.request.PersonRequest;
+import com.tungstun.barapi.port.persistence.person.SpringPersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class PersonCommandHandlerIntegrationTest {
     @Autowired
-    private PersonRepository repository;
+    private SpringPersonRepository repository;
     @Autowired
     private SpringBarRepository barRepository;
     @Autowired
@@ -110,13 +110,12 @@ class PersonCommandHandlerIntegrationTest {
     @Test
     @DisplayName("update person")
     void updatePerson() throws EntityNotFoundException {
-        PersonRequest request = new PersonRequest();
-        request.name = "personUpdated";
-        request.phoneNumber = "+31601010101";
+        UpdatePerson command = new UpdatePerson(bar.getId(), person.getId(), "personUpdated");
 
-        UUID id = service.updatePerson(bar.getId(), person.getId(), request);
+        UUID id = service.updatePerson(command);
 
-//        assertEquals(request.name, resPerson.getName());
+        Person actualPerson = repository.findById(id).orElseThrow();
+        assertEquals(command.name(), actualPerson.getName());
     }
 
     @Test

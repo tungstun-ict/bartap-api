@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
 import com.tungstun.barapi.domain.person.Person;
@@ -94,7 +95,8 @@ public class PersonController {
             @ApiParam(value = "ID value for the person you want to update") @PathVariable("personId") UUID personId,
             @Valid @RequestBody PersonRequest personRequest
     ) throws EntityNotFoundException {
-        return personCommandHandler.updatePerson(barId, personId, personRequest);
+        UpdatePerson command = new UpdatePerson(barId, personId, personRequest.name);
+        return personCommandHandler.updatePerson(command);
     }
 
     @DeleteMapping("/{personId}")
