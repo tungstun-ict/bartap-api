@@ -73,6 +73,7 @@ public class Bill {
     private boolean addHistoryEntry(OrderHistoryType type, Order order, Person customer) {
         OrderProduct product = order.getProduct();
         return history.add(new OrderHistoryEntry(
+                UUID.randomUUID(),
                 type,
                 order.getCreationDate(),
                 product.getId(),

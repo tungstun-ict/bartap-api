@@ -10,8 +10,7 @@ import java.util.UUID;
 @Table(name = "order_history_entry")
 public class OrderHistoryEntry {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     @Column(name = "order_history_type")
     @Enumerated(value = EnumType.STRING)
@@ -38,7 +37,8 @@ public class OrderHistoryEntry {
     public OrderHistoryEntry() {
     }
 
-    public OrderHistoryEntry(OrderHistoryType type, LocalDateTime date, UUID productId, String productName, Integer amount, Person customer, Person bartender) {
+    public OrderHistoryEntry(UUID id, OrderHistoryType type, LocalDateTime date, UUID productId, String productName, Integer amount, Person customer, Person bartender) {
+        this.id = id;
         this.type = type;
         this.date = date;
         this.productId = productId;
@@ -48,7 +48,7 @@ public class OrderHistoryEntry {
         this.bartender = bartender;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
