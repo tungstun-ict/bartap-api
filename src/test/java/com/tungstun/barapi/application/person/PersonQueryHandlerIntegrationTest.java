@@ -1,18 +1,11 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.person;
 
-import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.application.person.PersonCommandHandler;
-import com.tungstun.barapi.application.person.PersonQueryHandler;
-import com.tungstun.barapi.application.person.command.CreatePerson;
-import com.tungstun.barapi.application.person.command.DeletePerson;
-import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
-import com.tungstun.barapi.port.persistence.person.SpringPersonRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,13 +21,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-class PersonCommandHandlerIntegrationTest {
-    @Autowired
-    private SpringPersonRepository repository;
+class PersonQueryHandlerIntegrationTest {
     @Autowired
     private SpringBarRepository barRepository;
-    @Autowired
-    private PersonCommandHandler service;
     @Autowired
     private PersonQueryHandler personQueryHandler;
 
@@ -87,45 +76,5 @@ class PersonCommandHandlerIntegrationTest {
         List<Person> resPeople = personQueryHandler.handle(new ListPeopleOfBar(bar.getId()));
 
         assertTrue(resPeople.isEmpty());
-    }
-
-    @Test
-    @DisplayName("create person")
-    void createPerson() {
-        CreatePerson command = new CreatePerson(bar.getId(), "newName");
-
-        assertDoesNotThrow(() -> service.createNewPerson(command));
-    }
-
-    @Test
-    @DisplayName("create existing person")
-    void createExistingPerson() {
-        CreatePerson command = new CreatePerson(bar.getId(), person.getName());
-
-        assertThrows(
-                DuplicateRequestException.class,
-                () -> service.createNewPerson(command)
-        );
-    }
-
-    @Test
-    @DisplayName("update person")
-    void updatePerson() throws EntityNotFoundException {
-        UpdatePerson command = new UpdatePerson(bar.getId(), person.getId(), "personUpdated");
-
-        UUID id = service.updatePerson(command);
-
-        Person actualPerson = repository.findById(id).orElseThrow();
-        assertEquals(command.name(), actualPerson.getName());
-    }
-
-    @Test
-    @DisplayName("delete person")
-    void deletePerson() throws EntityNotFoundException {
-        DeletePerson command = new DeletePerson(person.getId());
-
-        service.deletePersonFromBar(command);
-
-        assertTrue(repository.findById(person.getId()).isEmpty());
     }
 }
