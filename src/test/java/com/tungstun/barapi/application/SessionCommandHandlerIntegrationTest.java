@@ -3,6 +3,8 @@ package com.tungstun.barapi.application;
 import com.tungstun.barapi.application.session.SessionCommandHandler;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
 import com.tungstun.barapi.application.session.command.CreateSession;
+import com.tungstun.barapi.application.session.command.DeleteSession;
+import com.tungstun.barapi.application.session.command.EndSession;
 import com.tungstun.barapi.application.session.command.UpdateSession;
 import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
@@ -19,7 +21,6 @@ import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.bill.SpringBillRepository;
 import com.tungstun.barapi.port.persistence.person.SpringPersonRepository;
 import com.tungstun.barapi.port.persistence.session.SpringSessionRepository;
-import com.tungstun.barapi.presentation.dto.request.SessionRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -151,10 +152,9 @@ class SessionCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Delete session")
     void deleteSession() throws EntityNotFoundException {
-        SessionRequest request = new SessionRequest();
-        request.name = "newTest";
+        DeleteSession command = new DeleteSession(session.getId());
 
-        service.deleteSession(session.getId());
+        service.deleteSession(command);
 
         assertTrue(repository.findById(session.getId()).isEmpty());
     }
@@ -162,7 +162,9 @@ class SessionCommandHandlerIntegrationTest {
     @Test
     @DisplayName("End session")
     void endSession() throws EntityNotFoundException {
-        service.endSession(bar.getId(), session.getId());
+        EndSession command = new EndSession(bar.getId(), session.getId());
+
+        service.endSession(command);
 
         assertNotNull(repository.getById(session.getId()).getEndDate());
     }
@@ -172,10 +174,11 @@ class SessionCommandHandlerIntegrationTest {
     void endEndedSessionThrows() {
         session.end();
         repository.save(session);
+        EndSession command = new EndSession(bar.getId(), session.getId());
 
         assertThrows(
                 InvalidSessionStateException.class,
-                () -> service.endSession(bar.getId(), session.getId())
+                () -> service.endSession(command)
         );
     }
 }

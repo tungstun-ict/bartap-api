@@ -3,6 +3,8 @@ package com.tungstun.barapi.application.session;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.session.command.CreateSession;
+import com.tungstun.barapi.application.session.command.DeleteSession;
+import com.tungstun.barapi.application.session.command.EndSession;
 import com.tungstun.barapi.application.session.command.UpdateSession;
 import com.tungstun.barapi.application.session.query.GetSession;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -43,13 +45,13 @@ public class SessionCommandHandler {
         return sessionRepository.save(session).getId();
     }
 
-    public void endSession(UUID barId, UUID sessionId) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
-        session.end();
-        sessionRepository.save(session);
+    public void deleteSession(DeleteSession command) throws EntityNotFoundException {
+        sessionRepository.delete(command.sessionId());
     }
 
-    public void deleteSession(UUID sessionId) throws EntityNotFoundException {
-        sessionRepository.delete(sessionId);
+    public void endSession(EndSession command) throws EntityNotFoundException {
+        Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
+        session.end();
+        sessionRepository.save(session);
     }
 }

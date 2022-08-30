@@ -3,6 +3,8 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.session.SessionCommandHandler;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
 import com.tungstun.barapi.application.session.command.CreateSession;
+import com.tungstun.barapi.application.session.command.DeleteSession;
+import com.tungstun.barapi.application.session.command.EndSession;
 import com.tungstun.barapi.application.session.command.UpdateSession;
 import com.tungstun.barapi.application.session.query.GetActiveSession;
 import com.tungstun.barapi.application.session.query.GetSession;
@@ -96,7 +98,7 @@ public class SessionController {
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
         CreateSession command = new CreateSession(barId, sessionRequest.name);
-        return this.sessionCommandHandler.createNewSession(command);
+        return sessionCommandHandler.createNewSession(command);
     }
 
     @PutMapping("/{sessionId}")
@@ -128,7 +130,8 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to end the session from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
-        this.sessionCommandHandler.endSession(barId, sessionId);
+        EndSession command = new EndSession(barId, sessionId);
+        sessionCommandHandler.endSession(command);
     }
 
     @DeleteMapping("/{sessionId}")
@@ -143,6 +146,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to delete the session from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
-        this.sessionCommandHandler.deleteSession(sessionId);
+        DeleteSession command = new DeleteSession(sessionId);
+        sessionCommandHandler.deleteSession(command);
     }
 }
