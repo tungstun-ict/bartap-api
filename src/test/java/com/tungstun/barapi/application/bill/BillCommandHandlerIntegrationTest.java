@@ -99,7 +99,7 @@ class BillCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Delete bill")
     void deleteBill() throws EntityNotFoundException {
-        DeleteBill command = new DeleteBill(bill.getId());
+        DeleteBill command = new DeleteBill(bar.getId(), session.getId(), bill.getId());
 
         billCommandHandler.handle(command);
 

@@ -149,7 +149,7 @@ public class BillController {
             @PathVariable("sessionId") UUID sessionId,
             @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        DeleteBill command = new DeleteBill(billId);
+        DeleteBill command = new DeleteBill(barId, sessionId, billId);
         billCommandHandler.handle(command);
     }
 }

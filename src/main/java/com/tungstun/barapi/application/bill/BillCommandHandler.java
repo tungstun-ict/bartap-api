@@ -49,6 +49,9 @@ public class BillCommandHandler {
     }
 
     public void handle(DeleteBill command) throws EntityNotFoundException {
+        Session session = sessionQueryHandler.handle(new GetSession(command.barId(), command.sessionId()));
+        session.removeBill(command.billId());
+        sessionRepository.save(session);
         billRepository.delete(command.billId());
     }
 }
