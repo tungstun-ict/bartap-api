@@ -106,7 +106,7 @@ class OrderQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get all orders of bill")
     void getAllOrdersOfBill() throws EntityNotFoundException {
-        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bill.getId(), session.getId(), bar.getId()));
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bar.getId(), session.getId(), bill.getId()));
 
         assertEquals(1, resOrders.size());
         assertTrue(resOrders.stream().anyMatch(o -> o.getId().equals(order.getId())));
@@ -115,7 +115,7 @@ class OrderQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get none orders of bill")
     void getNoneOrdersOfBill() throws EntityNotFoundException {
-        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bill3.getId(), session3.getId(), bar.getId()));
+        List<Order> resOrders = orderQueryHandler.handle(new ListOrdersOfBill(bar.getId(), session3.getId(), bill3.getId()));
 
         assertEquals(0, resOrders.size());
     }

@@ -102,7 +102,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") UUID sessionId,
             @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        List<Order> orders = orderQueryHandler.handle(new ListOrdersOfBill(billId, sessionId, barId));
+        List<Order> orders = orderQueryHandler.handle(new ListOrdersOfBill(barId, sessionId, billId));
         return orderConverter.convertAll(orders);
     }
 
