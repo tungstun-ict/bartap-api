@@ -1,10 +1,5 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.product;
 
-import com.tungstun.barapi.application.product.ProductCommandHandler;
-import com.tungstun.barapi.application.product.ProductQueryHandler;
-import com.tungstun.barapi.application.product.command.CreateProduct;
-import com.tungstun.barapi.application.product.command.DeleteProduct;
-import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -15,7 +10,6 @@ import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.category.SpringCategoryRepository;
-import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,19 +23,16 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Transactional
 @SpringBootTest
-class ProductCommandHandlerIntegrationTest {
+class ProductQueryHandlerIntegrationTest {
     @Autowired
     private SpringCategoryRepository categoryRepository;
     @Autowired
     private SpringBarRepository barRepository;
-    @Autowired
-    private SpringProductRepository productRepository;
-    @Autowired
-    private ProductCommandHandler service;
     @Autowired
     private ProductQueryHandler productQueryHandler;
 
@@ -157,111 +148,4 @@ class ProductCommandHandlerIntegrationTest {
                 () -> productQueryHandler.handle(new GetProduct(UUID.randomUUID(), bar.getId()))
         );
     }
-
-    @Test
-    @DisplayName("create product")
-    void createProduct() throws EntityNotFoundException {
-        CreateProduct command = new CreateProduct(
-                bar.getId(),
-                "testName",
-                "testBrand",
-                2.5,
-                250d,
-                true,
-                ProductType.DRINK.toString(),
-                category.getId()
-        );
-
-        UUID id = service.createProduct(command);
-
-        Product actualProduct = productRepository.findById(id).orElseThrow();
-        assertEquals(command.name(), actualProduct.getName());
-        assertEquals(command.brand(), actualProduct.getBrand());
-        assertEquals(command.size(), actualProduct.getSize());
-        assertEquals(command.price(), actualProduct.getPrice().amount().doubleValue());
-        assertTrue(actualProduct.isFavorite());
-        assertEquals(command.productType(), actualProduct.getType().toString());
-        assertEquals(command.categoryId(), actualProduct.getCategory().getId());
-    }
-
-    @Test
-    @DisplayName("update product")
-    void updateProduct() throws EntityNotFoundException {
-
-        UpdateProduct command = new UpdateProduct(
-                bar.getId(),
-                product.getId(),
-                "testNameNew",
-                "testBrandNew",
-                5d,
-                50d,
-                false,
-                ProductType.FOOD.toString(),
-                category.getId()
-        );
-
-        UUID id = service.updateProductOfBar(command);
-
-
-        Product actualProduct = productRepository.findById(id).orElseThrow();
-        assertEquals(command.name(), actualProduct.getName());
-        assertEquals(command.brand(), actualProduct.getBrand());
-        assertEquals(command.size(), actualProduct.getSize());
-        assertEquals(command.price(), actualProduct.getPrice().amount().doubleValue());
-        assertFalse(actualProduct.isFavorite());
-        assertEquals(command.productType(), actualProduct.getType().toString());
-        assertEquals(command.categoryId(), actualProduct.getCategory().getId());
-    }
-
-    @Test
-    @DisplayName("delete product")
-    void deleteProduct() {
-        DeleteProduct command = new DeleteProduct(product.getId());
-
-        assertDoesNotThrow(() -> service.deleteProductOfBar(command));
-    }
-
-//    @Test
-//    @DisplayName("search all product of bar")
-//    void getAllProductsOfBar() throws EntityNotFoundException {
-//        List<Product> resProducts = service.searchProductsOfBar(bar.getId(), null, null, null);
-//
-//        assertEquals(3, resProducts.size());
-//        assertTrue(resProducts.contains(product));
-//        assertTrue(resProducts.contains(product2));
-//        assertTrue(resProducts.contains(product3));
-//    }
-
-//    private List<Object[]> searchArgs() {
-//        List<Product> productsAll = List.of(product, product2, product3);
-//        List<Product> productsOne = List.of(product);
-//        List<Product> productsTwo = List.of(product2);
-//        List<Product> productsThree = List.of(product3);
-//        return List.of(
-//                new Object[]{null, null, null, productsAll},
-//                new Object[]{ProductType.FOOD.toString(), null, null, productsOne},
-//                new Object[]{ProductType.DRINK.toString(), null, null, productsTwo},
-//                new Object[]{ProductType.OTHER.toString(), null, null, productsThree},
-//                new Object[]{null, category.getId(), null, productsOne},
-//                new Object[]{null, category2.getId(), null, productsTwo},
-//                new Object[]{null, category3.getId(), null, productsThree},
-//                new Object[]{null, null, true, List.of()},
-//                new Object[]{null, null, false, productsAll}
-//        );
-//    }
-//    @Test
-//    @DisplayName("search all product of bar")
-//    void searchProductsOfBar() throws EntityNotFoundException {
-//        List<Object[]> argList = searchArgs();
-//        for (Object[] arguments : argList) {
-//            List<Product> resProducts = service.searchProductsOfBar(
-//                    bar.getId(),
-//                    (String) arguments[0],
-//                    (Long) arguments[1],
-//                    (Boolean) arguments[2]
-//            );
-//
-//            assertEquals(((List<Product>) arguments[3]).size(), resProducts.size());
-//        }
-//    }
 }
