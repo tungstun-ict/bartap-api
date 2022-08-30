@@ -21,7 +21,7 @@ public class BillQueryHandler {
     }
 
     public Bill handle(GetBill query) {
-        return sessionQueryHandler.handle(new GetSession(query.sessionId(), query.barId()))
+        return sessionQueryHandler.handle(new GetSession(query.barId(), query.sessionId()))
                 .getBill(query.billId());
     }
 

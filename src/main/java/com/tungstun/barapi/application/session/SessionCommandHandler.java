@@ -40,7 +40,7 @@ public class SessionCommandHandler {
     }
 
     public UUID handle(UpdateSession command) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
+        Session session = sessionQueryHandler.handle(new GetSession(command.barId(), command.sessionId()));
         session.setName(command.name());
         return sessionRepository.save(session).getId();
     }
@@ -50,7 +50,7 @@ public class SessionCommandHandler {
     }
 
     public void handle(EndSession command) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
+        Session session = sessionQueryHandler.handle(new GetSession(command.barId(), command.sessionId()));
         session.end();
         sessionRepository.save(session);
     }

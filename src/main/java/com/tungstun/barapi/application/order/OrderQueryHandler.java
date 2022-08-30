@@ -38,7 +38,7 @@ public class OrderQueryHandler {
     }
 
     public List<Order> handle(ListOrdersOfSession query) {
-        return sessionQueryHandler.handle(new GetSession(query.sessionId(), query.barId()))
+        return sessionQueryHandler.handle(new GetSession(query.barId(), query.sessionId()))
                 .getAllOrders();
     }
 }

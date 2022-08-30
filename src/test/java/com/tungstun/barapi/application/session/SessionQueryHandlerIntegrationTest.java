@@ -77,7 +77,7 @@ class SessionQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get session of bar")
     void getSession() throws EntityNotFoundException {
-        Session resSession = serviceQueryHandler.handle(new GetSession(session.getId(), bar.getId()));
+        Session resSession = serviceQueryHandler.handle(new GetSession(bar.getId(), session.getId()));
 
         assertEquals(session.getId(), resSession.getId());
     }
@@ -87,7 +87,7 @@ class SessionQueryHandlerIntegrationTest {
     void getNotExistingSession() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> serviceQueryHandler.handle(new GetSession(UUID.randomUUID(), bar.getId()))
+                () -> serviceQueryHandler.handle(new GetSession(bar.getId(), UUID.randomUUID()))
         );
     }
 

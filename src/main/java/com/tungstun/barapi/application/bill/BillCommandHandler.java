@@ -34,7 +34,7 @@ public class BillCommandHandler {
     }
 
     public UUID handle(AddCustomerToSession command) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
+        Session session = sessionQueryHandler.handle(new GetSession(command.barId(), command.sessionId()));
         Person customer = personQueryHandler.handle(new GetPerson(command.barId(), command.customerId()));
         Bill bill = session.addCustomer(customer);
         sessionRepository.save(session);
@@ -42,7 +42,7 @@ public class BillCommandHandler {
     }
 
     public void handle(PayBill command) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
+        Session session = sessionQueryHandler.handle(new GetSession(command.barId(), command.sessionId()));
         session.getBill(command.billId())
                 .pay();
         sessionRepository.save(session);

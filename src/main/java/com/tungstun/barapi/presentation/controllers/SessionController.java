@@ -81,7 +81,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the bar you want to retrieve the session from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the session you want to retrieve") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
+        Session session = sessionQueryHandler.handle(new GetSession(barId, sessionId));
         return converter.convert(session);
     }
 
