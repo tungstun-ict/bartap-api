@@ -2,6 +2,7 @@ package com.tungstun.barapi.application.category;
 
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.category.command.CreateCategory;
+import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.category.query.ListCategoriesOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -11,7 +12,6 @@ import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.category.SpringCategoryRepository;
-import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -160,32 +160,26 @@ public class CategoryCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Update existing category name bar")
     void updateExistingCategory() throws EntityNotFoundException {
-        CategoryRequest request = new CategoryRequest();
-        request.name = "categoryNew";
+        UpdateCategory command = new UpdateCategory(bar.getId(), category.getId(), "categoryNew");
 
-        UUID id = service.updateCategoryOfBar(bar.getId(), category.getId(), request);
+        UUID id = service.updateCategoryOfBar(command);
 
-//        assertEquals("categoryNew", updatedCategory.getName());
+        assertEquals(command.name(), repository.findById(id).orElseThrow().getName());
     }
 
     @Test
     @DisplayName("Update existing category name with already existing category in bar")
     void updateExistingDuplicateCategory() {
         String sameName = "categoryNew";
-
-        Category category2 = new Category(UUID.randomUUID(), sameName);
-        bar.addCategory(category2);
+        bar.createCategory(sameName);
         bar = barRepository.save(bar);
-
-        CategoryRequest request = new CategoryRequest();
-        request.name = sameName;
+        UpdateCategory command = new UpdateCategory(bar.getId(), category.getId(), sameName);
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.updateCategoryOfBar(bar.getId(), category.getId(), request)
+                () -> service.updateCategoryOfBar(command)
         );
     }
-
 
     @Test
     @DisplayName("Delete existing category in bar")

@@ -4,12 +4,12 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.category.command.CreateCategory;
+import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.product.Category;
 import com.tungstun.barapi.domain.product.CategoryRepository;
-import com.tungstun.barapi.presentation.dto.request.CategoryRequest;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
@@ -38,18 +38,19 @@ public class CategoryCommandHandler {
         return category.getId();
     }
 
-    public UUID updateCategoryOfBar(UUID barId, UUID categoryId, CategoryRequest categoryRequest) throws EntityNotFoundException {
-        boolean exists = barQueryHandler.handle(new GetBar(barId))
+    public UUID updateCategoryOfBar(UpdateCategory command) throws EntityNotFoundException {
+        boolean exists = barQueryHandler.handle(new GetBar(command.barId()))
                 .getCategories()
                 .stream()
-                .anyMatch(categoryIteration -> categoryIteration.getName().equalsIgnoreCase(categoryRequest.name));
+                .anyMatch(categoryIteration -> categoryIteration.getName().equalsIgnoreCase(command.name()));
         if (exists) {
-            throw new DuplicateRequestException("Bar already has category with name '%s'" + categoryRequest.name);
+            throw new DuplicateRequestException("Bar already has category with name '%s'" + command.name());
         }
-        Category category = categoryQueryHandler.handle(new GetCategory(categoryId, barId));
-        category.setName(categoryRequest.name);
+
+        Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
+        category.setName(command.name());
         categoryRepository.save(category);
-        return categoryId;
+        return command.categoryId();
     }
 
     public void deleteCategoryFromBar(UUID barId, UUID categoryId) throws EntityNotFoundException {

@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.category.CategoryCommandHandler;
 import com.tungstun.barapi.application.category.CategoryQueryHandler;
 import com.tungstun.barapi.application.category.command.CreateCategory;
+import com.tungstun.barapi.application.category.command.UpdateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.category.query.ListCategoriesOfBar;
 import com.tungstun.barapi.domain.product.Category;
@@ -94,7 +95,8 @@ public class CategoryController {
             @ApiParam(value = "ID value for the category you want to update") @PathVariable("categoryId") UUID categoryId,
             @Valid @RequestBody CategoryRequest categoryRequest
     ) throws EntityNotFoundException {
-        return categoryCommandHandler.updateCategoryOfBar(barId, categoryId, categoryRequest);
+        UpdateCategory command = new UpdateCategory(barId, categoryId, categoryRequest.name);
+        return categoryCommandHandler.updateCategoryOfBar(command);
     }
 
     @DeleteMapping("/{categoryId}")
