@@ -1,7 +1,7 @@
-package com.tungstun.barapi.presentation.dto.converter;
+package com.tungstun.barapi.port.web.product.converter;
 
 import com.tungstun.barapi.domain.product.Product;
-import com.tungstun.barapi.presentation.dto.response.ProductResponse;
+import com.tungstun.barapi.port.web.product.response.ProductResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

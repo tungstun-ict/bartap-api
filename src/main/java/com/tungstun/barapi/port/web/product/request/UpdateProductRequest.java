@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.dto.request;
+package com.tungstun.barapi.port.web.product.request;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -8,33 +8,33 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.UUID;
 
-@ApiModel(description = "Request details about the product")
-public class ProductRequest {
+@ApiModel(description = "Request details to update a product")
+public record UpdateProductRequest(
     @ApiModelProperty(notes = "The product's name")
     @NotBlank(message = "Name cannot be null or blank")
-    public String name;
+    String name,
 
     @ApiModelProperty(notes = "The product's brand")
     @NotBlank(message = "Brand cannot be null or blank")
-    public String brand;
+    String brand,
 
     @ApiModelProperty(notes = "The product's size")
     @Min(value = 0, message = "Size cannot be 0 or lower")
-    public Double size;
+    Double size,
 
     @ApiModelProperty(notes = "The product's price")
     @Min(value = 0, message = "Price cannot be 0 or lower")
-    public Double price;
+    Double price,
 
     @ApiModelProperty(notes = "Is product favorite")
     @NotNull
-    public Boolean isFavorite;
+    Boolean isFavorite,
 
     @ApiModelProperty(notes = "The product's type")
     @NotNull
-    public String productType;
+    String productType,
 
     @ApiModelProperty(notes = "The ID of the product's category")
     @NotNull
-    public UUID categoryId;
+    UUID categoryId) {
 }

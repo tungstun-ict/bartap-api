@@ -1,4 +1,4 @@
-package com.tungstun.barapi.presentation.dto.response;
+package com.tungstun.barapi.port.web.product.response;
 
 import com.tungstun.barapi.domain.product.Category;
 import io.swagger.annotations.ApiModel;

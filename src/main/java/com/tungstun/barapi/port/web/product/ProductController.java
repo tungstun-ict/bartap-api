@@ -8,9 +8,11 @@ import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
 import com.tungstun.barapi.domain.product.Product;
-import com.tungstun.barapi.presentation.dto.converter.ProductConverter;
-import com.tungstun.barapi.presentation.dto.request.ProductRequest;
-import com.tungstun.barapi.presentation.dto.response.ProductResponse;
+import com.tungstun.barapi.port.web.product.converter.ProductConverter;
+import com.tungstun.barapi.port.web.product.request.CreateProductRequest;
+import com.tungstun.barapi.port.web.product.request.UpdateProductRequest;
+import com.tungstun.barapi.port.web.product.response.ProductResponse;
+import com.tungstun.common.response.UuidResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.http.HttpStatus;
@@ -85,21 +87,21 @@ public class ProductController {
             notes = "Provide categoryId of bar to add a new product with information from the request body to the bar",
             response = ProductResponse.class
     )
-    public UUID addProductOfBar(
+    public UuidResponse addProductOfBar(
             @ApiParam(value = "ID value for the bar you want to create the product for") @PathVariable("barId") UUID barId,
-            @Valid @RequestBody ProductRequest productRequest
+            @Valid @RequestBody CreateProductRequest request
     ) throws EntityNotFoundException {
         CreateProduct command = new CreateProduct(
                 barId,
-                productRequest.name,
-                productRequest.brand,
-                productRequest.size,
-                productRequest.price,
-                productRequest.isFavorite,
-                productRequest.productType,
-                productRequest.categoryId
+                request.name(),
+                request.brand(),
+                request.size(),
+                request.price(),
+                request.isFavorite(),
+                request.productType(),
+                request.categoryId()
         );
-        return productCommandHandler.handle(command);
+        return new UuidResponse(productCommandHandler.handle(command));
     }
 
     @PutMapping("/{productId}")
@@ -110,23 +112,23 @@ public class ProductController {
             notes = "Provide categoryId of bar and product to update the product with information from the request body",
             response = ProductResponse.class
     )
-    public UUID updateProductOfBar(
+    public UuidResponse updateProductOfBar(
             @ApiParam(value = "ID value for the bar you want to update the product from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("productId") UUID productId,
-            @Valid @RequestBody ProductRequest productRequest
+            @Valid @RequestBody UpdateProductRequest request
     ) throws EntityNotFoundException {
         UpdateProduct command = new UpdateProduct(
                 barId,
                 productId,
-                productRequest.name,
-                productRequest.brand,
-                productRequest.size,
-                productRequest.price,
-                productRequest.isFavorite,
-                productRequest.productType,
-                productRequest.categoryId
+                request.name(),
+                request.brand(),
+                request.size(),
+                request.price(),
+                request.isFavorite(),
+                request.productType(),
+                request.categoryId()
         );
-        return productCommandHandler.handle(command);
+        return new UuidResponse(productCommandHandler.handle(command));
     }
 
     @DeleteMapping("/{productId}")
