@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
+import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
@@ -181,6 +182,7 @@ public class BillController {
             @PathVariable("sessionId") UUID sessionId,
             @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        billCommandHandler.deleteBill(barId, sessionId, billId);
+        DeleteBill command = new DeleteBill(billId);
+        billCommandHandler.deleteBill(command);
     }
 }

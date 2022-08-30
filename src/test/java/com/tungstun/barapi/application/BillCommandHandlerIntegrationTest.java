@@ -4,6 +4,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
+import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
@@ -258,7 +259,9 @@ class BillCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Delete bill")
     void deleteBill() throws EntityNotFoundException {
-        service.deleteBill(bar.getId(), session.getId(), bill.getId());
+        DeleteBill command = new DeleteBill(bill.getId());
+
+        service.deleteBill(command);
 
         assertTrue(repository.findById(bill.getId()).isEmpty());
     }

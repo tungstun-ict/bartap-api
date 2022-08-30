@@ -1,6 +1,7 @@
 package com.tungstun.barapi.application.bill;
 
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
+import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPerson;
@@ -47,10 +48,7 @@ public class BillCommandHandler {
         sessionRepository.save(session);
     }
 
-    public void deleteBill(UUID barId, UUID sessionId, UUID billId) throws EntityNotFoundException {
-        billRepository.delete(billId);
-//        Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
-//        session.removeBill(billId);
-//        sessionRepository.save(session);
+    public void deleteBill(DeleteBill command) throws EntityNotFoundException {
+        billRepository.delete(command.billId());
     }
 }
