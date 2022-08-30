@@ -5,6 +5,7 @@ import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.category.CategoryQueryHandler;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.product.command.CreateProduct;
+import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarRepository;
@@ -13,7 +14,6 @@ import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
-import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import com.tungstun.common.money.Money;
 import org.springframework.stereotype.Service;
 
@@ -53,15 +53,16 @@ public class ProductCommandHandler {
         return product.getId();
     }
 
-    public UUID updateProductOfBar(UUID barId, UUID productId, ProductRequest productRequest) throws EntityNotFoundException {
-        Product product = productQueryHandler.handle(new GetProduct(productId, barId))  ;
-        Category category = categoryQueryHandler.handle(new GetCategory(productRequest.categoryId, barId));
+    public UUID updateProductOfBar(UpdateProduct command) throws EntityNotFoundException {
+        Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()))  ;
+        Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
         product.setCategory(category);
-        product.setName(productRequest.name);
-        product.setBrand(productRequest.brand);
-        product.setSize(productRequest.size);
-        product.updatePrice(new Money(productRequest.price));
-        product.setFavorite(productRequest.isFavorite);
+        product.setName(command.name());
+        product.setBrand(command.brand());
+        product.setSize(command.size());
+        product.setFavorite(command.isFavorite());
+        product.updatePrice(new Money(command.price()));
+        product.setType(ProductType.getProductType(command.productType()));
         return productRepository.save(product).getId();
     }
 

@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
 import com.tungstun.barapi.application.product.command.CreateProduct;
+import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
 import com.tungstun.barapi.domain.product.Product;
@@ -113,7 +114,18 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to update") @PathVariable("productId") UUID productId,
             @Valid @RequestBody ProductRequest productRequest
     ) throws EntityNotFoundException {
-        return productCommandHandler.updateProductOfBar(barId, productId, productRequest);
+        UpdateProduct command = new UpdateProduct(
+                barId,
+                productId,
+                productRequest.name,
+                productRequest.brand,
+                productRequest.size,
+                productRequest.price,
+                productRequest.isFavorite,
+                productRequest.productType,
+                productRequest.categoryId
+        );
+        return productCommandHandler.updateProductOfBar(command);
     }
 
     @DeleteMapping("/{productId}")

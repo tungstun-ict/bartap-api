@@ -3,6 +3,7 @@ package com.tungstun.barapi.application;
 import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
 import com.tungstun.barapi.application.product.command.CreateProduct;
+import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -14,7 +15,6 @@ import com.tungstun.barapi.domain.product.ProductType;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.barapi.port.persistence.category.SpringCategoryRepository;
 import com.tungstun.barapi.port.persistence.product.SpringProductRepository;
-import com.tungstun.barapi.presentation.dto.request.ProductRequest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -47,7 +47,6 @@ class ProductCommandHandlerIntegrationTest {
     private Bar bar;
     private Category category;
     private Product product;
-    private Product product2;
     private Product product3;
 
     @BeforeEach
@@ -62,7 +61,7 @@ class ProductCommandHandlerIntegrationTest {
                 .setType(ProductType.DRINK)
                 .setBrand("meet")
                 .build();
-        product2 = new ProductBuilder("product2", category2)
+        Product product2 = new ProductBuilder("product2", category2)
                 .setPrice(2.0)
                 .setSize(200)
                 .setType(ProductType.FOOD)
@@ -187,21 +186,30 @@ class ProductCommandHandlerIntegrationTest {
     @Test
     @DisplayName("update product")
     void updateProduct() throws EntityNotFoundException {
-        ProductRequest request = new ProductRequest();
-        request.name = "testNameNew";
-        request.brand = "testBrandNew";
-        request.isFavorite = true;
-        request.price = 5d;
-        request.size = 500d;
-        request.categoryId = category.getId();
 
-        UUID id = service.updateProductOfBar(bar.getId(), product.getId(), request);
+        UpdateProduct command = new UpdateProduct(
+                bar.getId(),
+                product.getId(),
+                "testNameNew",
+                "testBrandNew",
+                5d,
+                50d,
+                false,
+                ProductType.FOOD.toString(),
+                category.getId()
+        );
 
-//        assertEquals(request.name, resProduct.getName());
-//        assertEquals(request.brand, resProduct.getBrand());
-//        assertEquals(request.isFavorite, resProduct.isFavorite());
-//        assertEquals(request.price, resProduct.getPrice().amount().doubleValue());
-//        assertEquals(request.size, resProduct.getSize());
+        UUID id = service.updateProductOfBar(command);
+
+
+        Product actualProduct = productRepository.findById(id).orElseThrow();
+        assertEquals(command.name(), actualProduct.getName());
+        assertEquals(command.brand(), actualProduct.getBrand());
+        assertEquals(command.size(), actualProduct.getSize());
+        assertEquals(command.price(), actualProduct.getPrice().amount().doubleValue());
+        assertFalse(actualProduct.isFavorite());
+        assertEquals(command.productType(), actualProduct.getType().toString());
+        assertEquals(command.categoryId(), actualProduct.getCategory().getId());
     }
 
     @Test
