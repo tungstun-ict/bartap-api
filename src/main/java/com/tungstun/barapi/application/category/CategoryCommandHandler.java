@@ -3,6 +3,7 @@ package com.tungstun.barapi.application.category;
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
+import com.tungstun.barapi.application.category.command.CreateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarRepository;
@@ -17,22 +18,22 @@ import java.util.UUID;
 
 @Service
 @Transactional
-public class CategoryService {
+public class CategoryCommandHandler {
     private final BarQueryHandler barQueryHandler;
     private final CategoryQueryHandler categoryQueryHandler;
     private final CategoryRepository categoryRepository;
     private final BarRepository barRepository;
 
-    public CategoryService(BarQueryHandler barQueryHandler, CategoryQueryHandler categoryQueryHandler, CategoryRepository categoryRepository, BarRepository barRepository) {
+    public CategoryCommandHandler(BarQueryHandler barQueryHandler, CategoryQueryHandler categoryQueryHandler, CategoryRepository categoryRepository, BarRepository barRepository) {
         this.barQueryHandler = barQueryHandler;
         this.categoryQueryHandler = categoryQueryHandler;
         this.categoryRepository = categoryRepository;
         this.barRepository = barRepository;
     }
 
-    public UUID addCategoryToBar(UUID barId, CategoryRequest categoryRequest) throws EntityNotFoundException {
-        Bar bar = barQueryHandler.handle(new GetBar(barId));
-        Category category = bar.createCategory(categoryRequest.name);
+    public UUID addCategoryToBar(CreateCategory command) throws EntityNotFoundException {
+        Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
+        Category category = bar.createCategory(command.name());
         barRepository.save(bar);
         return category.getId();
     }

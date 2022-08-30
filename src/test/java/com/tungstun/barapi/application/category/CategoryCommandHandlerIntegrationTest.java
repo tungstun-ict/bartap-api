@@ -1,8 +1,7 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.category;
 
 import com.sun.jdi.request.DuplicateRequestException;
-import com.tungstun.barapi.application.category.CategoryQueryHandler;
-import com.tungstun.barapi.application.category.CategoryService;
+import com.tungstun.barapi.application.category.command.CreateCategory;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.category.query.ListCategoriesOfBar;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -32,7 +31,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
-public class CategoryServiceIntegrationTest {
+public class CategoryCommandHandlerIntegrationTest {
     private static Bar bar;
     private static Category category;
     @Autowired
@@ -42,7 +41,7 @@ public class CategoryServiceIntegrationTest {
     @Autowired
     private SpringCategoryRepository categoryRepository;
     @Autowired
-    private CategoryService service;
+    private CategoryCommandHandler service;
     @Autowired
     private CategoryQueryHandler categoryQueryHandler;
 
@@ -142,21 +141,19 @@ public class CategoryServiceIntegrationTest {
     @Test
     @DisplayName("Add category to bar")
     void addCategory() {
-        CategoryRequest request = new CategoryRequest();
-        request.name = "testCategory";
+        CreateCategory command = new CreateCategory(bar.getId(), "testCategory");
 
-        assertDoesNotThrow(() -> service.addCategoryToBar(bar.getId(), request));
+        assertDoesNotThrow(() -> service.addCategoryToBar(command));
     }
 
     @Test
     @DisplayName("add existing category name to bar")
     void addExistingCategoryName() {
-        CategoryRequest request = new CategoryRequest();
-        request.name = "category";
+        CreateCategory command = new CreateCategory(bar.getId(), "category");
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addCategoryToBar(bar.getId(), request)
+                () -> service.addCategoryToBar(command)
         );
     }
 

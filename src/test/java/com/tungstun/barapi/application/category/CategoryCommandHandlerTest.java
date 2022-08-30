@@ -1,10 +1,7 @@
-package com.tungstun.barapi.application;
+package com.tungstun.barapi.application.category;
 
-import com.tungstun.barapi.application.bar.BarCommandHandler;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
-import com.tungstun.barapi.application.category.CategoryQueryHandler;
-import com.tungstun.barapi.application.category.CategoryService;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bar.BarRepository;
@@ -23,13 +20,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class CategoryServiceTest {
-    private static final BarCommandHandler BAR_COMMAND_HANDLER = mock(BarCommandHandler.class);
+class CategoryCommandHandlerTest {
     private static final BarRepository barRepository = mock(BarRepository.class);
     private static final BarQueryHandler barQueryHandler = mock(BarQueryHandler.class);
     private static final CategoryRepository repository = mock(CategoryRepository.class);
     private static final CategoryQueryHandler categoryQueryHandler = mock(CategoryQueryHandler.class);
-    private static final CategoryService service = new CategoryService(barQueryHandler, categoryQueryHandler, repository, barRepository);
+    private static final CategoryCommandHandler service = new CategoryCommandHandler(barQueryHandler, categoryQueryHandler, repository, barRepository);
 
     private static Bar bar;
     private static Category category;
