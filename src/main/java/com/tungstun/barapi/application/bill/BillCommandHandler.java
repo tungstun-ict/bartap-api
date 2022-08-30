@@ -35,7 +35,7 @@ public class BillCommandHandler {
 
     public UUID handle(AddCustomerToSession command) throws EntityNotFoundException {
         Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
-        Person customer = personQueryHandler.handle(new GetPerson(command.customerId(), command.barId()));
+        Person customer = personQueryHandler.handle(new GetPerson(command.barId(), command.customerId()));
         Bill bill = session.addCustomer(customer);
         sessionRepository.save(session);
         return bill.getId();

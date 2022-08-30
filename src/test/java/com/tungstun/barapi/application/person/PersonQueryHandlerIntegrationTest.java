@@ -42,7 +42,7 @@ class PersonQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get person of bar")
     void getPersonOfBar() throws EntityNotFoundException {
-        Person resPerson = personQueryHandler.handle(new GetPerson(person.getId(), bar.getId()));
+        Person resPerson = personQueryHandler.handle(new GetPerson(bar.getId(), person.getId()));
 
         assertEquals(person, resPerson);
     }
@@ -52,7 +52,7 @@ class PersonQueryHandlerIntegrationTest {
     void getNotExistingPersonOfBar() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> personQueryHandler.handle(new GetPerson(UUID.randomUUID(), bar.getId()))
+                () -> personQueryHandler.handle(new GetPerson(bar.getId(), UUID.randomUUID()))
         );
     }
 

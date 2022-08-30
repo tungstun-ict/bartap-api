@@ -63,7 +63,7 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to retrieve the person from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the person you want to retrieve") @PathVariable("personId") UUID personId
     ) throws EntityNotFoundException {
-        Person person = personQueryHandler.handle(new GetPerson(personId, barId));
+        Person person = personQueryHandler.handle(new GetPerson(barId, personId));
         return converter.convert(person);
     }
 

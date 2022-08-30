@@ -39,7 +39,7 @@ public class PersonCommandHandler {
     }
 
     public UUID handle(UpdatePerson command) throws EntityNotFoundException {
-        Person person = personQueryHandler.handle(new GetPerson(command.personId(), command.barId()));
+        Person person = personQueryHandler.handle(new GetPerson(command.barId(), command.personId()));
         person.setName(command.name());
         personRepository.save(person);
         return person.getId();
