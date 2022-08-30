@@ -1,7 +1,7 @@
 package com.tungstun.barapi.domain.bar;
 
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
+import com.tungstun.exception.DuplicateActiveSessionException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

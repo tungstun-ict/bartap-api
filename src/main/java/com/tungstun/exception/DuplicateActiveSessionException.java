@@ -1,4 +1,4 @@
-package com.tungstun.barapi.exceptions;
+package com.tungstun.exception;
 
 public class DuplicateActiveSessionException extends RuntimeException {
     private final String message;

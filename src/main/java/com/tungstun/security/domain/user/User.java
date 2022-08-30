@@ -1,8 +1,8 @@
 package com.tungstun.security.domain.user;
 
-import com.tungstun.barapi.exceptions.CannotAuthenticateException;
-import com.tungstun.barapi.exceptions.NotAuthorizedException;
 import com.tungstun.common.phonenumber.PhoneNumber;
+import com.tungstun.exception.CannotAuthenticateException;
+import com.tungstun.exception.NotAuthorizedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -36,7 +36,7 @@ public class User implements UserDetails {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Authorization> authorizations;
 
     public User() {

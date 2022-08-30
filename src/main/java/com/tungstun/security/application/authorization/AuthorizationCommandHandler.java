@@ -1,6 +1,6 @@
 package com.tungstun.security.application.authorization;
 
-import com.tungstun.barapi.exceptions.UserNotFoundException;
+import com.tungstun.exception.UserNotFoundException;
 import com.tungstun.security.application.authorization.command.AuthorizeNewBarOwnership;
 import com.tungstun.security.application.authorization.command.AuthorizeUser;
 import com.tungstun.security.application.authorization.command.RevokeBarOwnerShip;

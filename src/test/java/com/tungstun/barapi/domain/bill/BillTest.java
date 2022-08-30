@@ -8,7 +8,7 @@ import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.product.ProductBuilder;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.domain.session.SessionFactory;
-import com.tungstun.barapi.exceptions.InvalidSessionStateException;
+import com.tungstun.exception.InvalidSessionStateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

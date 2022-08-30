@@ -9,7 +9,7 @@ import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.BillFactory;
 import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.person.Person;
-import com.tungstun.barapi.exceptions.InvalidSessionStateException;
+import com.tungstun.exception.InvalidSessionStateException;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 

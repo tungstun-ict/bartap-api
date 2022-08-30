@@ -1,4 +1,4 @@
-package com.tungstun.barapi.exceptions;
+package com.tungstun.exception;
 
 public class InvalidSessionStateException extends RuntimeException {
     public InvalidSessionStateException() { }

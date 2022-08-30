@@ -1,6 +1,6 @@
 package com.tungstun.security.application.user;
 
-import com.tungstun.barapi.exceptions.UserNotFoundException;
+import com.tungstun.exception.UserNotFoundException;
 import com.tungstun.security.domain.user.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

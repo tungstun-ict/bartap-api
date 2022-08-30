@@ -2,7 +2,7 @@ package com.tungstun.security.config.filter;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.tungstun.barapi.exceptions.NotAuthenticatedException;
+import com.tungstun.exception.NotAuthenticatedException;
 import com.tungstun.security.domain.jwt.JwtValidator;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

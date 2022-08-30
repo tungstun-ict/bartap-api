@@ -8,7 +8,7 @@ import com.tungstun.barapi.domain.product.CategoryFactory;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.barapi.domain.session.SessionFactory;
-import com.tungstun.barapi.exceptions.DuplicateActiveSessionException;
+import com.tungstun.exception.DuplicateActiveSessionException;
 import com.tungstun.security.domain.user.User;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
