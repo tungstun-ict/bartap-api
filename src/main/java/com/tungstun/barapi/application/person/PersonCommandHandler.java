@@ -3,6 +3,7 @@ package com.tungstun.barapi.application.person;
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.DeletePerson;
 import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -44,7 +45,7 @@ public class PersonCommandHandler {
         return person.getId();
     }
 
-    public void deletePersonFromBar(UUID barId, UUID personId) throws EntityNotFoundException {
-        personRepository.delete(personId);
+    public void deletePersonFromBar(DeletePerson command) throws EntityNotFoundException {
+        personRepository.delete(command.personId());
     }
 }

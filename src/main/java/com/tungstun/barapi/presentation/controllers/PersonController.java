@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.DeletePerson;
 import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
@@ -110,6 +111,7 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to delete the person from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("personId") UUID personId
     ) throws EntityNotFoundException {
-        personCommandHandler.deletePersonFromBar(barId, personId);
+        DeletePerson command = new DeletePerson(personId);
+        personCommandHandler.deletePersonFromBar(command);
     }
 }

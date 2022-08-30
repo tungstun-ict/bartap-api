@@ -4,6 +4,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.DeletePerson;
 import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.person.query.ListPeopleOfBar;
@@ -121,10 +122,10 @@ class PersonCommandHandlerIntegrationTest {
     @Test
     @DisplayName("delete person")
     void deletePerson() throws EntityNotFoundException {
-        service.deletePersonFromBar(bar.getId(), person.getId());
+        DeletePerson command = new DeletePerson(person.getId());
 
-//        Bar resBar = barRepository.findById(bar.getId()).orElseThrow();
-//        assertFalse(resBar.getPeople().contains(person));
+        service.deletePersonFromBar(command);
+
         assertTrue(repository.findById(person.getId()).isEmpty());
     }
 }
