@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
 import com.tungstun.barapi.application.product.command.CreateProduct;
+import com.tungstun.barapi.application.product.command.DeleteProduct;
 import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
@@ -140,22 +141,7 @@ public class ProductController {
             @ApiParam(value = "ID value for the bar you want to delete the product from") @PathVariable("barId") UUID barId,
             @ApiParam(value = "ID value for the product you want to delete") @PathVariable("productId") UUID productId
     ) throws EntityNotFoundException {
-        productCommandHandler.deleteProductOfBar(barId, productId);
+        DeleteProduct command = new DeleteProduct(productId);
+        productCommandHandler.deleteProductOfBar(command);
     }
-
-//    @GetMapping("/search")
-//    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-//    @ApiOperation(
-//            value = "Searches products",
-//            notes = "Provide categoryId of bar and search value to search for products with",
-//            response = ProductResponse.class
-//    )
-//    public ResponseEntity<List<ProductResponse>> searchProductInBar(
-//            @ApiParam(value = "ID value for the bar you want to search the product from") @PathVariable("barId") UUID barId,
-//            @ApiParam(value = "The name to filter your search with") @Valid @RequestParam(value = "name") String name
-//
-//    ) throws EntityNotFoundException {
-//        List<Product> foundProducts = this.productService.searchProduct(barId, name);
-//        return new ResponseEntity<>(converter.convertAll(foundProducts), HttpStatus.OK);
-//    }
 }

@@ -5,6 +5,7 @@ import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.category.CategoryQueryHandler;
 import com.tungstun.barapi.application.category.query.GetCategory;
 import com.tungstun.barapi.application.product.command.CreateProduct;
+import com.tungstun.barapi.application.product.command.DeleteProduct;
 import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -66,9 +67,7 @@ public class ProductCommandHandler {
         return productRepository.save(product).getId();
     }
 
-    public void deleteProductOfBar(UUID barId, UUID productId) throws EntityNotFoundException {
-        productRepository.deleteById(productId);
-//        Product product = getProductOfBar(barId, productId);
-//        this.productRepository.delete(product);
+    public void deleteProductOfBar(DeleteProduct command) throws EntityNotFoundException {
+        productRepository.deleteById(command.productId());
     }
 }

@@ -3,6 +3,7 @@ package com.tungstun.barapi.application;
 import com.tungstun.barapi.application.product.ProductCommandHandler;
 import com.tungstun.barapi.application.product.ProductQueryHandler;
 import com.tungstun.barapi.application.product.command.CreateProduct;
+import com.tungstun.barapi.application.product.command.DeleteProduct;
 import com.tungstun.barapi.application.product.command.UpdateProduct;
 import com.tungstun.barapi.application.product.query.GetProduct;
 import com.tungstun.barapi.application.product.query.ListProductsOfBar;
@@ -215,7 +216,9 @@ class ProductCommandHandlerIntegrationTest {
     @Test
     @DisplayName("delete product")
     void deleteProduct() {
-        assertDoesNotThrow(() -> service.deleteProductOfBar(bar.getId(), product.getId()));
+        DeleteProduct command = new DeleteProduct(product.getId());
+
+        assertDoesNotThrow(() -> service.deleteProductOfBar(command));
     }
 
 //    @Test
