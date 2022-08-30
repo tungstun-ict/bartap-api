@@ -3,6 +3,7 @@ package com.tungstun.barapi.presentation.controllers;
 import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
+import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.domain.bill.Bill;
@@ -164,7 +165,8 @@ public class BillController {
             @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") UUID sessionId,
             @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        billCommandHandler.payBill(barId, sessionId, billId);
+        PayBill command = new PayBill(barId, sessionId, billId);
+        billCommandHandler.payBill(command);
     }
 
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")

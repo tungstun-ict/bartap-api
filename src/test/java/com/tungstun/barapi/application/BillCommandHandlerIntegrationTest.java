@@ -4,6 +4,7 @@ import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.application.bill.BillCommandHandler;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
+import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -229,7 +230,9 @@ class BillCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Set is payed of bill")
     void setIsPayedOfBill() throws EntityNotFoundException {
-        service.payBill(bar.getId(), session.getId(), bill.getId());
+        PayBill command = new PayBill(bar.getId(), session.getId(), bill.getId());
+
+        service.payBill(command);
 
         Bill resBill = repository.findById(bill.getId()).orElseThrow();
         assertTrue(resBill.isPayed());

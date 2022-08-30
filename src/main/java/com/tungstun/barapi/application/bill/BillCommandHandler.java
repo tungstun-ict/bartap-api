@@ -1,6 +1,7 @@
 package com.tungstun.barapi.application.bill;
 
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
+import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
@@ -39,9 +40,9 @@ public class BillCommandHandler {
         return bill.getId();
     }
 
-    public void payBill(UUID barId, UUID sessionId, UUID billId) throws EntityNotFoundException {
-        Session session = sessionQueryHandler.handle(new GetSession(sessionId, barId));
-        session.getBill(billId)
+    public void payBill(PayBill command) throws EntityNotFoundException {
+        Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
+        session.getBill(command.billId())
                 .pay();
         sessionRepository.save(session);
     }
