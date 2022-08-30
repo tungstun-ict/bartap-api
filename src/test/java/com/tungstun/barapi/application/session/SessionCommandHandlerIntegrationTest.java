@@ -73,7 +73,7 @@ class SessionCommandHandlerIntegrationTest {
         repository.save(session);
         CreateSession command = new CreateSession(bar.getId(), "new");
 
-        assertDoesNotThrow(() -> serviceCommandHandler.createNewSession(command));
+        assertDoesNotThrow(() -> serviceCommandHandler.handle(command));
     }
 
     @Test
@@ -83,7 +83,7 @@ class SessionCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateActiveSessionException.class,
-                () -> serviceCommandHandler.createNewSession(command)
+                () -> serviceCommandHandler.handle(command)
         );
     }
 
@@ -92,7 +92,7 @@ class SessionCommandHandlerIntegrationTest {
     void updateSession() throws EntityNotFoundException {
         UpdateSession command = new UpdateSession(bar.getId(), session.getId(), "newTest");
 
-        assertDoesNotThrow(() -> serviceCommandHandler.updateSession(command));
+        assertDoesNotThrow(() -> serviceCommandHandler.handle(command));
     }
 
     @Test
@@ -100,7 +100,7 @@ class SessionCommandHandlerIntegrationTest {
     void deleteSession() throws EntityNotFoundException {
         DeleteSession command = new DeleteSession(session.getId());
 
-        serviceCommandHandler.deleteSession(command);
+        serviceCommandHandler.handle(command);
 
         assertTrue(repository.findById(session.getId()).isEmpty());
     }
@@ -110,7 +110,7 @@ class SessionCommandHandlerIntegrationTest {
     void endSession() throws EntityNotFoundException {
         EndSession command = new EndSession(bar.getId(), session.getId());
 
-        serviceCommandHandler.endSession(command);
+        serviceCommandHandler.handle(command);
 
         assertNotNull(repository.getById(session.getId()).getEndDate());
     }
@@ -124,7 +124,7 @@ class SessionCommandHandlerIntegrationTest {
 
         assertThrows(
                 InvalidSessionStateException.class,
-                () -> serviceCommandHandler.endSession(command)
+                () -> serviceCommandHandler.handle(command)
         );
     }
 }

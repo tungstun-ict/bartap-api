@@ -71,7 +71,7 @@ class BillCommandHandlerIntegrationTest {
 
         AddCustomerToSession command = new AddCustomerToSession(bar.getId(), session.getId(), person2.getId());
 
-        assertDoesNotThrow(() -> billCommandHandler.addCustomerToSession(command));
+        assertDoesNotThrow(() -> billCommandHandler.handle(command));
     }
 
     @Test
@@ -81,7 +81,7 @@ class BillCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> billCommandHandler.addCustomerToSession(command)
+                () -> billCommandHandler.handle(command)
         );
     }
 
@@ -90,7 +90,7 @@ class BillCommandHandlerIntegrationTest {
     void setIsPayedOfBill() throws EntityNotFoundException {
         PayBill command = new PayBill(bar.getId(), session.getId(), bill.getId());
 
-        billCommandHandler.payBill(command);
+        billCommandHandler.handle(command);
 
         Bill resBill = repository.findById(bill.getId()).orElseThrow();
         assertTrue(resBill.isPayed());
@@ -101,7 +101,7 @@ class BillCommandHandlerIntegrationTest {
     void deleteBill() throws EntityNotFoundException {
         DeleteBill command = new DeleteBill(bill.getId());
 
-        billCommandHandler.deleteBill(command);
+        billCommandHandler.handle(command);
 
         assertTrue(repository.findById(bill.getId()).isEmpty());
     }

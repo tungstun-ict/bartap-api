@@ -138,7 +138,7 @@ public class OrderController {
             @ApiParam(value = "ID value for the order you want to delete") @PathVariable("orderId") UUID orderId
     ) throws EntityNotFoundException {
         RemoveOrder command = new RemoveOrder(barId, sessionId, billId, orderId);
-        orderCommandHandler.deleteOrderFromBill(command);
+        orderCommandHandler.handle(command);
     }
 
     @PutMapping("sessions/{sessionId}/bills/{billId}")
@@ -165,6 +165,6 @@ public class OrderController {
                 orderLineRequest.amount,
                 userDetails.getUsername()
         );
-        return orderCommandHandler.addProductToBill(command);
+        return orderCommandHandler.handle(command);
     }
 }

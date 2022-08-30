@@ -101,7 +101,7 @@ class OrderCommandHandlerIntegrationTest {
                 user.getUsername()
         );
 
-        UUID orderId = service.addProductToBill(command);
+        UUID orderId = service.handle(command);
 
         boolean exists = billRepository.getById(bill.getId())
                 .getOrders()
@@ -124,7 +124,7 @@ class OrderCommandHandlerIntegrationTest {
         );
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.addProductToBill(command)
+                () -> service.handle(command)
         );
     }
 
@@ -133,7 +133,7 @@ class OrderCommandHandlerIntegrationTest {
     void deleteOrderFromBill() throws EntityNotFoundException {
         RemoveOrder command = new RemoveOrder(bar.getId(), session.getId(), bill.getId(), order.getId());
 
-        service.deleteOrderFromBill(command);
+        service.handle(command);
 
         bill = billRepository.findById(bill.getId()).orElseThrow();
         assertTrue(bill.getOrders().isEmpty());
@@ -146,7 +146,7 @@ class OrderCommandHandlerIntegrationTest {
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.deleteOrderFromBill(command)
+                () -> service.handle(command)
         );
     }
 }

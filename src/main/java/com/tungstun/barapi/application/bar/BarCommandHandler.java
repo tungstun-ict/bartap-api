@@ -34,7 +34,7 @@ public class BarCommandHandler {
         this.userQueryHandler = userQueryHandler;
     }
 
-    public UUID addBar(CreateBar command) {
+    public UUID handle(CreateBar command) {
         User user = (User) userQueryHandler.loadUserByUsername(command.ownerUsername());
         boolean exists = barRepository.findAllById(user.getAuthorizations().keySet())
                 .stream()
@@ -59,7 +59,7 @@ public class BarCommandHandler {
         return barRepository.save(bar).getId();
     }
 
-    public UUID updateBar(UpdateBar command) throws EntityNotFoundException {
+    public UUID handle(UpdateBar command) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
         bar.getDetails().setAddress(command.address());
         bar.getDetails().setName(command.name());
@@ -68,7 +68,7 @@ public class BarCommandHandler {
         return barRepository.save(bar).getId();
     }
 
-    public void deleteBar(DeleteBar command) {
+    public void handle(DeleteBar command) {
         barRepository.delete(command.barId());
     }
 }

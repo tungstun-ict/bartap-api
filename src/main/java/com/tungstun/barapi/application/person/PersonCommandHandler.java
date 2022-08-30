@@ -31,21 +31,21 @@ public class PersonCommandHandler {
         this.barQueryHandler = barQueryHandler;
     }
 
-    public UUID createNewPerson(CreatePerson command) throws EntityNotFoundException {
+    public UUID handle(CreatePerson command) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
         Person person = bar.createPerson(command.name());
         barRepository.save(bar);
         return person.getId();
     }
 
-    public UUID updatePerson(UpdatePerson command) throws EntityNotFoundException {
+    public UUID handle(UpdatePerson command) throws EntityNotFoundException {
         Person person = personQueryHandler.handle(new GetPerson(command.personId(), command.barId()));
         person.setName(command.name());
         personRepository.save(person);
         return person.getId();
     }
 
-    public void deletePersonFromBar(DeletePerson command) throws EntityNotFoundException {
+    public void handle(DeletePerson command) throws EntityNotFoundException {
         personRepository.delete(command.personId());
     }
 }

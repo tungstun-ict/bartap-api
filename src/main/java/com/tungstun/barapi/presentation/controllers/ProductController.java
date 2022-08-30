@@ -99,7 +99,7 @@ public class ProductController {
                 productRequest.productType,
                 productRequest.categoryId
         );
-        return productCommandHandler.createProduct(command);
+        return productCommandHandler.handle(command);
     }
 
     @PutMapping("/{productId}")
@@ -126,7 +126,7 @@ public class ProductController {
                 productRequest.productType,
                 productRequest.categoryId
         );
-        return productCommandHandler.updateProductOfBar(command);
+        return productCommandHandler.handle(command);
     }
 
     @DeleteMapping("/{productId}")
@@ -142,6 +142,6 @@ public class ProductController {
             @ApiParam(value = "ID value for the product you want to delete") @PathVariable("productId") UUID productId
     ) throws EntityNotFoundException {
         DeleteProduct command = new DeleteProduct(productId);
-        productCommandHandler.deleteProductOfBar(command);
+        productCommandHandler.handle(command);
     }
 }

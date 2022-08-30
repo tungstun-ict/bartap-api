@@ -46,7 +46,7 @@ class PersonCommandHandlerIntegrationTest {
     void createPerson() {
         CreatePerson command = new CreatePerson(bar.getId(), "newName");
 
-        assertDoesNotThrow(() -> personCommandHandler.createNewPerson(command));
+        assertDoesNotThrow(() -> personCommandHandler.handle(command));
     }
 
     @Test
@@ -56,7 +56,7 @@ class PersonCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> personCommandHandler.createNewPerson(command)
+                () -> personCommandHandler.handle(command)
         );
     }
 
@@ -65,7 +65,7 @@ class PersonCommandHandlerIntegrationTest {
     void updatePerson() throws EntityNotFoundException {
         UpdatePerson command = new UpdatePerson(bar.getId(), person.getId(), "personUpdated");
 
-        UUID id = personCommandHandler.updatePerson(command);
+        UUID id = personCommandHandler.handle(command);
 
         Person actualPerson = repository.findById(id).orElseThrow();
         assertEquals(command.name(), actualPerson.getName());
@@ -76,7 +76,7 @@ class PersonCommandHandlerIntegrationTest {
     void deletePerson() throws EntityNotFoundException {
         DeletePerson command = new DeletePerson(person.getId());
 
-        personCommandHandler.deletePersonFromBar(command);
+        personCommandHandler.handle(command);
 
         assertTrue(repository.findById(person.getId()).isEmpty());
     }

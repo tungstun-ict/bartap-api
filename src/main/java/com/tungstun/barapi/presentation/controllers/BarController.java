@@ -84,7 +84,7 @@ public class BarController {
                 barRequest.phoneNumber,
                 ((UserDetails) authentication.getPrincipal()).getUsername()
         );
-        return barCommandHandler.addBar(command);
+        return barCommandHandler.handle(command);
     }
 
     @PutMapping("/{barId}")
@@ -106,7 +106,7 @@ public class BarController {
                 barRequest.mail,
                 barRequest.phoneNumber
         );
-        return barCommandHandler.updateBar(command);
+        return barCommandHandler.handle(command);
     }
 
 
@@ -121,6 +121,6 @@ public class BarController {
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") UUID barId
     ) {
         DeleteBar command = new DeleteBar(barId);
-        barCommandHandler.deleteBar(command);
+        barCommandHandler.handle(command);
     }
 }

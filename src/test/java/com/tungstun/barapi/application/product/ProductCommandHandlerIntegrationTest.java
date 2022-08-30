@@ -89,7 +89,7 @@ class ProductCommandHandlerIntegrationTest {
                 category.getId()
         );
 
-        UUID id = productCommandHandler.createProduct(command);
+        UUID id = productCommandHandler.handle(command);
 
         Product actualProduct = productRepository.findById(id).orElseThrow();
         assertEquals(command.name(), actualProduct.getName());
@@ -117,7 +117,7 @@ class ProductCommandHandlerIntegrationTest {
                 category.getId()
         );
 
-        UUID id = productCommandHandler.updateProductOfBar(command);
+        UUID id = productCommandHandler.handle(command);
 
 
         Product actualProduct = productRepository.findById(id).orElseThrow();
@@ -135,6 +135,6 @@ class ProductCommandHandlerIntegrationTest {
     void deleteProduct() {
         DeleteProduct command = new DeleteProduct(product.getId());
 
-        assertDoesNotThrow(() -> productCommandHandler.deleteProductOfBar(command));
+        assertDoesNotThrow(() -> productCommandHandler.handle(command));
     }
 }

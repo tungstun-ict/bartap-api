@@ -34,7 +34,7 @@ public class OrderCommandHandler {
         this.billRepository = billRepository;
     }
 
-    public UUID addProductToBill(AddOrder command) throws EntityNotFoundException {
+    public UUID handle(AddOrder command) throws EntityNotFoundException {
         Person bartender = personQueryHandler.handle(new GetPersonByUserUsername(command.bartenderUsername(), command.barId()));
         Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()));
         Bill bill = billQueryHandler.handle(new GetBill(command.billId(), command.sessionId(), command.barId()));
@@ -43,7 +43,7 @@ public class OrderCommandHandler {
         return order.getId();
     }
 
-    public void deleteOrderFromBill(RemoveOrder command) throws EntityNotFoundException {
+    public void handle(RemoveOrder command) throws EntityNotFoundException {
         Bill bill = billQueryHandler.handle(new GetBill(command.billId(), command.sessionId(), command.barId()));
         bill.removeOrder(command.orderId());
         billRepository.save(bill);

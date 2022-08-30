@@ -52,7 +52,7 @@ public class CategoryCommandHandlerIntegrationTest {
     void addCategory() {
         CreateCategory command = new CreateCategory(bar.getId(), "testCategory");
 
-        assertDoesNotThrow(() -> categoryCommandHandler.addCategoryToBar(command));
+        assertDoesNotThrow(() -> categoryCommandHandler.handle(command));
     }
 
     @Test
@@ -62,7 +62,7 @@ public class CategoryCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> categoryCommandHandler.addCategoryToBar(command)
+                () -> categoryCommandHandler.handle(command)
         );
     }
 
@@ -71,7 +71,7 @@ public class CategoryCommandHandlerIntegrationTest {
     void updateExistingCategory() throws EntityNotFoundException {
         UpdateCategory command = new UpdateCategory(bar.getId(), category.getId(), "categoryNew");
 
-        UUID id = categoryCommandHandler.updateCategoryOfBar(command);
+        UUID id = categoryCommandHandler.handle(command);
 
         assertEquals(command.name(), repository.findById(id).orElseThrow().getName());
     }
@@ -86,7 +86,7 @@ public class CategoryCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> categoryCommandHandler.updateCategoryOfBar(command)
+                () -> categoryCommandHandler.handle(command)
         );
     }
 
@@ -95,7 +95,7 @@ public class CategoryCommandHandlerIntegrationTest {
     void deleteExistingCategory() {
         DeleteCategory command = new DeleteCategory(category.getId());
 
-        assertDoesNotThrow(() -> categoryCommandHandler.deleteCategoryFromBar(command));
+        assertDoesNotThrow(() -> categoryCommandHandler.handle(command));
     }
 
     @Test
@@ -106,7 +106,7 @@ public class CategoryCommandHandlerIntegrationTest {
         bar.addProduct(product);
         DeleteCategory command = new DeleteCategory(category.getId());
 
-        categoryCommandHandler.deleteCategoryFromBar(command);
+        categoryCommandHandler.handle(command);
 
         assertTrue(categoryRepository.findById(category.getId()).isEmpty());
     }

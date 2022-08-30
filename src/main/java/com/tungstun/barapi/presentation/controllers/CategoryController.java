@@ -80,7 +80,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryRequest categoryRequest
     ) throws EntityNotFoundException {
         CreateCategory command = new CreateCategory(barId, categoryRequest.name);
-        return categoryCommandHandler.addCategoryToBar(command);
+        return categoryCommandHandler.handle(command);
     }
 
     @PutMapping("/{categoryId}")
@@ -97,7 +97,7 @@ public class CategoryController {
             @Valid @RequestBody CategoryRequest categoryRequest
     ) throws EntityNotFoundException {
         UpdateCategory command = new UpdateCategory(barId, categoryId, categoryRequest.name);
-        return categoryCommandHandler.updateCategoryOfBar(command);
+        return categoryCommandHandler.handle(command);
     }
 
     @DeleteMapping("/{categoryId}")
@@ -112,6 +112,6 @@ public class CategoryController {
             @ApiParam(value = "ID value for the category you want to delete") @PathVariable("categoryId") UUID categoryId
     ) throws EntityNotFoundException {
         DeleteCategory command = new DeleteCategory(categoryId);
-        categoryCommandHandler.deleteCategoryFromBar(command);
+        categoryCommandHandler.handle(command);
     }
 }

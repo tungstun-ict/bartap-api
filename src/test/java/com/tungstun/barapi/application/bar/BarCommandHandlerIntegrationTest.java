@@ -37,7 +37,7 @@ public class BarCommandHandlerIntegrationTest {
         User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
         CreateBar command = new CreateBar("address", "name", "mail@mail.com", "+31612345678", user.getUsername());
 
-        assertDoesNotThrow(() -> barCommandHandler.addBar(command));
+        assertDoesNotThrow(() -> barCommandHandler.handle(command));
     }
 
     @Test
@@ -55,7 +55,7 @@ public class BarCommandHandlerIntegrationTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> barCommandHandler.addBar(command)
+                () -> barCommandHandler.handle(command)
         );
     }
 
@@ -68,7 +68,7 @@ public class BarCommandHandlerIntegrationTest {
         repository.save(bar);
         UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");
 
-        UUID id = barCommandHandler.updateBar(command);
+        UUID id = barCommandHandler.handle(command);
 
         Bar actualBar = repository.findById(id).orElseThrow();
         assertEquals(command.address(), actualBar.getDetails().getAddress());
@@ -84,7 +84,7 @@ public class BarCommandHandlerIntegrationTest {
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> barCommandHandler.updateBar(command)
+                () -> barCommandHandler.handle(command)
         );
     }
 
@@ -95,7 +95,7 @@ public class BarCommandHandlerIntegrationTest {
         DeleteBar command = new DeleteBar(bar.getId());
 
         assertDoesNotThrow(
-                () -> barCommandHandler.deleteBar(command)
+                () -> barCommandHandler.handle(command)
         );
 
         assertTrue(repository.findById(bar.getId()).isEmpty());

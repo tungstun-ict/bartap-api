@@ -98,7 +98,7 @@ public class SessionController {
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
         CreateSession command = new CreateSession(barId, sessionRequest.name);
-        return sessionCommandHandler.createNewSession(command);
+        return sessionCommandHandler.handle(command);
     }
 
     @PutMapping("/{sessionId}")
@@ -115,7 +115,7 @@ public class SessionController {
             @Valid @RequestBody SessionRequest sessionRequest
     ) throws EntityNotFoundException {
         UpdateSession command = new UpdateSession(barId, sessionId, sessionRequest.name);
-        return sessionCommandHandler.updateSession(command);
+        return sessionCommandHandler.handle(command);
     }
 
     @PatchMapping("/{sessionId}/end")
@@ -131,7 +131,7 @@ public class SessionController {
             @ApiParam(value = "ID value for the session you want to end") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         EndSession command = new EndSession(barId, sessionId);
-        sessionCommandHandler.endSession(command);
+        sessionCommandHandler.handle(command);
     }
 
     @DeleteMapping("/{sessionId}")
@@ -147,6 +147,6 @@ public class SessionController {
             @ApiParam(value = "ID value for the session you want to delete") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         DeleteSession command = new DeleteSession(sessionId);
-        sessionCommandHandler.deleteSession(command);
+        sessionCommandHandler.handle(command);
     }
 }

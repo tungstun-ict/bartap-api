@@ -32,14 +32,14 @@ public class CategoryCommandHandler {
         this.barRepository = barRepository;
     }
 
-    public UUID addCategoryToBar(CreateCategory command) throws EntityNotFoundException {
+    public UUID handle(CreateCategory command) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
         Category category = bar.createCategory(command.name());
         barRepository.save(bar);
         return category.getId();
     }
 
-    public UUID updateCategoryOfBar(UpdateCategory command) throws EntityNotFoundException {
+    public UUID handle(UpdateCategory command) throws EntityNotFoundException {
         boolean exists = barQueryHandler.handle(new GetBar(command.barId()))
                 .getCategories()
                 .stream()
@@ -54,7 +54,7 @@ public class CategoryCommandHandler {
         return command.categoryId();
     }
 
-    public void deleteCategoryFromBar(DeleteCategory command) throws EntityNotFoundException {
+    public void handle(DeleteCategory command) throws EntityNotFoundException {
         categoryRepository.delete(command.categoryId());
     }
 }

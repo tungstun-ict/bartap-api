@@ -150,7 +150,7 @@ public class BillController {
             @Valid @RequestBody BillRequest billRequest
     ) throws EntityNotFoundException {
         AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, billRequest.customerId);
-        return billCommandHandler.addCustomerToSession(command);
+        return billCommandHandler.handle(command);
     }
 
     @PatchMapping("/sessions/{sessionId}/bills/{billId}/pay")
@@ -167,7 +167,7 @@ public class BillController {
             @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         PayBill command = new PayBill(barId, sessionId, billId);
-        billCommandHandler.payBill(command);
+        billCommandHandler.handle(command);
     }
 
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
@@ -183,6 +183,6 @@ public class BillController {
             @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         DeleteBill command = new DeleteBill(billId);
-        billCommandHandler.deleteBill(command);
+        billCommandHandler.handle(command);
     }
 }

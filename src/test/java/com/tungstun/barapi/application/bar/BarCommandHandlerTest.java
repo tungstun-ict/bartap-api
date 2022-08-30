@@ -80,7 +80,7 @@ class BarCommandHandlerTest {
         when(repository.save(any(Bar.class)))
                 .thenReturn(bar);
 
-        assertDoesNotThrow(() -> service.addBar(command));
+        assertDoesNotThrow(() -> service.handle(command));
 
         verify(userQueryHandler, times(1)).loadUserByUsername(ownerName);
         verify(repository, times(1)).findAllById(any());
@@ -111,7 +111,7 @@ class BarCommandHandlerTest {
 
         assertThrows(
                 DuplicateRequestException.class,
-                () -> service.addBar(command)
+                () -> service.handle(command)
         );
         verify(repository, times(1)).findAllById(any());
         verify(userQueryHandler, times(1)).loadUserByUsername(person.getUser().getUsername());
@@ -138,7 +138,7 @@ class BarCommandHandlerTest {
                 .thenReturn(expectedBar);
         UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");
 
-        service.updateBar(command);
+        service.handle(command);
 
         verify(repository, times(1)).findById(any());
         verify(repository, times(1)).save(any(Bar.class));
@@ -154,7 +154,7 @@ class BarCommandHandlerTest {
 
         assertThrows(
                 EntityNotFoundException.class,
-                () -> service.updateBar(command)
+                () -> service.handle(command)
         );
 
         verify(repository, times(1)).findById(any());
@@ -166,7 +166,7 @@ class BarCommandHandlerTest {
         DeleteBar command = new DeleteBar(UUID.randomUUID());
 
         assertDoesNotThrow(
-                () -> service.deleteBar(command)
+                () -> service.handle(command)
         );
 
         verify(repository, times(1)).delete(any());

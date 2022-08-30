@@ -39,7 +39,7 @@ public class ProductCommandHandler {
         this.categoryQueryHandler = categoryQueryHandler;
     }
 
-    public UUID createProduct(CreateProduct command) throws EntityNotFoundException {
+    public UUID handle(CreateProduct command) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
         Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
         Product product = new ProductBuilder(command.name(), category)
@@ -54,7 +54,7 @@ public class ProductCommandHandler {
         return product.getId();
     }
 
-    public UUID updateProductOfBar(UpdateProduct command) throws EntityNotFoundException {
+    public UUID handle(UpdateProduct command) throws EntityNotFoundException {
         Product product = productQueryHandler.handle(new GetProduct(command.productId(), command.barId()))  ;
         Category category = categoryQueryHandler.handle(new GetCategory(command.categoryId(), command.barId()));
         product.setCategory(category);
@@ -67,7 +67,7 @@ public class ProductCommandHandler {
         return productRepository.save(product).getId();
     }
 
-    public void deleteProductOfBar(DeleteProduct command) throws EntityNotFoundException {
+    public void handle(DeleteProduct command) throws EntityNotFoundException {
         productRepository.deleteById(command.productId());
     }
 }

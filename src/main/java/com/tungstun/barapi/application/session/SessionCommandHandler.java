@@ -32,24 +32,24 @@ public class SessionCommandHandler {
         this.sessionRepository = sessionRepository;
     }
 
-    public UUID createNewSession(CreateSession command) throws EntityNotFoundException {
+    public UUID handle(CreateSession command) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(command.barId()));
         Session session = bar.newSession(command.name());
         barRepository.save(bar);
         return session.getId();
     }
 
-    public UUID updateSession(UpdateSession command) throws EntityNotFoundException {
+    public UUID handle(UpdateSession command) throws EntityNotFoundException {
         Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
         session.setName(command.name());
         return sessionRepository.save(session).getId();
     }
 
-    public void deleteSession(DeleteSession command) throws EntityNotFoundException {
+    public void handle(DeleteSession command) throws EntityNotFoundException {
         sessionRepository.delete(command.sessionId());
     }
 
-    public void endSession(EndSession command) throws EntityNotFoundException {
+    public void handle(EndSession command) throws EntityNotFoundException {
         Session session = sessionQueryHandler.handle(new GetSession(command.sessionId(), command.barId()));
         session.end();
         sessionRepository.save(session);

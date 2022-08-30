@@ -80,7 +80,7 @@ public class PersonController {
             @Valid @RequestBody PersonRequest personRequest
     ) throws EntityNotFoundException {
         CreatePerson command = new CreatePerson(barId, personRequest.name);
-        return personCommandHandler.createNewPerson(command);
+        return personCommandHandler.handle(command);
     }
 
     @PutMapping("/{personId}")
@@ -97,7 +97,7 @@ public class PersonController {
             @Valid @RequestBody PersonRequest personRequest
     ) throws EntityNotFoundException {
         UpdatePerson command = new UpdatePerson(barId, personId, personRequest.name);
-        return personCommandHandler.updatePerson(command);
+        return personCommandHandler.handle(command);
     }
 
     @DeleteMapping("/{personId}")
@@ -112,6 +112,6 @@ public class PersonController {
             @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("personId") UUID personId
     ) throws EntityNotFoundException {
         DeletePerson command = new DeletePerson(personId);
-        personCommandHandler.deletePersonFromBar(command);
+        personCommandHandler.handle(command);
     }
 }
