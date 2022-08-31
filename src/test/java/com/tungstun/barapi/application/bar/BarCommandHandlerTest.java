@@ -10,6 +10,7 @@ import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bar.BarDetails;
 import com.tungstun.barapi.domain.bar.BarRepository;
 import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.common.phonenumber.PhoneNumber;
 import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -67,14 +68,14 @@ class BarCommandHandlerTest {
     @DisplayName("Create bar returns bar")
     void createBar_ReturnsBar() {
         String ownerName = "hans";
-        CreateBar command = new CreateBar("address 0", "name", "mail@bar.com", "+31698765432", ownerName);
+        CreateBar command = new CreateBar("address 0", "name", "mail@bar.com", "+31687654321", ownerName);
         Bar bar = new BarBuilder("bar")
                 .setAddress("address 1")
                 .setMail("new@mail.com")
-                .setPhoneNumber("+31612345678")
+                .setPhoneNumber("+31687654321")
                 .build();
         when(userQueryHandler.loadUserByUsername(ownerName))
-                .thenReturn(new User(UUID.randomUUID(), ownerName, "", "", "", "", "+310612345678", new ArrayList<>()));
+                .thenReturn(new User(UUID.randomUUID(), ownerName, "", "", "", "", "+31687654321", new ArrayList<>()));
         when(repository.findAllById(any()))
                 .thenReturn(new ArrayList<>(List.of(bar)));
         when(repository.save(any(Bar.class)))
@@ -95,7 +96,7 @@ class BarCommandHandlerTest {
                 "name",
                 new User(UUID.randomUUID(), "name", "", "", "", "", "+310612345678", new ArrayList<>())
         );
-        CreateBar command = new CreateBar("address", "name", "mail", "+31698765432", person.getUser().getUsername());
+        CreateBar command = new CreateBar("address", "name", "mail", "+31687654321", person.getUser().getUsername());
         Bar bar = new BarBuilder(command.name())
                 .setAddress(command.address())
                 .setMail(command.mail())
@@ -123,17 +124,17 @@ class BarCommandHandlerTest {
         Person person = new Person(
                 UUID.randomUUID(),
                 "name",
-                new User(UUID.randomUUID(), "name", "", "", "", "", "+310612345678", new ArrayList<>())
+                new User(UUID.randomUUID(), "name", "", "", "", "", "+31612345678", new ArrayList<>())
         );
         Bar bar = new BarBuilder("name")
                 .setAddress("address")
                 .setMail("mail")
-                .setPhoneNumber("+31698765432")
+                .setPhoneNumber("+31687654321")
                 .setPeople(new ArrayList<>(List.of(person)))
                 .build();
         when(repository.findById(bar.getId()))
                 .thenReturn(Optional.of(bar));
-        Bar expectedBar = new Bar(bar.getId(), new BarDetails("newAddress", "newName", "newMail@Mmail.com", "+31698765432"), List.of(), List.of(), List.of(), List.of());
+        Bar expectedBar = new Bar(bar.getId(), new BarDetails("newAddress", "newName", "newMail@Mmail.com", new PhoneNumber("+31687654321")), List.of(), List.of(), List.of(), List.of());
         when(repository.save(any(Bar.class)))
                 .thenReturn(expectedBar);
         UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");

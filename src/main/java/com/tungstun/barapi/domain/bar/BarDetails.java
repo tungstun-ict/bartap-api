@@ -1,5 +1,7 @@
 package com.tungstun.barapi.domain.bar;
 
+import com.tungstun.common.phonenumber.PhoneNumber;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -15,11 +17,11 @@ public class BarDetails {
     private String mail;
 
     @Column(name = "phone_number")
-    private String phoneNumber;
+    private PhoneNumber phoneNumber;
 
     public BarDetails() {
     }
-    public BarDetails(String name, String address, String mail, String phoneNumber) {
+    public BarDetails(String name, String address, String mail, PhoneNumber phoneNumber) {
         this.name = name;
         this.address = address;
         this.mail = mail;
@@ -50,11 +52,11 @@ public class BarDetails {
         this.mail = mail;
     }
 
-    public String getPhoneNumber() {
+    public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
 
     public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = new PhoneNumber(phoneNumber);
     }
 }

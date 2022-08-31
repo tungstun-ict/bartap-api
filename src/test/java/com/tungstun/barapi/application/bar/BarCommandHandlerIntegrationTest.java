@@ -76,7 +76,7 @@ public class BarCommandHandlerIntegrationTest {
         assertEquals(command.address(), actualBar.getDetails().getAddress());
         assertEquals(command.name(), actualBar.getDetails().getName());
         assertEquals(command.mail(), actualBar.getDetails().getMail());
-        assertEquals(command.phoneNumber(), actualBar.getDetails().getPhoneNumber());
+        assertEquals(command.phoneNumber(), actualBar.getDetails().getPhoneNumber().getValue());
     }
 
     @Test

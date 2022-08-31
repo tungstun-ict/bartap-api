@@ -15,7 +15,7 @@ public class BarConverter {
                 bar.getDetails().getAddress(),
                 bar.getDetails().getName(),
                 bar.getDetails().getMail(),
-                bar.getDetails().getPhoneNumber()
+                bar.getDetails().getPhoneNumber().getValue()
         );
     }
 

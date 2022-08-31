@@ -18,6 +18,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
@@ -122,7 +123,7 @@ class PersonCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Connect person to user")
     void connectPersonToUser() throws EntityNotFoundException {
-        User user = userRepository.save(new User(UUID.randomUUID(), "name2", "", "", "", "mail@mail.mm", "+31612345876", new ArrayList<>()));
+        User user = userRepository.save(new User(UUID.randomUUID(), "name2", "", "", "", "mail@mail.mm", "+31687654321", new ArrayList<>()));
         String token = personCommandHandler.handle(new CreatePersonConnectionToken(bar.getId(), person.getId()));
         ConnectUserToPerson command = new ConnectUserToPerson(user.getUsername(), token);
 
@@ -132,15 +133,14 @@ class PersonCommandHandlerIntegrationTest {
         assertEquals(user, person.getUser());
     }
 
+    @DirtiesContext // To assure the setExpiration does not bleed into other tests of this class
     @Test
     @DisplayName("Connect person to user with expired token throws")
     void connectPersonToUser_WithExpiredToken_Throws() throws EntityNotFoundException {
         jwtCredentials.setJwtPersonConnectExpirationInMs(-2000L);
-
         User user = userRepository.save(new User(UUID.randomUUID(), "name2", "", "", "", "mail@mail.mm", "+31612345876", new ArrayList<>()));
         String token = personCommandHandler.handle(new CreatePersonConnectionToken(bar.getId(), person.getId()));
         ConnectUserToPerson command = new ConnectUserToPerson(user.getUsername(), token);
-
         assertThrows(
                 NotAuthenticatedException.class,
                 () -> personCommandHandler.handle(command)
