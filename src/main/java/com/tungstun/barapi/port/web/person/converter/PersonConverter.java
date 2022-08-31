@@ -5,6 +5,7 @@ import com.tungstun.barapi.port.web.person.response.PersonResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -14,7 +15,7 @@ public class PersonConverter {
     }
 
     public PersonResponse convert(Person person) {
-        Long userId = person.getUser() != null
+        UUID userId = person.getUser() != null
                 ? person.getUser().getId()
                 : null;
         return new PersonResponse(

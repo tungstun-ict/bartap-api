@@ -18,7 +18,7 @@ public class UserConverter {
                 user.getLastName(),
                 user.getMail(),
                 user.getPhoneNumber().getValue(),
-                user.getAuthorizations().keySet()
+                user.getAuthorizations()
         );
     }
 

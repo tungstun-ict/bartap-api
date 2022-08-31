@@ -61,10 +61,10 @@ public class CategoryQueryHandlerIntegrationTest {
 
     @BeforeEach
     void setup() {
-        bar = new BarBuilder("test bar").build();
-        category = repository.save(new Category(UUID.randomUUID(), "category"));
-        bar = barRepository.save(bar);
-        bar.addCategory(category);
+        category = new Category(UUID.randomUUID(), "category");
+        bar = new BarBuilder("test bar")
+                .setCategories(List.of(category))
+                .build();
         bar = barRepository.save(bar);
     }
 

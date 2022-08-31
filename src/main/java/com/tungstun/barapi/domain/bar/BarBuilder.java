@@ -24,8 +24,8 @@ public class BarBuilder {
         this.categories = new ArrayList<>();
     }
 
-    public BarBuilder setAddress(String adres) {
-        this.details.setAddress(adres);
+    public BarBuilder setAddress(String address) {
+        this.details.setAddress(address);
         return this;
     }
 

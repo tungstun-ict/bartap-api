@@ -6,6 +6,8 @@ import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -17,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,7 +37,7 @@ public class BarCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Create bar returns bar")
     void createBar_ReturnsBar() {
-        User user = userRepository.save(new User("user", "", "", "", "", "+310612345678", new ArrayList<>()));
+        User user = userRepository.save(new User(UUID.randomUUID(), "user", "", "", "", "", "+310612345678", new ArrayList<>()));
         CreateBar command = new CreateBar("address", "name", "mail@mail.com", "+31612345678", user.getUsername());
 
         assertDoesNotThrow(() -> barCommandHandler.handle(command));
@@ -43,15 +46,14 @@ public class BarCommandHandlerIntegrationTest {
     @Test
     @DisplayName("Create existing bar throws DuplicateRequestException")
     void createBarWithExistingName_ThrowDuplicateRequest() {
-        Bar bar = new BarBuilder("bar").build();
-        User user = new User("user", "", "", "", "", "+31612345679", new ArrayList<>());
-        user.newBarAuthorization(bar.getId());
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345679", new ArrayList<>());
         user = userRepository.save(user);
-        bar.createPerson("name", user);
-        repository.save(bar);
-
-        CreateBar command = new CreateBar("address", "bar", "mail@mail.com", "+31612345678", user.getUsername());
-
+        Person owner = new PersonBuilder("owner").setUser(user).build();
+        Bar bar = new BarBuilder("bar").setPeople(new ArrayList<>(List.of(owner))).build();
+        user.newBarAuthorization(bar.getId(), owner);
+        user = userRepository.save(user);
+        bar = repository.save(bar);
+        CreateBar command = new CreateBar("address", bar.getDetails().getName(), "mail@mail.com", "+31612345678", user.getUsername());
 
         assertThrows(
                 DuplicateRequestException.class,
@@ -63,7 +65,7 @@ public class BarCommandHandlerIntegrationTest {
     @DisplayName("Update bar returns updated bar")
     void updateBar_ReturnsUpdatedBar() throws EntityNotFoundException {
         Bar bar = new BarBuilder("bar").build();
-        User user = userRepository.save(new User("user", "", "", "", "", "+31612345679", new ArrayList<>()));
+        User user = userRepository.save(new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345679", new ArrayList<>()));
         bar.createPerson("name", user);
         repository.save(bar);
         UpdateBar command = new UpdateBar(bar.getId(), "newAddress", "newName", "newMail@mail.com", "+31612345678");

@@ -39,7 +39,7 @@ public class JwtValidator {
         return verify(token, verifier);
     }
 
-    public DecodedJWT verifyRefreshToken(String token) {
+    public DecodedJWT verifyToken(String token) {
         JWTVerifier verifier = JWT.require(credentials.algorithm())
                 .withIssuer(credentials.getJwtIssuer())
                 .withAudience(credentials.getJwtAudience())

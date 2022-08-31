@@ -63,7 +63,7 @@ class OrderCommandHandlerIntegrationTest {
                 .setSize(100)
                 .build();
 
-        user = new User("testUser", "", "", "", "", "+310612345678", new ArrayList<>());
+        user = new User(UUID.randomUUID(), "testUser", "", "", "", "", "+310612345678", new ArrayList<>());
         userRepository.save(user);
         Person customer = personRepository.save(new PersonBuilder("name")
                 .setName("testPerson")

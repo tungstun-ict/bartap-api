@@ -74,7 +74,7 @@ class BarCommandHandlerTest {
                 .setPhoneNumber("+31612345678")
                 .build();
         when(userQueryHandler.loadUserByUsername(ownerName))
-                .thenReturn(new User(ownerName, "", "", "", "", "+310612345678", new ArrayList<>()));
+                .thenReturn(new User(UUID.randomUUID(), ownerName, "", "", "", "", "+310612345678", new ArrayList<>()));
         when(repository.findAllById(any()))
                 .thenReturn(new ArrayList<>(List.of(bar)));
         when(repository.save(any(Bar.class)))
@@ -93,7 +93,7 @@ class BarCommandHandlerTest {
         Person person = new Person(
                 UUID.randomUUID(),
                 "name",
-                new User("name", "", "", "", "", "+310612345678", new ArrayList<>())
+                new User(UUID.randomUUID(), "name", "", "", "", "", "+310612345678", new ArrayList<>())
         );
         CreateBar command = new CreateBar("address", "name", "mail", "+31698765432", person.getUser().getUsername());
         Bar bar = new BarBuilder(command.name())
@@ -102,7 +102,7 @@ class BarCommandHandlerTest {
                 .setPhoneNumber(command.phoneNumber())
                 .setPeople(new ArrayList<>(List.of(person)))
                 .build();
-        person.getUser().newBarAuthorization(bar.getId());
+        person.getUser().newBarAuthorization(bar.getId(), person);
         String username = person.getUser().getUsername();
         when(userQueryHandler.loadUserByUsername(username))
                 .thenReturn(person.getUser());
@@ -123,7 +123,7 @@ class BarCommandHandlerTest {
         Person person = new Person(
                 UUID.randomUUID(),
                 "name",
-                new User("name", "", "", "", "", "+310612345678", new ArrayList<>())
+                new User(UUID.randomUUID(), "name", "", "", "", "", "+310612345678", new ArrayList<>())
         );
         Bar bar = new BarBuilder("name")
                 .setAddress("address")

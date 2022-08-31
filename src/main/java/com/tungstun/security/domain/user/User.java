@@ -1,5 +1,6 @@
 package com.tungstun.security.domain.user;
 
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.common.phonenumber.PhoneNumber;
 import com.tungstun.exception.CannotAuthenticateException;
 import com.tungstun.exception.NotAuthorizedException;
@@ -14,8 +15,7 @@ import java.util.stream.Collectors;
 @Table(name = "\"user\"")
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     @Column(name = "username", unique = true)
     private String username;
@@ -42,7 +42,8 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String username, String password, String mail, String firstName, String lastName, String phoneNumber, List<Authorization> authorizations) {
+    public User(UUID id, String username, String password, String mail, String firstName, String lastName, String phoneNumber, List<Authorization> authorizations) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.mail = mail;
@@ -52,7 +53,7 @@ public class User implements UserDetails {
         this.authorizations = authorizations;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -115,16 +116,16 @@ public class User implements UserDetails {
             throw new CannotAuthenticateException("Account disabled. A disabled account cannot be authenticated.");
     }
 
-    public boolean newBarAuthorization(UUID barId) {
-        addAuthorization(barId, Role.OWNER);
+    public boolean newBarAuthorization(UUID barId, Person person) {
+        addAuthorization(barId, Role.OWNER, person);
         return true;
     }
 
-    public boolean authorizeUser(User user, UUID barId, Role role) {
-        if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner of bar to authorize other users");
-        if (this.equals(user)) throw new IllegalArgumentException("Cannot change your own bar role");
+    public boolean authorize(UUID barId, Role role, Person person) {
+//        if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner of bar to authorize other users");
+//        if (this.equals(user)) throw new IllegalArgumentException("Cannot change your own bar role");
         if (role == Role.OWNER) throw new IllegalArgumentException("Cannot make an other person than yourself owner");
-        return user.addAuthorization(barId, role);
+        return addAuthorization(barId, role, person);
     }
 
     private boolean isOwner(UUID barId) {
@@ -133,14 +134,17 @@ public class User implements UserDetails {
                 .anyMatch(authorization -> authorization.getRole() == Role.OWNER);
     }
 
-    private boolean addAuthorization(UUID barId, Role role) {
+    private boolean addAuthorization(UUID barId, Role role, Person person) {
+        System.out.println(authorizations.stream()
+                .anyMatch(authorization -> authorization.getBarId().equals(barId)));
+
         authorizations.stream()
                 .filter(authorization -> authorization.getBarId().equals(barId))
-                .filter(authorization -> authorization.getRole() != (Role.OWNER)) // Cannot unmake yourself Owner
+//                .filter(authorization -> authorization.getRole() != (Role.OWNER)) // Cannot unmake yourself Owner
                 .findAny()
                 .ifPresentOrElse(
                         authorization -> authorization.updateRole(role),
-                        () -> authorizations.add(new Authorization(barId, role)));
+                        () -> authorizations.add(new Authorization(barId, role, person)));
         return true;
     }
 
@@ -151,10 +155,10 @@ public class User implements UserDetails {
         return user.revokeAuthorization(barId);
     }
 
-    public boolean revokeOwnership(UUID barId) {
-        if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner to revoke ownership");
-        return revokeAuthorization(barId);
-    }
+//    public boolean revokeOwnership(UUID barId) {
+//        if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner to revoke ownership");
+//        return revokeAuthorization(barId);
+//    }
 
     private boolean revokeAuthorization(UUID barId) {
         return authorizations.removeIf(authorization -> authorization.getBarId().equals(barId));
@@ -166,23 +170,6 @@ public class User implements UserDetails {
                         Authorization::getBarId,
                         authorization -> authorization.getRole().name()));
     }
-
-//    public boolean addUserBarAuthorizations(UserBarAuthorization userBarAuthorization) {
-//        if (!this.userBarAuthorizations.contains(userBarAuthorization)) return this.userBarAuthorizations.add(userBarAuthorization);
-//        return false;
-//    }
-//
-//    public boolean removeUserBarAuthorizations(UserBarAuthorization userBarAuthorization) {
-//        return this.userBarAuthorizations.remove(userBarAuthorization);
-//    }
-//
-//    public Map<Long, String> getAuthoritiesMap() {
-//        Map<Long, String> barAuth = new HashMap<>();
-//        for (UserBarAuthorization userBarAuthorization : userBarAuthorizations) {
-//            barAuth.put(userBarAuthorization.getBar().getId(), userBarAuthorization.getRole().toString());
-//        }
-//        return barAuth;
-//    }
 
     @Override
     public boolean isAccountNonExpired() {

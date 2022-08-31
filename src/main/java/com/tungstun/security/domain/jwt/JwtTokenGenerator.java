@@ -29,7 +29,7 @@ public class JwtTokenGenerator {
                     .withAudience(credentials.getJwtAudience())
                     .withExpiresAt(new Date(System.currentTimeMillis() + credentials.getJwtExpirationInMs()))
                     .withSubject(user.getUsername())
-                    .withClaim("client_id", user.getId())
+                    .withClaim("client_id", user.getId().toString())
                     .withClaim("authorizations", authorizations)
                     .sign(credentials.algorithm());
         } catch (JWTCreationException e) {
@@ -49,14 +49,14 @@ public class JwtTokenGenerator {
         }
     }
 
-    public String createPersonConnectionToken(UUID barId, UUID customerId) {
+    public String createPersonConnectionToken(UUID barId, UUID personId) {
         try {
             return JWT.create()
                     .withIssuer(credentials.getJwtIssuer())
                     .withAudience(credentials.getJwtAudience())
                     .withExpiresAt(new Date(System.currentTimeMillis() + credentials.getJwtPersonConnectExpirationInMs()))
                     .withClaim("bar_id", barId.toString())
-                    .withClaim("customer_id", customerId.toString())
+                    .withClaim("person_id", personId.toString())
                     .sign(credentials.algorithm());
         } catch (JWTCreationException e) {
             throw new JWTCreationException("Exception occurred during the creation of the person connection token", e);

@@ -1,5 +1,7 @@
 package com.tungstun.barapi.security.domain.user;
 
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.exception.NotAuthorizedException;
 import com.tungstun.security.domain.user.Authorization;
 import com.tungstun.security.domain.user.Role;
@@ -31,27 +33,6 @@ class UserTest {
         );
     }
 
-    @BeforeEach
-    void setUp() {
-        barId = UUID.randomUUID();
-        userWithAuthorization = new User(
-                "username",
-                "password",
-                "mail@mail.com",
-                "first",
-                "last",
-                "+31612345678",
-                new ArrayList<>(List.of(new Authorization(barId, Role.OWNER))));
-        user = new User(
-                "username",
-                "password",
-                "mail@mail.com",
-                "first",
-                "last",
-                "+31612345679",
-                new ArrayList<>());
-    }
-
     @Test
     void userWithAuthorization_ContainsAuthorization() {
         String actualRole = userWithAuthorization.getAuthorizations().get(barId);
@@ -79,11 +60,36 @@ class UserTest {
 //        );
 //    }
 
+    @BeforeEach
+    void setUp() {
+        barId = UUID.randomUUID();
+        userWithAuthorization = new User(
+                UUID.randomUUID(),
+                "username",
+                "password",
+                "mail@mail.com",
+                "first",
+                "last",
+                "+31612345678",
+                new ArrayList<>(List.of(new Authorization(barId, Role.OWNER, null))));
+        user = new User(
+                UUID.randomUUID(),
+                "username",
+                "password",
+                "mail@mail.com",
+                "first",
+                "last",
+                "+31612345679",
+                new ArrayList<>());
+    }
+
     @Test
     void addNewBarAuthorization_Successfully() {
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person owner = new PersonBuilder("owner").setUser(user).build();
         UUID newBarId = UUID.randomUUID();
 
-        user.newBarAuthorization(newBarId);
+        user.newBarAuthorization(newBarId, owner);
 
         assertTrue(user.getAuthorizations().containsKey(newBarId));
         assertEquals(Role.OWNER.name(), user.getAuthorizations().get(newBarId));
@@ -92,13 +98,19 @@ class UserTest {
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"BARTENDER", "CUSTOMER"})
     void authorizeUserForOwnedBar_DoesNotThrow(Role role) {
-        assertDoesNotThrow(() -> userWithAuthorization.authorizeUser(user, barId, role));
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person person = new PersonBuilder("owner").setUser(user).build();
+
+        assertDoesNotThrow(() -> user.authorize(barId, role, person));
     }
 
     @ParameterizedTest
     @EnumSource(value = Role.class, names = {"BARTENDER", "CUSTOMER"})
     void authorizeUserForOwnedBar_AuthorizesUserForBar(Role role) {
-        userWithAuthorization.authorizeUser(user, barId, role);
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person person = new PersonBuilder("owner").setUser(user).build();
+
+        user.authorize(barId, role, person);
 
         String userTwoRole = user.getAuthorizations().get(barId);
         assertEquals(role.name(), userTwoRole);
@@ -107,9 +119,12 @@ class UserTest {
     @ParameterizedTest
     @MethodSource("provideRolesForChangingRoles")
     void updateAuthorizationOfUser_Successfully_AndDoesNotThrow(Role role, Role newRole) {
-        userWithAuthorization.authorizeUser(user, barId, role);
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person person = new PersonBuilder("owner").setUser(user).build();
 
-        assertDoesNotThrow(() -> userWithAuthorization.authorizeUser(user, barId, newRole));
+        user.authorize(barId, role, person);
+
+        assertDoesNotThrow(() -> user.authorize(barId, newRole, person));
 
         String user2Role = user.getAuthorizations().get(barId);
         assertEquals(newRole.name(), user2Role);
@@ -117,51 +132,66 @@ class UserTest {
 
     @Test
     void authorizeUserForOwnedBarAsOwner_Throws() {
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person person = new PersonBuilder("owner").setUser(user).build();
+
         assertThrows(
                 IllegalArgumentException.class,
-                () -> userWithAuthorization.authorizeUser(user, barId, Role.OWNER)
+                () -> userWithAuthorization.authorize(barId, Role.OWNER, person)
         );
     }
 
-    @Test
-    void authorizeUserForNotOwnedBarWithNoOwnedBars_Throws() {
-        assertThrows(
-                NotAuthorizedException.class,
-                () -> user.authorizeUser(userWithAuthorization, barId, Role.CUSTOMER)
-        );
-    }
+//    @Test
+//    void authorizeUserForNotOwnedBarWithNoOwnedBars_Throws() {
+//        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
+//        Person person = new PersonBuilder("owner").setUser(user).build();
+//
+//        assertThrows(
+//                NotAuthorizedException.class,
+//                () -> user.authorize(barId, Role.CUSTOMER, person)
+//        );
+//    }
 
-    @Test
-    void authorizeUserForNotOwnedBar_Throws() {
-        UUID notOwnedBarId = UUID.randomUUID();
+//    @Test
+//    void authorizeUserForNotOwnedBar_Throws() {
+//        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
+//        Person person = new PersonBuilder("owner").setUser(user).build();
+//        UUID notOwnedBarId = UUID.randomUUID();
+//
+//        assertThrows(
+//                NotAuthorizedException.class,
+//                () -> userWithAuthorization.authorize(notOwnedBarId, Role.CUSTOMER, person)
+//        );
+//    }
 
-        assertThrows(
-                NotAuthorizedException.class,
-                () -> userWithAuthorization.authorizeUser(user, notOwnedBarId, Role.CUSTOMER)
-        );
-    }
+//    @Test
+//    void authorizeUserForNotOwnedButRelatedBar_Throws() {
+//        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
+//        Person person = new PersonBuilder("owner").setUser(user).build();
+//        userWithAuthorization.authorize(barId, Role.BARTENDER, person);
+//
+//        assertThrows(
+//                NotAuthorizedException.class,
+//                () -> user.authorize(barId, Role.CUSTOMER, person)
+//        );
+//    }
 
-    @Test
-    void authorizeUserForNotOwnedButRelatedBar_Throws() {
-        userWithAuthorization.authorizeUser(user, barId, Role.BARTENDER);
-
-        assertThrows(
-                NotAuthorizedException.class,
-                () -> user.authorizeUser(userWithAuthorization, barId, Role.CUSTOMER)
-        );
-    }
-
-    @Test
-    void userAuthorizesItself_Throws() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> userWithAuthorization.authorizeUser(userWithAuthorization, barId, Role.CUSTOMER)
-        );
-    }
+//    @Test
+//    void userAuthorizesItself_Throws() {
+//        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
+//        Person person = new PersonBuilder("owner").setUser(user).build();
+//
+//        assertThrows(
+//                IllegalArgumentException.class,
+//                () -> user.authorize(barId, Role.CUSTOMER, person)
+//        );
+//    }
 
     @Test
     void revokeAuthorizedUserAuthorization_RevokesAuthorization() {
-        userWithAuthorization.authorizeUser(user, barId, Role.CUSTOMER);
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person person = new PersonBuilder("owner").setUser(user).build();
+        user.authorize(barId, Role.CUSTOMER, person);
 
         userWithAuthorization.revokeUserAuthorization(user, barId);
 
@@ -178,7 +208,9 @@ class UserTest {
 
     @Test
     void revokeUserAuthorizationWithNoAuthorizationLevel_Throws() {
-        userWithAuthorization.authorizeUser(user, barId, Role.CUSTOMER);
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        Person person = new PersonBuilder("owner").setUser(user).build();
+        user.authorize(barId, Role.CUSTOMER, person);
 
         assertThrows(
                 NotAuthorizedException.class,
@@ -194,16 +226,16 @@ class UserTest {
         );
     }
 
-    @Test
-    void revokeOwnership_Successfully() {
-        assertDoesNotThrow(() -> userWithAuthorization.revokeOwnership(barId));
-    }
-
-    @Test
-    void revokeOwnershipOfNotOwnedBar_Throws() {
-        assertThrows(
-                NotAuthorizedException.class,
-                () -> user.revokeOwnership(barId)
-        );
-    }
+//    @Test
+//    void revokeOwnership_Successfully() {
+//        assertDoesNotThrow(() -> userWithAuthorization.revokeOwnership(barId));
+//    }
+//
+//    @Test
+//    void revokeOwnershipOfNotOwnedBar_Throws() {
+//        assertThrows(
+//                NotAuthorizedException.class,
+//                () -> user.revokeOwnership(barId)
+//        );
+//    }
 }

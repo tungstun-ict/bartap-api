@@ -108,6 +108,24 @@ public class Bar {
         return person;
     }
 
+    public void connectUserToPerson(User user, UUID personId) {
+        people.stream()
+                .filter(person -> person.getUser() != null).forEach(p -> System.out.println(p.getUser().getId()));
+        boolean isAlreadyConnected = people
+                .stream()
+                .filter(person -> person.getUser() != null)
+                .anyMatch(person -> person.getUser().getId().equals(user.getId()));
+        if (isAlreadyConnected) {
+            throw new IllegalArgumentException("User is already connected to a person of the bar");
+        }
+
+        people.stream()
+                .filter(p -> p.getId().equals(personId))
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("No person found with id: " + personId))
+                .connectUser(user, id);
+    }
+
     public UUID getId() {
         return id;
     }
@@ -126,6 +144,10 @@ public class Bar {
 
     public List<Product> getProducts() {
         return this.products;
+    }
+
+    public boolean addProduct(Product product) {
+        return this.products.add(product);
     }
 
     public boolean removeProduct(Product product) {

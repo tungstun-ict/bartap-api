@@ -16,5 +16,5 @@ public record PersonResponse(
     String name,
 
     @ApiModelProperty(notes = "The person's user id")
-    Long userId) {
+    UUID userId) {
 }

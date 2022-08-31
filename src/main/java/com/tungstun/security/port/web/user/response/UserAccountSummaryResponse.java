@@ -3,10 +3,12 @@ package com.tungstun.security.port.web.user.response;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
+import java.util.UUID;
+
 @ApiModel(description = "Response detail summary about the user account")
 public record UserAccountSummaryResponse(
         @ApiModelProperty(notes = "The user's categoryId")
-        Long id,
+        UUID id,
 
         @ApiModelProperty(notes = "The user's username")
         String username,

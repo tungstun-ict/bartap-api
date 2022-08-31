@@ -8,6 +8,7 @@ import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
 import com.tungstun.barapi.domain.bar.BarRepository;
+import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.domain.user.User;
@@ -42,19 +43,17 @@ public class BarCommandHandler {
         if (exists) {
             throw new DuplicateRequestException("User already owns bar with name: " + command.name());
         }
-
+        Person owner = new PersonBuilder(command.ownerUsername())
+                .setUser(user)
+                .build();
         Bar bar = new BarBuilder(command.name())
                 .setAddress(command.address())
                 .setMail(command.mail())
                 .setPhoneNumber(command.phoneNumber())
-                .setPeople(
-                        List.of(new PersonBuilder(command.ownerUsername())
-                                .setUser(user)
-                                .build())
-                )
+                .setPeople(List.of(owner))
                 .build();
 
-        user.newBarAuthorization(bar.getId());
+        user.newBarAuthorization(bar.getId(), owner);
         userRepository.update(user);
         return barRepository.save(bar).getId();
     }

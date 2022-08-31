@@ -11,6 +11,4 @@ public interface PersonRepository {
     void delete(UUID id);
 
     Optional<Person> findById(UUID id);
-
-//    List<Person> findAllByBarId(UUID barId);
 }

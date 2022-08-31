@@ -1,5 +1,7 @@
 package com.tungstun.security.domain.user;
 
+import com.tungstun.barapi.domain.person.Person;
+
 import javax.persistence.*;
 import java.util.UUID;
 
@@ -19,11 +21,15 @@ public class Authorization {
     @Enumerated(STRING)
     private Role role;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private Person person;
+
     public Authorization() {
     }
-    public Authorization(UUID barId, Role role) {
+    public Authorization(UUID barId, Role role, Person person) {
         this.barId = barId;
         this.role = role;
+        this.person = person;
     }
 
     public Long getId() {
@@ -39,6 +45,17 @@ public class Authorization {
     }
 
     public void updateRole(Role role) {
+        if (this.role.equals(Role.OWNER)) {
+            throw new IllegalArgumentException("Cannot change owner's role to a lower role");
+        }
         this.role = role;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
     }
 }

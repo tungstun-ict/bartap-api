@@ -19,6 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
+import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,10 +41,10 @@ public class CategoryCommandHandlerIntegrationTest {
 
     @BeforeEach
     void setup() {
-        bar = new BarBuilder("test bar").build();
-        category = repository.save(new Category(UUID.randomUUID(), "category"));
-        bar = barRepository.save(bar);
-        bar.addCategory(category);
+        category = new Category(UUID.randomUUID(), "category");
+        bar = new BarBuilder("test bar")
+                .setCategories(List.of(category))
+                .build();
         bar = barRepository.save(bar);
     }
 

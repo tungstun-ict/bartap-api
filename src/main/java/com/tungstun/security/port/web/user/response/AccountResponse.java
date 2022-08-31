@@ -3,13 +3,13 @@ package com.tungstun.security.port.web.user.response;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
-import java.util.Set;
+import java.util.Map;
 import java.util.UUID;
 
 @ApiModel(description = "Response details of customer")
 public record AccountResponse(
         @ApiModelProperty(notes = "Users categoryId")
-        Long id,
+        UUID id,
 
         @ApiModelProperty(notes = "Users username")
         String username,
@@ -26,6 +26,6 @@ public record AccountResponse(
         @ApiModelProperty(notes = "Users last phone number")
         String phoneNumber,
 
-        @ApiModelProperty(notes = "Users connected bars")
-        Set<UUID> connectedBars) {
+        @ApiModelProperty(notes = "Users connected bar entries")
+        Map<UUID, String> connectedBars) {
 }

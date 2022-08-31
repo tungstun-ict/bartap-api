@@ -40,7 +40,7 @@ public class BarController {
         this.converter = converter;
     }
 
-    @GetMapping
+    @GetMapping("owned")
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(
             value = "Finds all bars owned by user",

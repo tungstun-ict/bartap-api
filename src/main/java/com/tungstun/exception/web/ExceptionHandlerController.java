@@ -16,8 +16,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import javax.naming.directory.InvalidAttributesException;
 import javax.persistence.EntityNotFoundException;
+import javax.security.auth.login.AccountException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
+import java.nio.file.AccessDeniedException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,9 +38,9 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
         return ExceptionResponse.with("User not authenticated", e.getLocalizedMessage());
     }
 
-    @ExceptionHandler(value = {NotAuthorizedException.class})
+    @ExceptionHandler(value = {NotAuthorizedException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ExceptionResponse handleNotAuthorizedExceptions(NotAuthorizedException e) {
+    public ExceptionResponse handleNotAuthorizedExceptions(RuntimeException e) {
         return ExceptionResponse.with("User not authorized for action or resource", e.getLocalizedMessage());
     }
 
@@ -70,7 +72,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(value = {UserNotFoundException.class})
     public ExceptionResponse handleUserNotFoundException(UserNotFoundException e) {
-        return ExceptionResponse.with("User not found", "No user exists with given username");
+        return ExceptionResponse.with("User not found", e.getLocalizedMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
@@ -80,10 +82,18 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
         return ExceptionResponse.with("Incorrect input", List.of("Something went wrong during persistence"));
     }
 
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(value = {AccountException.class})
+    public ExceptionResponse handleAccountException(AccountException e) {
+        LOG.error(Arrays.toString(e.getStackTrace()));
+        return ExceptionResponse.with("Account exception", e.getLocalizedMessage());
+    }
+
+
     @ExceptionHandler(value = {Exception.class, RuntimeException.class})
     @ResponseStatus(HttpStatus.CONFLICT)
     public ExceptionResponse handleRuntimeException(RuntimeException e) {
-        LOG.error(Arrays.toString(e.getStackTrace()));
+        e.printStackTrace();
         return ExceptionResponse.with("Unexpected error", e.getMessage());
     }
 }

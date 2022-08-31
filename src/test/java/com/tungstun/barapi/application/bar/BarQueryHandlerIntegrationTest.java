@@ -4,6 +4,8 @@ import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bar.BarBuilder;
+import com.tungstun.barapi.domain.person.Person;
+import com.tungstun.barapi.domain.person.PersonBuilder;
 import com.tungstun.barapi.port.persistence.bar.SpringBarRepository;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
@@ -33,10 +35,13 @@ public class BarQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get all bars of bar owner returns bars")
     void getAllBarsOfBarOwner_ReturnsBars() {
-        repository.save(new BarBuilder("bar").build()); //Not owned bar
-        Bar bar = repository.save(new BarBuilder("bar2").build());
-        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
-        user.newBarAuthorization(bar.getId());
+        User user = new User(UUID.randomUUID(), "user", "", "", "", "", "+31612345678", new ArrayList<>());
+        user = userRepository.save(user);
+        Person owner = new PersonBuilder("owner").setUser(user).build();
+        Bar bar = repository.save(new BarBuilder("bar").setPeople(List.of(owner)).build());
+        repository.save(new BarBuilder("bar2").build()); //Not owned bar
+
+        user.newBarAuthorization(bar.getId(), owner);
         user = userRepository.save(user);
 
         List<Bar> resBars = barQueryHandler.handle(new ListOwnedBars(user.getUsername()));

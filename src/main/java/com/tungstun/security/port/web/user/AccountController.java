@@ -1,6 +1,6 @@
 package com.tungstun.security.port.web.user;
 
-import com.tungstun.common.response.IdResponse;
+import com.tungstun.common.response.UuidResponse;
 import com.tungstun.security.application.user.UserCommandHandler;
 import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.application.user.command.RegisterUser;
@@ -31,13 +31,13 @@ public class AccountController {
         this.converter = converter;
     }
 
-    @PostMapping
+    @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(
             value = "Registers new user",
             notes = "Provide account information in the request body to create a new user account"
     )
-    public IdResponse register(
+    public UuidResponse register(
             @Valid @RequestBody UserRegistrationRequest userRegistrationRequest
     ) throws AccountException {
         RegisterUser command = new RegisterUser(
@@ -48,7 +48,7 @@ public class AccountController {
                 userRegistrationRequest.mail(),
                 userRegistrationRequest.phoneNumber()
         );
-        return new IdResponse(userCommandHandler.registerUser(command));
+        return new UuidResponse(userCommandHandler.registerUser(command));
     }
 
     @GetMapping

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.tungstun.security.domain.user.Role;
 import com.tungstun.security.domain.user.User;
 
 import javax.persistence.Column;
@@ -30,24 +31,13 @@ public class Person {
     @JsonIgnore
     private User user;
 
-//    @JsonBackReference
-//    @OneToMany(
-//            mappedBy = "customer",
-//            cascade = CascadeType.ALL,
-//            orphanRemoval = true
-//    )
-//    private List<Bill> bills;
-
     public Person() {
     }
 
-    public Person(UUID id, String name, User user
-//                  , List<Bill> bills
-    ) {
+    public Person(UUID id, String name, User user) {
         this.id = id;
         this.name = name;
         this.user = user;
-//        this.bills = bills;
     }
 
     public UUID getId() {
@@ -66,23 +56,13 @@ public class Person {
         return user;
     }
 
-    public void setUser(User user) {
+    public void connectUser(User user, UUID barId) {
+        if (this.user != null) {
+            throw new IllegalStateException(String.format("Person with id %s is already connected to a user", id));
+        }
         this.user = user;
+        user.authorize(barId, Role.CUSTOMER, this);
     }
-
-//    public List<Bill> getBills() {
-//        return bills;
-//    }
-//
-//    public boolean addBill(Bill bill) {
-//        if (!this.bills.contains(bill)) return this.bills.add(bill);
-//        return false;
-//    }
-//
-//    public boolean removeBill(Bill bill) {
-//        return this.bills.remove(bill);
-//    }
-
 
     @Override
     public boolean equals(Object o) {

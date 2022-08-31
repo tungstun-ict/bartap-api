@@ -17,6 +17,7 @@ import javax.security.auth.login.LoginException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
+import java.util.UUID;
 
 @Service
 public class UserCommandHandler {
@@ -41,10 +42,11 @@ public class UserCommandHandler {
         this.registrationValidator = registrationValidator;
     }
 
-    public Long registerUser(RegisterUser command) throws AccountException {
+    public UUID registerUser(RegisterUser command) throws AccountException {
         registrationValidator.validateRegistrationDetails(command);
         String encodedPassword = passwordEncoder.encode(command.password());
         return userRepository.save(new User(
+                UUID.randomUUID(),
                 command.username(),
                 encodedPassword,
                 command.mail().strip(),
@@ -55,7 +57,7 @@ public class UserCommandHandler {
         )).getId();
     }
 
-    public Long handle(UpdateUser command) {
+    public UUID handle(UpdateUser command) {
         User user = (User) userQueryHandler.loadUserByUsername(command.username());
         if (command.firstName() != null) user.setFirstName(command.firstName());
         if (command.lastName() != null) user.setLastName(command.lastName());
@@ -82,7 +84,7 @@ public class UserCommandHandler {
     }
 
     public Map<String, String> handle(RefreshAccessToken command) {
-        jwtValidator.verifyRefreshToken(command.refreshToken());
+        jwtValidator.verifyToken(command.refreshToken());
         DecodedJWT accessTokenInfo = jwtValidator.verifyAccessToken(command.accessToken());
         User userDetails = (User) userQueryHandler.loadUserByUsername(accessTokenInfo.getSubject());
         String newAccessToken = jwtTokenGenerator.createAccessToken(userDetails);
