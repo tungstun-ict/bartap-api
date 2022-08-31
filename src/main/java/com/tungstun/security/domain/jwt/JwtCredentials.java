@@ -4,14 +4,13 @@ import com.auth0.jwt.algorithms.Algorithm;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Arrays;
-
 @Configuration
 @ConfigurationProperties(prefix = "com.tungstun.bartap.security.jwt")
 public class JwtCredentials {
     private String jwtSecret;
     private Long jwtExpirationInMs;
     private Long jwtRefreshExpirationInMs;
+    private Long jwtPersonConnectExpirationInMs;
     private String[] jwtAudience;
     private String jwtIssuer;
 
@@ -43,6 +42,14 @@ public class JwtCredentials {
         this.jwtRefreshExpirationInMs = jwtRefreshExpirationInMs;
     }
 
+    public Long getJwtPersonConnectExpirationInMs() {
+        return jwtPersonConnectExpirationInMs;
+    }
+
+    public void setJwtPersonConnectExpirationInMs(Long jwtPersonConnectExpirationInMs) {
+        this.jwtPersonConnectExpirationInMs = jwtPersonConnectExpirationInMs;
+    }
+
     public String[] getJwtAudience() {
         return jwtAudience;
     }
@@ -57,16 +64,5 @@ public class JwtCredentials {
 
     public void setJwtIssuer(String jwtIssuer) {
         this.jwtIssuer = jwtIssuer;
-    }
-
-    @Override
-    public String toString() {
-        return "JwtCredentials{" +
-                "jwtSecret='" + jwtSecret + '\'' +
-                ", jwtExpirationInMs=" + jwtExpirationInMs +
-                ", jwtRefreshExpirationInMs=" + jwtRefreshExpirationInMs +
-                ", jwtAudience=" + Arrays.toString(jwtAudience) +
-                ", jwtIssuer='" + jwtIssuer + '\'' +
-                '}';
     }
 }

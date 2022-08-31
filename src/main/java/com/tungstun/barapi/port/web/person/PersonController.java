@@ -3,6 +3,7 @@ package com.tungstun.barapi.port.web.person;
 import com.tungstun.barapi.application.person.PersonCommandHandler;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.command.CreatePerson;
+import com.tungstun.barapi.application.person.command.CreatePersonConnectionToken;
 import com.tungstun.barapi.application.person.command.DeletePerson;
 import com.tungstun.barapi.application.person.command.UpdatePerson;
 import com.tungstun.barapi.application.person.query.GetPerson;
@@ -15,13 +16,16 @@ import com.tungstun.barapi.port.web.person.response.PersonResponse;
 import com.tungstun.common.response.UuidResponse;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -67,6 +71,24 @@ public class PersonController {
     ) throws EntityNotFoundException {
         Person person = personQueryHandler.handle(new GetPerson(barId, personId));
         return converter.convert(person);
+    }
+
+    @GetMapping(path = "/{personId}/connect")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
+    @ApiOperation(
+            value = "Gets connection token of person of bar",
+            notes = "Provide id of bar and person to get a connection token that can be used to connect the person to a user",
+            response = PersonResponse.class
+    )
+    public ResponseEntity<Void> getPersonConnectionToken(
+            @ApiParam(value = "ID value for the bar you want to get the person's connection token from") @PathVariable("barId") UUID barId,
+            @ApiParam(value = "ID value for the person you want to retrieve the connection token from") @PathVariable("personId") UUID personId
+    ) throws EntityNotFoundException {
+        String token  = personCommandHandler.handle(new CreatePersonConnectionToken(barId, personId));
+
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.setAll(Map.of("connect_token", token));
+        return ResponseEntity.ok().headers(responseHeaders).build();
     }
 
     @PostMapping

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Component
@@ -45,6 +46,20 @@ public class JwtTokenGenerator {
                     .sign(credentials.algorithm());
         } catch (JWTCreationException e) {
             throw new JWTCreationException("Exception occurred during the creation of th refresh token", e);
+        }
+    }
+
+    public String createPersonConnectionToken(UUID barId, UUID customerId) {
+        try {
+            return JWT.create()
+                    .withIssuer(credentials.getJwtIssuer())
+                    .withAudience(credentials.getJwtAudience())
+                    .withExpiresAt(new Date(System.currentTimeMillis() + credentials.getJwtPersonConnectExpirationInMs()))
+                    .withClaim("bar_id", barId.toString())
+                    .withClaim("customer_id", customerId.toString())
+                    .sign(credentials.algorithm());
+        } catch (JWTCreationException e) {
+            throw new JWTCreationException("Exception occurred during the creation of the person connection token", e);
         }
     }
 }
