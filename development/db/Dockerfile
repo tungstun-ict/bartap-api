@@ -1,6 +1,6 @@
 FROM postgres:13-alpine
 
-COPY schema.sql /data/schema.sql
+COPY v2/schema-v2.sql /data/schema-v2.sql
 
 COPY create_users.sh /docker-entrypoint-initdb.d/01-create_users.sh
 COPY create_dbs.sh /docker-entrypoint-initdb.d/02-create_dbs.sh
