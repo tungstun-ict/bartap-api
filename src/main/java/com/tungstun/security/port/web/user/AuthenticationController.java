@@ -5,7 +5,7 @@ import com.tungstun.security.application.user.command.LogIn;
 import com.tungstun.security.application.user.command.RefreshAccessToken;
 import com.tungstun.security.port.web.user.request.LoginRequest;
 import com.tungstun.security.port.web.user.request.RefreshTokenRequest;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,20 +33,20 @@ public class AuthenticationController {
     }
 
     @PostMapping
-    @ApiOperation(
-            value = "Logs in user",
-            notes = "Provide login credentials in the request body to receive an access and refresh token"
+    @Operation(
+            summary = "Logs in a user",
+            description = "Log in using the provided login credentials and receive an access and refresh token"
     )
     public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) throws LoginException {
-        LogIn command = new LogIn(loginRequest.userIdentification(), loginRequest.password());
+        LogIn command = new LogIn(loginRequest.username(), loginRequest.password());
         Map<String, String> authorization = userCommandHandler.handle(command);
         return createResponseWithHeaders(authorization);
     }
 
     @PostMapping("/refresh")
-    @ApiOperation(
-            value = "Refreshes the user's access token",
-            notes = "Provide refresh token, access token in the request body to receive a new access token"
+    @Operation(
+            summary = "Refreshes the user's access token",
+            description = "Request a new access token using the old access token and the refresh token"
     )
     public ResponseEntity<Void> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         RefreshAccessToken command = new RefreshAccessToken(refreshTokenRequest.accessToken(), refreshTokenRequest.refreshToken());

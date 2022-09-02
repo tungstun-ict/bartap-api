@@ -8,12 +8,12 @@ import com.tungstun.security.domain.user.User;
 import com.tungstun.security.port.web.user.converter.UserConverter;
 import com.tungstun.security.port.web.user.request.UserRegistrationRequest;
 import com.tungstun.security.port.web.user.response.AccountResponse;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.security.auth.login.AccountException;
 import javax.validation.Valid;
@@ -33,9 +33,9 @@ public class AccountController {
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(
-            value = "Registers new user",
-            notes = "Provide account information in the request body to create a new user account"
+    @Operation(
+            summary = "Registers a user",
+            description = "Create a new user account given the provided information"
     )
     public UuidResponse register(
             @Valid @RequestBody UserRegistrationRequest userRegistrationRequest
@@ -53,8 +53,11 @@ public class AccountController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Gets all information of logged in user")
-    public AccountResponse getAccountInformation(@ApiIgnore Authentication authentication) {
+    @Operation(
+            summary = "Gets account information",
+            description = "Gets all account information of the logged in in user"
+    )
+    public AccountResponse getAccountInformation(@Parameter(hidden = true) Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = (User) userQueryHandler.loadUserByUsername(userDetails.getUsername());
 

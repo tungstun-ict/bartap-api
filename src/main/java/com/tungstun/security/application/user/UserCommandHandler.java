@@ -7,8 +7,6 @@ import com.tungstun.security.domain.jwt.JwtValidator;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
 import com.tungstun.security.util.account.RegistrationValidator;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -70,7 +68,7 @@ public class UserCommandHandler {
     }
 
     public Map<String, String> handle(LogIn command) throws LoginException {
-        User user = (User) loadUserByMailOrUsername(command.username());
+        User user = (User) userQueryHandler.loadUserByUsername(command.username());
         user.canAuthenticate();
         if (!passwordEncoder.matches(command.password(), user.getPassword())) {
             throw new LoginException("Incorrect password");
@@ -89,10 +87,5 @@ public class UserCommandHandler {
         User userDetails = (User) userQueryHandler.loadUserByUsername(accessTokenInfo.getSubject());
         String newAccessToken = jwtTokenGenerator.createAccessToken(userDetails);
         return Collections.singletonMap("access_token", newAccessToken);
-    }
-
-    public UserDetails loadUserByMailOrUsername(String username) {
-        return userRepository.findByMailOrUsername(username, username)
-                .orElseThrow(() -> new UsernameNotFoundException(String.format("No user found with the username '%s'", username)));
     }
 }
