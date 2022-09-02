@@ -12,8 +12,8 @@ import com.tungstun.barapi.port.web.bill.converter.BillConverter;
 import com.tungstun.barapi.port.web.bill.request.CreateBillRequest;
 import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -41,15 +41,14 @@ public class BillController {
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds bill of bar",
-            notes = "Provide categoryId of bar, session and bill to look up the specific bill from session from the bar",
-            response = BillResponse.class
+    @Operation(
+            summary = "Finds bill of bar",
+            description = "Find the bill of session of bar with the given id's"
     )
     public BillResponse getBillOfBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve the bill from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to retrieve the bill from") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to retrieve") @PathVariable("billId") UUID billId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         Bill bill = billQueryHandler.handle(new GetBill(barId, sessionId, billId));
         return converter.convert(bill);
@@ -58,14 +57,13 @@ public class BillController {
     @GetMapping("/people/{personId}/bills")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds bills of customer of bar",
-            notes = "Provide categoryId of bar and customer to look up all bills from session from the bar",
-            response = BillResponse.class
+    @Operation(
+            summary = "Finds bills of customer",
+            description = "Find all the bills of customer of bar with given id's"
     )
     public List<BillSummaryResponse> getBillsOfCustomerOfBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve the bills from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the customer you want to retrieve the bill from") @PathVariable("personId") UUID personId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the customer") @PathVariable("personId") UUID personId
     ) throws EntityNotFoundException {
         List<Bill> bills = billQueryHandler.handle(new ListBillsOfCustomer(barId, personId));
         return converter.convertAllToSummary(bills);
@@ -74,14 +72,13 @@ public class BillController {
     @PostMapping("/sessions/{sessionId}/")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Creates new bill for session of bar",
-            notes = "Provide categoryId of bar and session to add a new bill with information from the request body to session of the bar",
-            response = BillResponse.class
+    @Operation(
+            summary = "Adds bill for customer to session",
+            description = "Add new bill for a customer to a session if that person did not already have a bill active in the session"
     )
     public UUID createBillForBar(
-            @ApiParam(value = "ID value for the bar you want to create a new bill for") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to add a new bill to") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
             @Valid @RequestBody CreateBillRequest createBillRequest
     ) throws EntityNotFoundException {
         AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, createBillRequest.customerId());
@@ -91,15 +88,14 @@ public class BillController {
     @PatchMapping("/sessions/{sessionId}/bills/{billId}/pay")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
-    @ApiOperation(
-            value = "Updates the payment state of the bill of session of bar",
-            notes = "Provide categoryId of bar, session and bill to update isPayed to the requested isPayed state ",
-            response = BillResponse.class
+    @Operation(
+            summary = "Updates the payment state of the bill",
+            description = "Update the payment state of a bill to payed (payed = true)"
     )
     public void payOfBillOfBar(
-            @ApiParam(value = "ID value for the bar you want to update the bill from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to update the bill from") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to update") @PathVariable("billId") UUID billId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         PayBill command = new PayBill(barId, sessionId, billId);
         billCommandHandler.handle(command);
@@ -108,14 +104,14 @@ public class BillController {
     @DeleteMapping("/sessions/{sessionId}/bills/{billId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Deletes bill of session of bar",
-            notes = "Provide categoryId of bar, session and bill to delete bill of session of the bar"
+    @Operation(
+            summary = "Deletes bill of session",
+            description = "Delete bill of session of bar with the given id's"
     )
     public void deleteBill(
-            @PathVariable("barId") UUID barId,
-            @PathVariable("sessionId") UUID sessionId,
-            @PathVariable("billId") UUID billId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         DeleteBill command = new DeleteBill(barId, sessionId, billId);
         billCommandHandler.handle(command);
