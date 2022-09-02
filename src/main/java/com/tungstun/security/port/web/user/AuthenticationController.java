@@ -35,7 +35,8 @@ public class AuthenticationController {
     @PostMapping
     @Operation(
             summary = "Logs in a user",
-            description = "Log in using the provided login credentials and receive an access and refresh token"
+            description = "Log in using the provided login credentials and receive an access and refresh token",
+            tags = "Account"
     )
     public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest loginRequest) throws LoginException {
         LogIn command = new LogIn(loginRequest.username(), loginRequest.password());
@@ -46,7 +47,8 @@ public class AuthenticationController {
     @PostMapping("/refresh")
     @Operation(
             summary = "Refreshes the user's access token",
-            description = "Request a new access token using the old access token and the refresh token"
+            description = "Request a new access token using the old access token and the refresh token",
+            tags = "Account"
     )
     public ResponseEntity<Void> refreshToken(@Valid @RequestBody RefreshTokenRequest refreshTokenRequest) {
         RefreshAccessToken command = new RefreshAccessToken(refreshTokenRequest.accessToken(), refreshTokenRequest.refreshToken());

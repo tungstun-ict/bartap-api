@@ -44,7 +44,8 @@ public class CategoryController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds all categories of bar",
-            description = "Find all the categories of the bar with the given id"
+            description = "Find all the categories of the bar with the given id",
+            tags = "Category"
     )
     public List<CategoryResponse> getCategoriesOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId
@@ -58,7 +59,8 @@ public class CategoryController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds category",
-            description = "Find category of bar with given id's"
+            description = "Find category of bar with given id's",
+            tags = "Category"
     )
     public CategoryResponse getCategoryOfBar(
             @Param(value = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -73,7 +75,8 @@ public class CategoryController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Creates a category",
-            description = "Create a new category for a bar with the given information"
+            description = "Create a new category for a bar with the given information",
+            tags = "Category"
     )
     public UuidResponse addCategoryToBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -88,7 +91,8 @@ public class CategoryController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Updates a category of bar",
-            description = "Update a category of a bar with the given information"
+            description = "Update a category of a bar with the given information",
+            tags = "Category"
     )
     public UuidResponse updateCategoryOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -103,7 +107,8 @@ public class CategoryController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Deletes a category",
-            description = "Delete a category of a bar with given id's"
+            description = "Delete a category of a bar with given id's",
+            tags = "Category"
     )
     public void deleteCategoryOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,

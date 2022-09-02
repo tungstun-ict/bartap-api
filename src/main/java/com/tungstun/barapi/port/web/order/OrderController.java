@@ -47,7 +47,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds the order history of a session",
-            description = "Find the full order history of all orders added and removed during the session"
+            description = "Find the full order history of all orders added and removed during the session",
+            tags = "Order"
     )
     public List<OrderHistoryEntryResponse> getSessionOrderHistory(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -62,7 +63,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds the order history of a bill",
-            description = "Find the full order history of all orders added to and removed from a bill during its session"
+            description = "Find the full order history of all orders added to and removed from a bill during its session",
+            tags = "Order"
     )
     public List<OrderHistoryEntryResponse> getBillOrderHistory(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -78,7 +80,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds orders of a session",
-            description = "Find all orders of a session of a bar with the given id's"
+            description = "Find all orders of a session of a bar with the given id's",
+            tags = "Order"
     )
     public List<OrderResponse> getAllSessionOrders(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -93,7 +96,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds orders of bill",
-            description = "Finds all orders of a bill of a session of a bar with the given id's"
+            description = "Finds all orders of a bill of a session of a bar with the given id's",
+            tags = "Order"
     )
     public List<OrderResponse> getAllBillOrders(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -109,7 +113,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds an order",
-            description = "Find an order of a bill of a session of a bar with the given id's"
+            description = "Find an order of a bill of a session of a bar with the given id's",
+            tags = "Order"
     )
     public OrderResponse getOrderFromBill(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -126,7 +131,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Adds new order to bill",
-            description = "Create a new order and add it the the bill of a session of a bar with the given id's"
+            description = "Create a new order and add it the the bill of a session of a bar with the given id's",
+            tags = "Order"
     )
     public UuidResponse createNewOrder(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -152,7 +158,8 @@ public class OrderController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Remove order from bill",
-            description = "Remove an order from a bill of a session of a bar"
+            description = "Remove an order from a bill of a session of a bar",
+            tags = "Order"
     )
     public void deleteOrder(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,

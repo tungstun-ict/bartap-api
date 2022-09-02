@@ -35,7 +35,8 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Registers a user",
-            description = "Create a new user account given the provided information"
+            description = "Create a new user account given the provided information",
+            tags = "Account"
     )
     public UuidResponse register(
             @Valid @RequestBody UserRegistrationRequest userRegistrationRequest
@@ -55,7 +56,8 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Gets account information",
-            description = "Get all account information of the logged in in user"
+            description = "Get all account information of the logged in in user",
+            tags = "Account"
     )
     public AccountResponse getAccountInformation(@Parameter(hidden = true) Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();

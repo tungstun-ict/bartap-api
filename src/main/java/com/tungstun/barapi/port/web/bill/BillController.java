@@ -43,7 +43,8 @@ public class BillController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds bill of bar",
-            description = "Find the bill of session of bar with the given id's"
+            description = "Find the bill of session of bar with the given id's",
+            tags = "Bill"
     )
     public BillResponse getBillOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -59,7 +60,8 @@ public class BillController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds bills of customer",
-            description = "Find all the bills of customer of bar with given id's"
+            description = "Find all the bills of customer of bar with given id's",
+            tags = "Bill"
     )
     public List<BillSummaryResponse> getBillsOfCustomerOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -74,7 +76,8 @@ public class BillController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Adds bill for customer to session",
-            description = "Add new bill for a customer to a session if that person did not already have a bill active in the session"
+            description = "Add new bill for a customer to a session if that person did not already have a bill active in the session",
+            tags = "Bill"
     )
     public UUID createBillForBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -90,7 +93,8 @@ public class BillController {
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @Operation(
             summary = "Updates the payment state of the bill",
-            description = "Update the payment state of a bill to payed (payed = true)"
+            description = "Update the payment state of a bill to payed (payed = true)",
+            tags = "Bill"
     )
     public void payOfBillOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -106,7 +110,8 @@ public class BillController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Deletes bill of session",
-            description = "Delete bill of session of bar with the given id's"
+            description = "Delete bill of session of bar with the given id's",
+            tags = "Bill"
     )
     public void deleteBill(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,

@@ -50,7 +50,8 @@ public class PersonController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds people of a bar",
-            description = "Find all people of a bar with the given id"
+            description = "Find all people of a bar with the given id",
+            tags = "Person"
     )
     public List<PersonResponse> getAllPeopleOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId
@@ -64,7 +65,8 @@ public class PersonController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds person of a bar",
-            description = "Find a person of a bar with the given id's"
+            description = "Find a person of a bar with the given id's",
+            tags = "Person"
     )
     public PersonResponse getPersonOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
@@ -78,7 +80,8 @@ public class PersonController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Creates a person connection token for a user",
-            description = "Creates and returns a connection token a user can use to connect with a person/customer of a bar so long no other user is connected to the person"
+            description = "Creates and returns a connection token a user can use to connect with a person/customer of a bar so long no other user is connected to the person",
+            tags = "Person"
     )
     public ResponseEntity<Void> getPersonConnectionToken(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
@@ -96,7 +99,8 @@ public class PersonController {
 //    @PreAuthorize("hasPermission(#barId, {})") todo Make sure is authorized, not perse role authorized
     @Operation(
             summary = "Connects a user and a person",
-            description = "Connects a user with a person using the person's connection token"
+            description = "Connects a user with a person using the person's connection token",
+            tags = "Person"
     )
     public void connectUserToPerson(
             @Parameter(hidden = true) Authentication authentication,
@@ -113,7 +117,8 @@ public class PersonController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Creates a person",
-            description = "Create a new person for a bar with the given id"
+            description = "Create a new person for a bar with the given id",
+            tags = "Person"
     )
     public UuidResponse createNewPersonForBar(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
@@ -128,7 +133,8 @@ public class PersonController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Updates a person of a bar",
-            description = "Update a person of a bar with the given information"
+            description = "Update a person of a bar with the given information",
+            tags = "Person"
     )
     public UuidResponse updatePerson(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
@@ -144,7 +150,8 @@ public class PersonController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Deletes a person from a bar",
-            description = "Delete a person of a bar with the given id's"
+            description = "Delete a person of a bar with the given id's",
+            tags = "Person"
     )
     public void deletePerson(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,

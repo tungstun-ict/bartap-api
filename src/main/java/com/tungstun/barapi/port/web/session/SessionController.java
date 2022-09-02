@@ -44,7 +44,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds sessions of a bar",
-            description = "Find all session of a bar with the given id's"
+            description = "Find all session of a bar with the given id's",
+            tags = "Session"
     )
     public List<SessionResponse> getAllBarSessions(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId
@@ -58,7 +59,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds active session of a bar",
-            description = "Find the currently active session of a bar with the given id if one is active"
+            description = "Find the currently active session of a bar with the given id if one is active",
+            tags = "Session"
     )
     public SessionResponse getActiveBarSessions(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId
@@ -72,7 +74,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds session of a bar",
-            description = "Find a session of a bar with the given id's"
+            description = "Find a session of a bar with the given id's",
+            tags = "Session"
     )
     public SessionResponse getBarSessionsById(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -87,7 +90,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Creates a new session for a bar",
-            description = "Create a new session for a bar with the given id if there is no currently active bar"
+            description = "Create a new session for a bar with the given id if there is no currently active bar",
+            tags = "Session"
     )
     public UuidResponse createNewSession(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -102,7 +106,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Updates a session for a bar",
-            description = "Update a session of a bar with the given information"
+            description = "Update a session of a bar with the given information",
+            tags = "Session"
     )
     public UuidResponse updateSession(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -118,7 +123,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @Operation(
             summary = "Ends a session of a bar",
-            description = "End a session of a bar with the given id's"
+            description = "End a session of a bar with the given id's",
+            tags = "Session"
     )
     public void endSession(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -133,7 +139,8 @@ public class SessionController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Deletes a session of a bar",
-            description = "Delete a session of a bar with the given id's"
+            description = "Delete a session of a bar with the given id's",
+            tags = "Session"
     )
     public void deleteSession(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,

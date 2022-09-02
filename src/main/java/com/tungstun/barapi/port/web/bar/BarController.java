@@ -43,7 +43,8 @@ public class BarController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Finds all owned bars",
-            description = "Finds all bars that are owned by the logged in user"
+            description = "Finds all bars that are owned by the logged in user",
+            tags = "Bar"
     )
     public List<BarResponse> getAllBarOwnerBars(@Parameter(hidden = true) Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
@@ -56,7 +57,8 @@ public class BarController {
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @Operation(
             summary = "Finds bar by id",
-            description = "Finds bar with the given id"
+            description = "Finds bar with the given id",
+            tags = "Bar"
     )
     public BarResponse getBar(
             @Parameter(description = "Id value of the bar you want to retrieve") @PathVariable("barId") UUID barId
@@ -69,7 +71,8 @@ public class BarController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(
             summary = "Creates a bar",
-            description = "Creates a new bar with the given information"
+            description = "Creates a new bar with the given information",
+            tags = "Bar"
     )
     public UuidResponse addBar(
             @Valid @RequestBody CreateBarRequest request,
@@ -90,7 +93,8 @@ public class BarController {
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @Operation(
             summary = "Updates bar",
-            description = "Update bar with id's details with the given information"
+            description = "Update bar with id's details with the given information",
+            tags = "Bar"
     )
     public UuidResponse updateBar(
             @Parameter(description = "Id value of the bar you want to update") @PathVariable("barId") UUID barId,
@@ -112,7 +116,8 @@ public class BarController {
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
     @Operation(
             summary = "Deletes a bar",
-            description = "Delete bar with th given id"
+            description = "Delete bar with th given id",
+            tags = "Bar"
     )
     public void deleteBar(
             @Parameter(description = "Id value for the bar you want to delete") @PathVariable("barId") UUID barId

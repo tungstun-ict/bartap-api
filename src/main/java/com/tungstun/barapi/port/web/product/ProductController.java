@@ -43,7 +43,8 @@ public class ProductController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds products of a bar",
-            description = "Find all products of a bar with the given id, which can be filtered by: product type, category, favorites and any provided search term"
+            description = "Find all products of a bar with the given id, which can be filtered by: product type, category, favorites and any provided search term",
+            tags = "Product"
     )
     public List<ProductResponse> getAllProductsOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -67,7 +68,8 @@ public class ProductController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Finds product of a bar",
-            description = "Find a product of a bar with the given id's"
+            description = "Find a product of a bar with the given id's",
+            tags = "Product"
     )
     public ProductResponse getProductOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -82,7 +84,8 @@ public class ProductController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Creates a new product",
-            description = "Create a new product for a bar with the given information"
+            description = "Create a new product for a bar with the given information",
+            tags = "Product"
     )
     public UuidResponse addProductOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -106,7 +109,8 @@ public class ProductController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Updates a product of a bar",
-            description = "Update a product of a bar with the given information"
+            description = "Update a product of a bar with the given information",
+            tags = "Product"
     )
     public UuidResponse updateProductOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
@@ -132,7 +136,8 @@ public class ProductController {
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
     @Operation(
             summary = "Deletes a product of a bar",
-            description = "Delete a product of a bar with the given id's"
+            description = "Delete a product of a bar with the given id's",
+            tags = "Product"
     )
     public void deleteProductFromBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,

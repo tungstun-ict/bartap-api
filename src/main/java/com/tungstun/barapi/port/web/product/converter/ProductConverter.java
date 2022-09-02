@@ -10,15 +10,15 @@ import java.util.stream.Collectors;
 @Component
 public class ProductConverter {
     public ProductResponse convert(Product product) {
-        ProductResponse response =  new ProductResponse();
-        response.setId(product.getId());
-        response.setName(product.getName());
-        response.setSize(product.getSize());
-        response.setPrice(product.getPrice().amount().doubleValue());
-        response.setFavorite(product.isFavorite());
-        response.setBrand(product.getBrand());
-        response.setCategory(product.getCategory());
-        return response;
+        return new ProductResponse(
+                product.getId(),
+                product.getName(),
+                product.getBrand(),
+                product.getSize(),
+                product.getPrice().amount().doubleValue(),
+                product.isFavorite(),
+                product.getCategory()
+        );
     }
 
     public List<ProductResponse> convertAll(List<Product> products) {
