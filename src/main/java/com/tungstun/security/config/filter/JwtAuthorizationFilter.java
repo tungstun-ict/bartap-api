@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,8 +23,8 @@ import java.util.*;
  * the Authorization header of the incoming request.
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    private final String[] ignoredPaths;
     private final JwtValidator validator;
+    private final String[] ignoredPaths;
 
     public JwtAuthorizationFilter(
             AuthenticationManager authenticationManager,
@@ -37,8 +38,8 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return Arrays.stream(this.ignoredPaths)
-                .anyMatch(path -> path.equals(request.getRequestURI()));
+        return Arrays.stream(ignoredPaths)
+                .anyMatch(path -> new AntPathMatcher().match(path, request.getRequestURI()));
     }
 
     @Override

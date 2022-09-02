@@ -38,8 +38,6 @@ public class ProductSimilaritySearchAlgorithm implements ProductSearchAlgorithm 
         String completeName = brand + " " + name;
         String completeNameReversed = name + " " + brand;
         Pattern regexPattern =  Pattern.compile("(.*)" + searchString + "(.*)", Pattern.CASE_INSENSITIVE);
-        System.out.println(Stream.of(completeName, completeNameReversed, brand, name)
-                .map(right -> JACCARD_SIMILARITY.apply(searchString, right)).collect(Collectors.toList()));
         return Stream.of(completeName, completeNameReversed, brand, name)
                 .map(right -> JACCARD_SIMILARITY.apply(searchString, right)) // Calculate similarity index of all string combinations
                 .reduce((l, r) -> l > r ? l : r) // Reduce stream to the highest similarity value

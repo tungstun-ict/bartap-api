@@ -109,8 +109,6 @@ public class Bar {
     }
 
     public void connectUserToPerson(User user, UUID personId) {
-        people.stream()
-                .filter(person -> person.getUser() != null).forEach(p -> System.out.println(p.getUser().getId()));
         boolean isAlreadyConnected = people
                 .stream()
                 .filter(person -> person.getUser() != null)
@@ -150,24 +148,12 @@ public class Bar {
         return this.products.add(product);
     }
 
-    public boolean removeProduct(Product product) {
-        return this.products.remove(product);
-    }
-
     public List<Session> getSessions() {
         return this.sessions;
     }
 
-    public boolean removeSession(Session session) {
-        return this.sessions.remove(session);
-    }
-
     public List<Category> getCategories() {
         return categories;
-    }
-
-    public boolean removeCategory(Category category) {
-        return this.categories.remove(category);
     }
 
     @Override

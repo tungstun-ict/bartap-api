@@ -4,6 +4,7 @@ import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
 import com.tungstun.barapi.port.web.order.converter.OrderConverter;
+import com.tungstun.barapi.port.web.person.converter.PersonConverter;
 import com.tungstun.barapi.port.web.session.converter.SessionConverter;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
@@ -15,17 +16,19 @@ import java.util.stream.Collectors;
 public class BillConverter {
     private final OrderConverter orderConverter;
     private final SessionConverter sessionConverter;
+    private final PersonConverter personConverter;
 
-    public BillConverter(OrderConverter orderConverter, @Lazy SessionConverter sessionConverter) {
+    public BillConverter(OrderConverter orderConverter, @Lazy SessionConverter sessionConverter, PersonConverter personConverter) {
         this.orderConverter = orderConverter;
         this.sessionConverter = sessionConverter;
+        this.personConverter = personConverter;
     }
 
     public BillResponse convert(Bill bill) {
         return new BillResponse(
                 bill.getId(),
                 bill.isPayed(),
-                bill.getCustomer(),
+                personConverter.convert(bill.getCustomer()),
                 bill.calculateTotalPrice(),
                 orderConverter.convertAll(bill.getOrders())
         );

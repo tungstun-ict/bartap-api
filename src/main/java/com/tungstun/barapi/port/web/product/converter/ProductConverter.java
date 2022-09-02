@@ -1,6 +1,7 @@
 package com.tungstun.barapi.port.web.product.converter;
 
 import com.tungstun.barapi.domain.product.Product;
+import com.tungstun.barapi.port.web.category.converter.CategoryConverter;
 import com.tungstun.barapi.port.web.product.response.ProductResponse;
 import org.springframework.stereotype.Component;
 
@@ -9,6 +10,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class ProductConverter {
+    private final CategoryConverter categoryConverter;
+
+    public ProductConverter(CategoryConverter categoryConverter) {
+        this.categoryConverter = categoryConverter;
+    }
+
     public ProductResponse convert(Product product) {
         return new ProductResponse(
                 product.getId(),
@@ -17,7 +24,7 @@ public class ProductConverter {
                 product.getSize(),
                 product.getPrice().amount().doubleValue(),
                 product.isFavorite(),
-                product.getCategory()
+                categoryConverter.convert(product.getCategory())
         );
     }
 

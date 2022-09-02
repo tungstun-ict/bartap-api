@@ -1,6 +1,6 @@
 package com.tungstun.barapi.port.web.product.response;
 
-import com.tungstun.barapi.domain.product.Category;
+import com.tungstun.barapi.port.web.category.response.CategoryResponse;
 
 import java.util.UUID;
 
@@ -11,5 +11,5 @@ public record ProductResponse(
         double size,
         double price,
         boolean isFavorite,
-        Category category) {
+        CategoryResponse category) {
 }
