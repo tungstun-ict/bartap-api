@@ -35,7 +35,6 @@ public class Bill {
 
     @ManyToOne
     @JoinColumn(name = "session_id")
-//    @Where(clause = "deleted = false")
     private Session session;
 
     @JsonManagedReference
@@ -70,9 +69,9 @@ public class Bill {
                 .sum();
     }
 
-    private boolean addHistoryEntry(OrderHistoryType type, Order order, Person customer) {
+    private void addHistoryEntry(OrderHistoryType type, Order order, Person customer) {
         OrderProduct product = order.getProduct();
-        return history.add(new OrderHistoryEntry(
+        history.add(new OrderHistoryEntry(
                 UUID.randomUUID(),
                 type,
                 order.getCreationDate(),

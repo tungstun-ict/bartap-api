@@ -4,6 +4,7 @@ import com.tungstun.common.phonenumber.PhoneNumber;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import javax.persistence.Embedded;
 
 @Embeddable
 public class BarDetails {
@@ -16,7 +17,7 @@ public class BarDetails {
     @Column(name = "mail")
     private String mail;
 
-    @Column(name = "phone_number")
+    @Embedded
     private PhoneNumber phoneNumber;
 
     public BarDetails() {

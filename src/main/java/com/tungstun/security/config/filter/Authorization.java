@@ -1,4 +1,6 @@
 package com.tungstun.security.config.filter;
 
-public record Authorization(String barId, String role) {
+import java.util.UUID;
+
+public record Authorization(UUID barId, String role) {
 }

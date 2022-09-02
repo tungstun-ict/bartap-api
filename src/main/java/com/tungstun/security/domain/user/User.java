@@ -32,7 +32,6 @@ public class User implements UserDetails {
     @Column(name = "last_name")
     private String lastName;
 
-    @Column(name = "phone_number")
     @Embedded
     private PhoneNumber phoneNumber;
 
@@ -135,16 +134,12 @@ public class User implements UserDetails {
     }
 
     private boolean addAuthorization(UUID barId, Role role, Person person) {
-        System.out.println(authorizations.stream()
-                .anyMatch(authorization -> authorization.getBarId().equals(barId)));
-
         authorizations.stream()
                 .filter(authorization -> authorization.getBarId().equals(barId))
-//                .filter(authorization -> authorization.getRole() != (Role.OWNER)) // Cannot unmake yourself Owner
                 .findAny()
                 .ifPresentOrElse(
                         authorization -> authorization.updateRole(role),
-                        () -> authorizations.add(new Authorization(barId, role, person)));
+                        () -> authorizations.add(new Authorization(UUID.randomUUID(), barId, role, person)));
         return true;
     }
 

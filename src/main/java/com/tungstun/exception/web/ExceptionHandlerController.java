@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import javax.naming.directory.InvalidAttributesException;
 import javax.persistence.EntityNotFoundException;
 import javax.security.auth.login.AccountException;
+import javax.security.auth.login.LoginException;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import java.nio.file.AccessDeniedException;
@@ -74,6 +75,14 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     public ExceptionResponse handleUserNotFoundException(UserNotFoundException e) {
         return ExceptionResponse.with("User not found", e.getLocalizedMessage());
     }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(value = {LoginException.class})
+    public ExceptionResponse handleLoginException(LoginException e) {
+        return ExceptionResponse.with("Login failed", e.getLocalizedMessage());
+    }
+
+
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(value = {DataIntegrityViolationException.class})

@@ -71,7 +71,7 @@ class UserTest {
                 "first",
                 "last",
                 "+31612345678",
-                new ArrayList<>(List.of(new Authorization(barId, Role.OWNER, null))));
+                new ArrayList<>(List.of(new Authorization(UUID.randomUUID(), barId, Role.OWNER, null))));
         user = new User(
                 UUID.randomUUID(),
                 "username",

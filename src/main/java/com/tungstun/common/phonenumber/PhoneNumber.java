@@ -4,6 +4,7 @@ import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
@@ -23,6 +24,7 @@ public class PhoneNumber implements Serializable {
             "Provided phone number may contain ' ', '-' and '.' characters anywhere, " +
             "except in front of the  country code (i.e. +31)";
 
+    @Column(name = "phone_number")
     private String value;
 
     public PhoneNumber() {

@@ -11,8 +11,7 @@ import static javax.persistence.EnumType.STRING;
 @Table(name = "\"authorization\"")
 public class Authorization {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     @Column(name = "bar_id")
     private UUID barId;
@@ -26,13 +25,14 @@ public class Authorization {
 
     public Authorization() {
     }
-    public Authorization(UUID barId, Role role, Person person) {
+    public Authorization(UUID id, UUID barId, Role role, Person person) {
+        this.id = id;
         this.barId = barId;
         this.role = role;
         this.person = person;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

@@ -15,10 +15,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 /**
  * Tries to authorize a user, based on the Bearer token (JWT) from
@@ -27,10 +24,6 @@ import java.util.Optional;
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
     private final String[] ignoredPaths;
     private final JwtValidator validator;
-
-    public JwtAuthorizationFilter(AuthenticationManager authenticationManager, JwtValidator validator) {
-        this(authenticationManager, validator, new String[]{});
-    }
 
     public JwtAuthorizationFilter(
             AuthenticationManager authenticationManager,
@@ -63,7 +56,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         try {
             DecodedJWT decodedJWT = validator.verifyAccessToken(accessToken);
 
-            Long userId = Optional.ofNullable(decodedJWT.getClaim("client_id").asLong())
+            UUID userId = Optional.of(UUID.fromString(decodedJWT.getClaim("client_id").asString()))
                     .orElseThrow(() -> new JWTDecodeException("No client_id in access token"));
 
             String username = decodedJWT.getSubject();
@@ -71,7 +64,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
                     .asMap()
                     .entrySet()
                     .stream()
-                    .map(entry -> new Authorization(entry.getKey(), (String) entry.getValue()))
+                    .map(entry -> new Authorization(UUID.fromString(entry.getKey()), (String) entry.getValue()))
                     .toList();
             UserProfile principal = new UserProfile(userId, username, authorizations);
             Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());

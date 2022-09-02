@@ -3,18 +3,11 @@ package com.tungstun.security.config.filter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
-public record UserProfile(Long id, String username, List<Authorization> authorizations) implements UserDetails {
-    public Long getId() {
+public record UserProfile(UUID id, String username, List<Authorization> authorizations) implements UserDetails {
+    public UUID getId() {
         return id;
-    }
-
-    public List<Authorization> getAuthorizations() {
-        return authorizations;
     }
 
     @Override
