@@ -13,8 +13,9 @@ import com.tungstun.barapi.port.web.category.request.CreateCategoryRequest;
 import com.tungstun.barapi.port.web.category.request.UpdateCategoryRequest;
 import com.tungstun.barapi.port.web.category.response.CategoryResponse;
 import com.tungstun.common.response.UuidResponse;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -41,13 +42,12 @@ public class CategoryController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds all categories of bar",
-            notes = "Provide categoryId of bar to look up all categories that are linked to the bar",
-            response = CategoryResponse.class
+    @Operation(
+            summary = "Finds all categories of bar",
+            description = "Find all the categories of the bar with the given id"
     )
     public List<CategoryResponse> getCategoriesOfBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve categories from") @PathVariable("barId") UUID barId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId
     ) throws EntityNotFoundException {
         List<Category> categories = categoryQueryHandler.handle(new ListCategoriesOfBar(barId));
         return converter.convertAll(categories);
@@ -56,14 +56,13 @@ public class CategoryController {
     @GetMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds category of bar",
-            notes = "Provide categoryId of bar and category to look up the specific category from the bar",
-            response = CategoryResponse.class
+    @Operation(
+            summary = "Finds category",
+            description = "Find category of bar with given id's"
     )
     public CategoryResponse getCategoryOfBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve the category from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the category you want to retrieve") @PathVariable("categoryId") UUID categoryId
+            @Param(value = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Param(value = "Id value of the category") @PathVariable("categoryId") UUID categoryId
     ) throws EntityNotFoundException {
         Category category = categoryQueryHandler.handle(new GetCategory(barId, categoryId));
         return converter.convert(category);
@@ -72,13 +71,12 @@ public class CategoryController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Creates new category for bar",
-            notes = "Provide categoryId of bar to add new category with information from the request body to the bar",
-            response = CategoryResponse.class
+    @Operation(
+            summary = "Creates a category",
+            description = "Create a new category for a bar with the given information"
     )
     public UuidResponse addCategoryToBar(
-            @ApiParam(value = "ID value for the bar you want to create a new category for") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
             @Valid @RequestBody CreateCategoryRequest request
     ) throws EntityNotFoundException {
         CreateCategory command = new CreateCategory(barId, request.name());
@@ -88,14 +86,13 @@ public class CategoryController {
     @PutMapping("/{categoryId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Updates the category of bar",
-            notes = "Provide categoryId of bar to update the category with information from the request body",
-            response = CategoryResponse.class
+    @Operation(
+            summary = "Updates a category of bar",
+            description = "Update a category of a bar with the given information"
     )
     public UuidResponse updateCategoryOfBar(
-            @ApiParam(value = "ID value for the bar you want to update the category from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the category you want to update") @PathVariable("categoryId") UUID categoryId,
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the category") @PathVariable("categoryId") UUID categoryId,
             @Valid @RequestBody UpdateCategoryRequest request
     ) throws EntityNotFoundException {
         UpdateCategory command = new UpdateCategory(barId, categoryId, request.name());
@@ -104,14 +101,13 @@ public class CategoryController {
 
     @DeleteMapping("/{categoryId}")
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Deletes the category of bar",
-            notes = "Provide categoryId of bar to delete the category of bar",
-            response = CategoryResponse.class
+    @Operation(
+            summary = "Deletes a category",
+            description = "Delete a category of a bar with given id's"
     )
     public void deleteCategoryOfBar(
-            @ApiParam(value = "ID value for the bar you want to delete the category from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the category you want to delete") @PathVariable("categoryId") UUID categoryId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the category") @PathVariable("categoryId") UUID categoryId
     ) throws EntityNotFoundException {
         DeleteCategory command = new DeleteCategory(categoryId);
         categoryCommandHandler.handle(command);
