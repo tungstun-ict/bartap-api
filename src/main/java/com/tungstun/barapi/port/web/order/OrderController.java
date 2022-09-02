@@ -13,15 +13,14 @@ import com.tungstun.barapi.port.web.order.request.CreateOrderRequest;
 import com.tungstun.barapi.port.web.order.response.OrderHistoryEntryResponse;
 import com.tungstun.barapi.port.web.order.response.OrderResponse;
 import com.tungstun.common.response.UuidResponse;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -46,15 +45,13 @@ public class OrderController {
     @GetMapping("sessions/{sessionId}/order-history")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds the full order history of session of bar",
-            notes = "Provide id of bar and session to look up full order history that are linked session",
-            response = OrderResponse.class,
-            responseContainer = "List"
+    @Operation(
+            summary = "Finds the order history of a session",
+            description = "Find the full order history of all orders added and removed during the session"
     )
     public List<OrderHistoryEntryResponse> getSessionOrderHistory(
-            @ApiParam(value = "ID value for the bar you want to retrieve order history from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to retrieve order history from") @PathVariable("sessionId") UUID sessionId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         List<OrderHistoryEntry> orderHistory = orderQueryHandler.handle(new ListOrderHistoryOfSession(barId, sessionId));
         return orderHistoryEntryConverter.convertAll(orderHistory);
@@ -63,16 +60,14 @@ public class OrderController {
     @GetMapping("sessions/{sessionId}/bills/{billId}/order-history")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds the full order history of bill of session",
-            notes = "Provide id of bar, session and bill to look up full order history that are linked bill",
-            response = OrderResponse.class,
-            responseContainer = "List"
+    @Operation(
+            summary = "Finds the order history of a bill",
+            description = "Find the full order history of all orders added to and removed from a bill during its session"
     )
     public List<OrderHistoryEntryResponse> getBillOrderHistory(
-            @ApiParam(value = "ID value for the bar you want to retrieve order history from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to retrieve order history from") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to retrieve order history from") @PathVariable("billId") UUID billId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         List<OrderHistoryEntry> orderHistory = orderQueryHandler.handle(new ListOrderHistory(barId, sessionId, billId));
         return orderHistoryEntryConverter.convertAll(orderHistory);
@@ -81,15 +76,13 @@ public class OrderController {
     @GetMapping("sessions/{sessionId}/orders")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds all orders of session of bar",
-            notes = "Provide categoryId of bar and session to look up all orders that are linked session of the bar",
-            response = OrderResponse.class,
-            responseContainer = "List"
+    @Operation(
+            summary = "Finds orders of a session",
+            description = "Find all orders of a session of a bar with the given id's"
     )
     public List<OrderResponse> getAllSessionOrders(
-            @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") UUID sessionId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId
     ) throws EntityNotFoundException {
         List<Order> orders = orderQueryHandler.handle(new ListOrdersOfSession(barId, sessionId));
         return orderConverter.convertAll(orders);
@@ -98,15 +91,14 @@ public class OrderController {
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds orders of bill of session of bar",
-            notes = "Provide categoryId of bar, session, bill and order to look up orders of bill of session of the bar",
-            response = OrderResponse.class
+    @Operation(
+            summary = "Finds orders of bill",
+            description = "Finds all orders of a bill of a session of a bar with the given id's"
     )
     public List<OrderResponse> getAllBillOrders(
-            @ApiParam(value = "ID value for the bar you want to retrieve orders from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to retrieve orders from") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to retrieve orders from") @PathVariable("billId") UUID billId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         List<Order> orders = orderQueryHandler.handle(new ListOrdersOfBill(barId, sessionId, billId));
         return orderConverter.convertAll(orders);
@@ -115,16 +107,15 @@ public class OrderController {
     @GetMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Finds order of bill of session of bar",
-            notes = "Provide categoryId of bar, session, bill and order to look up specific order of bill of session of the bar",
-            response = OrderResponse.class
+    @Operation(
+            summary = "Finds an order",
+            description = "Find an order of a bill of a session of a bar with the given id's"
     )
     public OrderResponse getOrderFromBill(
-            @ApiParam(value = "ID value for the bar you want to retrieve the order from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to retrieve the order from") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to retrieve the order from") @PathVariable("billId") UUID billId,
-            @ApiParam(value = "ID value for the order you want to retrieve") @PathVariable("orderId") UUID orderId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id values of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId,
+            @Parameter(description = "Id value of the order") @PathVariable("orderId") UUID orderId
     ) throws EntityNotFoundException {
         Order order = orderQueryHandler.handle(new GetOrder(barId, sessionId, billId, orderId));
         return orderConverter.convert(order);
@@ -133,17 +124,16 @@ public class OrderController {
     @PutMapping("sessions/{sessionId}/bills/{billId}")
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Create new order for bill of session of bar",
-            notes = "Provide categoryId of bar, session and bill to create a new order with information from request body",
-            response = OrderResponse.class
+    @Operation(
+            summary = "Adds new order to bill",
+            description = "Create a new order and add it the the bill of a session of a bar with the given id's"
     )
     public UuidResponse createNewOrder(
-            @ApiParam(value = "ID value for the bar you want to add the new order to") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to add the new order to") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to add the new order to") @PathVariable("billId") UUID billId,
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id values of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId,
             @Valid @RequestBody CreateOrderRequest request,
-            @ApiIgnore Authentication authentication
+            @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         AddOrder command = new AddOrder(
@@ -160,15 +150,15 @@ public class OrderController {
     @DeleteMapping("sessions/{sessionId}/bills/{billId}/orders/{orderId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
-    @ApiOperation(
-            value = "Deletes order of bill of session of bar",
-            notes = "Provide categoryId of bar, session, bill and order to delete specific order of bill of session of the bar"
+    @Operation(
+            summary = "Remove order from bill",
+            description = "Remove an order from a bill of a session of a bar"
     )
     public void deleteOrder(
-            @ApiParam(value = "ID value for the bar you want to delete the order from") @PathVariable("barId") UUID barId,
-            @ApiParam(value = "ID value for the session you want to delete the order from") @PathVariable("sessionId") UUID sessionId,
-            @ApiParam(value = "ID value for the bill you want to delete the order from") @PathVariable("billId") UUID billId,
-            @ApiParam(value = "ID value for the order you want to delete") @PathVariable("orderId") UUID orderId
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id values of the session") @PathVariable("sessionId") UUID sessionId,
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId,
+            @Parameter(description = "Id value of the order") @PathVariable("orderId") UUID orderId
     ) throws EntityNotFoundException {
         RemoveOrder command = new RemoveOrder(barId, sessionId, billId, orderId);
         orderCommandHandler.handle(command);
