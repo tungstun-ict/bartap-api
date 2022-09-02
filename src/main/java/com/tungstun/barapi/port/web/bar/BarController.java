@@ -13,14 +13,13 @@ import com.tungstun.barapi.port.web.bar.request.CreateBarRequest;
 import com.tungstun.barapi.port.web.bar.request.UpdateBarRequest;
 import com.tungstun.barapi.port.web.bar.response.BarResponse;
 import com.tungstun.common.response.UuidResponse;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-import springfox.documentation.annotations.ApiIgnore;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
@@ -42,12 +41,11 @@ public class BarController {
 
     @GetMapping("owned")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(
-            value = "Finds all bars owned by user",
-            notes = "Look up a all owned bars",
-            response = BarResponse.class
+    @Operation(
+            summary = "Finds all owned bars",
+            description = "Finds all bars that are owned by the logged in user"
     )
-    public List<BarResponse> getAllBarOwnerBars(@ApiIgnore Authentication authentication) {
+    public List<BarResponse> getAllBarOwnerBars(@Parameter(hidden = true) Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<Bar> allBars = barQueryHandler.handle(new ListOwnedBars(userDetails.getUsername()));
         return converter.convertAll(allBars);
@@ -56,13 +54,12 @@ public class BarController {
     @GetMapping("/{barId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
-    @ApiOperation(
-            value = "Finds bar by categoryId",
-            notes = "Provide categoryId to look up a specific bar",
-            response = BarResponse.class
+    @Operation(
+            summary = "Finds bar by id",
+            description = "Finds bar with the given id"
     )
     public BarResponse getBar(
-            @ApiParam(value = "ID value for the bar you want to retrieve") @PathVariable("barId") UUID barId
+            @Parameter(description = "Id value of the bar you want to retrieve") @PathVariable("barId") UUID barId
     ) throws EntityNotFoundException {
         Bar bar = barQueryHandler.handle(new GetBar(barId));
         return converter.convert(bar);
@@ -70,14 +67,13 @@ public class BarController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(
-            value = "Creates a new bar",
-            notes = "Provide bar information in the request body to create a new bar",
-            response = BarResponse.class
+    @Operation(
+            summary = "Creates a bar",
+            description = "Creates a new bar with the given information"
     )
     public UuidResponse addBar(
             @Valid @RequestBody CreateBarRequest request,
-            @ApiIgnore Authentication authentication
+            @Parameter(hidden = true) Authentication authentication
     ) {
         CreateBar command = new CreateBar(
                 request.address(),
@@ -92,13 +88,12 @@ public class BarController {
     @PutMapping("/{barId}")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
-    @ApiOperation(
-            value = "Updates bar",
-            notes = "Provide categoryId of bar to update the bar with bar information in the request body",
-            response = BarResponse.class
+    @Operation(
+            summary = "Updates bar",
+            description = "Update bar with id's details with the given information"
     )
     public UuidResponse updateBar(
-            @ApiParam(value = "ID value for the bar you want to update") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the bar you want to update") @PathVariable("barId") UUID barId,
             @Valid @RequestBody UpdateBarRequest request
     ) throws EntityNotFoundException {
         UpdateBar command = new UpdateBar(
@@ -115,12 +110,12 @@ public class BarController {
     @DeleteMapping("/{barId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PreAuthorize("hasPermission(#barId, {'OWNER'})")
-    @ApiOperation(
-            value = "Deletes a bar",
-            notes = "Provide categoryId to delete a specific bar"
+    @Operation(
+            summary = "Deletes a bar",
+            description = "Delete bar with th given id"
     )
     public void deleteBar(
-            @ApiParam(value = "ID value for the bar you want to delete") @PathVariable("barId") UUID barId
+            @Parameter(description = "Id value for the bar you want to delete") @PathVariable("barId") UUID barId
     ) {
         DeleteBar command = new DeleteBar(barId);
         barCommandHandler.handle(command);
