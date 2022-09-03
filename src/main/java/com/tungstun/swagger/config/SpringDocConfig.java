@@ -9,7 +9,7 @@ import io.swagger.v3.oas.models.annotations.OpenAPI31;
 @OpenAPI31
 @OpenAPIDefinition(
         info = @Info(
-                title = "bartap backend Api",
+                title = "bartap backend API",
                 description = "The backend API for for the bartap project",
                 version = "2.0",
                 contact = @Contact(
