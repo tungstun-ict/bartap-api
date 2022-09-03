@@ -7,5 +7,6 @@ public record UserAccountSummaryResponse(
         String username,
         String firstName,
         String lastName,
-        String mail) {
+        String mail,
+        String phoneNumber) {
 }

@@ -34,7 +34,8 @@ public class UserConverter {
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
-                user.getMail()
+                user.getMail(),
+                user.getPhoneNumber().getValue()
         );
     }
 
