@@ -35,7 +35,7 @@ public class User implements UserDetails {
     @Embedded
     private PhoneNumber phoneNumber;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Authorization> authorizations;
 
     public User() {

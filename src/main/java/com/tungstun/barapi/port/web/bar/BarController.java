@@ -41,6 +41,7 @@ public class BarController {
 
     @GetMapping("owned")
     @ResponseStatus(HttpStatus.OK)
+//    @PreAuthorize("hasPermission(#barId, {'OWNER'})") Authenticate, not authorize,,, with no role
     @Operation(
             summary = "Finds all owned bars",
             description = "Finds all bars that are owned by the logged in user",
