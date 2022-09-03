@@ -83,7 +83,7 @@ public class UserCommandHandler {
 
     public Map<String, String> handle(RefreshAccessToken command) {
         jwtValidator.verifyToken(command.refreshToken());
-        DecodedJWT accessTokenInfo = jwtValidator.verifyAccessToken(command.accessToken());
+        DecodedJWT accessTokenInfo = jwtValidator.verifyAccessTokenSignature(command.accessToken());
         User userDetails = (User) userQueryHandler.loadUserByUsername(accessTokenInfo.getSubject());
         String newAccessToken = jwtTokenGenerator.createAccessToken(userDetails);
         return Collections.singletonMap("access_token", newAccessToken);
