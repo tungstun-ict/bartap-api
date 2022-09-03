@@ -1,8 +1,5 @@
 package com.tungstun.barapi.domain.bill;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.product.Product;
 import com.tungstun.barapi.domain.session.Session;
@@ -15,10 +12,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Entity
 @Table(name = "bill")
 @SQLDelete(sql = "UPDATE bill SET deleted = true WHERE id=?")
@@ -37,7 +30,6 @@ public class Bill {
     @JoinColumn(name = "session_id")
     private Session session;
 
-    @JsonManagedReference
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Person customer;

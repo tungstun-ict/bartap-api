@@ -34,9 +34,4 @@ public class DefaultPersonRepository implements PersonRepository {
     public Optional<Person> findById(UUID id) {
         return repository.findById(id);
     }
-
-//    @Override
-//    public List<Person> findAllByBarId(UUID barId) {
-//        return repository.findAllByBarId(barId);
-//    }
 }

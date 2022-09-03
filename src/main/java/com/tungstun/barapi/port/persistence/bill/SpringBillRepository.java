@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface SpringBillRepository extends JpaRepository<Bill, UUID> {
-//    Optional<Bill> findByIdAndBarId(UUID id, UUID barId);
 }

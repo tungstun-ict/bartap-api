@@ -6,5 +6,4 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface SpringPersonRepository extends JpaRepository<Person, UUID> {
-//    List<Person> findAllByBarId(UUID barId);
 }

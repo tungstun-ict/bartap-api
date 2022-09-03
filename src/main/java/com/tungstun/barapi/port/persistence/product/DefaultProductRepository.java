@@ -34,24 +34,4 @@ public class DefaultProductRepository implements ProductRepository {
     public Optional<Product> findById(UUID id) {
         return repository.findById(id);
     }
-
-//    @Override
-//    public Optional<Product> findByIdAndBarId(UUID id, UUID barId) {
-//        return repository.findByIdAndBarId(id, barId);
-//    }
-//
-//    @Override
-//    public List<Product> findAllOfBar(UUID barId) {
-//        return repository.findAllByBarId(barId);
-//    }
-//
-//    @Override
-//    public List<Product> findAllOfCategory(UUID categoryId, UUID barId) {
-//        return repository.findAllByCategoryIdAndBarId(categoryId, barId);
-//    }
-//
-//    @Override
-//    public void delete(UUID id, UUID barId) {
-//        repository.deleteByIdAndBarId(id, barId);
-//    }
 }

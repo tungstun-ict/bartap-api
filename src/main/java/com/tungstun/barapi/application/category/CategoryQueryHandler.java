@@ -24,7 +24,7 @@ public class CategoryQueryHandler {
                 .stream()
                 .filter(category -> category.getId().equals(command.categoryId()))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("No category found with productId: " + command.categoryId()));
+                .orElseThrow(() -> new EntityNotFoundException("No category found with id: " + command.categoryId()));
     }
 
     public List<Category> handle(ListCategoriesOfBar command) {

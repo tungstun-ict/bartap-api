@@ -11,12 +11,4 @@ public interface ProductRepository {
     void delete(UUID id);
 
     Optional<Product> findById(UUID id);
-
-//    Optional<Product> findByIdAndBarId(UUID id, UUID barId);
-//
-//    List<Product> findAllOfBar(UUID barId);
-//
-//    List<Product> findAllOfCategory(UUID categoryId, UUID barId);
-//
-//    void delete(UUID id, UUID barId);
 }

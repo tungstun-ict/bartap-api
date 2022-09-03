@@ -34,14 +34,4 @@ public class DefaultCategoryRepository implements CategoryRepository {
     public Optional<Category> findById(UUID id) {
         return repository.findById(id);
     }
-
-//    @Override
-//    public Optional<Category> findByIdAndBarId(UUID id, UUID barId) {
-//        return repository.findByIdAndBarId(id, barId);
-//    }
-//
-//    @Override
-//    public List<Category> findAllOfBar(UUID barId) {
-//        return repository.findAllByBarId(barId);
-//    }
 }

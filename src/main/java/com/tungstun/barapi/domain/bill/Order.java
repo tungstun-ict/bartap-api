@@ -1,8 +1,5 @@
 package com.tungstun.barapi.domain.bill;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.barapi.domain.person.Person;
 
 import javax.persistence.*;
@@ -11,11 +8,6 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.UUID;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
 @Entity
 @Table(name = "\"order\"")
 public class Order {

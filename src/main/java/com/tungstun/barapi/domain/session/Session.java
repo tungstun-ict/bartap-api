@@ -1,9 +1,5 @@
 package com.tungstun.barapi.domain.session;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.sun.jdi.request.DuplicateRequestException;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.BillFactory;
@@ -21,11 +17,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-//@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "session")
 @SQLDelete(sql = "UPDATE session SET deleted = true WHERE id=?")
@@ -49,8 +40,6 @@ public class Session {
     @Column(name = "locked", nullable = false)
     private boolean ended;
 
-    @JsonIdentityReference(alwaysAsId = true)
-    @JsonIgnore
     @OneToMany(
             mappedBy = "session",
             orphanRemoval = true,

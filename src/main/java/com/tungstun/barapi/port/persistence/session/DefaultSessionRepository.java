@@ -34,14 +34,4 @@ public class DefaultSessionRepository implements SessionRepository {
     public Optional<Session> findById(UUID id) {
         return repository.findById(id);
     }
-
-//    @Override
-//    public Optional<Session> findByIdAndBarId(UUID id, UUID barId) {
-//        return repository.findByIdAndBarId(id, barId);
-//    }
-//
-//    @Override
-//    public List<Session> findAllByBarId(UUID id) {
-//        return repository.findAllByBarId(id);
-//    }
 }

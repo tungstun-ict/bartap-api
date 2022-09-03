@@ -1,25 +1,14 @@
 package com.tungstun.barapi.domain.person;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.tungstun.security.domain.user.Role;
 import com.tungstun.security.domain.user.User;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 import java.util.Objects;
 import java.util.UUID;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
+@Table(name = "person")
 public class Person {
     @Id
     private UUID id;
@@ -28,7 +17,6 @@ public class Person {
     private String name;
 
     @OneToOne
-    @JsonIgnore
     private User user;
 
     public Person() {

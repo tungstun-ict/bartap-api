@@ -1,6 +1,5 @@
 package com.tungstun.barapi.domain.product;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tungstun.common.money.Money;
 import org.hibernate.annotations.Where;
 
@@ -11,7 +10,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
 @Table(name = "product")
 @Where(clause = "deleted = false")

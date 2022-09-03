@@ -11,8 +11,4 @@ public interface SessionRepository {
     void delete(UUID id);
 
     Optional<Session> findById(UUID id);
-//
-//    Optional<Session> findByIdAndBarId(UUID id, UUID barId);
-//
-//    List<Session> findAllByBarId(UUID id);
 }

@@ -11,6 +11,4 @@ public interface BillRepository {
     void delete(UUID id);
 
     Optional<Bill> findById(UUID id);
-
-//    Optional<Bill> findByIdAndBarId(UUID id, UUID barId);
 }

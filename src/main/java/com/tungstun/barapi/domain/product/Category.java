@@ -1,8 +1,5 @@
 package com.tungstun.barapi.domain.product;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -12,11 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.util.UUID;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "category")
 @SQLDelete(sql = "UPDATE category SET deleted = true WHERE id=?")
