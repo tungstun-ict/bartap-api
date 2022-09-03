@@ -84,7 +84,7 @@ public class BillController {
             @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
             @Valid @RequestBody CreateBillRequest createBillRequest
     ) throws EntityNotFoundException {
-        AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, createBillRequest.customerId());
+        AddCustomerToSession command = new AddCustomerToSession(barId, sessionId, createBillRequest.personId());
         return billCommandHandler.handle(command);
     }
 
