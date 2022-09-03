@@ -36,18 +36,21 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(value = {NotAuthenticatedException.class})
     public ExceptionResponse handleNotAuthenticatedExceptions(NotAuthenticatedException e) {
+        e.printStackTrace();
         return ExceptionResponse.with("User not authenticated", e.getLocalizedMessage());
     }
 
     @ExceptionHandler(value = {NotAuthorizedException.class, AccessDeniedException.class})
     @ResponseStatus(HttpStatus.FORBIDDEN)
     public ExceptionResponse handleNotAuthorizedExceptions(RuntimeException e) {
+        e.printStackTrace();
         return ExceptionResponse.with("User not authorized for action or resource", e.getLocalizedMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(value = {EntityNotFoundException.class,})
     public ExceptionResponse mainHandler(Exception e) {
+        e.printStackTrace();
         return ExceptionResponse.with("Error", e.getLocalizedMessage());
     }
 
@@ -57,6 +60,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
             DuplicateRequestException.class
     })
     public ExceptionResponse invalidArgsHandler(RuntimeException e) {
+        e.printStackTrace();
         return ExceptionResponse.with("Error", e.getLocalizedMessage());
     }
 
@@ -67,18 +71,21 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
                 .stream()
                 .map(ConstraintViolation::getMessage)
                 .toList();
+        e.printStackTrace();
         return ExceptionResponse.with("Incorrect input", violationMessages);
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(value = {UserNotFoundException.class})
     public ExceptionResponse handleUserNotFoundException(UserNotFoundException e) {
+        e.printStackTrace();
         return ExceptionResponse.with("User not found", e.getLocalizedMessage());
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)
     @ExceptionHandler(value = {LoginException.class})
     public ExceptionResponse handleLoginException(LoginException e) {
+        e.printStackTrace();
         return ExceptionResponse.with("Login failed", e.getLocalizedMessage());
     }
 
