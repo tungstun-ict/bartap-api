@@ -96,7 +96,6 @@ public class PersonController {
 
     @PostMapping(path = "/connect-user")
     @ResponseStatus(HttpStatus.OK)
-//    @PreAuthorize("hasPermission(#barId, {})") todo Make sure is authorized, not perse role authorized
     @Operation(
             summary = "Connects a user and a person",
             description = "Connects a user with a person using the person's connection token",
@@ -109,7 +108,7 @@ public class PersonController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         User user = (User) userQueryHandler.loadUserByUsername(userDetails.getUsername());
 
-      personCommandHandler.handle(new ConnectUserToPerson(user.getUsername(), request.token()));
+        personCommandHandler.handle(new ConnectUserToPerson(user.getUsername(), request.token()));
     }
 
     @PostMapping("/bars/{barId}/people")
