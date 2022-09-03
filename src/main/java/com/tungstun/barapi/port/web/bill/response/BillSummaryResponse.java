@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public record BillSummaryResponse(
     UUID id,
-    boolean isPayed,
+    Boolean isPayed,
     Double totalPrice,
     SessionSummaryResponse session) {
 }

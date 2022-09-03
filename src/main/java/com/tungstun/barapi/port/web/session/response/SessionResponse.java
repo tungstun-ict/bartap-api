@@ -13,6 +13,6 @@ public record SessionResponse(
         String name,
         LocalDateTime creationDate,
         LocalDateTime closedDate,
-        boolean isLocked,
+        Boolean isLocked,
         List<BillResponse> bills) {
 }

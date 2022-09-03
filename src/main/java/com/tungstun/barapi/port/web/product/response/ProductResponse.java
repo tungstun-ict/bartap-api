@@ -8,8 +8,8 @@ public record ProductResponse(
         UUID id,
         String name,
         String brand,
-        double size,
-        double price,
-        boolean isFavorite,
+        Double size,
+        Double price,
+        Boolean isFavorite,
         CategoryResponse category) {
 }

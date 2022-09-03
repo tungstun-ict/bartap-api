@@ -11,9 +11,11 @@ import java.util.stream.Collectors;
 @Component
 public class OrderConverter {
     private final PersonConverter personConverter;
+    private final OrderProductConverter orderProductConverter;
 
-    public OrderConverter(PersonConverter personConverter) {
+    public OrderConverter(PersonConverter personConverter, OrderProductConverter orderProductConverter) {
         this.personConverter = personConverter;
+        this.orderProductConverter = orderProductConverter;
     }
 
     public OrderResponse convert(Order order) {
@@ -21,7 +23,7 @@ public class OrderConverter {
                 order.getId(),
                 order.getAmount(),
                 order.getCreationDate(),
-                order.getProduct(),
+                orderProductConverter.convert(order.getProduct()),
                 personConverter.convert(order.getBartender())
         );
     }

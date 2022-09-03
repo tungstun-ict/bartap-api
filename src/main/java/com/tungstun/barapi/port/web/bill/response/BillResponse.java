@@ -8,7 +8,7 @@ import java.util.UUID;
 
 public record BillResponse(
         UUID id,
-        boolean isPayed,
+        Boolean isPayed,
         PersonResponse customer,
         Double totalPrice,
         List<OrderResponse> orders) {
