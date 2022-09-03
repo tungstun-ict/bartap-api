@@ -5,5 +5,5 @@ import java.util.UUID;
 
 public record CreateBillRequest(
         @NotNull
-        UUID customerId) {
+        UUID personId) {
 }
