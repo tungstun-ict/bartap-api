@@ -24,6 +24,7 @@ public class ProductConverter {
                 product.getSize(),
                 product.getPrice().amount().doubleValue(),
                 product.isFavorite(),
+                product.getType().toString(),
                 categoryConverter.convert(product.getCategory())
         );
     }
