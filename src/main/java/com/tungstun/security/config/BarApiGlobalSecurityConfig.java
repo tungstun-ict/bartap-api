@@ -36,6 +36,15 @@ public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguratio
         return expressionHandler;
     }
 
+
+    @Configuration
+    @EnableWebSecurity
+    @EnableGlobalMethodSecurity(
+            prePostEnabled = true,
+            securedEnabled = true,
+            jsr250Enabled = true)
+    public static class EmbeddedWebBarApiWebSecurityConfigurerAdapter extends BarApiWebSecurityConfig { }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(4);

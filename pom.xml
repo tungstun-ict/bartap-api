@@ -156,7 +156,6 @@
 				<version>3.0.0-M7</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
-					<outputDir>${basedir}/reports/junit</outputDir>
 				</configuration>
 			</plugin>
 
@@ -179,8 +178,11 @@
 							<goal>report</goal>
 						</goals>
 						<configuration>
+							<formats>
+								<format>XML</format>
+								<format>HTML</format>
+							</formats>
 							<excludes>
-								<outputDirectory>${basedir}/reports/jacoco</outputDirectory>
 								<exclude>**/BarApiApplication.*</exclude>
 							</excludes>
 						</configuration>
