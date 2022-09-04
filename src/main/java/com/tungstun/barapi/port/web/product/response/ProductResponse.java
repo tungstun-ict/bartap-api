@@ -11,6 +11,6 @@ public record ProductResponse(
         Double size,
         Double price,
         Boolean isFavorite,
-        String type,
+        String productType,
         CategoryResponse category) {
 }
