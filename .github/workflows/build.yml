@@ -33,7 +33,7 @@ jobs:
       - name: JaCoCo Report
         uses: Madrapps/jacoco-report@v1.2
         with:
-          paths: ${{github.workspace}}**/surefire-reports/**/*.xml
+          paths: ${{github.workspace}/surefire-reports/*.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: JaCoCo Test Coverage
           min-coverage-overall: 50
@@ -42,7 +42,7 @@ jobs:
       - name: JaCoCo Code Coverage Report
         uses: PavanMudigonda/jacoco-reporter@v4.5
         with:
-          coverage_results_path: ${{ github.workspace }}**/surefire-reports/**/*.xml
+          coverage_results_path: ${{ github.workspace }}/surefire-reports/*.xml
           coverage_report_name: Coverage
           coverage_report_title: JaCoCo
           github_token: ${{ secrets.GITHUB_TOKEN }}

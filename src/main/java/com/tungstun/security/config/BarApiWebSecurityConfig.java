@@ -46,7 +46,7 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter  imple
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.httpBasic().disable()
                 .cors()
                 .and()
                 .csrf()
