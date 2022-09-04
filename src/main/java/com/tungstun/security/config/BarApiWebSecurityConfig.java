@@ -8,8 +8,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter  implements WebMvcConfigurer{
     private static final String LOGIN_PATH = "/api/authenticate";
     private static final String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
     private static final String REGISTER_PATH = "/api/register";
@@ -31,6 +33,16 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private JwtValidator validator;
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .exposedHeaders("*");
+        WebMvcConfigurer.super.addCorsMappings(registry);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
