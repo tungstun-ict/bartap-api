@@ -4,14 +4,13 @@ import com.tungstun.security.config.filter.JwtAuthorizationFilter;
 import com.tungstun.security.domain.jwt.JwtValidator;
 import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter  implements WebMvcConfigurer{
+public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
     private static final String LOGIN_PATH = "/api/authenticate";
     private static final String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
     private static final String REGISTER_PATH = "/api/register";
@@ -46,17 +45,15 @@ public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter  imple
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.httpBasic().disable()
-                .cors()
-                .and()
-                .csrf()
-                .disable()
+        http.cors().and()
+                .csrf().disable()
+                .formLogin().disable()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.POST, new String[]{
+                .antMatchers(ArrayUtils.addAll(SWAGGER_PATHS,
                         REGISTER_PATH,
                         LOGIN_PATH,
                         LOGIN_REFRESH_PATH
-                }).permitAll()
+                )).permitAll()
                 .antMatchers(SWAGGER_PATHS).permitAll()
                 .anyRequest().authenticated()
                 .and()
