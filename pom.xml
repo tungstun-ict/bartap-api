@@ -63,6 +63,7 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
+			<version>42.5.0</version>
 			<scope>runtime</scope>
 		</dependency>
 
@@ -152,73 +153,75 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>2.22.2</version>
+				<version>3.0.0-M7</version>
 				<configuration>
 					<useSystemClassLoader>false</useSystemClassLoader>
+					<outputDir>${basedir}/reports/junit</outputDir>
 				</configuration>
 			</plugin>
 
-<!--			<plugin>-->
-<!--				<groupId>org.jacoco</groupId>-->
-<!--				<artifactId>jacoco-maven-plugin</artifactId>-->
-<!--				<version>0.8.6</version>-->
-<!--				<executions>-->
-<!--					<execution>-->
-<!--						<id>pre-unit-test</id>-->
-<!--						<goals>-->
-<!--							<goal>prepare-agent</goal>-->
-<!--						</goals>-->
-<!--					</execution>-->
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.8</version>
+				<executions>
+					<execution>
+						<id>pre-unit-test</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
 
-<!--					<execution>-->
-<!--						<id>post-unit-test</id>-->
-<!--						<phase>test</phase>-->
-<!--						<goals>-->
-<!--							<goal>report</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<excludes>-->
-<!--								<exclude>**/LingoApplication.*</exclude>-->
-<!--							</excludes>-->
-<!--						</configuration>-->
-<!--					</execution>-->
+					<execution>
+						<id>post-unit-test</id>
+						<phase>test</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<outputDirectory>${basedir}/reports/jacoco</outputDirectory>
+								<exclude>**/BarApiApplication.*</exclude>
+							</excludes>
+						</configuration>
+					</execution>
 
-<!--					<execution>-->
-<!--						<id>jacoco-check</id>-->
-<!--						<goals>-->
-<!--							<goal>check</goal>-->
-<!--						</goals>-->
-<!--						<configuration>-->
-<!--							<rules>-->
-<!--								<rule>-->
-<!--									<element>BUNDLE</element>-->
-<!--									<limits>-->
-<!--										<limit>-->
-<!--											<counter>INSTRUCTION</counter>-->
-<!--											<value>COVEREDRATIO</value>-->
-<!--											<minimum>0.90</minimum>-->
-<!--										</limit>-->
-<!--										<limit>-->
-<!--											<counter>BRANCH</counter>-->
-<!--											<value>COVEREDRATIO</value>-->
-<!--											<minimum>0.90</minimum>-->
-<!--										</limit>-->
+					<execution>
+						<id>jacoco-check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>INSTRUCTION</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.60</minimum>
+										</limit>
+										<limit>
+											<counter>BRANCH</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.30</minimum>
+										</limit>
 <!--										<limit>-->
 <!--											<counter>CLASS</counter>-->
 <!--											<value>MISSEDCOUNT</value>-->
 <!--											<maximum>0</maximum>-->
 <!--										</limit>-->
-<!--									</limits>-->
-<!--								</rule>-->
-<!--							</rules>-->
-<!--						</configuration>-->
-<!--					</execution>-->
-<!--				</executions>-->
-<!--			</plugin>-->
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 <!--			<plugin>-->
 <!--				<groupId>org.pitest</groupId>-->
 <!--				<artifactId>pitest-maven</artifactId>-->
-<!--				<version>1.6.2</version>-->
+<!--				<version>1.9.5</version>-->
 <!--				<dependencies>-->
 <!--					<dependency>-->
 <!--						<groupId>org.pitest</groupId>-->
@@ -230,9 +233,7 @@
 <!--					<mutationThreshold>80</mutationThreshold>-->
 <!--					<timestampedReports>false</timestampedReports>-->
 <!--				</configuration>-->
-
 <!--			</plugin>-->
 		</plugins>
 	</build>
-
 </project>
