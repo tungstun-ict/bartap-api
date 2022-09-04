@@ -13,6 +13,8 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -21,12 +23,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         securedEnabled = true,
         jsr250Enabled = true)
 @Primary
-public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
+public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration implements WebMvcConfigurer {
     private final UserQueryHandler userQueryHandler;
 
     public BarApiGlobalSecurityConfig(@Lazy UserQueryHandler userQueryHandler) {
         this.userQueryHandler = userQueryHandler;
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .exposedHeaders("*");
+        WebMvcConfigurer.super.addCorsMappings(registry);
+    }
+
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
@@ -35,15 +48,6 @@ public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguratio
         expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(userQueryHandler));
         return expressionHandler;
     }
-
-
-    @Configuration
-    @EnableWebSecurity
-    @EnableGlobalMethodSecurity(
-            prePostEnabled = true,
-            securedEnabled = true,
-            jsr250Enabled = true)
-    public static class EmbeddedWebBarApiWebSecurityConfigurerAdapter extends BarApiWebSecurityConfig { }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
