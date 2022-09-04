@@ -28,7 +28,6 @@ public class JwtValidator {
         try {
             return verifier.verify(token);
         } catch (JWTVerificationException e) {
-            e.printStackTrace();
             throw new NotAuthenticatedException("Invalid token", e);
         }
     }

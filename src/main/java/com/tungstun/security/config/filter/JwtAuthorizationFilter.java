@@ -2,8 +2,13 @@ package com.tungstun.security.config.filter;
 
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tungstun.exception.NotAuthenticatedException;
+import com.tungstun.exception.web.ExceptionResponse;
 import com.tungstun.security.domain.jwt.JwtValidator;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -70,9 +75,16 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             UserProfile principal = new UserProfile(userId, username, authorizations);
             Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(auth);
-        } catch (JWTDecodeException | NotAuthenticatedException ignored) {
-            // Continue request without an Authentication bound to the session's request
+            chain.doFilter(request, response);
+        } catch (JWTDecodeException | NotAuthenticatedException e) {
+            returnUnAuthorizedResponse(response, e);
         }
-        chain.doFilter(request, response);
+    }
+    public void returnUnAuthorizedResponse(HttpServletResponse response, RuntimeException e) throws IOException {
+        ExceptionResponse res = ExceptionResponse.with("Invalid token", e.getLocalizedMessage());
+        String value = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(res);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON.toString());
+        response.getWriter().write(value);
     }
 }
