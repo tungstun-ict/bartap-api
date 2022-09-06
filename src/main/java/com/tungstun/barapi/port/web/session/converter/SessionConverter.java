@@ -24,7 +24,7 @@ public class SessionConverter {
                 session.getCreationDate(),
                 session.getEndDate(),
                 session.isActive(),
-                billConverter.convertAll(session.getBills())
+                billConverter.convertAllToSummary(session.getBills())
         );
     }
 

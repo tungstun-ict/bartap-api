@@ -1,7 +1,7 @@
 package com.tungstun.barapi.port.web.session.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.tungstun.barapi.port.web.bill.response.BillResponse;
+import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,5 +14,5 @@ public record SessionResponse(
         LocalDateTime creationDate,
         LocalDateTime closedDate,
         Boolean isLocked,
-        List<BillResponse> bills) {
+        List<BillSummaryResponse> bills) {
 }
