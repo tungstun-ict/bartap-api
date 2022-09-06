@@ -5,6 +5,7 @@ import com.tungstun.common.money.Money;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
+import java.util.Objects;
 import java.util.UUID;
 
 @Embeddable
@@ -46,5 +47,18 @@ public class OrderProduct {
 
     public Money getPrice() {
         return price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OrderProduct that = (OrderProduct) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -52,7 +52,8 @@ public class SpringDocConfig {
                         new Tag().name("Order").description("Functionality based around the Order"),
                         new Tag().name("Person").description("Functionality based around the Person"),
                         new Tag().name("Product").description("Functionality based around the Product"),
-                        new Tag().name("Session").description("Functionality based around the Session")
+                        new Tag().name("Session").description("Functionality based around the Session"),
+                        new Tag().name("Customer Statistics").description("Functionality based around the Account and Customer personalized statistics")
                 ));
     }
 }

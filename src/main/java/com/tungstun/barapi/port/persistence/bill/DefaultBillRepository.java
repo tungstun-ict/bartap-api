@@ -34,9 +34,4 @@ public class DefaultBillRepository implements BillRepository {
     public Optional<Bill> findById(UUID id) {
         return repository.findById(id);
     }
-
-//    @Override
-//    public Optional<Bill> findByIdAndBarId(UUID id, UUID barId) {
-//        return repository.findByIdAndBarId(id, barId);
-//    }
 }
