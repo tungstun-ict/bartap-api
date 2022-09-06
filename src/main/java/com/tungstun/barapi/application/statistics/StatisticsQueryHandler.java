@@ -1,14 +1,14 @@
 package com.tungstun.barapi.application.statistics;
 
 import com.tungstun.barapi.application.bar.BarQueryHandler;
+import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListConnectedBars;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPersonByUserUsername;
-import com.tungstun.barapi.application.statistics.model.CustomerStatistics;
-import com.tungstun.barapi.application.statistics.model.CustomerStatisticsUtil;
-import com.tungstun.barapi.application.statistics.model.GlobalCustomerStatistics;
+import com.tungstun.barapi.application.statistics.model.*;
+import com.tungstun.barapi.application.statistics.query.GetBarStatistics;
 import com.tungstun.barapi.application.statistics.query.GetCustomerStatistics;
 import com.tungstun.barapi.application.statistics.query.GetGlobalCustomerStatistics;
 import com.tungstun.barapi.domain.bar.Bar;
@@ -18,6 +18,7 @@ import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.session.Session;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -30,6 +31,46 @@ public class StatisticsQueryHandler {
         this.barQueryHandler = barQueryHandler;
         this.personQueryHandler = personQueryHandler;
         this.billQueryHandler = billQueryHandler;
+    }
+
+    public BarStatistics handle(GetBarStatistics query) {
+        Bar bar = barQueryHandler.handle(new GetBar(query.barId()));
+        List<Session> sessions = bar.getSessions();
+
+        LocalDateTime now = LocalDateTime.now();
+        OrderProduct mostSoldProductOfLastMonth = BarStatisticsUtil.mostSoldProduct(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
+        OrderProduct mostSoldProductOfLastYear = BarStatisticsUtil.mostSoldProduct(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
+        OrderProduct mostSoldProductOfAllTime = BarStatisticsUtil.mostSoldProduct(sessions);
+
+        Bill mostExpensiveBillOfLastMonth = BarStatisticsUtil.mostExpensiveBill(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
+        Bill mostExpensiveBillOfLastYear = BarStatisticsUtil.mostExpensiveBill(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
+        Bill mostExpensiveBillOfAllTime = BarStatisticsUtil.mostExpensiveBill(sessions);
+
+        double totalSpentLastMonth = BarStatisticsUtil.totalAmountSpent(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
+        double totalSpentOfLastYear = BarStatisticsUtil.totalAmountSpent(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
+        double totalSpentOfAllTime = BarStatisticsUtil.totalAmountSpent(sessions);
+
+        double totalNotYetPayedLastMonth = BarStatisticsUtil.totalAmountNotYetPayed(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
+        double totalNotYetPayedLastYear = BarStatisticsUtil.totalAmountNotYetPayed(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
+        double totalNotYetPayedAllTime = BarStatisticsUtil.totalAmountNotYetPayed(sessions);
+
+        return new BarStatistics(
+                mostSoldProductOfLastMonth,
+                mostSoldProductOfLastYear,
+                mostSoldProductOfAllTime,
+
+                mostExpensiveBillOfLastMonth,
+                mostExpensiveBillOfLastYear,
+                mostExpensiveBillOfAllTime,
+
+                totalSpentLastMonth,
+                totalSpentOfLastYear,
+                totalSpentOfAllTime,
+
+                totalNotYetPayedLastMonth,
+                totalNotYetPayedLastYear,
+                totalNotYetPayedAllTime
+        );
     }
 
     public CustomerStatistics handle(GetCustomerStatistics query) {
@@ -48,7 +89,6 @@ public class StatisticsQueryHandler {
                 favoriteProduct
         );
     }
-
 
     public GlobalCustomerStatistics handle(GetGlobalCustomerStatistics query) {
         List<Bill> bills = barQueryHandler.handle(new ListConnectedBars(query.username()))
@@ -71,6 +111,4 @@ public class StatisticsQueryHandler {
                 favoriteProduct
         );
     }
-
-
 }

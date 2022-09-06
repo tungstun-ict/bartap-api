@@ -23,7 +23,7 @@ public class CustomerStatisticsConverter {
         return new CustomerStatisticsResponse(
                 customerStatistics.totalSpent(),
                 customerStatistics.totalNotYetPayed(),
-                billConverter.convert(customerStatistics.highestPricedBill()),
+                billConverter.convertToSummary(customerStatistics.highestPricedBill()),
                 orderProductConverter.convert(customerStatistics.favoriteProduct())
         );
     }
