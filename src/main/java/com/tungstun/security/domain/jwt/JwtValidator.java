@@ -22,13 +22,14 @@ public class JwtValidator {
 
     private DecodedJWT verify(String token, JWTVerifier verifier) {
         if (token == null) {
+            System.out.println("demodemo");
+            System.out.println(token);
             throw new NotAuthenticatedException("Invalid token");
         }
 
         try {
             return verifier.verify(token);
         } catch (JWTVerificationException e) {
-            e.printStackTrace();
             throw new NotAuthenticatedException("Invalid token", e);
         }
     }
