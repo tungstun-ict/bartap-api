@@ -10,5 +10,5 @@ public record BillSummaryResponse(
     Boolean isPayed,
     Double totalPrice,
     SessionSummaryResponse session,
-    PersonResponse customerId) {
+    PersonResponse customer) {
 }
