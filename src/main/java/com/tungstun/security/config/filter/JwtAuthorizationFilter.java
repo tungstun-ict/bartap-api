@@ -81,6 +81,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
     public void returnUnAuthorizedResponse(HttpServletResponse response, RuntimeException e) throws IOException {
+        e.printStackTrace();
         ExceptionResponse res = ExceptionResponse.with("Invalid token", e.getLocalizedMessage());
         String value = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(res);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());
