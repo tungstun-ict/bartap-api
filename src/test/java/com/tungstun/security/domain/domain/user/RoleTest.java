@@ -1,4 +1,4 @@
-package com.tungstun.barapi.security.domain.user;
+package com.tungstun.security.domain.domain.user;
 
 import com.tungstun.security.domain.user.Role;
 import org.junit.jupiter.params.ParameterizedTest;

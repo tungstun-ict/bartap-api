@@ -1,4 +1,4 @@
-package com.tungstun.barapi.security.domain.user;
+package com.tungstun.security.domain.domain.user;
 
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.person.PersonBuilder;

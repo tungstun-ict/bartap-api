@@ -1,4 +1,4 @@
-package com.tungstun.barapi.security.domain.jwt;
+package com.tungstun.security.domain.domain.jwt;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tungstun.barapi.domain.person.Person;

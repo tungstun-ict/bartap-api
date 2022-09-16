@@ -3,6 +3,7 @@ package com.tungstun.security.domain.user;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public interface UserRepository {
@@ -14,11 +15,9 @@ public interface UserRepository {
 
     void delete(User id);
 
-    Optional<User> findById(Long id);
+    Optional<User> findById(UUID id);
 
     Optional<User> findByUsername(String username);
 
     Optional<User> findByMail(String mail);
-
-    Optional<User> findByMailOrUsername(String mail, String username);
 }

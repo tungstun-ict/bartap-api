@@ -3,7 +3,7 @@ package com.tungstun.security.port.web.user.response;
 import java.util.Map;
 import java.util.UUID;
 
-public record AccountResponse(
+public record UserResponse(
         UUID id,
         String username,
         String firstName,
