@@ -5,6 +5,7 @@ import com.tungstun.security.domain.user.UserRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
 public class DefaultUserRepository implements UserRepository {
@@ -25,18 +26,18 @@ public class DefaultUserRepository implements UserRepository {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(UUID id) {
         repository.deleteById(id);
-    }
-
-    @Override
-    public Optional<User> findById(Long id) {
-        return repository.findById(id);
     }
 
     @Override
     public void delete(User user) {
         repository.delete(user);
+    }
+
+    @Override
+    public Optional<User> findById(UUID id) {
+        return repository.findById(id);
     }
 
     @Override
@@ -49,8 +50,4 @@ public class DefaultUserRepository implements UserRepository {
         return repository.findByMail(mail);
     }
 
-    @Override
-    public Optional<User> findByMailOrUsername(String mail, String username) {
-        return repository.findByMailOrUsername(mail, username);
-    }
 }

@@ -1,4 +1,6 @@
 package com.tungstun.security.application.user.command;
 
-public record DeleteUser(Long id) {
+import java.util.UUID;
+
+public record DeleteUser(UUID id) {
 }
