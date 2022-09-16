@@ -28,7 +28,7 @@ public class UserQueryHandler implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UserNotFoundException {
         return userRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with username '%s' was not found", username)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with userId '%s' was not found", username)));
     }
     public User handle(GetUser query) throws UserNotFoundException {
         return userRepository.findById(query.userId())

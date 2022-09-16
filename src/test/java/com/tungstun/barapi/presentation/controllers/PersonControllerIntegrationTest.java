@@ -14,7 +14,7 @@
 //
 //class PersonControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Get people")
 //    void getPeople() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -29,7 +29,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("Get people not allowed")
 //    void getPeopleNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -41,7 +41,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Get person")
 //    void getPerson() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -56,7 +56,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("Get person not allowed")
 //    void getPersonNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -68,7 +68,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Add person")
 //    void addPerson() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -88,7 +88,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("Add person not allowed")
 //    void addPersonNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -105,7 +105,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Update person")
 //    void updatePerson() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -125,7 +125,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("Update person not allowed")
 //    void updatePersonNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -144,7 +144,7 @@
 //
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Delete person")
 //    void deletePerson() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -156,7 +156,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("Delete person not allowed")
 //    void deletePersonNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders

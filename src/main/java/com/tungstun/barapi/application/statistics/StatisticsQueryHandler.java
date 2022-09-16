@@ -6,7 +6,7 @@ import com.tungstun.barapi.application.bar.query.ListConnectedBars;
 import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
-import com.tungstun.barapi.application.person.query.GetPersonByUserUsername;
+import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.statistics.model.*;
 import com.tungstun.barapi.application.statistics.query.GetBarStatistics;
 import com.tungstun.barapi.application.statistics.query.GetCustomerStatistics;
@@ -74,7 +74,7 @@ public class StatisticsQueryHandler {
     }
 
     public CustomerStatistics handle(GetCustomerStatistics query) {
-        Person person = personQueryHandler.handle(new GetPersonByUserUsername(query.barId(), query.username()));
+        Person person = personQueryHandler.handle(new GetPerson(query.barId(), query.userId()));
         List<Bill> bills = billQueryHandler.handle(new ListBillsOfCustomer(query.barId(), person.getId()));
 
         double totalSpent = CustomerStatisticsUtil.totalAmountSpent(bills);

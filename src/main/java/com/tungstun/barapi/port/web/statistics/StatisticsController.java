@@ -13,6 +13,7 @@ import com.tungstun.barapi.port.web.statistics.converter.GlobalCustomerStatistic
 import com.tungstun.barapi.port.web.statistics.response.BarStatisticsResponse;
 import com.tungstun.barapi.port.web.statistics.response.CustomerStatisticsResponse;
 import com.tungstun.barapi.port.web.statistics.response.GlobalCustomerStatisticsResponse;
+import com.tungstun.security.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
@@ -54,6 +55,22 @@ public class StatisticsController {
         return barStatisticsConverter.convert(barStatistics);
     }
 
+    @GetMapping("/bars/{barId}/people/{personId}/statistics")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
+    @Operation(
+            summary = "Finds customer's statistics",
+            description = "Find customer statistics of a bar that the authenticated user is owner of",
+            tags = "Statistics"
+    )
+    public CustomerStatisticsResponse getCustomerStatisticsOfBar(
+            @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
+            @Parameter(description = "Id value of the customer") @PathVariable UUID personId
+    ) throws EntityNotFoundException {
+        CustomerStatistics customerStatistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, personId));
+        return customerStatisticsConverter.convert(customerStatistics);
+    }
+
     @GetMapping("/bars/{barId}/customer-statistics")
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER', 'CUSTOMER'})")
@@ -66,8 +83,8 @@ public class StatisticsController {
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        CustomerStatistics customerStatistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, userDetails.getUsername()));
+        User user = (User) authentication.getPrincipal();
+        CustomerStatistics customerStatistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, user.getId()));
         return customerStatisticsConverter.convert(customerStatistics);
     }
 

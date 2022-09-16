@@ -44,7 +44,7 @@ class JwtTokenGeneratorTest {
     void createAccessToken_ContainsCorrectValues() throws IllegalAccessException {
         User user = new User(
                 UUID.randomUUID(),
-                "username",
+                "userId",
                 "password",
                 "mail@mail.com",
                 "first",

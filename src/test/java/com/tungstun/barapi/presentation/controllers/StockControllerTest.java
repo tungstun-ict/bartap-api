@@ -29,7 +29,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Get product's stock")
 //    void getStock() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -42,7 +42,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("Get product's stock not allowed")
 //    void getStockNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -54,7 +54,7 @@
 //    }
 //
 ////    @Test
-////    @WithMockUser(username = "owner")
+////    @WithMockUser(userId = "owner")
 ////    @DisplayName("Increase product's stock")
 ////    void increaseStock() throws Exception {
 ////        RequestBuilder request = MockMvcRequestBuilders
@@ -69,7 +69,7 @@
 ////    }
 //
 ////    @Test
-////    @WithMockUser(username = "owner")
+////    @WithMockUser(userId = "owner")
 ////    @DisplayName("Decrease product's stock")
 ////    void decreaseStock() throws Exception {
 ////        RequestBuilder request = MockMvcRequestBuilders
@@ -84,7 +84,7 @@
 ////    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("Update product's stock")
 //    void updateStock() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -99,7 +99,7 @@
 //    }
 //
 //    @ParameterizedTest
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @ValueSource(strings = {"/increase", "/decrease", "/update"})
 //    @DisplayName("Get product's stock")
 //    void stockControllerForbiddenCalls(String url) throws Exception {

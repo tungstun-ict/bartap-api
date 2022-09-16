@@ -14,7 +14,7 @@
 //
 //class BarControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("get bars")
 //    void getBars() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -27,7 +27,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("get bars empty")
 //    void getBarEmpty() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -40,7 +40,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("get bar")
 //    void getBar() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -57,7 +57,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("get bar which you arent connected with")
 //    void getBarNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -69,7 +69,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("create bar")
 //    void createBar() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -93,7 +93,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("update bar")
 //    void updateBar() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -117,7 +117,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("update bar which you arent connected with")
 //    void updateBarNotOwned() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -136,7 +136,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "owner")
+//    @WithMockUser(userId = "owner")
 //    @DisplayName("delete bar ")
 //    void deleteBar() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -148,7 +148,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(username = "anonymous")
+//    @WithMockUser(userId = "anonymous")
 //    @DisplayName("delete bar which you arent connected with")
 //    void deleteBarNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
