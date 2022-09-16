@@ -18,9 +18,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
         securedEnabled = true,
         jsr250Enabled = true)
 public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter{
+    private static final String REGISTER_PATH = "/api/account/register";
     private static final String LOGIN_PATH = "/api/authenticate";
     private static final String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
-    private static final String REGISTER_PATH = "/api/register";
     private static final String[] SWAGGER_PATHS = {
             // -- Swagger UI v2
             "/v2/api-docs",
