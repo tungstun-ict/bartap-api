@@ -43,6 +43,7 @@ public class UserQueryHandler implements UserDetailsService {
                 .parallelStream()
                 .map(Bar::getPeople)
                 .flatMap(List::stream)
+                .filter(person -> person.getUser() != null)
                 .filter(person -> person.getUser().equals(user))
                 .findAny()
                 .orElseThrow(() -> new EntityNotFoundException("No user found with id: " + query.userId()));
