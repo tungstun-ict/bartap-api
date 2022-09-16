@@ -13,7 +13,6 @@ import com.tungstun.barapi.port.web.person.request.UpdatePersonRequest;
 import com.tungstun.barapi.port.web.person.response.PersonResponse;
 import com.tungstun.common.response.UuidResponse;
 import com.tungstun.security.application.user.UserQueryHandler;
-import com.tungstun.security.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpHeaders;
@@ -102,13 +101,11 @@ public class PersonController {
             tags = "Person"
     )
     public void connectUserToPerson(
-            @Parameter(hidden = true) Authentication authentication,
-            @RequestBody @Valid ConnectUserToPersonRequest request
+            @RequestBody @Valid ConnectUserToPersonRequest request,
+            @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        User user = (User) userQueryHandler.loadUserByUsername(userDetails.getUsername());
-
-        personCommandHandler.handle(new ConnectUserToPerson(user.getUsername(), request.token()));
+        personCommandHandler.handle(new ConnectUserToPerson(userDetails.getUsername(), request.token()));
     }
 
     @PostMapping("/bars/{barId}/people")
