@@ -1,9 +1,9 @@
-package com.tungstun.barapi.port.web.statistics.converter;
+package com.tungstun.statistics.port.web.statistics.converter;
 
-import com.tungstun.barapi.application.statistics.model.GlobalCustomerStatistics;
 import com.tungstun.barapi.port.web.bill.converter.BillConverter;
 import com.tungstun.barapi.port.web.order.converter.OrderProductConverter;
-import com.tungstun.barapi.port.web.statistics.response.GlobalCustomerStatisticsResponse;
+import com.tungstun.statistics.domain.statistics.GlobalCustomerStatistics;
+import com.tungstun.statistics.port.web.statistics.response.GlobalCustomerStatisticsResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

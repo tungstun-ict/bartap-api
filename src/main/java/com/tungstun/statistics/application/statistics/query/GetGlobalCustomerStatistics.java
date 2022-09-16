@@ -1,4 +1,4 @@
-package com.tungstun.barapi.application.statistics.query;
+package com.tungstun.statistics.application.statistics.query;
 
 public record GetGlobalCustomerStatistics(String username) {
 }

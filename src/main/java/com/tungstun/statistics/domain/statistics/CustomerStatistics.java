@@ -1,9 +1,9 @@
-package com.tungstun.barapi.application.statistics.model;
+package com.tungstun.statistics.domain.statistics;
 
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.OrderProduct;
 
-public record GlobalCustomerStatistics(
+public record CustomerStatistics(
         Double totalSpent,
         Double totalNotYetPayed,
         Bill highestPricedBill,

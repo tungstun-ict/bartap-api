@@ -1,4 +1,4 @@
-package com.tungstun.barapi.application.statistics;
+package com.tungstun.statistics.application.statistics;
 
 import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
@@ -7,15 +7,15 @@ import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPerson;
-import com.tungstun.barapi.application.statistics.model.*;
-import com.tungstun.barapi.application.statistics.query.GetBarStatistics;
-import com.tungstun.barapi.application.statistics.query.GetCustomerStatistics;
-import com.tungstun.barapi.application.statistics.query.GetGlobalCustomerStatistics;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.OrderProduct;
 import com.tungstun.barapi.domain.person.Person;
 import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
+import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
+import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
+import com.tungstun.statistics.domain.statistics.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
