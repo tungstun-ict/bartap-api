@@ -35,7 +35,7 @@ public class PersonQueryHandler {
                 .filter(person -> person.getUser() != null)
                 .filter(person -> person.getUser().getUsername().equals(query.username()))
                 .findFirst()
-                .orElseThrow(() -> new EntityNotFoundException("Bar does not have a person with user with userId: " + query.username()));
+                .orElseThrow(() -> new EntityNotFoundException("Bar does not have a person with user with username: " + query.username()));
     }
 
     public List<Person> handle(ListPeopleOfBar query) {

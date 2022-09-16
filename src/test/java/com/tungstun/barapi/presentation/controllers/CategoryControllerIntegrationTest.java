@@ -14,7 +14,7 @@
 //
 //class CategoryControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get categories")
 //    void getCategories() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -29,7 +29,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get categories not allowed")
 //    void getCategoriesNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -41,7 +41,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get category")
 //    void getCategory() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -56,7 +56,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get category not allowed")
 //    void getCategoryNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -68,7 +68,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Create category")
 //    void createCategory() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -88,7 +88,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get category not allowed")
 //    void createCategoryNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -105,7 +105,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Update category")
 //    void updateCategory() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -125,7 +125,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Update category not allowed")
 //    void updateCategoryNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -142,7 +142,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Delete category")
 //    void deleteCategory() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -154,7 +154,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Delete category not allowed")
 //    void deleteCategoryNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders

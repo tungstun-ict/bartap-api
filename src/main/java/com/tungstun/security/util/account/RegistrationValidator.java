@@ -49,7 +49,7 @@ public class RegistrationValidator {
 
     private void validateUniqueUsername(String username) throws AccountException {
         boolean exists = this.userRepository.findByUsername(username).isPresent();
-        if (exists) throw new AccountException("Account with userId already exists");
+        if (exists) throw new AccountException("Account with username already exists");
     }
 
     private void validateUniqueMail(String mail) throws AccountException {

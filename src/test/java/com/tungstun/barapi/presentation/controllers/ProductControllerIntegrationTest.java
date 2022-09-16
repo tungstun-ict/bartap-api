@@ -14,7 +14,7 @@
 //
 //class ProductControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get products")
 //    void getProducts() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -33,7 +33,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get products not allowed")
 //    void getProductsNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -45,7 +45,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get product")
 //    void getProduct() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -64,7 +64,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get product not allowed")
 //    void getProductNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -76,7 +76,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Create product")
 //    void createProduct() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -105,7 +105,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Create product not allowed")
 //    void createProductNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -126,7 +126,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Update product")
 //    void updateProduct() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -155,7 +155,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Update product not allowed")
 //    void updateProductNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -176,7 +176,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Delete product")
 //    void deleteProduct() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -188,7 +188,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Delete product not allowed")
 //    void deleteProductNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders

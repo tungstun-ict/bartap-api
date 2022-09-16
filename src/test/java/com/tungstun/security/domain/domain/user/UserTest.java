@@ -51,7 +51,7 @@ class UserTest {
 //    @Test
 //    void addNewBarAuthorization_WhenBarIsOwnedByOtherUser_Throws() {
 //        Long barId = 123L;
-//        User testUser = new User("userId", "password", "mail@mail.com", "first", "last", new ArrayList<>());
+//        User testUser = new User("username", "password", "mail@mail.com", "first", "last", new ArrayList<>());
 //        testUser.newBarAuthorization(barId);
 //
 //        assertThrows(
@@ -65,7 +65,7 @@ class UserTest {
         barId = UUID.randomUUID();
         userWithAuthorization = new User(
                 UUID.randomUUID(),
-                "userId",
+                "username",
                 "password",
                 "mail@mail.com",
                 "first",
@@ -74,7 +74,7 @@ class UserTest {
                 new ArrayList<>(List.of(new Authorization(UUID.randomUUID(), barId, Role.OWNER, null))));
         user = new User(
                 UUID.randomUUID(),
-                "userId",
+                "username",
                 "password",
                 "mail@mail.com",
                 "first",

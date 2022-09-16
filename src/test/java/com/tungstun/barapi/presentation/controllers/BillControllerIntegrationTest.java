@@ -14,7 +14,7 @@
 //
 //class BillControllerIntegrationTest extends BarIntegrationTestLifeCycle {
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get bills")
 //    void getBills() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -32,7 +32,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("get bills which you arent connected with")
 //    void getBillsNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -44,7 +44,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get bills of session")
 //    void getBillsOfSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -62,7 +62,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("get bill of session which you arent connected with")
 //    void getBillOfSessionNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -74,7 +74,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get bill of session")
 //    void getBillOfSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -92,7 +92,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get bill of person from active session")
 //    void getBillOfPersonFromActiveSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -110,7 +110,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("get bill of person of active session not allowd")
 //    void getBillOfPersonOfActiveSessionNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -122,7 +122,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("get bill of session which you arent connected with")
 //    void getBillsOfSessionNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -134,7 +134,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get bills of customer")
 //    void getBillsOfCustomer() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -150,7 +150,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("get bills of customer which you arent connected with")
 //    void getBillsOfCustomerNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -162,7 +162,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get bill of customer")
 //    void getBillOfCustomer() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders

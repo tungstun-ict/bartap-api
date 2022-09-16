@@ -19,7 +19,7 @@
 //    private SpringSessionRepository repository;
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get sessions")
 //    void getSessions() throws Exception {
 //        session.lock();
@@ -40,7 +40,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get sessions Not Allowed")
 //    void getSessionsNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -52,7 +52,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get session")
 //    void getSession() throws Exception {
 //        session.lock();
@@ -73,7 +73,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get session Not Allowed")
 //    void getSessionNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -85,7 +85,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get active session")
 //    void getActiveSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -102,7 +102,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Get active session when no session is active")
 //    void getActiveSessionWhenNoActiveSession() throws Exception {
 //        session.lock();
@@ -117,7 +117,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Get active session Not Allowed")
 //    void getActiveSessionNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -129,7 +129,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Create session when no session is active")
 //    void createSession() throws Exception {
 //        session.lock();
@@ -149,7 +149,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Create session Not Allowed")
 //    void createActiveSessionNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -165,7 +165,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Update session")
 //    void updateSession() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -184,7 +184,7 @@
 //
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("Update session not editable")
 //    void updateSessionNotEditable() throws Exception {
 //        session.lock();
@@ -202,7 +202,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(username = "anonymous")
 //    @DisplayName("Update session Not Allowed")
 //    void updateActiveSessionNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -218,7 +218,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(username = "owner")
 //    @DisplayName("End session")
 //    void endSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
