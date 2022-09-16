@@ -15,7 +15,11 @@ import com.tungstun.barapi.domain.session.Session;
 import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
 import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
 import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
-import com.tungstun.statistics.domain.statistics.*;
+import com.tungstun.statistics.domain.statistics.model.BarStatistics;
+import com.tungstun.statistics.domain.statistics.model.CustomerStatistics;
+import com.tungstun.statistics.domain.statistics.model.GlobalCustomerStatistics;
+import com.tungstun.statistics.domain.statistics.util.BarStatisticsUtil;
+import com.tungstun.statistics.domain.statistics.util.CustomerStatisticsUtil;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -38,38 +42,19 @@ public class StatisticsQueryHandler {
         List<Session> sessions = bar.getSessions();
 
         LocalDateTime now = LocalDateTime.now();
-        OrderProduct mostSoldProductOfLastMonth = BarStatisticsUtil.mostSoldProduct(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
-        OrderProduct mostSoldProductOfLastYear = BarStatisticsUtil.mostSoldProduct(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
-        OrderProduct mostSoldProductOfAllTime = BarStatisticsUtil.mostSoldProduct(sessions);
+        OrderProduct mostSoldProduct = BarStatisticsUtil.mostSoldProduct(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
 
-        Bill mostExpensiveBillOfLastMonth = BarStatisticsUtil.mostExpensiveBill(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
-        Bill mostExpensiveBillOfLastYear = BarStatisticsUtil.mostExpensiveBill(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
-        Bill mostExpensiveBillOfAllTime = BarStatisticsUtil.mostExpensiveBill(sessions);
+        Bill mostExpensiveBill = BarStatisticsUtil.mostExpensiveBill(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
 
-        double totalSpentLastMonth = BarStatisticsUtil.totalAmountSpent(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
-        double totalSpentOfLastYear = BarStatisticsUtil.totalAmountSpent(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
-        double totalSpentOfAllTime = BarStatisticsUtil.totalAmountSpent(sessions);
+        double totalSpent = BarStatisticsUtil.totalAmountSpent(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
 
-        double totalNotYetPayedLastMonth = BarStatisticsUtil.totalAmountNotYetPayed(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
-        double totalNotYetPayedLastYear = BarStatisticsUtil.totalAmountNotYetPayed(sessions, s -> s.getCreationDate().isAfter(now.minusYears(1)));
-        double totalNotYetPayedAllTime = BarStatisticsUtil.totalAmountNotYetPayed(sessions);
+        double totalNotYetPayed = BarStatisticsUtil.totalAmountNotYetPayed(sessions, s -> s.getCreationDate().isAfter(now.minusMonths(1)));
 
         return new BarStatistics(
-                mostSoldProductOfLastMonth,
-                mostSoldProductOfLastYear,
-                mostSoldProductOfAllTime,
-
-                mostExpensiveBillOfLastMonth,
-                mostExpensiveBillOfLastYear,
-                mostExpensiveBillOfAllTime,
-
-                totalSpentLastMonth,
-                totalSpentOfLastYear,
-                totalSpentOfAllTime,
-
-                totalNotYetPayedLastMonth,
-                totalNotYetPayedLastYear,
-                totalNotYetPayedAllTime
+                mostSoldProduct,
+                mostExpensiveBill,
+                totalSpent,
+                totalNotYetPayed
         );
     }
 

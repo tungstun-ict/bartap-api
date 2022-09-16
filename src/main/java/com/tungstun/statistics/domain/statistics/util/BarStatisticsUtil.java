@@ -1,4 +1,4 @@
-package com.tungstun.statistics.domain.statistics;
+package com.tungstun.statistics.domain.statistics.util;
 
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.Order;
@@ -15,6 +15,11 @@ import java.util.stream.Stream;
 
 public class BarStatisticsUtil {
 
+    public static OrderProduct mostSoldProduct(List<Session> sessions) {
+        return BarStatisticsUtil.mostSoldProduct(sessions, s -> true);
+    }
+
+
     private static Stream<Bill> filterSessions(List<Session> sessions, Predicate<Session> predicate) {
         predicate = Optional.ofNullable(predicate)
                 .orElse(s -> true);
@@ -22,10 +27,6 @@ public class BarStatisticsUtil {
                 .filter(predicate)
                 .map(Session::getBills)
                 .flatMap(List::stream);
-    }
-
-    public static OrderProduct mostSoldProduct(List<Session> sessions) {
-        return BarStatisticsUtil.mostSoldProduct(sessions, s -> true);
     }
 
     public static OrderProduct mostSoldProduct(List<Session> sessions, Predicate<Session> predicate) {
