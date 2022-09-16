@@ -7,24 +7,25 @@ import com.tungstun.barapi.domain.session.Session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class BarBuilder {
-    private BarDetails details;
+    private final BarDetails details;
     private List<Person> people;
     private List<Product> products;
     private List<Session> sessions;
     private List<Category> categories;
 
-    public BarBuilder() {
-        this.details = new BarDetails();
+    public BarBuilder(String name) {
+        this.details = new BarDetails(name, null, null, null);
         this.people = new ArrayList<>();
         this.products = new ArrayList<>();
         this.sessions = new ArrayList<>();
         this.categories = new ArrayList<>();
     }
 
-    public BarBuilder setAddress(String adres) {
-        this.details.setAddress(adres);
+    public BarBuilder setAddress(String address) {
+        this.details.setAddress(address);
         return this;
     }
 
@@ -43,7 +44,7 @@ public class BarBuilder {
         return this;
     }
 
-    public BarBuilder setUsers(List<Person> people) {
+    public BarBuilder setPeople(List<Person> people) {
         this.people = people;
         return this;
     }
@@ -65,11 +66,12 @@ public class BarBuilder {
 
     public Bar build() {
         return new Bar(
-                this.details,
-                this.people,
-                this.products,
-                this.sessions,
-                this.categories
+                UUID.randomUUID(),
+                details,
+                people,
+                products,
+                sessions,
+                categories
         );
     }
 }

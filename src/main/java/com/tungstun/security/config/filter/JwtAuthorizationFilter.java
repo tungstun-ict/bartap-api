@@ -1,94 +1,94 @@
 package com.tungstun.security.config.filter;
 
-import com.tungstun.security.data.model.UserProfile;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.tungstun.exception.NotAuthenticatedException;
+import com.tungstun.exception.web.ExceptionResponse;
+import com.tungstun.security.domain.jwt.JwtValidator;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.util.AntPathMatcher;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.*;
 
 /**
  * Tries to authorize a user, based on the Bearer token (JWT) from
  * the Authorization header of the incoming request.
  */
 public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
-    private final String secret;
+    private final JwtValidator validator;
     private final String[] ignoredPaths;
 
-    public JwtAuthorizationFilter(String secret, AuthenticationManager authenticationManager) {
-        this(secret, authenticationManager, new String[]{});
-    }
     public JwtAuthorizationFilter(
-            String secret,
             AuthenticationManager authenticationManager,
+            JwtValidator validator,
             String[] ignoredPaths
     ) {
         super(authenticationManager);
-        this.secret = secret;
+        this.validator = validator;
         this.ignoredPaths = ignoredPaths;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-       return Arrays.stream(this.ignoredPaths)
-               .anyMatch(path -> path.equals(request.getRequestURI()));
+        return Arrays.stream(ignoredPaths)
+                .anyMatch(path -> new AntPathMatcher().match(path, request.getRequestURI()));
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request,
-                                    HttpServletResponse response,
-                                    FilterChain filterChain
-    ) throws IOException, ServletException {
-        Authentication authentication = this.getAuthentication(request);
-        if (authentication != null) {
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-        filterChain.doFilter(request, response);
-    }
-
-    private Authentication getAuthentication(HttpServletRequest request) {
-        String accessToken = request.getHeader("access_token");
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain chain) throws IOException, ServletException {
         String tokenType = request.getHeader("token_type");
+        String accessToken = request.getHeader("access_token");
+        System.out.println(accessToken);
+        System.out.println(tokenType);
+        System.out.println("tokens printed");
 
-        if (accessToken == null || accessToken.isEmpty()) {
-            return null;
+        if (accessToken == null || tokenType == null || accessToken.isEmpty() || !tokenType.equalsIgnoreCase("bearer")) {
+            chain.doFilter(request, response);
         }
 
-        if (!tokenType.equals("bearer")) {
-            return null;
+        try {
+            DecodedJWT decodedJWT = validator.verifyAccessToken(accessToken);
+
+            UUID userId = Optional.of(UUID.fromString(decodedJWT.getClaim("client_id").asString()))
+                    .orElseThrow(() -> new JWTDecodeException("No client_id in access token"));
+
+            String username = decodedJWT.getSubject();
+            List<Authorization> authorizations = decodedJWT.getClaim("authorizations")
+                    .asMap()
+                    .entrySet()
+                    .stream()
+                    .map(entry -> new Authorization(UUID.fromString(entry.getKey()), (String) entry.getValue()))
+                    .toList();
+            UserProfile principal = new UserProfile(userId, username, authorizations);
+            Authentication auth = new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
+            SecurityContextHolder.getContext().setAuthentication(auth);
+            chain.doFilter(request, response);
+        } catch (JWTDecodeException | NotAuthenticatedException e) {
+            returnUnAuthorizedResponse(response, e);
         }
-
-        byte[] signingKey = this.secret.getBytes();
-
-        JwtParser jwtParser = Jwts.parserBuilder()
-                .setSigningKey(signingKey)
-                .build();
-
-        Jws<Claims> parsedToken = jwtParser
-                .parseClaimsJws(accessToken);
-
-        var username = parsedToken
-                .getBody()
-                .getSubject();
-
-        if (username.isEmpty()) {
-            return null;
-        }
-
-        UserProfile principal = new UserProfile(username);
-
-        return new UsernamePasswordAuthenticationToken(principal, null, Collections.emptyList());
+    }
+    public void returnUnAuthorizedResponse(HttpServletResponse response, RuntimeException e) throws IOException {
+        e.printStackTrace();
+        ExceptionResponse res = ExceptionResponse.with("Invalid token", e.getLocalizedMessage());
+        String value = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(res);
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON.toString());
+        response.getWriter().write(value);
     }
 }

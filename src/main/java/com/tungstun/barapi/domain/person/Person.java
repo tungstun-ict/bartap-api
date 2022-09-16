@@ -1,51 +1,34 @@
 package com.tungstun.barapi.domain.person;
 
-import com.fasterxml.jackson.annotation.*;
-import com.tungstun.barapi.domain.payment.Bill;
-import com.tungstun.security.data.model.User;
+import com.tungstun.security.domain.user.Role;
+import com.tungstun.security.domain.user.User;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Entity
+@Table(name = "person")
 public class Person {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
-    @JsonIgnore
-    @Column(name = "phone_number")
-    private String phoneNumber;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JsonIgnore
+    @OneToOne
     private User user;
 
-    @JsonBackReference
-    @OneToMany(
-            mappedBy = "customer",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    private List<Bill> bills;
-
-    public Person() { }
-    public Person(String name, String phoneNumber, User user, List<Bill> bills) {
-        this.name = name;
-        this.phoneNumber = phoneNumber;
-        this.user = user;
-        this.bills = bills;
+    public Person() {
     }
 
-    public Long getId() {
+    public Person(UUID id, String name, User user) {
+        this.id = id;
+        this.name = name;
+        this.user = user;
+    }
+
+    public UUID getId() {
         return id;
     }
 
@@ -53,26 +36,32 @@ public class Person {
         return name;
     }
 
-    public void setName(String name) { this.name = name; }
-
-    public User getUser() { return user; }
-
-    public void setUser(User user) { this.user = user; }
-
-    public String getPhoneNumber() { return phoneNumber; }
-
-    public void setPhoneNumber(String phoneNumber) { this.phoneNumber = phoneNumber; }
-
-    public List<Bill> getBills() {
-        return bills;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public boolean addBill(Bill bill) {
-        if (!this.bills.contains(bill)) return this.bills.add(bill);
-        return false;
+    public User getUser() {
+        return user;
     }
 
-    public boolean removeBill(Bill bill) {
-        return this.bills.remove(bill);
+    public void connectUser(User user, UUID barId) {
+        if (this.user != null) {
+            throw new IllegalStateException(String.format("Person with id %s is already connected to a user", id));
+        }
+        this.user = user;
+        user.authorize(barId, Role.CUSTOMER, this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Person person = (Person) o;
+        return Objects.equals(id, person.id) && Objects.equals(name, person.name) && Objects.equals(user, person.user);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, user);
     }
 }
