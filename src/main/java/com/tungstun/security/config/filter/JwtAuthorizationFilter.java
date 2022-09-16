@@ -54,6 +54,9 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             FilterChain chain) throws IOException, ServletException {
         String tokenType = request.getHeader("token_type");
         String accessToken = request.getHeader("access_token");
+        System.out.println(accessToken);
+        System.out.println(tokenType);
+        System.out.println("tokens printed");
 
         if (accessToken == null || tokenType == null || accessToken.isEmpty() || !tokenType.equalsIgnoreCase("bearer")) {
             chain.doFilter(request, response);
@@ -81,6 +84,7 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         }
     }
     public void returnUnAuthorizedResponse(HttpServletResponse response, RuntimeException e) throws IOException {
+        e.printStackTrace();
         ExceptionResponse res = ExceptionResponse.with("Invalid token", e.getLocalizedMessage());
         String value = new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(res);
         response.setStatus(HttpStatus.UNAUTHORIZED.value());

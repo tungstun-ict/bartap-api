@@ -45,7 +45,8 @@ public class BillConverter {
                 bill.getId(),
                 bill.isPayed(),
                 bill.calculateTotalPrice(),
-                sessionConverter.convertToSummary(bill.getSession())
+                sessionConverter.convertToSummary(bill.getSession()),
+                personConverter.convert(bill.getCustomer())
         );
     }
 
