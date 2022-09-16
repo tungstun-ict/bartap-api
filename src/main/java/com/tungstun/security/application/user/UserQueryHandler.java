@@ -8,6 +8,7 @@ import com.tungstun.security.application.user.query.GetUser;
 import com.tungstun.security.application.user.query.GetUserSummary;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.domain.user.UserRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
@@ -20,7 +21,7 @@ public class UserQueryHandler implements UserDetailsService {
     private final UserRepository userRepository;
     private final BarQueryHandler barQueryHandler;
 
-    public UserQueryHandler(UserRepository userRepository, BarQueryHandler barQueryHandler) {
+    public UserQueryHandler(UserRepository userRepository, @Lazy BarQueryHandler barQueryHandler) {
         this.userRepository = userRepository;
         this.barQueryHandler = barQueryHandler;
     }
