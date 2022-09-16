@@ -23,7 +23,6 @@ class CurrencyTest {
 
     @Test
     void compareLaterCodeToCode_ReturnsMinusOne (){
-        System.out.println("EUR".compareTo("USD"));
         Currency currency = new Currency("", "USD");
         Currency currency2 = new Currency("", "EUR");
         assertTrue(currency.compareTo(currency2) > 0);

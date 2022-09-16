@@ -54,9 +54,6 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             FilterChain chain) throws IOException, ServletException {
         String tokenType = request.getHeader("token_type");
         String accessToken = request.getHeader("access_token");
-        System.out.println(accessToken);
-        System.out.println(tokenType);
-        System.out.println("tokens printed");
 
         if (accessToken == null || tokenType == null || accessToken.isEmpty() || !tokenType.equalsIgnoreCase("bearer")) {
             chain.doFilter(request, response);
