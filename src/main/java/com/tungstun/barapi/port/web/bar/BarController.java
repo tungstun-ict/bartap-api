@@ -6,6 +6,7 @@ import com.tungstun.barapi.application.bar.command.CreateBar;
 import com.tungstun.barapi.application.bar.command.DeleteBar;
 import com.tungstun.barapi.application.bar.command.UpdateBar;
 import com.tungstun.barapi.application.bar.query.GetBar;
+import com.tungstun.barapi.application.bar.query.ListConnectedBars;
 import com.tungstun.barapi.application.bar.query.ListOwnedBars;
 import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.barapi.port.web.bar.converter.BarConverter;
@@ -39,7 +40,7 @@ public class BarController {
         this.converter = converter;
     }
 
-    @GetMapping("owned")
+    @GetMapping("/owned")
     @ResponseStatus(HttpStatus.OK)
     @Operation(
             summary = "Finds all owned bars",
@@ -49,6 +50,19 @@ public class BarController {
     public List<BarResponse> getAllBarOwnerBars(@Parameter(hidden = true) Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         List<Bar> allBars = barQueryHandler.handle(new ListOwnedBars(userDetails.getUsername()));
+        return converter.convertAll(allBars);
+    }
+
+    @GetMapping("/connected")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Finds all connected bars",
+            description = "Finds all bars that are connected by the logged in user",
+            tags = "Bar"
+    )
+    public List<BarResponse> getAllConnectedBars(@Parameter(hidden = true) Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        List<Bar> allBars = barQueryHandler.handle(new ListConnectedBars(userDetails.getUsername()));
         return converter.convertAll(allBars);
     }
 
