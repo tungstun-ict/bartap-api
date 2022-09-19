@@ -14,12 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class BarStatisticsUtil {
-
-    public static OrderProduct mostSoldProduct(List<Session> sessions) {
-        return BarStatisticsUtil.mostSoldProduct(sessions, s -> true);
-    }
-
-
     private static Stream<Bill> filterSessions(List<Session> sessions, Predicate<Session> predicate) {
         predicate = Optional.ofNullable(predicate)
                 .orElse(s -> true);
@@ -47,10 +41,6 @@ public class BarStatisticsUtil {
                 .orElse(null);
     }
 
-    public static Bill mostExpensiveBill(List<Session> sessions) {
-        return BarStatisticsUtil.mostExpensiveBill(sessions, s -> true);
-    }
-
     public static Bill mostExpensiveBill(List<Session> sessions, Predicate<Session> predicate) {
         return filterSessions(sessions, predicate)
                 .reduce((bill, bill2) -> bill.calculateTotalPrice() > bill2.calculateTotalPrice()
@@ -60,19 +50,11 @@ public class BarStatisticsUtil {
                 .orElse(null);
     }
 
-    public static Double totalAmountSpent(List<Session> sessions) {
-        return BarStatisticsUtil.totalAmountSpent(sessions, s -> true);
-    }
-
     public static Double totalAmountSpent(List<Session> sessions, Predicate<Session> predicate) {
         return filterSessions(sessions, predicate)
                 .filter(Bill::isPayed)
                 .mapToDouble(Bill::calculateTotalPrice)
                 .sum();
-    }
-
-    public static Double totalAmountNotYetPayed(List<Session> sessions) {
-        return BarStatisticsUtil.totalAmountNotYetPayed(sessions, s -> true);
     }
 
     public static Double totalAmountNotYetPayed(List<Session> sessions, Predicate<Session> predicate) {
