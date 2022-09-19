@@ -68,7 +68,7 @@ public class BarController {
 
     @GetMapping("/{barId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER', 'BARTENDER', 'CUSTOMER'})")
     @Operation(
             summary = "Finds bar by id",
             description = "Finds bar with the given id",
