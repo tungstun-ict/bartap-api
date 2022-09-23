@@ -11,6 +11,8 @@ import com.tungstun.statistics.application.statistics.query.GetUserCustomerStati
 import com.tungstun.statistics.domain.statistics.Filters;
 import com.tungstun.statistics.domain.statistics.Statistics;
 import com.tungstun.statistics.domain.statistics.StatisticsGenerator;
+import com.tungstun.statistics.domain.statistics.filter.BillFromUserWithIdFilter;
+import com.tungstun.statistics.domain.statistics.filter.BillFromUserWithUsernameFilter;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -43,8 +45,7 @@ public class StatisticsQueryHandler {
 
         return new StatisticsGenerator(filters)
                 .addBar(bar)
-                .addBillFilter(bill -> bill.getCustomer().getUser() != null)
-                .addBillFilter(bill -> bill.getCustomer().getUser().getId().equals(query.customerId()))
+                .addBillFilter(new BillFromUserWithIdFilter(query.userId()))
                 .generate();
     }
 
@@ -55,8 +56,7 @@ public class StatisticsQueryHandler {
                 .forEach(statisticsGenerator::addBar);
 
         return statisticsGenerator
-                .addBillFilter(bill -> bill.getCustomer().getUser() != null)
-                .addBillFilter(bill -> bill.getCustomer().getUser().getUsername().equals(query.username()))
+                .addBillFilter(new BillFromUserWithUsernameFilter(query.username()))
                 .generate();
     }
 }
