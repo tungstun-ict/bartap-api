@@ -20,7 +20,7 @@ public class StatisticsGenerator {
 
     public StatisticsGenerator() {
         sessions = new ArrayList<>();
-        this.sessionFilters = (b) -> true;
+        this.sessionFilters = (s) -> true;
         this.billFilters = (b) -> true;
     }
 
@@ -38,7 +38,6 @@ public class StatisticsGenerator {
         billFilters = billFilters.and(predicate);
         return this;
     }
-
 
     public Statistics generate() {
         List<Bill> bills = sessions
