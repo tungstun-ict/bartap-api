@@ -5,6 +5,8 @@ import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.bill.OrderProduct;
 import com.tungstun.barapi.domain.session.Session;
+import com.tungstun.statistics.domain.statistics.filter.SessionFromDateFilter;
+import com.tungstun.statistics.domain.statistics.filter.SessionToDateFilter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +20,17 @@ public class StatisticsGenerator {
     private Predicate<Session> sessionFilters;
     private Predicate<Bill> billFilters;
 
-    public StatisticsGenerator() {
+    public StatisticsGenerator(Filters filters) {
         sessions = new ArrayList<>();
         this.sessionFilters = (s) -> true;
         this.billFilters = (b) -> true;
+
+        if (filters.from() != null) {
+            sessionFilters = sessionFilters.and(new SessionFromDateFilter(filters.from()));
+        }
+        if (filters.to() != null) {
+            sessionFilters = sessionFilters.and(new SessionToDateFilter(filters.to()));
+        }
     }
 
     public StatisticsGenerator addBar(Bar bar) {

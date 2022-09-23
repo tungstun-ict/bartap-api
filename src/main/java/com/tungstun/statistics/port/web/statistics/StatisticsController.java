@@ -2,7 +2,11 @@ package com.tungstun.statistics.port.web.statistics;
 
 import com.tungstun.security.domain.user.User;
 import com.tungstun.statistics.application.statistics.StatisticsQueryHandler;
-import com.tungstun.statistics.application.statistics.query.*;
+import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
+import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
+import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
+import com.tungstun.statistics.application.statistics.query.GetUserCustomerStatistics;
+import com.tungstun.statistics.domain.statistics.Filters;
 import com.tungstun.statistics.domain.statistics.Statistics;
 import com.tungstun.statistics.port.web.statistics.converter.StatisticsConverter;
 import com.tungstun.statistics.port.web.statistics.response.StatisticsResponse;

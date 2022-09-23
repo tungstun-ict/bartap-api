@@ -4,11 +4,13 @@ import com.tungstun.barapi.application.bar.BarQueryHandler;
 import com.tungstun.barapi.application.bar.query.GetBar;
 import com.tungstun.barapi.application.bar.query.ListConnectedBars;
 import com.tungstun.barapi.domain.bar.Bar;
-import com.tungstun.statistics.application.statistics.query.*;
+import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
+import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
+import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
+import com.tungstun.statistics.application.statistics.query.GetUserCustomerStatistics;
+import com.tungstun.statistics.domain.statistics.Filters;
 import com.tungstun.statistics.domain.statistics.Statistics;
 import com.tungstun.statistics.domain.statistics.StatisticsGenerator;
-import com.tungstun.statistics.domain.statistics.filter.SessionFromDateFilter;
-import com.tungstun.statistics.domain.statistics.filter.SessionToDateFilter;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,18 +21,8 @@ public class StatisticsQueryHandler {
         this.barQueryHandler = barQueryHandler;
     }
 
-    private StatisticsGenerator addFilters(StatisticsGenerator statisticsGenerator, Filters filters) {
-        if (filters.from() != null) {
-            statisticsGenerator.addSessionFilter(new SessionFromDateFilter(filters.from()));
-        }
-        if (filters.to() != null) {
-            statisticsGenerator.addSessionFilter(new SessionToDateFilter(filters.to()));
-        }
-        return statisticsGenerator;
-    }
-
     public Statistics handle(GetBarStatistics query, Filters filters) {
-        StatisticsGenerator statisticsGenerator = addFilters(new StatisticsGenerator(), filters);
+        StatisticsGenerator statisticsGenerator = new StatisticsGenerator(filters);
         Bar bar = barQueryHandler.handle(new GetBar(query.barId()));
         statisticsGenerator.addBar(bar);
 
@@ -40,7 +32,7 @@ public class StatisticsQueryHandler {
     public Statistics handle(GetCustomerStatistics query, Filters filters) {
         Bar bar = barQueryHandler.handle(new GetBar(query.barId()));
 
-        return addFilters(new StatisticsGenerator(), filters)
+        return new StatisticsGenerator(filters)
                 .addBar(bar)
                 .addBillFilter(bill -> bill.getCustomer().getId().equals(query.customerId()))
                 .generate();
@@ -49,7 +41,7 @@ public class StatisticsQueryHandler {
     public Statistics handle(GetUserCustomerStatistics query, Filters filters) {
         Bar bar = barQueryHandler.handle(new GetBar(query.barId()));
 
-        return addFilters(new StatisticsGenerator(), filters)
+        return new StatisticsGenerator(filters)
                 .addBar(bar)
                 .addBillFilter(bill -> bill.getCustomer().getUser() != null)
                 .addBillFilter(bill -> bill.getCustomer().getUser().getId().equals(query.customerId()))
@@ -57,7 +49,7 @@ public class StatisticsQueryHandler {
     }
 
     public Statistics handle(GetGlobalCustomerStatistics query, Filters filters) {
-        StatisticsGenerator statisticsGenerator = addFilters(new StatisticsGenerator(), filters);
+        StatisticsGenerator statisticsGenerator = new StatisticsGenerator(filters);
 
         barQueryHandler.handle(new ListConnectedBars(query.username()))
                 .forEach(statisticsGenerator::addBar);

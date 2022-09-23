@@ -1,4 +1,4 @@
-package com.tungstun.statistics.application.statistics.query;
+package com.tungstun.statistics.domain.statistics;
 
 import java.time.LocalDate;
 
