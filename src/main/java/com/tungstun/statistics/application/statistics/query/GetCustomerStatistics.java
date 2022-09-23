@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public record GetCustomerStatistics(
         UUID barId,
-        UUID userId) {
+        UUID customerId) {
 }

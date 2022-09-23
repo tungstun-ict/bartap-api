@@ -180,7 +180,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(customerId = "anonymous")
 //    @DisplayName("get bill of customer which you arent connected with")
 //    void getBillOfCustomerNotOwned() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -192,7 +192,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("Create bill")
 //    void createBillForSession() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -214,7 +214,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(customerId = "anonymous")
 //    @DisplayName("Create bill not allowed")
 //    void createBillForSessionNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -231,7 +231,7 @@
 //
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("Set isPayed bill")
 //    void setIsPayedBillForSession() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -253,7 +253,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("Set isPayed bill no bool")
 //    void setIsPayedBillForSessionNoBool() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
@@ -269,7 +269,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("delete bill")
 //    void deletePayedBillOfSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders

@@ -5,15 +5,9 @@ import com.tungstun.statistics.application.statistics.StatisticsQueryHandler;
 import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
 import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
 import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
-import com.tungstun.statistics.domain.statistics.model.BarStatistics;
-import com.tungstun.statistics.domain.statistics.model.CustomerStatistics;
-import com.tungstun.statistics.domain.statistics.model.GlobalCustomerStatistics;
-import com.tungstun.statistics.port.web.statistics.converter.BarStatisticsConverter;
-import com.tungstun.statistics.port.web.statistics.converter.CustomerStatisticsConverter;
-import com.tungstun.statistics.port.web.statistics.converter.GlobalCustomerStatisticsConverter;
-import com.tungstun.statistics.port.web.statistics.response.BarStatisticsResponse;
-import com.tungstun.statistics.port.web.statistics.response.CustomerStatisticsResponse;
-import com.tungstun.statistics.port.web.statistics.response.GlobalCustomerStatisticsResponse;
+import com.tungstun.statistics.domain.statistics.model.Statistics;
+import com.tungstun.statistics.port.web.statistics.converter.StatisticsConverter;
+import com.tungstun.statistics.port.web.statistics.response.StatisticsResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
@@ -29,15 +23,11 @@ import java.util.UUID;
 @RequestMapping("/api")
 public class StatisticsController {
     private final StatisticsQueryHandler statisticsQueryHandler;
-    private final CustomerStatisticsConverter customerStatisticsConverter;
-    private final GlobalCustomerStatisticsConverter globalCustomerStatisticsConverter;
-    private final BarStatisticsConverter barStatisticsConverter;
+    private final StatisticsConverter statisticsConverter;
 
-    public StatisticsController(StatisticsQueryHandler statisticsQueryHandler, CustomerStatisticsConverter customerStatisticsConverter, GlobalCustomerStatisticsConverter globalCustomerStatisticsConverter, BarStatisticsConverter barStatisticsConverter) {
+    public StatisticsController(StatisticsQueryHandler statisticsQueryHandler, StatisticsConverter statisticsConverter) {
         this.statisticsQueryHandler = statisticsQueryHandler;
-        this.customerStatisticsConverter = customerStatisticsConverter;
-        this.globalCustomerStatisticsConverter = globalCustomerStatisticsConverter;
-        this.barStatisticsConverter = barStatisticsConverter;
+        this.statisticsConverter = statisticsConverter;
     }
 
     @GetMapping("/bars/{barId}/statistics")
@@ -48,11 +38,11 @@ public class StatisticsController {
             description = "Find statistics of a bar like popular drinks and other statistics",
             tags = "Statistics"
     )
-    public BarStatisticsResponse getBarStatistics(
+    public StatisticsResponse getBarStatistics(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId
     ) throws EntityNotFoundException {
-        BarStatistics barStatistics = statisticsQueryHandler.handle(new GetBarStatistics(barId));
-        return barStatisticsConverter.convert(barStatistics);
+        Statistics statistics = statisticsQueryHandler.handle(new GetBarStatistics(barId));
+        return statisticsConverter.convert(statistics);
     }
 
     @GetMapping("/bars/{barId}/people/{personId}/statistics")
@@ -63,12 +53,12 @@ public class StatisticsController {
             description = "Find customer statistics of a bar that the authenticated user is owner of",
             tags = "Statistics"
     )
-    public CustomerStatisticsResponse getCustomerStatisticsOfBar(
+    public StatisticsResponse getCustomerStatisticsOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
             @Parameter(description = "Id value of the customer") @PathVariable UUID personId
     ) throws EntityNotFoundException {
-        CustomerStatistics customerStatistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, personId));
-        return customerStatisticsConverter.convert(customerStatistics);
+        Statistics statistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, personId));
+        return statisticsConverter.convert(statistics);
     }
 
     @GetMapping("/bars/{barId}/customer-statistics")
@@ -79,13 +69,13 @@ public class StatisticsController {
             description = "Find multiple customer statistics of a bar that the authenticated user is connected to",
             tags = "Statistics"
     )
-    public CustomerStatisticsResponse getCustomerStatistics(
+    public StatisticsResponse getCustomerStatistics(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
         User user = (User) authentication.getPrincipal();
-        CustomerStatistics customerStatistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, user.getId()));
-        return customerStatisticsConverter.convert(customerStatistics);
+        Statistics statistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, user.getId()));
+        return statisticsConverter.convert(statistics);
     }
 
     @GetMapping("/global-customer-statistics")
@@ -95,11 +85,11 @@ public class StatisticsController {
             description = "Find multiple customer statistics that span all connected bars tha the authenticated user is connected to",
             tags = "Statistics"
     )
-    public GlobalCustomerStatisticsResponse getGlobalCustomerStatistics(
+    public StatisticsResponse getGlobalCustomerStatistics(
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        GlobalCustomerStatistics globalCustomerStatistics = statisticsQueryHandler.handle(new GetGlobalCustomerStatistics(userDetails.getUsername()));
-        return globalCustomerStatisticsConverter.convert(globalCustomerStatistics);
+        Statistics statistics = statisticsQueryHandler.handle(new GetGlobalCustomerStatistics(userDetails.getUsername()));
+        return statisticsConverter.convert(statistics);
     }
 }

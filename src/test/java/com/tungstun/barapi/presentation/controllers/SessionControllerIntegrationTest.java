@@ -230,7 +230,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("End session not editable")
 //    void endSessionNotEditable() throws Exception {
 //        session.lock();
@@ -244,7 +244,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(customerId = "anonymous")
 //    @DisplayName("End session Not Allowed")
 //    void endSessionNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -256,7 +256,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("Lock session")
 //    void lockSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -268,7 +268,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(customerId = "anonymous")
 //    @DisplayName("Lock session Not Allowed")
 //    void lockSessionNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -280,7 +280,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "owner")
+//    @WithMockUser(customerId = "owner")
 //    @DisplayName("Delete session")
 //    void deleteSession() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
@@ -292,7 +292,7 @@
 //    }
 //
 //    @Test
-//    @WithMockUser(userId = "anonymous")
+//    @WithMockUser(customerId = "anonymous")
 //    @DisplayName("Delete session Not Allowed")
 //    void deleteSessionNotAllowed() throws Exception {
 //        RequestBuilder request = MockMvcRequestBuilders
