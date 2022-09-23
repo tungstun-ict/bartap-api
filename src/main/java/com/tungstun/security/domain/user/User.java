@@ -23,7 +23,7 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "mail")
+    @Column(name = "mail", unique = true)
     private String mail;
 
     @Column(name = "first_name")
@@ -48,7 +48,9 @@ public class User implements UserDetails {
         this.mail = mail;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.phoneNumber = new PhoneNumber(phoneNumber);
+        this.phoneNumber = Optional.ofNullable(phoneNumber)
+                .map(PhoneNumber::new)
+                .orElse(null);
         this.authorizations = authorizations;
     }
 
