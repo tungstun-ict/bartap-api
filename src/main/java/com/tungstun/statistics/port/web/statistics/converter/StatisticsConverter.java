@@ -2,7 +2,7 @@ package com.tungstun.statistics.port.web.statistics.converter;
 
 import com.tungstun.barapi.port.web.bill.converter.BillConverter;
 import com.tungstun.barapi.port.web.order.converter.OrderProductConverter;
-import com.tungstun.statistics.domain.statistics.model.Statistics;
+import com.tungstun.statistics.domain.statistics.Statistics;
 import com.tungstun.statistics.port.web.statistics.response.StatisticsResponse;
 import org.springframework.stereotype.Component;
 

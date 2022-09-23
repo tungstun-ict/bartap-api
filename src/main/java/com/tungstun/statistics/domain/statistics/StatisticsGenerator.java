@@ -5,7 +5,6 @@ import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.Order;
 import com.tungstun.barapi.domain.bill.OrderProduct;
 import com.tungstun.barapi.domain.session.Session;
-import com.tungstun.statistics.domain.statistics.model.Statistics;
 
 import java.util.ArrayList;
 import java.util.List;

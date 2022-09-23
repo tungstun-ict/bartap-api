@@ -5,7 +5,7 @@ import com.tungstun.statistics.application.statistics.StatisticsQueryHandler;
 import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
 import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
 import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
-import com.tungstun.statistics.domain.statistics.model.Statistics;
+import com.tungstun.statistics.domain.statistics.Statistics;
 import com.tungstun.statistics.port.web.statistics.converter.StatisticsConverter;
 import com.tungstun.statistics.port.web.statistics.response.StatisticsResponse;
 import io.swagger.v3.oas.annotations.Operation;

@@ -7,8 +7,8 @@ import com.tungstun.barapi.domain.bar.Bar;
 import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
 import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
 import com.tungstun.statistics.application.statistics.query.GetGlobalCustomerStatistics;
+import com.tungstun.statistics.domain.statistics.Statistics;
 import com.tungstun.statistics.domain.statistics.StatisticsGenerator;
-import com.tungstun.statistics.domain.statistics.model.Statistics;
 import org.springframework.stereotype.Service;
 
 @Service

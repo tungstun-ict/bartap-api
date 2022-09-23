@@ -1,4 +1,4 @@
-package com.tungstun.statistics.domain.statistics.model;
+package com.tungstun.statistics.domain.statistics;
 
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.domain.bill.OrderProduct;
