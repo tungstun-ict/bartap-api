@@ -98,7 +98,7 @@ class OrderCommandHandlerIntegrationTest {
                 bill.getId(),
                 product.getId(),
                 2,
-                user.getUsername()
+                user.getId()
         );
 
         UUID orderId = service.handle(command);
@@ -120,7 +120,7 @@ class OrderCommandHandlerIntegrationTest {
                 bill.getId(),
                 product.getId(),
                 2,
-                "notExistingUsername"
+                UUID.randomUUID()
         );
         assertThrows(
                 EntityNotFoundException.class,

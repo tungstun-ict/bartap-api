@@ -7,15 +7,18 @@ import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
+import com.tungstun.barapi.application.bill.query.ListBillsOfUser;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.port.web.bill.converter.BillConverter;
 import com.tungstun.barapi.port.web.bill.request.CreateBillRequest;
 import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
+import com.tungstun.security.config.filter.UserProfile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -67,6 +70,23 @@ public class BillController {
             @Parameter(description = "Id value of the customer") @PathVariable("personId") UUID personId
     ) throws EntityNotFoundException {
         List<Bill> bills = billQueryHandler.handle(new ListBillsOfCustomer(barId, personId));
+        return converter.convertAllToSummary(bills);
+    }
+
+    @GetMapping("/bills")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER', 'CUSTOMER'})")
+    @Operation(
+            summary = "Finds bills of authenticated user",
+            description = "Find all the bills of the authenticated user of bar with given id's",
+            tags = "Bill"
+    )
+    public List<BillSummaryResponse> getBillsOfAuthenticatedUserOfBar(
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(hidden = true) Authentication authentication
+    ) throws EntityNotFoundException {
+        UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
+        List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(barId, userProfile.id()));
         return converter.convertAllToSummary(bills);
     }
 
