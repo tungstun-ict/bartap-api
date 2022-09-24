@@ -1,6 +1,6 @@
 package com.tungstun.statistics.port.web.statistics;
 
-import com.tungstun.security.domain.user.User;
+import com.tungstun.security.config.filter.UserProfile;
 import com.tungstun.statistics.application.statistics.StatisticsQueryHandler;
 import com.tungstun.statistics.application.statistics.query.GetBarStatistics;
 import com.tungstun.statistics.application.statistics.query.GetCustomerStatistics;
@@ -79,12 +79,12 @@ public class StatisticsController {
     )
     public StatisticsResponse getCustomerStatistics(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
-            @Parameter(description = "Filter on sessions from a certain date to later") @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @Parameter(description = "Filter on sessions from a certain date to later") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
-        User user = (User) authentication.getPrincipal();
-        Statistics statistics = statisticsQueryHandler.handle(new GetUserCustomerStatistics(barId, user.getId()), new Filters(from, to));
+        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
+        Statistics statistics = statisticsQueryHandler.handle(new GetUserCustomerStatistics(barId, userProfile.getId()), new Filters(from, to));
         return statisticsConverter.convert(statistics);
     }
 
