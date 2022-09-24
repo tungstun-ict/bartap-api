@@ -44,9 +44,9 @@ public class StatisticsController {
     )
     public StatisticsResponse getBarStatistics(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
-            @Parameter(description = "Filter on sessions from a certain date to later")  @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
-    ) throws EntityNotFoundException {
+            @Parameter(description = "Filter on sessions from a certain date to later") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+            ) throws EntityNotFoundException {
         Statistics statistics = statisticsQueryHandler.handle(new GetBarStatistics(barId), new Filters(from, to));
         return statisticsConverter.convert(statistics);
     }
@@ -62,9 +62,9 @@ public class StatisticsController {
     public StatisticsResponse getCustomerStatisticsOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
             @Parameter(description = "Id value of the customer") @PathVariable UUID personId,
-            @Parameter(description = "Filter on sessions from a certain date to later")  @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
-    ) throws EntityNotFoundException {
+            @Parameter(description = "Filter on sessions from a certain date to later") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+            ) throws EntityNotFoundException {
         Statistics statistics = statisticsQueryHandler.handle(new GetCustomerStatistics(barId, personId), new Filters(from, to));
         return statisticsConverter.convert(statistics);
     }
@@ -79,7 +79,7 @@ public class StatisticsController {
     )
     public StatisticsResponse getCustomerStatistics(
             @Parameter(description = "Id value of the bar") @PathVariable UUID barId,
-            @Parameter(description = "Filter on sessions from a certain date to later")  @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "Filter on sessions from a certain date to later") @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
             @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
@@ -96,8 +96,8 @@ public class StatisticsController {
             tags = "Statistics"
     )
     public StatisticsResponse getGlobalCustomerStatistics(
-            @Parameter(description = "Filter on sessions from a certain date to later")  @RequestParam("from") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam("to") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @Parameter(description = "Filter on sessions from a certain date to later") @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @Parameter(description = "Filter on sessions up to a certain date or earlier") @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
