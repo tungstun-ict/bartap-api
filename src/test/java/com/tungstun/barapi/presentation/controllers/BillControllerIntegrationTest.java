@@ -196,7 +196,7 @@
 //    @DisplayName("Create bill")
 //    void createBillForSession() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("customerId", anonymousPerson.getId());
+//        jsonObject.put("userId", anonymousPerson.getId());
 //
 //        RequestBuilder request = MockMvcRequestBuilders
 //                .post(String.format("/api/bars/%s/sessions/%s/", bar.getId(), session.getId()))
@@ -218,7 +218,7 @@
 //    @DisplayName("Create bill not allowed")
 //    void createBillForSessionNotAllowed() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("customerId", anonymousPerson.getId());
+//        jsonObject.put("userId", anonymousPerson.getId());
 //
 //        RequestBuilder request = MockMvcRequestBuilders
 //                .post(String.format("/api/bars/%s/sessions/%s/", bar.getId(), session.getId()))
@@ -235,7 +235,7 @@
 //    @DisplayName("Set isPayed bill")
 //    void setIsPayedBillForSession() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("customerId", anonymousPerson.getId());
+//        jsonObject.put("userId", anonymousPerson.getId());
 //
 //        RequestBuilder request = MockMvcRequestBuilders
 //                .patch(String.format("/api/bars/%s/sessions/%s/bills/%s?isPayed=true", bar.getId(), session.getId(), bill.getId()))
@@ -257,7 +257,7 @@
 //    @DisplayName("Set isPayed bill no bool")
 //    void setIsPayedBillForSessionNoBool() throws Exception {
 //        JSONObject jsonObject = new JSONObject();
-//        jsonObject.put("customerId", anonymousPerson.getId());
+//        jsonObject.put("userId", anonymousPerson.getId());
 //
 //        RequestBuilder request = MockMvcRequestBuilders
 //                .patch(String.format("/api/bars/%s/sessions/%s/bills/%s", bar.getId(), session.getId(), bill.getId()))

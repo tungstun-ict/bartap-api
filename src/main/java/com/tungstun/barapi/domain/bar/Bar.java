@@ -114,7 +114,7 @@ public class Bar {
                 .filter(person -> person.getUser() != null)
                 .anyMatch(person -> person.getUser().getId().equals(user.getId()));
         if (isAlreadyConnected) {
-            throw new IllegalArgumentException("User is already connected to a person of the bar");
+            throw new IllegalArgumentException("User is already connected to another person of the bar");
         }
 
         people.stream()
