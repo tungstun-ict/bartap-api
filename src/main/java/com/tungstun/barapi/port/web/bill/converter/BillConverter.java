@@ -30,7 +30,8 @@ public class BillConverter {
                 bill.isPayed(),
                 personConverter.convert(bill.getCustomer()),
                 bill.calculateTotalPrice(),
-                orderConverter.convertAll(bill.getOrders())
+                orderConverter.convertAll(bill.getOrders()),
+                sessionConverter.convertToSummary(bill.getSession())
         );
     }
 
