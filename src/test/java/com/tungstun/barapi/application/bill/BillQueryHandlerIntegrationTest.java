@@ -124,7 +124,7 @@ class BillQueryHandlerIntegrationTest {
     @Test
     @DisplayName("Get bills of user that is connected to a person")
     void getBillsByUser() {
-        List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(bar.getId(), user.getUsername()));
+        List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(bar.getId(), user.getId()));
 
         assertEquals(1, bills.size());
     }
@@ -134,7 +134,7 @@ class BillQueryHandlerIntegrationTest {
     void getBillsByUserThatIsNotConnected() {
         assertThrows(
                 EntityNotFoundException.class,
-                () -> billQueryHandler.handle(new ListBillsOfUser(bar.getId(), "randomWrongUsername"))
+                () -> billQueryHandler.handle(new ListBillsOfUser(bar.getId(), UUID.randomUUID()))
         );
     }
 }

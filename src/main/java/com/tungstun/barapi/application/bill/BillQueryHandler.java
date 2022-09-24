@@ -41,7 +41,7 @@ public class BillQueryHandler {
     }
 
     public List<Bill> handle(ListBillsOfUser query) {
-        Person person = personQueryHandler.handle(new GetPersonByUserUsername(query.barId(), query.username()));
+        Person person = personQueryHandler.handle(new GetPersonByUserUsername(query.barId(), query.userId()));
         return handle(new ListBillsOfCustomer(query.barId(), person.getId()));
     }
 }

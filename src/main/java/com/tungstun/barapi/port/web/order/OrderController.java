@@ -13,12 +13,12 @@ import com.tungstun.barapi.port.web.order.request.CreateOrderRequest;
 import com.tungstun.barapi.port.web.order.response.OrderHistoryEntryResponse;
 import com.tungstun.barapi.port.web.order.response.OrderResponse;
 import com.tungstun.common.response.UuidResponse;
+import com.tungstun.security.config.filter.UserProfile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
@@ -140,14 +140,14 @@ public class OrderController {
             @Valid @RequestBody CreateOrderRequest request,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
         AddOrder command = new AddOrder(
                 barId,
                 sessionId,
                 billId,
                 request.productId(),
                 request.amount(),
-                userDetails.getUsername()
+                userProfile.getId()
         );
         return new UuidResponse(orderCommandHandler.handle(command));
     }

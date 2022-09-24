@@ -4,5 +4,5 @@ import java.util.UUID;
 
 public record ListBillsOfUser(
         UUID barId,
-        String username) {
+        UUID userId) {
 }

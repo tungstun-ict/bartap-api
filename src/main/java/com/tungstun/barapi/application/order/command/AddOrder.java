@@ -8,5 +8,5 @@ public record AddOrder(
         UUID billId,
         UUID productId,
         Integer amount,
-        String bartenderUsername) {
+        UUID bartenderId) {
 }

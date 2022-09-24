@@ -86,7 +86,7 @@ public class BillController {
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
         UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
-        List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(barId, userProfile.getUsername()));
+        List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(barId, userProfile.id()));
         return converter.convertAllToSummary(bills);
     }
 
