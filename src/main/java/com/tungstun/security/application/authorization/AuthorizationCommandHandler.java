@@ -21,21 +21,21 @@ public class AuthorizationCommandHandler {
 //    public boolean handle(AuthorizeUser command) {
 //        User owner = loadUserById(command.ownerId());
 //        User user = loadUserById(command.userId());
-//        user.authorize(command.barId(), Role.getRole(command.role()));
+//        user.authorize(command.barIdentification(), Role.getRole(command.role()));
 //
 //        //getbar get person
-//        return owner.authorize(user, command.barId(), ));
+//        return owner.authorize(user, command.barIdentification(), ));
 //    }
 //
 //    public boolean handle(RevokeUserAuthorization command) {
 //        User owner = loadUserById(command.ownerId());
 //        User user = loadUserById(command.userId());
-//        return owner.revokeUserAuthorization(user, command.barId());
+//        return owner.revokeUserAuthorization(user, command.barIdentification());
 //    }
 //
 //    public boolean handle(AuthorizeNewBarOwnership command) {
 //        User user = loadUserById(command.userId());
-//        return user.newBarAuthorization(command.barId());
+//        return user.newBarAuthorization(command.barIdentification());
 //    }
 //
 //    /**
@@ -45,6 +45,6 @@ public class AuthorizationCommandHandler {
 //     */
 //    public boolean handle(RevokeBarOwnerShip command) {
 //        User owner = loadUserById(command.ownerId());
-//        return owner.revokeOwnership(command.barId());
+//        return owner.revokeOwnership(command.barIdentification());
 //    }
 }

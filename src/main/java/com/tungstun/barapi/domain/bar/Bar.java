@@ -29,6 +29,9 @@ public class Bar {
     @Id
     private UUID id;
 
+    @Column(name = "slug", unique = true)
+    private String slug;
+
     @Embedded
     private BarDetails details;
 
@@ -122,6 +125,14 @@ public class Bar {
                 .findFirst()
                 .orElseThrow(() -> new EntityNotFoundException("No person found with id: " + personId))
                 .connectUser(user, id);
+    }
+
+    public String getSlug() {
+        return slug;
+    }
+
+    public void setSlug(String slug) {
+        this.slug = slug;
     }
 
     public UUID getId() {

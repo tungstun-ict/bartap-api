@@ -66,18 +66,18 @@ public class BarController {
         return converter.convertAll(allBars);
     }
 
-    @GetMapping("/{barId}")
+    @GetMapping("/{barIdentification}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasPermission(#barId, {'OWNER', 'BARTENDER', 'CUSTOMER'})")
+    @PreAuthorize("hasPermission(#barIdentification, {'OWNER', 'BARTENDER', 'CUSTOMER'})")
     @Operation(
-            summary = "Finds bar by id",
-            description = "Finds bar with the given id",
+            summary = "Finds bar by id / slug",
+            description = "Finds bar with the given id or given slug",
             tags = "Bar"
     )
     public BarResponse getBar(
-            @Parameter(description = "Id value of the bar you want to retrieve") @PathVariable("barId") UUID barId
+            @Parameter(description = "Id value of the bar you want to retrieve") @PathVariable("barIdentification") String barIdentification
     ) throws EntityNotFoundException {
-        Bar bar = barQueryHandler.handle(new GetBar(barId));
+        Bar bar = barQueryHandler.handle(new GetBar(barIdentification));
         return converter.convert(bar);
     }
 

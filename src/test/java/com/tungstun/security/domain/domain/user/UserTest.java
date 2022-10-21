@@ -50,13 +50,13 @@ class UserTest {
 //  Commented due to not having functionality to check if other use already owns bar in Domain layer
 //    @Test
 //    void addNewBarAuthorization_WhenBarIsOwnedByOtherUser_Throws() {
-//        Long barId = 123L;
+//        Long barIdentification = 123L;
 //        User testUser = new User("username", "password", "mail@mail.com", "first", "last", new ArrayList<>());
-//        testUser.newBarAuthorization(barId);
+//        testUser.newBarAuthorization(barIdentification);
 //
 //        assertThrows(
 //                SomeException.class,
-//                () -> user.newBarAuthorization(barId)
+//                () -> user.newBarAuthorization(barIdentification)
 //        );
 //    }
 
@@ -148,7 +148,7 @@ class UserTest {
 //
 //        assertThrows(
 //                NotAuthorizedException.class,
-//                () -> user.authorize(barId, Role.CUSTOMER, person)
+//                () -> user.authorize(barIdentification, Role.CUSTOMER, person)
 //        );
 //    }
 
@@ -168,11 +168,11 @@ class UserTest {
 //    void authorizeUserForNotOwnedButRelatedBar_Throws() {
 //        User user = new User("user", "", "", "", "", "+31612345678", new ArrayList<>());
 //        Person person = new PersonBuilder("owner").setUser(user).build();
-//        userWithAuthorization.authorize(barId, Role.BARTENDER, person);
+//        userWithAuthorization.authorize(barIdentification, Role.BARTENDER, person);
 //
 //        assertThrows(
 //                NotAuthorizedException.class,
-//                () -> user.authorize(barId, Role.CUSTOMER, person)
+//                () -> user.authorize(barIdentification, Role.CUSTOMER, person)
 //        );
 //    }
 
@@ -183,7 +183,7 @@ class UserTest {
 //
 //        assertThrows(
 //                IllegalArgumentException.class,
-//                () -> user.authorize(barId, Role.CUSTOMER, person)
+//                () -> user.authorize(barIdentification, Role.CUSTOMER, person)
 //        );
 //    }
 
@@ -228,14 +228,14 @@ class UserTest {
 
 //    @Test
 //    void revokeOwnership_Successfully() {
-//        assertDoesNotThrow(() -> userWithAuthorization.revokeOwnership(barId));
+//        assertDoesNotThrow(() -> userWithAuthorization.revokeOwnership(barIdentification));
 //    }
 //
 //    @Test
 //    void revokeOwnershipOfNotOwnedBar_Throws() {
 //        assertThrows(
 //                NotAuthorizedException.class,
-//                () -> user.revokeOwnership(barId)
+//                () -> user.revokeOwnership(barIdentification)
 //        );
 //    }
 }

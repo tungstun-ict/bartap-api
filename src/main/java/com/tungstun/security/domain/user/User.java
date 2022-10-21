@@ -123,7 +123,7 @@ public class User implements UserDetails {
     }
 
     public boolean authorize(UUID barId, Role role, Person person) {
-//        if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner of bar to authorize other users");
+//        if (!isOwner(barIdentification)) throw new NotAuthorizedException("User has to be Owner of bar to authorize other users");
 //        if (this.equals(user)) throw new IllegalArgumentException("Cannot change your own bar role");
         if (role == Role.OWNER) throw new IllegalArgumentException("Cannot make an other person than yourself owner");
         return addAuthorization(barId, role, person);
@@ -152,9 +152,9 @@ public class User implements UserDetails {
         return user.revokeAuthorization(barId);
     }
 
-//    public boolean revokeOwnership(UUID barId) {
-//        if (!isOwner(barId)) throw new NotAuthorizedException("User has to be Owner to revoke ownership");
-//        return revokeAuthorization(barId);
+//    public boolean revokeOwnership(UUID barIdentification) {
+//        if (!isOwner(barIdentification)) throw new NotAuthorizedException("User has to be Owner to revoke ownership");
+//        return revokeAuthorization(barIdentification);
 //    }
 
     private boolean revokeAuthorization(UUID barId) {

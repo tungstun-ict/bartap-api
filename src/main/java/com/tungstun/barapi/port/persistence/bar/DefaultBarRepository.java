@@ -37,6 +37,11 @@ public class DefaultBarRepository implements BarRepository {
     }
 
     @Override
+    public Optional<Bar> findBySlug(String slug) {
+        return repository.findBySlug(slug);
+    }
+
+    @Override
     public List<Bar> findAllById(Iterable<UUID> ids) {
         return repository.findAllById(ids);
     }

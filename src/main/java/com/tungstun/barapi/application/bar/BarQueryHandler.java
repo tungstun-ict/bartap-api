@@ -27,8 +27,14 @@ public class BarQueryHandler {
     }
 
     public Bar handle(GetBar query) {
-        return barRepository.findById(query.barId())
-                .orElseThrow(() -> new EntityNotFoundException(String.format("Bar with id %s doesn't exist", query.barId())));
+        try {
+            UUID id = UUID.fromString(query.barIdentification());
+            return barRepository.findById(id)
+                    .orElseThrow(() -> new EntityNotFoundException(String.format("Bar with id %s doesn't exist", query.barIdentification())));
+        } catch (IllegalArgumentException ignored) {
+        }
+        return barRepository.findBySlug(query.barIdentification())
+                .orElseThrow(() -> new EntityNotFoundException(String.format("Bar with slug %s doesn't exist", query.barIdentification())));
     }
 
     public List<Bar> handle(ListOwnedBars query) {

@@ -13,5 +13,7 @@ public interface BarRepository {
 
     Optional<Bar> findById(UUID id);
 
+    Optional<Bar> findBySlug(String id);
+
     List<Bar> findAllById(Iterable<UUID> ids);
 }
