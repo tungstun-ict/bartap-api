@@ -5,17 +5,19 @@ import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
 import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
-import com.tungstun.barapi.application.bill.query.*;
+import com.tungstun.barapi.application.bill.query.GetActiveBillOfUser;
+import com.tungstun.barapi.application.bill.query.GetBill;
+import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
+import com.tungstun.barapi.application.bill.query.ListBillsOfUser;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.port.web.bill.converter.BillConverter;
 import com.tungstun.barapi.port.web.bill.request.CreateBillRequest;
 import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
 import com.tungstun.security.config.filter.UserProfile;
-import com.tungstun.security.domain.user.Role;
-import com.tungstun.security.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -50,15 +52,8 @@ public class BillController {
     public BillResponse getBillOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
             @Parameter(description = "Id value of the session") @PathVariable("sessionId") UUID sessionId,
-            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId,
-            @Parameter(hidden = true) Authentication authentication
+            @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
-        User user = (User) authentication.getPrincipal();
-        Role role = Role.getRole(user.getAuthorizations().get(barId));
-        if (role.equals(Role.CUSTOMER)) {
-            Bill bill = billQueryHandler.handle(new GetBillAsCustomer(barId, sessionId, billId, user.getId()));
-            return converter.convert(bill);
-        }
         Bill bill = billQueryHandler.handle(new GetBill(barId, sessionId, billId));
         return converter.convert(bill);
     }
@@ -107,7 +102,7 @@ public class BillController {
     public BillSummaryResponse getActiveBillOfAuthenticatedUserOfBar(
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
             @Parameter(hidden = true) Authentication authentication
-    ) throws EntityNotFoundException {
+    ) throws EntityNotFoundException, NotFoundException {
         UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
         Bill bill = billQueryHandler.handle(new GetActiveBillOfUser(barId, userProfile.id()));
         return converter.convertToSummary(bill);
