@@ -37,7 +37,8 @@ public class SessionConverter {
     public SessionSummaryResponse convertToSummary(Session session) {
         return new SessionSummaryResponse(
                 session.getId(),
-                session.getName()
+                session.getName(),
+                session.getCreationDate()
         );
     }
 
