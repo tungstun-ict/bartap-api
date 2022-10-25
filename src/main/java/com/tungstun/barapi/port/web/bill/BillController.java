@@ -5,6 +5,7 @@ import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
 import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
+import com.tungstun.barapi.application.bill.query.GetActiveBillOfUser;
 import com.tungstun.barapi.application.bill.query.GetBill;
 import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.application.bill.query.ListBillsOfUser;
@@ -16,6 +17,7 @@ import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
 import com.tungstun.security.config.filter.UserProfile;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import javassist.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -38,7 +40,6 @@ public class BillController {
         this.billQueryHandler = billQueryHandler;
         this.converter = converter;
     }
-
 
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
     @ResponseStatus(HttpStatus.OK)
@@ -88,6 +89,23 @@ public class BillController {
         UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
         List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(barId, userProfile.id()));
         return converter.convertAllToSummary(bills);
+    }
+
+    @GetMapping("/bills/active")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER', 'CUSTOMER'})")
+    @Operation(
+            summary = "Finds active bill of authenticated user",
+            description = "Find the active bill of the authenticated user of bar with given id's",
+            tags = "Bill"
+    )
+    public BillSummaryResponse getActiveBillOfAuthenticatedUserOfBar(
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(hidden = true) Authentication authentication
+    ) throws EntityNotFoundException, NotFoundException {
+        UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
+        Bill bill = billQueryHandler.handle(new GetActiveBillOfUser(barId, userProfile.id()));
+        return converter.convertToSummary(bill);
     }
 
     @PostMapping("/sessions/{sessionId}/")
