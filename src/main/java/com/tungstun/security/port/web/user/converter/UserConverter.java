@@ -1,23 +1,29 @@
 package com.tungstun.security.port.web.user.converter;
 
+import com.tungstun.common.phonenumber.PhoneNumber;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.port.web.user.response.UserResponse;
 import com.tungstun.security.port.web.user.response.UserSummaryResponse;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Component
 public class UserConverter {
     public UserResponse convert(User user) {
+        String phoneNumber = Optional.ofNullable(user.getPhoneNumber())
+                .map(PhoneNumber::getValue)
+                .orElse(null);
+
         return new UserResponse(
                 user.getId(),
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getMail(),
-                user.getPhoneNumber().getValue(),
+                phoneNumber,
                 user.getAuthorizations()
         );
     }
