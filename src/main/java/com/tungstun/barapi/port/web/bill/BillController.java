@@ -41,7 +41,7 @@ public class BillController {
 
     @GetMapping("/sessions/{sessionId}/bills/{billId}")
     @ResponseStatus(HttpStatus.OK)
-    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER'})")
+    @PreAuthorize("hasPermission(#barId, {'OWNER','BARTENDER', 'CUSTOMER'})")
     @Operation(
             summary = "Finds bill of bar",
             description = "Find the bill of session of bar with the given id's",
