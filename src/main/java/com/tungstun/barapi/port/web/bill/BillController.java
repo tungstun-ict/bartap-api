@@ -11,9 +11,9 @@ import com.tungstun.barapi.port.web.bill.converter.BillConverter;
 import com.tungstun.barapi.port.web.bill.request.CreateBillRequest;
 import com.tungstun.barapi.port.web.bill.response.BillResponse;
 import com.tungstun.barapi.port.web.bill.response.BillSummaryResponse;
+import com.tungstun.security.config.filter.Authorization;
 import com.tungstun.security.config.filter.UserProfile;
 import com.tungstun.security.domain.user.Role;
-import com.tungstun.security.domain.user.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import org.springframework.http.HttpStatus;
@@ -53,8 +53,14 @@ public class BillController {
             @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
-        User user = (User) authentication.getPrincipal();
-        Role role = Role.getRole(user.getAuthorizations().get(barId));
+        UserProfile user = (UserProfile) authentication.getPrincipal();
+        Role role = user.authorizations()
+                .stream()
+                .filter(auth -> auth.barId().equals(barId))
+                .map(Authorization::role)
+                .map(Role::getRole)
+                .findFirst()
+                .orElseThrow(() -> new EntityNotFoundException("No bill found for id: " + billId));
         if (role.equals(Role.CUSTOMER)) {
             Bill bill = billQueryHandler.handle(new GetBillAsCustomer(barId, sessionId, billId, user.getId()));
             return converter.convert(bill);
