@@ -8,6 +8,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,9 @@ import java.util.stream.Collectors;
 public class User implements UserDetails {
     @Id
     private UUID id;
+
+    @Column(name = "created_on")
+    private LocalDateTime createdOn;
 
     @Column(name = "username", unique = true)
     private String username;
@@ -52,6 +57,7 @@ public class User implements UserDetails {
                 .map(PhoneNumber::new)
                 .orElse(null);
         this.authorizations = authorizations;
+        this.createdOn = ZonedDateTime.now().toLocalDateTime();
     }
 
     public UUID getId() {
@@ -104,6 +110,10 @@ public class User implements UserDetails {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = new PhoneNumber(phoneNumber);
+    }
+
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
     public void canAuthenticate() {
