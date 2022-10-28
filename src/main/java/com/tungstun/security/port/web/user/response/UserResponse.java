@@ -2,6 +2,7 @@ package com.tungstun.security.port.web.user.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
 
@@ -13,5 +14,6 @@ public record UserResponse(
         String lastName,
         String email,
         String phoneNumber,
+        LocalDateTime createdOn,
         Map<UUID, String> connectedBars) {
 }

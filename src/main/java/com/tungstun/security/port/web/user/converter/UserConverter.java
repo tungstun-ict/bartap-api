@@ -24,6 +24,7 @@ public class UserConverter {
                 user.getLastName(),
                 user.getMail(),
                 phoneNumber,
+                user.getCreatedOn(),
                 user.getAuthorizations()
         );
     }

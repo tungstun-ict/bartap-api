@@ -573,6 +573,11 @@ set id = gen_random_uuid();
 update "user"
 set id = gen_random_uuid();
 
+-- Update the created date of all accounts without one to NOW
+update "user"
+set created_on = current_timestamp
+where created_on is NULL;
+
 -- Remove Foreign key constraints
 alter table "authorization"
     drop constraint bar_id_fk_cascade,
