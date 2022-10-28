@@ -19,7 +19,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
-public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter{
+public class BarApiWebSecurityConfig extends WebSecurityConfigurerAdapter implements WebMvcConfigurer {
     private static final String REGISTER_PATH = "/api/account/register";
     private static final String LOGIN_PATH = "/api/authenticate";
     private static final String LOGIN_REFRESH_PATH = "/api/authenticate/refresh";
