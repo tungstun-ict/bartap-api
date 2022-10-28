@@ -1,29 +1,21 @@
 package com.tungstun.barapi.domain.product;
 
-import com.tungstun.barapi.domain.stock.Stock;
+import com.tungstun.common.money.Money;
+
+import java.util.UUID;
 
 public class ProductBuilder {
-    private String name;
-    private String brand;
-    private double size;
-    private double price;
-    private boolean isFavorite;
-    private Category category;
-    private Stock stock;
+    private final String name;
+    private final Category category;
+    private String brand = "";
+    private double size = 0;
+    private boolean isFavorite = false;
+    private Money price = new Money(0.0);
+    private ProductType type = ProductType.OTHER;
 
-    public ProductBuilder() {
-        this.name = "Unknown";
-        this.brand = "Unknown";
-        this.size = 0;
-        this.price = 0.0;
-        this.isFavorite = false;
-        this.category = null;
-        this.stock = new Stock();
-    }
-
-    public ProductBuilder setName(String name) {
+    public ProductBuilder(String name, Category category) {
         this.name = name;
-        return this;
+        this.category = category;
     }
 
     public ProductBuilder setBrand(String brand) {
@@ -36,29 +28,30 @@ public class ProductBuilder {
         return this;
     }
 
-    public ProductBuilder setPrice(double price) {
-        this.price = price;
-        return this;
-    }
-
     public ProductBuilder setFavorite(boolean favorite) {
         isFavorite = favorite;
         return this;
     }
 
-    public ProductBuilder setCategory(Category category) {
-        this.category = category;
+    public ProductBuilder setPrice(double price) {
+        this.price = new Money(price);
         return this;
     }
 
-    public Product build(){
+    public ProductBuilder setType(ProductType type) {
+        this.type = type;
+        return this;
+    }
+
+    public Product build() {
         return new Product(
+                UUID.randomUUID(),
                 this.name,
                 this.brand,
                 this.size,
-                this.price,
                 this.isFavorite,
-                this.category,
-                this.stock);
+                this.type,
+                this.price,
+                this.category);
     }
 }

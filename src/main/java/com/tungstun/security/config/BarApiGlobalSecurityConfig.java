@@ -1,10 +1,11 @@
 package com.tungstun.security.config;
 
-import com.tungstun.security.application.UserService;
+import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.config.evaluator.BarApiPermissionEvaluator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -12,6 +13,8 @@ import org.springframework.security.config.annotation.method.configuration.Globa
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableWebSecurity
@@ -19,28 +22,32 @@ import org.springframework.security.crypto.password.PasswordEncoder;
         prePostEnabled = true,
         securedEnabled = true,
         jsr250Enabled = true)
-public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration {
-    private final UserService userService;
+@Primary
+public class BarApiGlobalSecurityConfig extends GlobalMethodSecurityConfiguration implements WebMvcConfigurer {
+    private final UserQueryHandler userQueryHandler;
 
-    public BarApiGlobalSecurityConfig(@Lazy UserService userService) {
-        this.userService = userService;
+    public BarApiGlobalSecurityConfig(@Lazy UserQueryHandler userQueryHandler) {
+        this.userQueryHandler = userQueryHandler;
     }
+
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("*")
+                .allowedHeaders("*")
+                .allowedMethods("*")
+                .exposedHeaders("*");
+        WebMvcConfigurer.super.addCorsMappings(registry);
+    }
+
 
     @Override
     protected MethodSecurityExpressionHandler createExpressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler =
                 new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(this.userService));
+        expressionHandler.setPermissionEvaluator(new BarApiPermissionEvaluator(userQueryHandler));
         return expressionHandler;
     }
-
-    @Configuration
-    @EnableWebSecurity
-    @EnableGlobalMethodSecurity(
-            prePostEnabled = true,
-            securedEnabled = true,
-            jsr250Enabled = true)
-    public static class EmbeddedWebBarApiWebSecurityConfigurerAdapter extends BarApiWebSecurityConfig { }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

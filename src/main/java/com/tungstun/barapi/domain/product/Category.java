@@ -1,43 +1,35 @@
 package com.tungstun.barapi.domain.product;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.util.UUID;
 
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.PropertyGenerator.class,
-        property = "id"
-)
-@JsonIdentityReference(alwaysAsId = true)
 @Entity
 @Table(name = "category")
 @SQLDelete(sql = "UPDATE category SET deleted = true WHERE id=?")
 @Where(clause = "deleted = false")
 public class Category {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-
     @Column(name = "deleted")
     private final boolean deleted = Boolean.FALSE;
+
+    @Id
+    private UUID id;
 
     @Column(name = "name")
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private ProductType productType;
-
     public Category() { }
-    public Category(String name, ProductType productType) {
+    public Category(UUID id, String name) {
+        this.id = id;
         this.name = name;
-        this.productType = productType;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -46,8 +38,4 @@ public class Category {
     }
 
     public void setName(String name) { this.name = name; }
-
-    public ProductType getProductType() { return productType; }
-
-    public void setProductType(ProductType productType) { this.productType = productType; }
 }
