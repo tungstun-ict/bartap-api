@@ -4,9 +4,11 @@ import com.tungstun.common.response.UuidResponse;
 import com.tungstun.security.application.user.UserCommandHandler;
 import com.tungstun.security.application.user.UserQueryHandler;
 import com.tungstun.security.application.user.command.RegisterUser;
+import com.tungstun.security.application.user.command.UpdateUser;
 import com.tungstun.security.application.user.query.GetUserSummary;
 import com.tungstun.security.domain.user.User;
 import com.tungstun.security.port.web.user.converter.UserConverter;
+import com.tungstun.security.port.web.user.request.UpdateUserRequest;
 import com.tungstun.security.port.web.user.request.UserRegistrationRequest;
 import com.tungstun.security.port.web.user.response.UserResponse;
 import com.tungstun.security.port.web.user.response.UserSummaryResponse;
@@ -53,6 +55,26 @@ public class AccountController {
                 userRegistrationRequest.phoneNumber()
         );
         return new UuidResponse(userCommandHandler.registerUser(command));
+    }
+
+    @PatchMapping("/{userId}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(
+            summary = "Update a user's account",
+            description = "Update a user's first name, last name and phone number",
+            tags = "Account"
+    )
+    public UuidResponse updateAccount(
+            @PathVariable("userId") UUID id,
+            @Valid @RequestBody UpdateUserRequest updateUserRequest
+    ){
+        UpdateUser command = new UpdateUser(
+                id,
+                updateUserRequest.firstName(),
+                updateUserRequest.lastName(),
+                updateUserRequest.phoneNumber()
+        );
+        return new UuidResponse(userCommandHandler.handle(command));
     }
 
     @GetMapping

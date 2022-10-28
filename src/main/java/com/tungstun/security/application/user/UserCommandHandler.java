@@ -2,6 +2,7 @@ package com.tungstun.security.application.user;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.tungstun.security.application.user.command.*;
+import com.tungstun.security.application.user.query.GetUser;
 import com.tungstun.security.domain.jwt.JwtTokenGenerator;
 import com.tungstun.security.domain.jwt.JwtValidator;
 import com.tungstun.security.domain.user.User;
@@ -56,7 +57,7 @@ public class UserCommandHandler {
     }
 
     public UUID handle(UpdateUser command) {
-        User user = (User) userQueryHandler.loadUserByUsername(command.username());
+        User user = userQueryHandler.handle(new GetUser(command.userId()));
         if (command.firstName() != null) user.setFirstName(command.firstName());
         if (command.lastName() != null) user.setLastName(command.lastName());
         if (command.phoneNumber() != null) user.setPhoneNumber(command.phoneNumber());
