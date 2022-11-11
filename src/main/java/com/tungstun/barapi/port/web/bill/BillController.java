@@ -5,6 +5,7 @@ import com.tungstun.barapi.application.bill.BillQueryHandler;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
 import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
+import com.tungstun.barapi.application.bill.command.PayBills;
 import com.tungstun.barapi.application.bill.query.*;
 import com.tungstun.barapi.domain.bill.Bill;
 import com.tungstun.barapi.port.web.bill.converter.BillConverter;
@@ -16,6 +17,7 @@ import com.tungstun.security.config.filter.UserProfile;
 import com.tungstun.security.domain.user.Role;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -23,7 +25,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.persistence.EntityNotFoundException;
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -97,7 +101,7 @@ public class BillController {
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
-        UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
+        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
         List<Bill> bills = billQueryHandler.handle(new ListBillsOfUser(barId, userProfile.id()));
         return converter.convertAllToSummary(bills);
     }
@@ -114,7 +118,7 @@ public class BillController {
             @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
             @Parameter(hidden = true) Authentication authentication
     ) throws EntityNotFoundException {
-        UserProfile userProfile =  (UserProfile) authentication.getPrincipal();
+        UserProfile userProfile = (UserProfile) authentication.getPrincipal();
         Bill bill = billQueryHandler.handle(new GetActiveBillOfUser(barId, userProfile.id()));
         return converter.convertToSummary(bill);
     }
@@ -150,6 +154,26 @@ public class BillController {
             @Parameter(description = "Id value of the bill") @PathVariable("billId") UUID billId
     ) throws EntityNotFoundException {
         PayBill command = new PayBill(barId, sessionId, billId);
+        billCommandHandler.handle(command);
+    }
+
+    @PatchMapping("/customer/{customerId}/bills/pay")
+    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasPermission(#barId, {'OWNER'})")
+    @Operation(
+            summary = "Updates payment state of bills up to date",
+            description = "Updates the payment state of all bil up to and on the passed date to true. " +
+                    "If no date specified, the current date is used",
+            tags = "Bill"
+    )
+    public void payOfBillOfBar(
+            @Parameter(description = "Id value of the bar") @PathVariable("barId") UUID barId,
+            @Parameter(description = "Id value of the session") @PathVariable("customerId") UUID customerId,
+            @RequestParam(name = "date", required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDate date
+    ) throws EntityNotFoundException {
+        date = Objects.requireNonNullElse(date, LocalDate.now());
+        PayBills command = new PayBills(barId, customerId, date);
         billCommandHandler.handle(command);
     }
 
