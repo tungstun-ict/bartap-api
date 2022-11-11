@@ -3,6 +3,8 @@ package com.tungstun.barapi.application.bill;
 import com.tungstun.barapi.application.bill.command.AddCustomerToSession;
 import com.tungstun.barapi.application.bill.command.DeleteBill;
 import com.tungstun.barapi.application.bill.command.PayBill;
+import com.tungstun.barapi.application.bill.command.PayBills;
+import com.tungstun.barapi.application.bill.query.ListBillsOfCustomer;
 import com.tungstun.barapi.application.person.PersonQueryHandler;
 import com.tungstun.barapi.application.person.query.GetPerson;
 import com.tungstun.barapi.application.session.SessionQueryHandler;
@@ -22,12 +24,14 @@ import java.util.UUID;
 @Transactional
 public class BillCommandHandler {
     private final BillRepository billRepository;
+    private final BillQueryHandler billQueryHandler;
     private final SessionRepository sessionRepository;
     private final SessionQueryHandler sessionQueryHandler;
     private final PersonQueryHandler personQueryHandler;
 
-    public BillCommandHandler(BillRepository billRepository, SessionRepository sessionRepository, SessionQueryHandler sessionQueryHandler, PersonQueryHandler personQueryHandler) {
+    public BillCommandHandler(BillRepository billRepository, BillQueryHandler billQueryHandler, SessionRepository sessionRepository, SessionQueryHandler sessionQueryHandler, PersonQueryHandler personQueryHandler) {
         this.billRepository = billRepository;
+        this.billQueryHandler = billQueryHandler;
         this.sessionRepository = sessionRepository;
         this.sessionQueryHandler = sessionQueryHandler;
         this.personQueryHandler = personQueryHandler;
@@ -53,5 +57,15 @@ public class BillCommandHandler {
         session.removeBill(command.billId());
         sessionRepository.save(session);
         billRepository.delete(command.billId());
+    }
+
+    public void handle(PayBills command) {
+        billQueryHandler
+                .handle(new ListBillsOfCustomer(command.barId(), command.personId()))
+                .stream()
+                .filter(b -> b.getSession().isEnded())
+                .filter(b -> !b.getSession().getCreationDate().toLocalDate().isAfter(command.date()))
+                .peek(Bill::pay)
+                .forEach(billRepository::save);
     }
 }
